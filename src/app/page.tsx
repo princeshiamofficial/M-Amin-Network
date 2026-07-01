@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 
 interface Plan {
   speed: number;
@@ -117,6 +118,10 @@ export default function Home() {
     <div className="flex flex-col gap-20 pb-20 overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center pt-10 pb-16">
+        {/* Morph Carousel Background Animation */}
+        <div className="absolute inset-0 w-full h-full opacity-[0.18] z-0 pointer-events-none">
+          <MorphCarousel />
+        </div>
         {/* Glow Effects */}
         <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-brand-cyan/10 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 rounded-full bg-brand-blue/15 blur-[150px] pointer-events-none" />
