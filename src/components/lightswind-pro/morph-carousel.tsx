@@ -8,6 +8,7 @@ export interface MorphCarouselProps {
   autoplay?: boolean;
   autoplayInterval?: number;
   aspectRatio?: string;
+  showPagination?: boolean;
 }
 
 export const MorphCarousel: React.FC<MorphCarouselProps> = ({
@@ -16,6 +17,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   autoplay = true,
   autoplayInterval = 5000,
   aspectRatio = "aspect-video",
+  showPagination = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -367,20 +369,22 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
 
       {/* Slide Navigation Pagination */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5 px-4 py-2 rounded-full bg-brand-dark/50 border border-brand-border/40 backdrop-blur-md">
-        {Array.from({ length: totalSlides }).map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => triggerTransition(idx)}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-              activeIndex === idx
-                ? "bg-brand-cyan scale-125 shadow-[0_0_8px_#00f0ff]"
-                : "bg-slate-500 hover:bg-slate-300"
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
-      </div>
+      {showPagination && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2.5 px-4 py-2 rounded-full bg-brand-dark/50 border border-brand-border/40 backdrop-blur-md">
+          {Array.from({ length: totalSlides }).map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => triggerTransition(idx)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                activeIndex === idx
+                  ? "bg-brand-cyan scale-125 shadow-[0_0_8px_#00f0ff]"
+                  : "bg-slate-500 hover:bg-slate-300"
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
