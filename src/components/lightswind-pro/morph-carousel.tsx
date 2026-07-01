@@ -217,8 +217,42 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     const uColorNext1Loc = gl.getUniformLocation(program, "u_colorNext1");
     const uColorNext2Loc = gl.getUniformLocation(program, "u_colorNext2");
 
-    // Texture setup (stub since we default to procedural gradients for premium layout backgrounds)
-    gl.uniform1i(uUseTexturesLoc, 0);
+    const uTexActiveLoc = gl.getUniformLocation(program, "u_texActive");
+    const uTexNextLoc = gl.getUniformLocation(program, "u_texNext");
+
+    // Texture setup and loading
+    const textures: WebGLTexture[] = [];
+    const useTextures = images.length > 0;
+    gl.uniform1i(uUseTexturesLoc, useTextures ? 1 : 0);
+
+    if (useTextures) {
+      const loadTexture = (url: string) => {
+        const tex = gl.createTexture();
+        if (!tex) return null;
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        
+        // 1x1 fallback pixel while loading
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([7, 11, 25, 255]));
+
+        const img = new Image();
+        img.onload = () => {
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        };
+        img.src = url;
+        return tex;
+      };
+
+      images.forEach((url) => {
+        const tex = loadTexture(url);
+        if (tex) textures.push(tex);
+      });
+    }
 
     // Animation Loop
     let animationFrameId: number;
@@ -244,14 +278,28 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       gl.uniform1f(uProgressLoc, transitionProgress.current);
       gl.uniform1f(uTimeLoc, currentTime);
 
-      // Bind gradient colors
-      const currentGrad = proceduralGradients[activeTextureIndex.current];
-      const nextGrad = proceduralGradients[nextTextureIndex.current];
+      if (useTextures) {
+        // Bind textures
+        if (textures[activeTextureIndex.current]) {
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, textures[activeTextureIndex.current]);
+          gl.uniform1i(uTexActiveLoc, 0);
+        }
+        if (textures[nextTextureIndex.current]) {
+          gl.activeTexture(gl.TEXTURE1);
+          gl.bindTexture(gl.TEXTURE_2D, textures[nextTextureIndex.current]);
+          gl.uniform1i(uTexNextLoc, 1);
+        }
+      } else {
+        // Bind gradient colors
+        const currentGrad = proceduralGradients[activeTextureIndex.current];
+        const nextGrad = proceduralGradients[nextTextureIndex.current];
 
-      gl.uniform3fv(uColorActive1Loc, currentGrad.c1);
-      gl.uniform3fv(uColorActive2Loc, currentGrad.c2);
-      gl.uniform3fv(uColorNext1Loc, nextGrad.c1);
-      gl.uniform3fv(uColorNext2Loc, nextGrad.c2);
+        gl.uniform3fv(uColorActive1Loc, currentGrad.c1);
+        gl.uniform3fv(uColorActive2Loc, currentGrad.c2);
+        gl.uniform3fv(uColorNext1Loc, nextGrad.c1);
+        gl.uniform3fv(uColorNext2Loc, nextGrad.c2);
+      }
 
       // Draw
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -280,6 +328,9 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       window.removeEventListener("resize", handleResize);
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
+      textures.forEach((tex) => {
+        if (tex) gl.deleteTexture(tex);
+      });
     };
   }, [isTransitioning]);
 

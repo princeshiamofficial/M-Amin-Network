@@ -120,7 +120,14 @@ export default function Home() {
       <section className="relative min-h-[90vh] flex items-center justify-center pt-10 pb-16">
         {/* Morph Carousel Background Animation */}
         <div className="absolute inset-0 w-full h-full opacity-[0.18] z-0 pointer-events-none">
-          <MorphCarousel />
+          <MorphCarousel
+            images={[
+              "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+              "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
+              "/933503ea823535235e8159f65709292f.jpg",
+              "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
+            ]}
+          />
         </div>
         {/* Glow Effects */}
         <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-brand-cyan/10 blur-[120px] pointer-events-none" />
