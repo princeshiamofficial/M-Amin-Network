@@ -297,7 +297,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </button>
       </div>
 
-      <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
+      <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-y-auto">
         <AdminNavbar
           activeTab={activeTab}
           onResetDatabase={handleResetDatabase}
@@ -335,7 +335,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#f8fafc]">
+        <div className="flex-1 p-8 space-y-6 bg-[#f8fafc]">
           {children}
         </div>
       </main>
