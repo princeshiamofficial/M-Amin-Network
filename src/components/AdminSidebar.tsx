@@ -355,11 +355,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
 
       {/* Sidebar Footer Area */}
       <div className="p-4 border-t border-[#1e293b]/55 bg-[#050b16]/40 space-y-2">
-        {!isCollapsed && (
-          <div className="px-1 text-[10px] text-slate-500 font-mono tracking-tight font-medium overflow-hidden truncate">
-            admin@maminnetwork.test
-          </div>
-        )}
 
         {/* View Public Site Action */}
         <Link
