@@ -80,6 +80,88 @@ interface JobApplication {
   date: string;
 }
 
+interface Testimonial {
+  id: string;
+  author: string;
+  role: string;
+  text: string;
+  rating: number;
+  isPublished: boolean;
+}
+
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  isPublished: boolean;
+}
+
+interface SiteContent {
+  hotline: string;
+  supportEmail: string;
+  address: string;
+}
+
+interface HomeSections {
+  hero: boolean;
+  packages: boolean;
+  offers: boolean;
+  coverage: boolean;
+  testimonials: boolean;
+  faq: boolean;
+}
+
+interface HeroTypography {
+  mainTitle: string;
+  subtitle: string;
+}
+
+interface SEOSettings {
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+}
+
+interface AboutContent {
+  storyTitle: string;
+  storyBody: string;
+}
+
+interface ContactPageContent {
+  headline: string;
+  officeHours: string;
+  mapEmbedUrl: string;
+}
+
+interface ComplaintPageContent {
+  guidelineTitle: string;
+  guidelineBody: string;
+}
+
+interface FooterContent {
+  facebook: string;
+  youtube: string;
+  copyrightText: string;
+}
+
+interface ServiceHighlight {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface ServiceReview {
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+}
+
+interface SystemConfig {
+  peeringBandwidthLimit: string;
+  maintenanceMode: boolean;
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -95,6 +177,58 @@ export default function AdminDashboardPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
+
+  // CMS Content States
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [siteContent, setSiteContent] = useState<SiteContent>({
+    hotline: "+880 1707-009267",
+    supportEmail: "support@maminnetwork.com",
+    address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh",
+  });
+  const [homeSections, setHomeSections] = useState<HomeSections>({
+    hero: true,
+    packages: true,
+    offers: true,
+    coverage: true,
+    testimonials: true,
+    faq: true,
+  });
+  const [heroTypography, setHeroTypography] = useState<HeroTypography>({
+    mainTitle: "Super Fast Broadband Connection in Dhaka",
+    subtitle: "High-speed fiber internet solutions tailored for homes and businesses across Southern Keraniganj.",
+  });
+  const [seoSettings, setSeoSettings] = useState<SEOSettings>({
+    metaTitle: "M Amin Network - Leading ISP in Keraniganj",
+    metaDescription: "Enjoy ultra-fast fiber internet connection, stable gateway SLA, and dedicated customer support.",
+    keywords: "internet provider, ISP Keraniganj, broadband, fiber optic, high-speed wifi",
+  });
+  const [aboutContent, setAboutContent] = useState<AboutContent>({
+    storyTitle: "Our Story & Mission",
+    storyBody: "Founded with a vision to connect every household in Southern Keraniganj with premium fiber internet, M Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7.",
+  });
+
+  // Additional CMS States
+  const [contactPageContent, setContactPageContent] = useState<ContactPageContent>({
+    headline: "Get in Touch With Us",
+    officeHours: "Saturday - Thursday: 09:00 AM - 10:00 PM",
+    mapEmbedUrl: "https://maps.google.com",
+  });
+  const [complaintPageContent, setComplaintPageContent] = useState<ComplaintPageContent>({
+    guidelineTitle: "Submitting Formal Grievances (BTRC SLA Compliance)",
+    guidelineBody: "Under BTRC guidelines, clients may lodge formal complaints here. All submissions generate trace IDs. Tickets are resolved within standard BTRC SLA frames (24-48 hrs).",
+  });
+  const [footerContent, setFooterContent] = useState<FooterContent>({
+    facebook: "https://facebook.com/maminnetwork",
+    youtube: "https://youtube.com/maminnetwork",
+    copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
+  });
+  const [serviceHighlights, setServiceHighlights] = useState<ServiceHighlight[]>([]);
+  const [serviceReviews, setServiceReviews] = useState<ServiceReview[]>([]);
+  const [systemConfig, setSystemConfig] = useState<SystemConfig>({
+    peeringBandwidthLimit: "10 Gbps",
+    maintenanceMode: false,
+  });
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -242,6 +376,49 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const defaultTestimonials: Testimonial[] = [
+    {
+      id: "TEST-001",
+      author: "Adil Chowdhury",
+      role: "Freelance Designer",
+      text: "The internet speeds are super stable. Bufferless 4K streaming and low latency during night peering works perfectly.",
+      rating: 5,
+      isPublished: true,
+    },
+    {
+      id: "TEST-002",
+      author: "Farhana Yasmin",
+      role: "Work From Home Mom",
+      text: "Good customer service. Line issues are resolved within hours after reporting to the support team.",
+      rating: 4,
+      isPublished: true,
+    },
+  ];
+
+  const defaultFAQs: FAQ[] = [
+    {
+      id: "FAQ-001",
+      question: "How long does address verification and installation take?",
+      answer: "Address checks and fiber connection setup generally take 24 to 48 working hours depending on location availability.",
+      isPublished: true,
+    },
+    {
+      id: "FAQ-002",
+      question: "Do you offer corporate dedicated splice lines?",
+      answer: "Yes, we offer fully redundant peering connections for businesses and corporations in Southern Keraniganj.",
+      isPublished: true,
+    },
+  ];
+
+  const defaultServiceHighlights: ServiceHighlight[] = [
+    { id: "SRV-1", title: "Dedicated GGC/SNA Peering Cache", description: "Direct connectivity to YouTube and Facebook caches for buffer-free delivery." },
+    { id: "SRV-2", title: "Optical Fiber SLA Gateway", description: "Redundant link pathways keeping fiber uptime metrics above BTRC rules." },
+  ];
+
+  const defaultServiceReviews: ServiceReview[] = [
+    { id: "REV-1", author: "Kamrul Islam", rating: 5, comment: "Zero latency during midnight working slots, highly recommended!" },
+  ];
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -318,6 +495,83 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_job_applications", JSON.stringify(defaultJobApplications));
       setJobApplications(defaultJobApplications);
     }
+
+    const savedTestimonials = localStorage.getItem("m_amin_testimonials");
+    if (savedTestimonials) {
+      setTestimonials(JSON.parse(savedTestimonials));
+    } else {
+      localStorage.setItem("m_amin_testimonials", JSON.stringify(defaultTestimonials));
+      setTestimonials(defaultTestimonials);
+    }
+
+    const savedFAQs = localStorage.getItem("m_amin_faqs");
+    if (savedFAQs) {
+      setFaqs(JSON.parse(savedFAQs));
+    } else {
+      localStorage.setItem("m_amin_faqs", JSON.stringify(defaultFAQs));
+      setFaqs(defaultFAQs);
+    }
+
+    const savedSiteContent = localStorage.getItem("m_amin_site_content");
+    if (savedSiteContent) {
+      setSiteContent(JSON.parse(savedSiteContent));
+    }
+
+    const savedHomeSections = localStorage.getItem("m_amin_home_sections");
+    if (savedHomeSections) {
+      setHomeSections(JSON.parse(savedHomeSections));
+    }
+
+    const savedHeroTypography = localStorage.getItem("m_amin_hero_typography");
+    if (savedHeroTypography) {
+      setHeroTypography(JSON.parse(savedHeroTypography));
+    }
+
+    const savedSeo = localStorage.getItem("m_amin_seo_settings");
+    if (savedSeo) {
+      setSeoSettings(JSON.parse(savedSeo));
+    }
+
+    const savedAbout = localStorage.getItem("m_amin_about_content");
+    if (savedAbout) {
+      setAboutContent(JSON.parse(savedAbout));
+    }
+
+    const savedContact = localStorage.getItem("m_amin_contact_content");
+    if (savedContact) {
+      setContactPageContent(JSON.parse(savedContact));
+    }
+
+    const savedComplaintContent = localStorage.getItem("m_amin_complaint_content_guidelines");
+    if (savedComplaintContent) {
+      setComplaintPageContent(JSON.parse(savedComplaintContent));
+    }
+
+    const savedFooter = localStorage.getItem("m_amin_footer_content");
+    if (savedFooter) {
+      setFooterContent(JSON.parse(savedFooter));
+    }
+
+    const savedHighlights = localStorage.getItem("m_amin_service_highlights");
+    if (savedHighlights) {
+      setServiceHighlights(JSON.parse(savedHighlights));
+    } else {
+      localStorage.setItem("m_amin_service_highlights", JSON.stringify(defaultServiceHighlights));
+      setServiceHighlights(defaultServiceHighlights);
+    }
+
+    const savedReviews = localStorage.getItem("m_amin_service_reviews");
+    if (savedReviews) {
+      setServiceReviews(JSON.parse(savedReviews));
+    } else {
+      localStorage.setItem("m_amin_service_reviews", JSON.stringify(defaultServiceReviews));
+      setServiceReviews(defaultServiceReviews);
+    }
+
+    const savedSys = localStorage.getItem("m_amin_system_config");
+    if (savedSys) {
+      setSystemConfig(JSON.parse(savedSys));
+    }
   };
 
   const resetToDefaults = () => {
@@ -330,6 +584,31 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_contact_submissions", JSON.stringify(defaultMessages));
       localStorage.setItem("m_amin_jobs", JSON.stringify(defaultJobs));
       localStorage.setItem("m_amin_job_applications", JSON.stringify(defaultJobApplications));
+      localStorage.setItem("m_amin_testimonials", JSON.stringify(defaultTestimonials));
+      localStorage.setItem("m_amin_faqs", JSON.stringify(defaultFAQs));
+      localStorage.setItem("m_amin_service_highlights", JSON.stringify(defaultServiceHighlights));
+      localStorage.setItem("m_amin_service_reviews", JSON.stringify(defaultServiceReviews));
+      
+      const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
+      const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
+      const defaultHero = { mainTitle: "Super Fast Broadband Connection in Dhaka", subtitle: "High-speed fiber internet solutions tailored for homes and businesses across Southern Keraniganj." };
+      const defaultSeo = { metaTitle: "M Amin Network - Leading ISP in Keraniganj", metaDescription: "Enjoy ultra-fast fiber internet connection, stable gateway SLA, and dedicated customer support.", keywords: "internet provider, ISP Keraniganj, broadband, fiber optic, high-speed wifi" };
+      const defaultAbout = { storyTitle: "Our Story & Mission", storyBody: "Founded with a vision to connect every household in Southern Keraniganj with premium fiber internet, M Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7." };
+      const defaultContact = { headline: "Get in Touch With Us", officeHours: "Saturday - Thursday: 09:00 AM - 10:00 PM", mapEmbedUrl: "https://maps.google.com" };
+      const defaultComp = { guidelineTitle: "Submitting Formal Grievances (BTRC SLA Compliance)", guidelineBody: "Under BTRC guidelines, clients may lodge formal complaints here. All submissions generate trace IDs. Tickets are resolved within standard BTRC SLA frames (24-48 hrs)." };
+      const defaultFoot = { facebook: "https://facebook.com/maminnetwork", youtube: "https://youtube.com/maminnetwork", copyrightText: "© 2026 M Amin Network. All Rights Reserved." };
+      const defaultSys = { peeringBandwidthLimit: "10 Gbps", maintenanceMode: false };
+
+      localStorage.setItem("m_amin_site_content", JSON.stringify(defaultSite));
+      localStorage.setItem("m_amin_home_sections", JSON.stringify(defaultHome));
+      localStorage.setItem("m_amin_hero_typography", JSON.stringify(defaultHero));
+      localStorage.setItem("m_amin_seo_settings", JSON.stringify(defaultSeo));
+      localStorage.setItem("m_amin_about_content", JSON.stringify(defaultAbout));
+      localStorage.setItem("m_amin_contact_content", JSON.stringify(defaultContact));
+      localStorage.setItem("m_amin_complaint_content_guidelines", JSON.stringify(defaultComp));
+      localStorage.setItem("m_amin_footer_content", JSON.stringify(defaultFoot));
+      localStorage.setItem("m_amin_system_config", JSON.stringify(defaultSys));
+
       setClaims(defaultClaims);
       setComplaints(defaultComplaints);
       setTickets(defaultTickets);
@@ -337,6 +616,20 @@ export default function AdminDashboardPage() {
       setMessages(defaultMessages);
       setJobs(defaultJobs);
       setJobApplications(defaultJobApplications);
+      setTestimonials(defaultTestimonials);
+      setFaqs(defaultFAQs);
+      setSiteContent(defaultSite);
+      setHomeSections(defaultHome);
+      setHeroTypography(defaultHero);
+      setSeoSettings(defaultSeo);
+      setAboutContent(defaultAbout);
+      setContactPageContent(defaultContact);
+      setComplaintPageContent(defaultComp);
+      setFooterContent(defaultFoot);
+      setServiceHighlights(defaultServiceHighlights);
+      setServiceReviews(defaultServiceReviews);
+      setSystemConfig(defaultSys);
+
       alert("Mock database has been reset successfully!");
     }
   };
@@ -351,6 +644,10 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_contact_submissions", JSON.stringify([]));
       localStorage.setItem("m_amin_jobs", JSON.stringify([]));
       localStorage.setItem("m_amin_job_applications", JSON.stringify([]));
+      localStorage.setItem("m_amin_testimonials", JSON.stringify([]));
+      localStorage.setItem("m_amin_faqs", JSON.stringify([]));
+      localStorage.setItem("m_amin_service_highlights", JSON.stringify([]));
+      localStorage.setItem("m_amin_service_reviews", JSON.stringify([]));
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -358,6 +655,10 @@ export default function AdminDashboardPage() {
       setMessages([]);
       setJobs([]);
       setJobApplications([]);
+      setTestimonials([]);
+      setFaqs([]);
+      setServiceHighlights([]);
+      setServiceReviews([]);
       alert("Mock database cleared successfully!");
     }
   };
@@ -434,6 +735,96 @@ export default function AdminDashboardPage() {
     const updated = jobApplications.filter((app) => app.id !== id);
     setJobApplications(updated);
     localStorage.setItem("m_amin_job_applications", JSON.stringify(updated));
+  };
+
+  const toggleTestimonialPublish = (id: string) => {
+    const updated = testimonials.map((t) => (t.id === id ? { ...t, isPublished: !t.isPublished } : t));
+    setTestimonials(updated);
+    localStorage.setItem("m_amin_testimonials", JSON.stringify(updated));
+  };
+
+  const deleteTestimonial = (id: string) => {
+    const updated = testimonials.filter((t) => t.id !== id);
+    setTestimonials(updated);
+    localStorage.setItem("m_amin_testimonials", JSON.stringify(updated));
+  };
+
+  const toggleFAQPublish = (id: string) => {
+    const updated = faqs.map((f) => (f.id === id ? { ...f, isPublished: !f.isPublished } : f));
+    setFaqs(updated);
+    localStorage.setItem("m_amin_faqs", JSON.stringify(updated));
+  };
+
+  const deleteFAQ = (id: string) => {
+    const updated = faqs.filter((f) => f.id !== id);
+    setFaqs(updated);
+    localStorage.setItem("m_amin_faqs", JSON.stringify(updated));
+  };
+
+  const saveSiteContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_site_content", JSON.stringify(siteContent));
+    alert("Site Contact settings saved successfully!");
+  };
+
+  const saveHomeSections = (key: keyof HomeSections) => {
+    const updated = { ...homeSections, [key]: !homeSections[key] };
+    setHomeSections(updated);
+    localStorage.setItem("m_amin_home_sections", JSON.stringify(updated));
+  };
+
+  const saveHeroTypography = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_hero_typography", JSON.stringify(heroTypography));
+    alert("Hero text settings saved successfully!");
+  };
+
+  const saveSEOSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_seo_settings", JSON.stringify(seoSettings));
+    alert("SEO details saved successfully!");
+  };
+
+  const saveAboutContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_about_content", JSON.stringify(aboutContent));
+    alert("About Us block content saved successfully!");
+  };
+
+  const saveContactContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_contact_content", JSON.stringify(contactPageContent));
+    alert("Contact page settings saved successfully!");
+  };
+
+  const saveComplaintContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_complaint_content_guidelines", JSON.stringify(complaintPageContent));
+    alert("Complaint guidelines saved successfully!");
+  };
+
+  const saveFooterContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_footer_content", JSON.stringify(footerContent));
+    alert("Top Bar & Footer settings saved successfully!");
+  };
+
+  const deleteServiceHighlight = (id: string) => {
+    const updated = serviceHighlights.filter((s) => s.id !== id);
+    setServiceHighlights(updated);
+    localStorage.setItem("m_amin_service_highlights", JSON.stringify(updated));
+  };
+
+  const deleteServiceReview = (id: string) => {
+    const updated = serviceReviews.filter((r) => r.id !== id);
+    setServiceReviews(updated);
+    localStorage.setItem("m_amin_service_reviews", JSON.stringify(updated));
+  };
+
+  const saveSystemConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_system_config", JSON.stringify(systemConfig));
+    alert("System Settings saved successfully!");
   };
 
   const handleLogout = () => {
@@ -621,7 +1012,7 @@ export default function AdminDashboardPage() {
                         <div key={c.id} className="py-2.5 flex justify-between items-center gap-2">
                           <div>
                             <span className="text-xs font-bold text-slate-800 block">{c.name}</span>
-                            <span className="text-[10px] text-slate-500 font-mono">{c.promoCode} | {c.phone}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">{c.phone}</span>
                           </div>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600">{c.status}</span>
                         </div>
@@ -643,7 +1034,7 @@ export default function AdminDashboardPage() {
                       tickets.slice(0, 3).map((t) => (
                         <div key={t.id} className="py-2.5 flex justify-between items-center gap-2">
                           <div>
-                            <span className="text-xs font-bold text-slate-800 block">{t.name} ({t.clientId})</span>
+                            <span className="text-xs font-bold text-slate-855 block">{t.name} ({t.clientId})</span>
                             <span className="text-[10px] text-slate-500">{t.category}</span>
                           </div>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600">{t.status}</span>
@@ -797,7 +1188,7 @@ export default function AdminDashboardPage() {
                         <span className="text-brand-blue font-bold">{c.latency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Status:</span>
+                        <span className="text-slate-550">Status:</span>
                         <span className={`font-bold ${c.status === "Optimal" ? "text-emerald-600" : "text-yellow-600"}`}>{c.status}</span>
                       </div>
                     </div>
@@ -920,7 +1311,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 text-right">
                             <button
                               onClick={() => deletePayment(p.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Wipe Log
                             </button>
@@ -994,7 +1385,7 @@ export default function AdminDashboardPage() {
                             )}
                             <button
                               onClick={() => deleteTicket(t.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Delete
                             </button>
@@ -1029,7 +1420,7 @@ export default function AdminDashboardPage() {
                     <tr className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 font-bold font-mono text-brand-blue">SUB-88293 (Tanvir Ahmed)</td>
                       <td className="py-3.5 font-extrabold text-slate-800">Upgrade to Enterprise Splice (100 Mbps)</td>
-                      <td className="py-3.5 text-slate-500">Upgrade Speed</td>
+                      <td className="py-3.5 text-slate-550">Upgrade Speed</td>
                       <td className="py-3.5">
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#eef2f5] text-slate-700 border border-slate-200 animate-pulse">
                           Splicing Scheduled
@@ -1154,7 +1545,7 @@ export default function AdminDashboardPage() {
                             )}
                             <button
                               onClick={() => deleteComplaint(c.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Delete
                             </button>
@@ -1202,7 +1593,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 font-extrabold text-slate-850">{j.title}</td>
                           <td className="py-3.5 text-slate-650">{j.department}</td>
                           <td className="py-3.5 text-slate-600 font-semibold">{j.type}</td>
-                          <td className="py-3.5 text-slate-500">{j.date}</td>
+                          <td className="py-3.5 text-slate-555">{j.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               j.status === "Open" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1218,7 +1609,7 @@ export default function AdminDashboardPage() {
                             </button>
                             <button
                               onClick={() => deleteJob(j.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Delete
                             </button>
@@ -1267,12 +1658,12 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{app.jobTitle}</td>
                           <td className="py-3.5 text-slate-650">{app.experience}</td>
-                          <td className="py-3.5 text-slate-500">{app.date}</td>
+                          <td className="py-3.5 text-slate-555">{app.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               app.status === "Accepted" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
-                              app.status === "Rejected" ? "bg-red-500/10 text-red-600 border border-red-500/20" :
-                              app.status === "Interview" ? "bg-purple-550/10 text-purple-600 border border-purple-500/20" :
+                              app.status === "Rejected" ? "bg-red-500/10 text-red-650 border border-red-500/20" :
+                              app.status === "Interview" ? "bg-purple-500/10 text-purple-650 border border-purple-500/20" :
                               "bg-blue-500/10 text-blue-600 border border-blue-500/20"
                             }`}>{app.status}</span>
                           </td>
@@ -1288,7 +1679,7 @@ export default function AdminDashboardPage() {
                             {app.status !== "Rejected" && (
                               <button
                                 onClick={() => updateApplicationStatus(app.id, "Rejected")}
-                                className="px-2.5 py-1 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Reject
                               </button>
@@ -1309,7 +1700,544 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* 14. REALTIME DEMO VIEW */}
+          {/* 14. TESTIMONIALS VIEW */}
+          {activeTab === "Testimonials" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Manage Customer Testimonials</h2>
+                <p className="text-xs text-slate-500 mt-1">Review feedback, toggle display status, or delete client reviews.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Author Details</th>
+                      <th className="pb-3">Rating</th>
+                      <th className="pb-3">Review Feedback Text</th>
+                      <th className="pb-3">Home Display</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {testimonials.map((t) => (
+                      <tr key={t.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5">
+                          <span className="font-extrabold text-slate-855 block">{t.author}</span>
+                          <span className="text-[10px] text-slate-500 font-mono">{t.role}</span>
+                        </td>
+                        <td className="py-3.5 font-bold text-amber-500">{"★".repeat(t.rating)}</td>
+                        <td className="py-3.5 text-slate-600 max-w-sm truncate">{t.text}</td>
+                        <td className="py-3.5">
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            t.isPublished ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-slate-100 text-slate-500 border border-slate-200"
+                          }`}>{t.isPublished ? "Published" : "Hidden"}</span>
+                        </td>
+                        <td className="py-3.5 text-right space-x-2">
+                          <button
+                            onClick={() => toggleTestimonialPublish(t.id)}
+                            className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Toggle Publish
+                          </button>
+                          <button
+                            onClick={() => deleteTestimonial(t.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 15. FAQS VIEW */}
+          {activeTab === "FAQs" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Manage Frequently Asked Questions</h2>
+                <p className="text-xs text-slate-500 mt-1">Review questions, toggle display status, or delete portal FAQs.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Question</th>
+                      <th className="pb-3">Answer Detail</th>
+                      <th className="pb-3">Home Display</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {faqs.map((f) => (
+                      <tr key={f.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-bold text-slate-800 max-w-xs truncate">{f.question}</td>
+                        <td className="py-3.5 text-slate-600 max-w-sm truncate">{f.answer}</td>
+                        <td className="py-3.5">
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            f.isPublished ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-slate-100 text-slate-500 border border-slate-200"
+                          }`}>{f.isPublished ? "Published" : "Hidden"}</span>
+                        </td>
+                        <td className="py-3.5 text-right space-x-2">
+                          <button
+                            onClick={() => toggleFAQPublish(f.id)}
+                            className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Toggle Publish
+                          </button>
+                          <button
+                            onClick={() => deleteFAQ(f.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 16. SITE CONTENT VIEW */}
+          {activeTab === "Site Content" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Site Contact & Global Details</h2>
+                <p className="text-xs text-slate-500 mt-1">Edit standard global contact information displayed across footer and portal headers.</p>
+              </div>
+              <form onSubmit={saveSiteContent} className="space-y-4 max-w-md">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Support Hotline Number</label>
+                  <input
+                    type="text"
+                    value={siteContent.hotline}
+                    onChange={(e) => setSiteContent({ ...siteContent, hotline: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Support Email Address</label>
+                  <input
+                    type="email"
+                    value={siteContent.supportEmail}
+                    onChange={(e) => setSiteContent({ ...siteContent, supportEmail: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">HQ Office Address</label>
+                  <textarea
+                    rows={2}
+                    value={siteContent.address}
+                    onChange={(e) => setSiteContent({ ...siteContent, address: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Global Details
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 17. HOME SECTIONS VIEW */}
+          {activeTab === "Home Sections" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Enable/Disable Homepage Rows</h2>
+                <p className="text-xs text-slate-500 mt-1">Switch sections on/off instantly across the consumer landing page.</p>
+              </div>
+              <div className="space-y-4 max-w-sm">
+                {Object.entries(homeSections).map(([key, val]) => (
+                  <div key={key} className="flex justify-between items-center py-2 border-b border-slate-100">
+                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">{key} Section</span>
+                    <button
+                      onClick={() => saveHomeSections(key as keyof HomeSections)}
+                      className={`px-3.5 py-1.5 rounded-lg text-[10px] font-bold border transition-colors cursor-pointer ${
+                        val
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
+                          : "bg-slate-100 text-slate-500 border-slate-200"
+                      }`}
+                    >
+                      {val ? "Enabled" : "Disabled"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 18. HERO TYPOGRAPHY VIEW */}
+          {activeTab === "Hero Typography" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Hero Screen Headings</h2>
+                <p className="text-xs text-slate-500 mt-1">Modify main advertising messages visible to visitors on landing.</p>
+              </div>
+              <form onSubmit={saveHeroTypography} className="space-y-4 max-w-lg">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Main Advertising Title</label>
+                  <textarea
+                    rows={2}
+                    value={heroTypography.mainTitle}
+                    onChange={(e) => setHeroTypography({ ...heroTypography, mainTitle: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-semibold"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Sub-Headline Text</label>
+                  <textarea
+                    rows={3}
+                    value={heroTypography.subtitle}
+                    onChange={(e) => setHeroTypography({ ...heroTypography, subtitle: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Hero Typography
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 19. SEO & SHARING VIEW */}
+          {activeTab === "SEO & Sharing" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Meta Tags & Search Visibility Settings</h2>
+                <p className="text-xs text-slate-500 mt-1">Configure keywords, titles, and site description variables to optimize SEO ranking.</p>
+              </div>
+              <form onSubmit={saveSEOSettings} className="space-y-4 max-w-lg">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Meta Page Title</label>
+                  <input
+                    type="text"
+                    value={seoSettings.metaTitle}
+                    onChange={(e) => setSeoSettings({ ...seoSettings, metaTitle: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Meta Description String</label>
+                  <textarea
+                    rows={3}
+                    value={seoSettings.metaDescription}
+                    onChange={(e) => setSeoSettings({ ...seoSettings, metaDescription: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Default Keywords (Comma Separated)</label>
+                  <input
+                    type="text"
+                    value={seoSettings.keywords}
+                    onChange={(e) => setSeoSettings({ ...seoSettings, keywords: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save SEO Details
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 20. ABOUT PAGE VIEW */}
+          {activeTab === "About Page" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">About Us Page Text Blocks</h2>
+                <p className="text-xs text-slate-500 mt-1">Customize the company storytelling blocks rendered on the about page.</p>
+              </div>
+              <form onSubmit={saveAboutContent} className="space-y-4 max-w-lg">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Mission Story Header</label>
+                  <input
+                    type="text"
+                    value={aboutContent.storyTitle}
+                    onChange={(e) => setAboutContent({ ...aboutContent, storyTitle: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Core Story Content Body</label>
+                  <textarea
+                    rows={5}
+                    value={aboutContent.storyBody}
+                    onChange={(e) => setAboutContent({ ...aboutContent, storyBody: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save About Page Block
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 22. CONTACT PAGE VIEW */}
+          {activeTab === "Contact Page" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Contact Us Page Setup</h2>
+                <p className="text-xs text-slate-500 mt-1">Customize layout values shown on the main support contact section.</p>
+              </div>
+              <form onSubmit={saveContactContent} className="space-y-4 max-w-lg">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Header Headline</label>
+                  <input
+                    type="text"
+                    value={contactPageContent.headline}
+                    onChange={(e) => setContactPageContent({ ...contactPageContent, headline: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Office Hours Details</label>
+                  <input
+                    type="text"
+                    value={contactPageContent.officeHours}
+                    onChange={(e) => setContactPageContent({ ...contactPageContent, officeHours: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Google Maps Embed URL</label>
+                  <input
+                    type="text"
+                    value={contactPageContent.mapEmbedUrl}
+                    onChange={(e) => setContactPageContent({ ...contactPageContent, mapEmbedUrl: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Contact Page Settings
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 23. COMPLAINT PAGE VIEW */}
+          {activeTab === "Complaint Page" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Formal Grievance Guidelines</h2>
+                <p className="text-xs text-slate-500 mt-1">Configure layout instructions visible to customers filing formal complaints.</p>
+              </div>
+              <form onSubmit={saveComplaintContent} className="space-y-4 max-w-lg">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Guideline Headline Title</label>
+                  <input
+                    type="text"
+                    value={complaintPageContent.guidelineTitle}
+                    onChange={(e) => setComplaintPageContent({ ...complaintPageContent, guidelineTitle: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Guideline Body Text</label>
+                  <textarea
+                    rows={4}
+                    value={complaintPageContent.guidelineBody}
+                    onChange={(e) => setComplaintPageContent({ ...complaintPageContent, guidelineBody: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Guidelines
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 24. TOP BAR & FOOTER VIEW */}
+          {activeTab === "Top Bar & Footer" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Header & Footer Global CMS Settings</h2>
+                <p className="text-xs text-slate-500 mt-1">Update social accounts and bottom copyright branding variables.</p>
+              </div>
+              <form onSubmit={saveFooterContent} className="space-y-4 max-w-md">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Facebook Page Link</label>
+                  <input
+                    type="text"
+                    value={footerContent.facebook}
+                    onChange={(e) => setFooterContent({ ...footerContent, facebook: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">YouTube Channel Link</label>
+                  <input
+                    type="text"
+                    value={footerContent.youtube}
+                    onChange={(e) => setFooterContent({ ...footerContent, youtube: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Copyright Bottom Text</label>
+                  <input
+                    type="text"
+                    value={footerContent.copyrightText}
+                    onChange={(e) => setFooterContent({ ...footerContent, copyrightText: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Header & Footer
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 25. SERVICES HUB VIEW */}
+          {activeTab === "Services Hub" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Featured Network Highlights</h2>
+                <p className="text-xs text-slate-500 mt-1">Review features highlighting the M Amin Network infrastructure.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Highlight ID</th>
+                      <th className="pb-3">Featured Headline</th>
+                      <th className="pb-3">Core Description</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {serviceHighlights.map((s) => (
+                      <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-bold font-mono text-brand-blue">{s.id}</td>
+                        <td className="py-3.5 font-extrabold text-slate-800">{s.title}</td>
+                        <td className="py-3.5 text-slate-600 max-w-sm truncate">{s.description}</td>
+                        <td className="py-3.5 text-right">
+                          <button
+                            onClick={() => deleteServiceHighlight(s.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 26. SERVICE REVIEWS VIEW */}
+          {activeTab === "Service Reviews" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Active Peering & Speed Reviews</h2>
+                <p className="text-xs text-slate-500 mt-1">Audit customer comments reviewing specific coverage clusters.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">ID</th>
+                      <th className="pb-3">Committer Details</th>
+                      <th className="pb-3">Score</th>
+                      <th className="pb-3">Comment Text</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {serviceReviews.map((r) => (
+                      <tr key={r.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-bold font-mono text-brand-blue">{r.id}</td>
+                        <td className="py-3.5 font-extrabold text-slate-800">{r.author}</td>
+                        <td className="py-3.5 font-bold text-amber-500">{"★".repeat(r.rating)}</td>
+                        <td className="py-3.5 text-slate-600 max-w-md truncate">{r.comment}</td>
+                        <td className="py-3.5 text-right">
+                          <button
+                            onClick={() => deleteServiceReview(r.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 27. SETTINGS VIEW */}
+          {activeTab === "Settings" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">General Core Settings</h2>
+                <p className="text-xs text-slate-500 mt-1">Configure general gateway parameters, simulated traffic ceilings, and maintenance triggers.</p>
+              </div>
+              <form onSubmit={saveSystemConfig} className="space-y-4 max-w-md">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Virtual Peering SLA Limit</label>
+                  <input
+                    type="text"
+                    value={systemConfig.peeringBandwidthLimit}
+                    onChange={(e) => setSystemConfig({ ...systemConfig, peeringBandwidthLimit: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+                <div className="flex items-center gap-3 py-2">
+                  <input
+                    type="checkbox"
+                    id="maint_mode"
+                    checked={systemConfig.maintenanceMode}
+                    onChange={(e) => setSystemConfig({ ...systemConfig, maintenanceMode: e.target.checked })}
+                    className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue"
+                  />
+                  <label htmlFor="maint_mode" className="text-xs font-bold text-slate-800 select-none cursor-pointer">
+                    Enable Landing Page Maintenance Banner
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  className="px-5 py-3.5 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  Save Configuration
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* 21. REALTIME DEMO VIEW */}
           {activeTab === "Realtime Demo" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
@@ -1357,7 +2285,7 @@ export default function AdminDashboardPage() {
                   </button>
                   <button
                     onClick={clearAllData}
-                    className="px-5 py-3 border border-red-500/40 bg-red-500/5 hover:bg-red-500/10 text-red-650 font-bold rounded-xl text-xs transition-all cursor-pointer"
+                    className="px-5 py-3 border border-red-500/40 bg-red-500/5 hover:bg-red-500/10 text-red-655 font-bold rounded-xl text-xs transition-all cursor-pointer"
                   >
                     Wipe Database (Delete All Logs)
                   </button>
