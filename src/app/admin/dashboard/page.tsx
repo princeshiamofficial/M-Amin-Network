@@ -162,6 +162,35 @@ interface SystemConfig {
   maintenanceMode: boolean;
 }
 
+interface AdminUser {
+  id: string;
+  username: string;
+  role: string;
+  email: string;
+  lastLogin: string;
+}
+
+interface SecurityLog {
+  id: string;
+  event: string;
+  ipAddress: string;
+  timestamp: string;
+  severity: "Info" | "Warning" | "Critical";
+}
+
+interface SEOAuditReport {
+  page: string;
+  score: number;
+  ssl: boolean;
+  mobileFriendly: boolean;
+}
+
+interface Shortcut {
+  id: string;
+  label: string;
+  targetTab: string;
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -229,6 +258,12 @@ export default function AdminDashboardPage() {
     peeringBandwidthLimit: "10 Gbps",
     maintenanceMode: false,
   });
+
+  // Access States
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
+  const [seoAuditReports, setSeoAuditReports] = useState<SEOAuditReport[]>([]);
+  const [shortcuts, setShortcuts] = useState<Shortcut[]>([]);
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -419,6 +454,28 @@ export default function AdminDashboardPage() {
     { id: "REV-1", author: "Kamrul Islam", rating: 5, comment: "Zero latency during midnight working slots, highly recommended!" },
   ];
 
+  const defaultAdminUsers: AdminUser[] = [
+    { id: "USR-1", username: "admin", role: "Super Administrator", email: "admin@maminnetwork.test", lastLogin: "7/3/2026, 10:30 AM" },
+    { id: "USR-2", username: "moderator_support", role: "Support Staff", email: "support@maminnetwork.test", lastLogin: "7/2/2026, 04:15 PM" },
+  ];
+
+  const defaultSecurityLogs: SecurityLog[] = [
+    { id: "LOG-1", event: "Super Admin Session Authenticated", ipAddress: "192.168.1.50", timestamp: "7/3/2026, 10:30 AM", severity: "Info" },
+    { id: "LOG-2", event: "Failed Authentication Attempt", ipAddress: "203.0.113.88", timestamp: "7/2/2026, 11:20 PM", severity: "Warning" },
+  ];
+
+  const defaultSEOAuditReports: SEOAuditReport[] = [
+    { page: "Homepage (/) ", score: 98, ssl: true, mobileFriendly: true },
+    { page: "Packages (/packages)", score: 95, ssl: true, mobileFriendly: true },
+    { page: "Offers (/offers)", score: 92, ssl: true, mobileFriendly: true },
+  ];
+
+  const defaultShortcuts: Shortcut[] = [
+    { id: "SC-1", label: "Grievances Queue", targetTab: "Complaints" },
+    { id: "SC-2", label: "Transactions Log", targetTab: "Bills" },
+    { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs" },
+  ];
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -572,6 +629,38 @@ export default function AdminDashboardPage() {
     if (savedSys) {
       setSystemConfig(JSON.parse(savedSys));
     }
+
+    const savedUsers = localStorage.getItem("m_amin_admin_users");
+    if (savedUsers) {
+      setAdminUsers(JSON.parse(savedUsers));
+    } else {
+      localStorage.setItem("m_amin_admin_users", JSON.stringify(defaultAdminUsers));
+      setAdminUsers(defaultAdminUsers);
+    }
+
+    const savedLogs = localStorage.getItem("m_amin_security_logs");
+    if (savedLogs) {
+      setSecurityLogs(JSON.parse(savedLogs));
+    } else {
+      localStorage.setItem("m_amin_security_logs", JSON.stringify(defaultSecurityLogs));
+      setSecurityLogs(defaultSecurityLogs);
+    }
+
+    const savedSeoAudits = localStorage.getItem("m_amin_seo_audits");
+    if (savedSeoAudits) {
+      setSeoAuditReports(JSON.parse(savedSeoAudits));
+    } else {
+      localStorage.setItem("m_amin_seo_audits", JSON.stringify(defaultSEOAuditReports));
+      setSeoAuditReports(defaultSEOAuditReports);
+    }
+
+    const savedShortcuts = localStorage.getItem("m_amin_dashboard_shortcuts");
+    if (savedShortcuts) {
+      setShortcuts(JSON.parse(savedShortcuts));
+    } else {
+      localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
+      setShortcuts(defaultShortcuts);
+    }
   };
 
   const resetToDefaults = () => {
@@ -588,6 +677,10 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_faqs", JSON.stringify(defaultFAQs));
       localStorage.setItem("m_amin_service_highlights", JSON.stringify(defaultServiceHighlights));
       localStorage.setItem("m_amin_service_reviews", JSON.stringify(defaultServiceReviews));
+      localStorage.setItem("m_amin_admin_users", JSON.stringify(defaultAdminUsers));
+      localStorage.setItem("m_amin_security_logs", JSON.stringify(defaultSecurityLogs));
+      localStorage.setItem("m_amin_seo_audits", JSON.stringify(defaultSEOAuditReports));
+      localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
       
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
@@ -629,6 +722,10 @@ export default function AdminDashboardPage() {
       setServiceHighlights(defaultServiceHighlights);
       setServiceReviews(defaultServiceReviews);
       setSystemConfig(defaultSys);
+      setAdminUsers(defaultAdminUsers);
+      setSecurityLogs(defaultSecurityLogs);
+      setSeoAuditReports(defaultSEOAuditReports);
+      setShortcuts(defaultShortcuts);
 
       alert("Mock database has been reset successfully!");
     }
@@ -648,6 +745,10 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_faqs", JSON.stringify([]));
       localStorage.setItem("m_amin_service_highlights", JSON.stringify([]));
       localStorage.setItem("m_amin_service_reviews", JSON.stringify([]));
+      localStorage.setItem("m_amin_admin_users", JSON.stringify([]));
+      localStorage.setItem("m_amin_security_logs", JSON.stringify([]));
+      localStorage.setItem("m_amin_seo_audits", JSON.stringify([]));
+      localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify([]));
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -659,6 +760,10 @@ export default function AdminDashboardPage() {
       setFaqs([]);
       setServiceHighlights([]);
       setServiceReviews([]);
+      setAdminUsers([]);
+      setSecurityLogs([]);
+      setSeoAuditReports([]);
+      setShortcuts([]);
       alert("Mock database cleared successfully!");
     }
   };
@@ -825,6 +930,24 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     localStorage.setItem("m_amin_system_config", JSON.stringify(systemConfig));
     alert("System Settings saved successfully!");
+  };
+
+  const deleteAdminUser = (id: string) => {
+    const updated = adminUsers.filter((u) => u.id !== id);
+    setAdminUsers(updated);
+    localStorage.setItem("m_amin_admin_users", JSON.stringify(updated));
+  };
+
+  const deleteSecurityLog = (id: string) => {
+    const updated = securityLogs.filter((l) => l.id !== id);
+    setSecurityLogs(updated);
+    localStorage.setItem("m_amin_security_logs", JSON.stringify(updated));
+  };
+
+  const deleteShortcut = (id: string) => {
+    const updated = shortcuts.filter((s) => s.id !== id);
+    setShortcuts(updated);
+    localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(updated));
   };
 
   const handleLogout = () => {
@@ -1117,7 +1240,7 @@ export default function AdminDashboardPage() {
                         .map((c) => (
                           <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
                             <td className="py-3.5">
-                              <span className="font-extrabold text-slate-850 block">{c.name}</span>
+                              <span className="font-extrabold text-slate-855 block">{c.name}</span>
                               <span className="text-[10px] text-slate-500 font-mono">{c.phone}</span>
                             </td>
                             <td className="py-3.5 text-slate-600">{c.address}</td>
@@ -1184,11 +1307,11 @@ export default function AdminDashboardPage() {
                         <span className="text-slate-900 font-bold">{c.load}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Backbone Latency:</span>
+                        <span className="text-slate-500">Backbone Latending:</span>
                         <span className="text-brand-blue font-bold">{c.latency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-550">Status:</span>
+                        <span className="text-slate-500">Status:</span>
                         <span className={`font-bold ${c.status === "Optimal" ? "text-emerald-600" : "text-yellow-600"}`}>{c.status}</span>
                       </div>
                     </div>
@@ -1241,7 +1364,7 @@ export default function AdminDashboardPage() {
           {activeTab === "Customers" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
-                <h2 className="text-lg font-extrabold text-slate-900">Active Subscriber Accounts</h2>
+                <h2 className="text-lg font-extrabold text-slate-905">Active Subscriber Accounts</h2>
                 <p className="text-xs text-slate-500 mt-1">Simulated listing of active optical fiber subscribers (AS150164).</p>
               </div>
               <div className="overflow-x-auto">
@@ -1278,7 +1401,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Online Transaction Logs</h2>
-                <p className="text-xs text-slate-500 mt-1">Audit customer payments received online through bKash, Nagad, and Cards.</p>
+                <p className="text-xs text-slate-555 mt-1">Audit customer payments received online through bKash, Nagad, and Cards.</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -1419,8 +1542,8 @@ export default function AdminDashboardPage() {
                   <tbody className="divide-y divide-slate-100">
                     <tr className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3.5 font-bold font-mono text-brand-blue">SUB-88293 (Tanvir Ahmed)</td>
-                      <td className="py-3.5 font-extrabold text-slate-800">Upgrade to Enterprise Splice (100 Mbps)</td>
-                      <td className="py-3.5 text-slate-550">Upgrade Speed</td>
+                      <td className="py-3.5 font-extrabold text-slate-850">Upgrade to Enterprise Splice (100 Mbps)</td>
+                      <td className="py-3.5 text-slate-555">Upgrade Speed</td>
                       <td className="py-3.5">
                         <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#eef2f5] text-slate-700 border border-slate-200 animate-pulse">
                           Splicing Scheduled
@@ -1591,13 +1714,13 @@ export default function AdminDashboardPage() {
                         <tr key={j.id} className="hover:bg-slate-50/70 transition-colors">
                           <td className="py-3.5 font-bold font-mono text-brand-blue">{j.id}</td>
                           <td className="py-3.5 font-extrabold text-slate-850">{j.title}</td>
-                          <td className="py-3.5 text-slate-650">{j.department}</td>
+                          <td className="py-3.5 text-slate-655">{j.department}</td>
                           <td className="py-3.5 text-slate-600 font-semibold">{j.type}</td>
                           <td className="py-3.5 text-slate-555">{j.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               j.status === "Open" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
-                              "bg-slate-500/10 text-slate-500 border border-slate-500/20"
+                              "bg-slate-500/10 text-slate-550 border border-slate-500/20"
                             }`}>{j.status}</span>
                           </td>
                           <td className="py-3.5 text-right space-x-2">
@@ -1679,7 +1802,7 @@ export default function AdminDashboardPage() {
                             {app.status !== "Rejected" && (
                               <button
                                 onClick={() => updateApplicationStatus(app.id, "Rejected")}
-                                className="px-2.5 py-1 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 bg-red-500/15 hover:bg-red-500/25 border border-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Reject
                               </button>
@@ -1774,7 +1897,7 @@ export default function AdminDashboardPage() {
                   <tbody className="divide-y divide-slate-100">
                     {faqs.map((f) => (
                       <tr key={f.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="py-3.5 font-bold text-slate-800 max-w-xs truncate">{f.question}</td>
+                        <td className="py-3.5 font-bold text-slate-805 max-w-xs truncate">{f.question}</td>
                         <td className="py-3.5 text-slate-600 max-w-sm truncate">{f.answer}</td>
                         <td className="py-3.5">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
@@ -2185,7 +2308,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 text-right">
                           <button
                             onClick={() => deleteServiceReview(r.id)}
-                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                           >
                             Delete
                           </button>
@@ -2234,6 +2357,170 @@ export default function AdminDashboardPage() {
                   Save Configuration
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* 28. USERS & ROLES VIEW */}
+          {activeTab === "Users & Roles" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Administrator Accounts & Team Roles</h2>
+                <p className="text-xs text-slate-500 mt-1">Audit administrative personnel and scope roles across the dashboard.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">User ID</th>
+                      <th className="pb-3">Username</th>
+                      <th className="pb-3">Scope Role</th>
+                      <th className="pb-3">Contact Email</th>
+                      <th className="pb-3">Last Active Login</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {adminUsers.map((u) => (
+                      <tr key={u.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-bold font-mono text-brand-blue">{u.id}</td>
+                        <td className="py-3.5 font-extrabold text-slate-800">{u.username}</td>
+                        <td className="py-3.5 font-semibold text-slate-650">{u.role}</td>
+                        <td className="py-3.5 text-slate-500 font-mono">{u.email}</td>
+                        <td className="py-3.5 text-slate-500">{u.lastLogin}</td>
+                        <td className="py-3.5 text-right">
+                          <button
+                            onClick={() => deleteAdminUser(u.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Revoke User
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 29. SECURITY VIEW */}
+          {activeTab === "Security" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Security Incident Logs</h2>
+                <p className="text-xs text-slate-500 mt-1">Audit security login traces and suspicious connection attempts.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">ID</th>
+                      <th className="pb-3">Event Action</th>
+                      <th className="pb-3">IP Address</th>
+                      <th className="pb-3">Timestamp</th>
+                      <th className="pb-3">Severity</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {securityLogs.map((l) => (
+                      <tr key={l.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-bold font-mono text-brand-blue">{l.id}</td>
+                        <td className="py-3.5 font-extrabold text-slate-800">{l.event}</td>
+                        <td className="py-3.5 font-mono text-slate-650">{l.ipAddress}</td>
+                        <td className="py-3.5 text-slate-500">{l.timestamp}</td>
+                        <td className="py-3.5">
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            l.severity === "Critical" ? "bg-red-500/10 text-red-600 border border-red-500/20 animate-pulse" :
+                            l.severity === "Warning" ? "bg-amber-400/10 text-amber-600 border border-amber-400/20" :
+                            "bg-blue-500/10 text-blue-600 border border-blue-500/20"
+                          }`}>{l.severity}</span>
+                        </td>
+                        <td className="py-3.5 text-right">
+                          <button
+                            onClick={() => deleteSecurityLog(l.id)}
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                          >
+                            Purge Log
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 30. SEO AUDIT VIEW */}
+          {activeTab === "SEO Audit" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">SEO Audit & Page Speed Index</h2>
+                <p className="text-xs text-slate-500 mt-1">Audit Lighthouse scores, SSL certification, and mobile friendliness tags for search engines.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Audit target page</th>
+                      <th className="pb-3">Speed Score</th>
+                      <th className="pb-3">SSL Cert</th>
+                      <th className="pb-3">Mobile Friendly</th>
+                      <th className="pb-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {seoAuditReports.map((r, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 font-extrabold text-slate-800">{r.page}</td>
+                        <td className="py-3.5 font-bold text-emerald-600 text-sm">{r.score} / 100</td>
+                        <td className="py-3.5 font-semibold text-emerald-600">{r.ssl ? "✓ HTTPS Enabled" : "✗ No SSL"}</td>
+                        <td className="py-3.5 font-semibold text-emerald-600">{r.mobileFriendly ? "✓ Optimized" : "✗ Needs Review"}</td>
+                        <td className="py-3.5">
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                            Excellent
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 31. MY SHORTCUTS VIEW */}
+          {activeTab === "My Shortcuts" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">Dashboard Shortcuts Panel</h2>
+                <p className="text-xs text-slate-500 mt-1">Customize quick shortcuts to switch between workspace layouts.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {shortcuts.map((s) => (
+                  <div key={s.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-sm space-y-4">
+                    <div>
+                      <h4 className="font-extrabold text-slate-800">{s.label}</h4>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Launches {s.targetTab} Workspace</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setActiveTab(s.targetTab)}
+                        className="px-3.5 py-1.5 bg-brand-blue text-white rounded-lg font-bold text-[10px] hover:opacity-95 cursor-pointer shadow-sm"
+                      >
+                        Launch
+                      </button>
+                      <button
+                        onClick={() => deleteShortcut(s.id)}
+                        className="px-3.5 py-1.5 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
