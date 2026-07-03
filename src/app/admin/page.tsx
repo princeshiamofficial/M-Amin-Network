@@ -340,6 +340,7 @@ export default function AdminDashboard() {
             src="/logo.png"
             alt="M-Amin Network"
             className="h-8 w-auto object-contain"
+            style={{ filter: "invert(1) hue-rotate(180deg)" }}
           />
         </div>
 
