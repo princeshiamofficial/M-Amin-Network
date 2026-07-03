@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
+import AdminNavbar from "@/components/AdminNavbar";
 
 interface Claim {
   id: string;
@@ -361,19 +362,12 @@ export default function AdminDashboardPage() {
 
       {/* Main Dynamic View Content Pane */}
       <main className="flex-1 h-screen overflow-y-auto bg-brand-dark/20 p-8 space-y-6">
-        {/* Dynamic Section Header */}
-        <div className="flex justify-between items-center pb-4 border-b border-brand-border/40">
-          <div>
-            <h1 className="text-2xl font-black text-white tracking-tight">{activeTab}</h1>
-            <p className="text-xs text-slate-400 mt-1">Operational management console workspace.</p>
-          </div>
-          <button
-            onClick={resetToDefaults}
-            className="px-4 py-2 border border-brand-border hover:border-brand-cyan/40 hover:bg-brand-border/40 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
-          >
-            Reset Mock Database
-          </button>
-        </div>
+        {/* Reusable Admin Top Navbar Component */}
+        <AdminNavbar
+          activeTab={activeTab}
+          onResetDatabase={resetToDefaults}
+          onSignOut={handleLogout}
+        />
 
         {/* 1. OVERVIEW VIEW */}
         {activeTab === "Overview" && (
