@@ -316,7 +316,7 @@ export default function AdminDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-brand-dark flex flex-col justify-center items-center p-4 relative overflow-hidden">
+      <div className="min-h-screen -mt-24 bg-brand-dark flex flex-col justify-center items-center p-4 relative overflow-hidden">
         {/* Glow backgrounds */}
         <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
   const activeComplaintsCount = complaints.filter((c) => c.status !== "Resolved").length;
 
   return (
-    <div className="min-h-screen bg-brand-dark text-slate-100 flex flex-col">
+    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
       {/* Top Banner Dashboard Nav */}
       <div className="bg-brand-card/90 border-b border-brand-border/60 sticky top-0 z-40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">

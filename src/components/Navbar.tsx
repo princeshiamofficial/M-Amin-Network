@@ -52,6 +52,8 @@ export default function Navbar() {
     { name: t("About", "আমাদের সম্পর্কে"), href: "/about" },
   ];
 
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm"

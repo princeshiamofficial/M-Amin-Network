@@ -2,11 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Footer() {
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <footer className="bg-brand-dark border-t border-brand-border/60 text-slate-300 pt-16 pb-8 mt-auto">
