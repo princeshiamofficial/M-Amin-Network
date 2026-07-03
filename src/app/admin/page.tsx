@@ -466,7 +466,7 @@ export default function AdminDashboard() {
           {/* Social Sign-In Grid */}
           <div className="grid grid-cols-3 gap-3">
             <button
-              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              onClick={(e) => e.preventDefault()}
               className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -477,7 +477,7 @@ export default function AdminDashboard() {
               </svg>
             </button>
             <button
-              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              onClick={(e) => e.preventDefault()}
               className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4 text-[#1877F2] fill-current" viewBox="0 0 24 24">
@@ -485,7 +485,7 @@ export default function AdminDashboard() {
               </svg>
             </button>
             <button
-              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              onClick={(e) => e.preventDefault()}
               className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
             >
               <svg className="w-4.5 h-4.5 text-black fill-current" viewBox="0 0 24 24">
