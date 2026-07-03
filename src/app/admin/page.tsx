@@ -321,7 +321,7 @@ export default function AdminDashboard() {
       <div
         className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
         style={{
-          backgroundImage: "linear-gradient(to bottom, rgba(215, 238, 255, 0.75), rgba(255, 255, 255, 0.9)), url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=2000&auto=format&fit=crop')"
+          backgroundImage: "linear-gradient(to bottom, rgba(215, 238, 255, 0.75), rgba(255, 255, 255, 0.9)), url('/sky_cloud_bg.png')"
         }}
       >
         {/* Background Decorative Arcs */}
