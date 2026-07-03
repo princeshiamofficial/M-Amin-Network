@@ -54,6 +54,7 @@ export default function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "claims" | "tickets" | "complaints" | "payments" | "config">("overview");
 
   // Database states
@@ -287,7 +288,8 @@ export default function AdminDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === "admin" && password === "admin123") {
+    const cleanUser = username.trim().toLowerCase();
+    if ((cleanUser === "admin" || cleanUser === "admin@mamin.net") && password === "admin123") {
       setIsAuthenticated(true);
       setLoginError("");
       sessionStorage.setItem("m_amin_admin_authenticated", "true");
@@ -316,78 +318,188 @@ export default function AdminDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen -mt-24 bg-brand-dark flex flex-col justify-center items-center p-4 relative overflow-hidden">
-        {/* Glow backgrounds */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
+      <div
+        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
+        style={{
+          backgroundImage: "linear-gradient(to bottom, rgba(215, 238, 255, 0.75), rgba(255, 255, 255, 0.9)), url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=2000&auto=format&fit=crop')"
+        }}
+      >
+        {/* Background Decorative Arcs */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+          <svg className="w-[850px] h-[850px] text-white opacity-45" viewBox="0 0 800 800" fill="none" stroke="currentColor" strokeWidth="1.2">
+            <circle cx="400" cy="400" r="160" strokeOpacity="0.3" />
+            <circle cx="400" cy="400" r="260" strokeOpacity="0.22" />
+            <circle cx="400" cy="400" r="360" strokeOpacity="0.15" />
+            <circle cx="400" cy="400" r="460" strokeOpacity="0.09" />
+          </svg>
+        </div>
 
-        {/* Back Link */}
-        <div className="absolute top-6 left-6">
+        {/* Top-left logo: Ebolt */}
+        <div className="absolute top-6 left-6 flex items-center z-20">
+          <div className="w-8 h-8 rounded-lg bg-[#111113] flex items-center justify-center text-white mr-2.5 shadow-sm">
+            <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="white" strokeWidth="2.5" />
+              <circle cx="12" cy="12" r="2.5" fill="white" />
+            </svg>
+          </div>
+          <span className="font-extrabold text-sm tracking-tight text-[#111113]">Ebolt</span>
+        </div>
+
+        {/* Back Link (Top Right) */}
+        <div className="absolute top-6 right-6 z-20">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-[#111113] transition-colors"
           >
-            ← Back to M-Amin Network
+            ← Back to Website
           </Link>
         </div>
 
-        {/* Login Card */}
-        <div className="max-w-md w-full glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 shadow-2xl relative z-10 text-left space-y-6">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-brand-blue to-brand-cyan flex items-center justify-center font-bold text-brand-dark text-xl shadow-lg shadow-brand-cyan/15 mx-auto">
-              AM
-            </div>
-            <h2 className="text-xl font-extrabold text-white tracking-tight">Admin Portal Access</h2>
-            <p className="text-xs text-slate-400">Operations Control Panel Authentication</p>
+        {/* Login Card Container */}
+        <div className="max-w-[400px] w-full bg-white/75 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
+          {/* Top Login Icon Box */}
+          <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl">
+            <svg className="w-6 h-6 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 20h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4" />
+              <polyline points="10 16 14 12 10 8" />
+              <line x1="14" y1="12" x2="3" y2="12" />
+            </svg>
+          </div>
+
+          <div className="text-center space-y-1.5">
+            <h2 className="text-[#111113] font-black text-[22px] tracking-tight text-center w-full block">Sign in with email</h2>
+            <p className="text-slate-500 text-xs font-medium leading-relaxed px-2 text-center w-full block">
+              Make a new doc to bring your words, data, and teams together. For free
+            </p>
           </div>
 
           {loginError && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3.5 rounded-xl text-xs flex gap-2 items-center">
-              <svg className="w-4 h-4 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <div className="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-2.5 rounded-xl text-xs font-semibold flex gap-2 items-center">
+              <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 9v2m0 4h.01M5.071 19a9 9 0 1112.728 0m-12.728 0h12.728" />
               </svg>
               <span>{loginError}</span>
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-350 font-bold uppercase tracking-wider">Username</label>
+            {/* Email Field */}
+            <div className="relative flex items-center">
+              <span className="absolute left-4 text-slate-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0l-7.5-4.615a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+              </span>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter admin username"
-                className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                placeholder="Email"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-450 focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-slate-350 font-bold uppercase tracking-wider">Password</label>
+            {/* Password Field */}
+            <div className="relative flex items-center">
+              <span className="absolute left-4 text-slate-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </span>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                placeholder="Password"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-11 py-3 text-sm text-slate-800 placeholder-slate-450 focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
+              {/* Toggle visibility */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                {showPassword ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <circle cx="12" cy="12" r="3" strokeWidth="2" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.893 7.893L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                )}
+              </button>
             </div>
 
+            {/* Forgot Password */}
+            <div className="text-right">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert("Demo: Password reset is not configured for admin profiles.");
+                }}
+                className="text-[11px] text-slate-500 font-bold hover:text-slate-800 transition-colors hover:underline"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            {/* Get Started Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center cursor-pointer mt-2"
+              className="w-full bg-[#1f2025] hover:bg-[#111113] active:scale-[0.985] text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(31,32,37,0.15)] flex justify-center items-center cursor-pointer"
             >
-              Sign In to Dashboard
+              Get Started
             </button>
           </form>
 
+          {/* Dotted Divider */}
+          <div className="flex items-center justify-center gap-3 my-1">
+            <div className="border-t border-dotted border-slate-350 flex-grow" />
+            <span className="text-[10px] text-slate-400 font-extrabold tracking-wider uppercase font-sans">Or sign in with</span>
+            <div className="border-t border-dotted border-slate-350 flex-grow" />
+          </div>
+
+          {/* Social Sign-In Grid */}
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.57 15 1 12 1 7.35 1 3.39 3.65 1.5 7.5l3.96 3.07C6.43 7.37 9.01 5.04 12 5.04z" />
+                <path fill="#4285F4" d="M23.49 12.27c0-.82-.07-1.6-.21-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.76 2.91c2.2-2.03 3.46-5.02 3.46-8.73z" />
+                <path fill="#FBBC05" d="M5.46 10.57c-.24-.72-.37-1.48-.37-2.27s.13-1.55.37-2.27L1.5 3.5C.54 5.41 0 7.56 0 9.8s.54 4.39 1.5 6.3l3.96-3.53z" />
+                <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.76-2.91c-1.1.74-2.5 1.18-4.2 1.18-2.99 0-5.57-2.33-6.47-5.46L1.5 16.2C3.39 20.05 7.35 23 12 23z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4 text-[#1877F2] fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => alert("Social sign-in is disabled for admin profiles.")}
+              className="bg-white hover:bg-slate-50 border border-slate-200/70 rounded-xl py-2.5 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <svg className="w-4.5 h-4.5 text-black fill-current" viewBox="0 0 24 24">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.21.67-2.93 1.49-.62.69-1.16 1.84-1.01 2.96 1.12.09 2.27-.58 2.95-1.39z" />
+              </svg>
+            </button>
+          </div>
+
           {/* Demo helper banner */}
-          <div className="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-3.5 text-xs text-slate-400 leading-normal text-center">
-            <span className="text-[10px] bg-brand-cyan/15 text-brand-cyan font-bold tracking-wider px-1.5 py-0.5 rounded border border-brand-cyan/25 uppercase inline-block mb-1.5">Demo credentials</span>
-            <div className="font-mono text-[11px] text-slate-300">
-              User: <span className="text-brand-cyan font-bold">admin</span> | Pass: <span className="text-brand-cyan font-bold">admin123</span>
+          <div className="bg-[#f0f9ff]/70 border border-[#e0f2fe] rounded-2xl p-3.5 text-xs text-slate-500 leading-normal text-center shadow-inner">
+            <span className="text-[10px] bg-brand-cyan/20 text-[#0369a1] font-bold tracking-wider px-2 py-0.5 rounded border border-[#bae6fd] uppercase inline-block mb-1.5 font-mono">Demo credentials</span>
+            <div className="font-mono text-[11px] text-slate-700 font-bold">
+              User: <span className="text-[#0369a1]">admin</span> | Pass: <span className="text-[#0369a1]">admin123</span>
             </div>
           </div>
         </div>
