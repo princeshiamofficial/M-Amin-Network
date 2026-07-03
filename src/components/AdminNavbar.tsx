@@ -119,9 +119,9 @@ export default function AdminNavbar({
             <div className="absolute right-0 top-9 mt-1.5 w-56 bg-white border border-slate-200/90 rounded-2xl shadow-xl z-50 py-3 text-[13px] text-slate-700">
               {/* Header */}
               <div className="px-4 pb-2.5 border-b border-slate-100 flex flex-col gap-0.5">
-                <span className="font-extrabold text-[#1e293b] text-sm">Mehan Ahmed</span>
-                <span className="text-[11px] text-[#94a3b8] font-medium">admin@colorhut.dev</span>
-                <span className="text-[10px] text-[#94a3b8] font-bold uppercase tracking-wide mt-0.5">Role: SYSTEM ADMIN</span>
+                <span className="font-extrabold text-[#1e293b] text-sm">M Amin</span>
+                <span className="text-[11px] text-[#94a3b8] font-medium">admin@maminnetwork.com</span>
+                <span className="text-[10px] text-[#94a3b8] font-bold uppercase tracking-wide mt-0.5">ROLE: SYSTEM ADMIN</span>
               </div>
               
               {/* Middle Action Links */}
@@ -148,13 +148,17 @@ export default function AdminNavbar({
                   <span>Profile (Soon)</span>
                 </div>
 
-                {/* Settings (Soon) */}
-                <div className="w-full px-4 py-2 flex items-center gap-3 text-slate-400 select-none font-semibold">
-                  <svg className="w-[17px] h-[17px] text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                {/* Settings (Active) */}
+                <Link
+                  href="/admin/settings"
+                  onClick={() => setIsAvatarOpen(false)}
+                  className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold block"
+                >
+                  <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   </svg>
-                  <span>Settings (Soon)</span>
-                </div>
+                  <span>Settings</span>
+                </Link>
               </div>
               
               {/* Footer */}
