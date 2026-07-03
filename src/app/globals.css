@@ -63,6 +63,9 @@
 :root {
   --background: #070b19;
   --foreground: #f8fafc;
+  --sidebar-background: 222.2 47.4% 11.2%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 210 40% 98%;
 }
 
 html,

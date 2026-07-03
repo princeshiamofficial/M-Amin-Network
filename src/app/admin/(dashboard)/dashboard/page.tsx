@@ -1018,16 +1018,28 @@ export default function AdminDashboardPage() {
           {activeTab === "Overview" && (
             <div className="space-y-6">
               {/* Welcome Banner */}
-              <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-[#111827] via-[#7c2d12] to-[#ea580c] p-6 sm:p-8 text-white shadow-sm flex flex-col justify-center min-h-[110px]">
-                <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
-                <div className="relative z-10">
-                  <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
-                    Welcome Mehan <span className="inline-block animate-pulse">👋</span>
-                  </h2>
-                  <p className="text-slate-200/90 text-xs sm:text-sm mt-1 font-medium">
-                    Here's an overview of your business activity.
-                  </p>
-                </div>
+              <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[hsl(var(--primary))] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
+                <h1 className="text-3xl sm:text-4xl font-bold flex items-center">
+                  Welcome Mehan
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-hand ml-2 h-8 w-8 transform rotate-[20deg] text-yellow-300"
+                  >
+                    <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path>
+                    <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"></path>
+                    <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"></path>
+                    <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
+                  </svg>
+                </h1>
+                <p className="text-md sm:text-lg text-primary-foreground/90 mt-1">Here's an overview of your business activity.</p>
               </div>
 
               {/* KPI Cards Grid */}
