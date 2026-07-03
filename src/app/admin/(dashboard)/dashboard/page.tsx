@@ -4,6 +4,18 @@ import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
+import {
+  Users,
+  FileText,
+  Receipt,
+  LifeBuoy,
+  MessageSquare,
+  AlertTriangle,
+  Mail,
+  Package,
+  Tag,
+  MapPin
+} from "lucide-react";
 
 interface Claim {
   id: string;
@@ -1099,11 +1111,7 @@ export default function AdminDashboardPage() {
         bg: "bg-blue-50 dark:bg-blue-500/20",
         text: "text-blue-600 dark:text-blue-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      ),
+      icon: Users,
       route: "/admin/customers",
     },
     {
@@ -1113,11 +1121,7 @@ export default function AdminDashboardPage() {
         bg: "bg-indigo-50 dark:bg-indigo-500/20",
         text: "text-indigo-600 dark:text-indigo-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-        </svg>
-      ),
+      icon: FileText,
       route: "/admin/job-applications",
     },
     {
@@ -1127,11 +1131,7 @@ export default function AdminDashboardPage() {
         bg: "bg-emerald-50 dark:bg-emerald-500/20",
         text: "text-emerald-600 dark:text-emerald-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 8h6m-6 2h6m-6 2h6m-6 2h6M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
-        </svg>
-      ),
+      icon: Receipt,
       route: "/admin/bills",
     },
     {
@@ -1141,11 +1141,7 @@ export default function AdminDashboardPage() {
         bg: "bg-rose-50 dark:bg-rose-500/20",
         text: "text-rose-600 dark:text-rose-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      ),
+      icon: LifeBuoy,
       route: "/admin/tickets",
     },
     {
@@ -1155,11 +1151,7 @@ export default function AdminDashboardPage() {
         bg: "bg-amber-100 dark:bg-amber-500/20",
         text: "text-amber-600 dark:text-amber-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-        </svg>
-      ),
+      icon: MessageSquare,
       route: "/admin/complaints",
     },
     {
@@ -1169,11 +1161,7 @@ export default function AdminDashboardPage() {
         bg: "bg-red-50 dark:bg-red-500/20",
         text: "text-red-600 dark:text-red-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-      ),
+      icon: AlertTriangle,
       route: "/admin/complaints",
     },
     {
@@ -1183,11 +1171,7 @@ export default function AdminDashboardPage() {
         bg: "bg-violet-50 dark:bg-violet-500/20",
         text: "text-violet-600 dark:text-violet-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
+      icon: Mail,
       route: "/admin/contact-messages",
     },
     {
@@ -1197,11 +1181,7 @@ export default function AdminDashboardPage() {
         bg: "bg-pink-50 dark:bg-pink-500/20",
         text: "text-pink-600 dark:text-pink-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-      ),
+      icon: Package,
       route: "/admin/packages",
     },
     {
@@ -1211,11 +1191,7 @@ export default function AdminDashboardPage() {
         bg: "bg-teal-50 dark:bg-teal-500/20",
         text: "text-teal-600 dark:text-teal-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      ),
+      icon: Tag,
       route: "/admin/offers",
     },
     {
@@ -1225,12 +1201,7 @@ export default function AdminDashboardPage() {
         bg: "bg-cyan-50 dark:bg-cyan-500/20",
         text: "text-cyan-600 dark:text-cyan-400",
       },
-      icon: (className: string) => (
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
+      icon: MapPin,
       route: "/admin/coverage-areas",
     },
   ];
@@ -1281,9 +1252,9 @@ export default function AdminDashboardPage() {
                       <div className={`absolute inset-0 opacity-[0.03] sm:hidden transition-opacity group-active:opacity-[0.06] ${card.color.bg}`} />
                       <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left relative z-10">
                         <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm sm:shadow-none ${card.color.bg}`}>
-                          {card.icon(`h-5 w-5 sm:h-6 sm:w-6 ${card.color.text}`)}
+                          <card.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${card.color.text}`} />
                         </div>
-                        <div className="flex-1 min-w-0 w-full">
+                        <div className="flex-1 min-w-0 w-full text-left">
                           <p className="text-[10px] sm:text-sm font-bold sm:font-medium uppercase sm:capitalize tracking-widest sm:tracking-normal text-slate-400 sm:text-slate-500 truncate px-1">
                             {card.label}
                           </p>
@@ -1293,7 +1264,7 @@ export default function AdminDashboardPage() {
                         </div>
                       </div>
                       <div className="absolute -right-4 -bottom-4 opacity-[0.04] sm:hidden pointer-events-none transform rotate-12 scale-110">
-                        {card.icon(`h-20 w-20 ${card.color.text}`)}
+                        <card.icon className={`h-20 w-20 ${card.color.text}`} />
                       </div>
                       <div className={`absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent sm:hidden`} />
                     </div>
