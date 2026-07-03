@@ -1272,32 +1272,7 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* KPI Cards Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Clients (Sim)</span>
-                  <span className="text-3xl font-extrabold text-slate-900 mt-2">{activeClients}</span>
-                  <span className="text-xs text-emerald-600 font-semibold mt-1">● Online across Keraniganj</span>
-                </div>
 
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Bandwidth</span>
-                  <span className="text-3xl font-extrabold text-brand-blue mt-2">{totalBandwidthGbps} Gbps</span>
-                  <span className="text-xs text-slate-500 mt-1">Simulated Live Traffic (AS150164)</span>
-                </div>
-
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Gateway SLA</span>
-                  <span className="text-3xl font-extrabold text-slate-900 mt-2">{networkUptime}</span>
-                  <span className="text-xs text-emerald-600 font-semibold mt-1">● Optimal signaling metrics</span>
-                </div>
-
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Revenue</span>
-                  <span className="text-3xl font-extrabold text-emerald-600 mt-2">৳{totalRevenue} BDT</span>
-                  <span className="text-xs text-slate-550 mt-1">Processed from {payments.length} transactions</span>
-                </div>
-              </div>
 
               {/* Graphic Visualizations */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
