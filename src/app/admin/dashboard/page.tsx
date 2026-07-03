@@ -633,6 +633,12 @@ export default function AdminDashboardPage() {
       } else {
         setIsAuthenticated(true);
         loadDatabase();
+        
+        const redirectTab = sessionStorage.getItem("m_amin_active_tab_redirect");
+        if (redirectTab) {
+          setActiveTab(redirectTab);
+          sessionStorage.removeItem("m_amin_active_tab_redirect");
+        }
       }
     }
 
@@ -1202,7 +1208,13 @@ export default function AdminDashboardPage() {
       <div className="relative flex-shrink-0">
         <AdminSidebar
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={(tab) => {
+            if (tab === "Packages") {
+              router.push("/admin/packages");
+            } else {
+              setActiveTab(tab);
+            }
+          }}
           onSignOut={handleLogout}
           isCollapsed={isSidebarCollapsed}
         />

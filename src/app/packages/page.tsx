@@ -128,7 +128,7 @@ function PackagesContent() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderRef, setOrderRef] = useState("");
 
-  const allPlans: Plan[] = [
+  const defaultPlans: Plan[] = [
     // Home Plans
     {
       speed: "10 Mbps",
@@ -279,24 +279,25 @@ function PackagesContent() {
     },
   ];
 
-  const [plans, setPlans] = useState<Plan[]>([]);
-
+  const [allPlans, setAllPlans] = useState<Plan[]>([]);
   useEffect(() => {
-    const savedPlans = localStorage.getItem("m_amin_packages");
-    if (savedPlans) {
-      setPlans(JSON.parse(savedPlans));
-    } else {
-      setPlans(allPlans);
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("m_amin_packages_list");
+      if (saved) {
+        setAllPlans(JSON.parse(saved));
+      } else {
+        localStorage.setItem("m_amin_packages_list", JSON.stringify(defaultPlans));
+        setAllPlans(defaultPlans);
+      }
     }
   }, []);
 
   // Auto-select plan from url query parameter if available
   useEffect(() => {
-    if (plans.length === 0) return;
     const planQuery = searchParams.get("plan");
     if (planQuery) {
       const parsedSpeed = parseInt(planQuery, 10);
-      const matchedPlan = plans.find(
+      const matchedPlan = allPlans.find(
         (p) => parseInt(p.speed, 10) === parsedSpeed
       );
       if (matchedPlan) {
@@ -305,9 +306,9 @@ function PackagesContent() {
         setIsModalOpen(true);
       }
     }
-  }, [searchParams, plans]);
+  }, [searchParams]);
 
-  const filteredPlans = plans.filter((p) => p.category === activeTab);
+  const filteredPlans = allPlans.filter((p) => p.category === activeTab);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
