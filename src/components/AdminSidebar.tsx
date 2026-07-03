@@ -296,10 +296,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
   ];
 
   return (
-    <aside className={`flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto transition-all duration-300 ${
+    <aside className={`flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-hidden transition-all duration-300 ${
       isCollapsed ? "w-20" : "w-72"
     }`}>
-      <div className={`flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-black transition-all ${
+      <div className={`sticky top-0 z-20 flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-black transition-all ${
         isCollapsed ? "px-4" : "px-6"
       }`}>
         {isCollapsed ? (
@@ -317,7 +317,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
       </div>
 
       {/* Navigation Group Items List */}
-      <div className="flex-1 px-3 py-4 space-y-5">
+      <div className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1.5">
             {!isCollapsed && (
