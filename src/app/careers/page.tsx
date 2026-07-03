@@ -194,7 +194,7 @@ export default function Careers() {
 
       {/* Job Postings Section - White Background */}
       <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Open Positions Section Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
