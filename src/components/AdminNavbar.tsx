@@ -116,36 +116,72 @@ export default function AdminNavbar({
           </button>
 
           {isAvatarOpen && (
-            <div className="absolute right-0 top-9 mt-1 w-48 bg-white border border-slate-200/90 rounded-[20px] shadow-xl z-50 py-2.5 text-xs">
-              <div className="px-4 py-1.5 border-b border-slate-100 flex flex-col gap-0.5">
-                <span className="font-extrabold text-slate-800">Super Admin</span>
-                <span className="text-[10px] text-slate-400 font-mono">admin@maminnetwork.com</span>
+            <div className="absolute right-0 top-9 mt-1.5 w-56 bg-white border border-slate-200/90 rounded-2xl shadow-xl z-50 py-3 text-[13px] text-slate-700">
+              {/* Header */}
+              <div className="px-4 pb-2.5 border-b border-slate-100 flex flex-col gap-0.5">
+                <span className="font-extrabold text-[#1e293b] text-sm">Mehan Ahmed</span>
+                <span className="text-[11px] text-[#94a3b8] font-medium">admin@colorhut.dev</span>
+                <span className="text-[10px] text-[#94a3b8] font-bold uppercase tracking-wide mt-0.5">Role: SYSTEM ADMIN</span>
               </div>
+              
+              {/* Middle Action Links */}
               <div className="py-1">
-                <Link
-                  href="/admin/dashboard"
-                  onClick={() => setIsAvatarOpen(false)}
-                  className="w-full px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left block"
+                <button
+                  onClick={() => {
+                    setIsAvatarOpen(false);
+                    alert("Profile Edit under construction");
+                  }}
+                  className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold"
                 >
-                  Dashboard Home
-                </Link>
-                <Link
-                  href="/admin/settings"
-                  onClick={() => setIsAvatarOpen(false)}
-                  className="w-full px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left block"
+                  <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  <span>Edit Profile</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setIsAvatarOpen(false);
+                    alert("Gyroscope Dashboard loaded");
+                  }}
+                  className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold"
                 >
-                  System Settings
-                </Link>
+                  <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                  <span>Gyroscope</span>
+                </button>
+
+                {/* Profile (Soon) */}
+                <div className="w-full px-4 py-2 flex items-center gap-3 text-slate-400 select-none font-semibold">
+                  <svg className="w-[17px] h-[17px] text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span>Profile (Soon)</span>
+                </div>
+
+                {/* Settings (Soon) */}
+                <div className="w-full px-4 py-2 flex items-center gap-3 text-slate-400 select-none font-semibold">
+                  <svg className="w-[17px] h-[17px] text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  </svg>
+                  <span>Settings (Soon)</span>
+                </div>
               </div>
+              
+              {/* Footer */}
               <div className="border-t border-slate-100 mt-1 pt-1.5">
                 <button
                   onClick={() => {
                     setIsAvatarOpen(false);
                     onSignOut();
                   }}
-                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-655 hover:text-red-700 font-bold transition-colors cursor-pointer"
+                  className="w-full flex items-center gap-3 px-4 py-2 hover:bg-rose-50/50 text-red-500 hover:text-red-655 transition-colors cursor-pointer text-left font-bold"
                 >
-                  Sign Out Session
+                  <svg className="w-[17px] h-[17px] text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013-3v1" />
+                  </svg>
+                  <span>Log out</span>
                 </button>
               </div>
             </div>
