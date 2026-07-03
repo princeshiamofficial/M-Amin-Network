@@ -60,6 +60,26 @@ interface ContactMessage {
   date: string;
 }
 
+interface Job {
+  id: string;
+  title: string;
+  department: string;
+  type: string;
+  status: "Open" | "Closed";
+  date: string;
+}
+
+interface JobApplication {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  jobTitle: string;
+  experience: string;
+  status: "Screening" | "Reviewing" | "Interview" | "Accepted" | "Rejected";
+  date: string;
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -73,6 +93,8 @@ export default function AdminDashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -188,6 +210,38 @@ export default function AdminDashboardPage() {
     },
   ];
 
+  const defaultJobs: Job[] = [
+    {
+      id: "JOB-001",
+      title: "Network Support Engineer",
+      department: "Technical Operations",
+      type: "Full-Time",
+      status: "Open",
+      date: "7/1/2026",
+    },
+    {
+      id: "JOB-002",
+      title: "Fiber Splicer Technician",
+      department: "Field Infrastructure",
+      type: "Full-Time",
+      status: "Open",
+      date: "7/2/2026",
+    },
+  ];
+
+  const defaultJobApplications: JobApplication[] = [
+    {
+      id: "APP-4829",
+      name: "Mehedi Hasan",
+      email: "mehedi@gmail.com",
+      phone: "01728394012",
+      jobTitle: "Network Support Engineer",
+      experience: "2 Years",
+      status: "Reviewing",
+      date: "7/2/2026, 11:34 AM",
+    },
+  ];
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -248,6 +302,22 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_contact_submissions", JSON.stringify(defaultMessages));
       setMessages(defaultMessages);
     }
+
+    const savedJobs = localStorage.getItem("m_amin_jobs");
+    if (savedJobs) {
+      setJobs(JSON.parse(savedJobs));
+    } else {
+      localStorage.setItem("m_amin_jobs", JSON.stringify(defaultJobs));
+      setJobs(defaultJobs);
+    }
+
+    const savedApps = localStorage.getItem("m_amin_job_applications");
+    if (savedApps) {
+      setJobApplications(JSON.parse(savedApps));
+    } else {
+      localStorage.setItem("m_amin_job_applications", JSON.stringify(defaultJobApplications));
+      setJobApplications(defaultJobApplications);
+    }
   };
 
   const resetToDefaults = () => {
@@ -258,11 +328,15 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_tickets", JSON.stringify(defaultTickets));
       localStorage.setItem("m_amin_payments", JSON.stringify(defaultPayments));
       localStorage.setItem("m_amin_contact_submissions", JSON.stringify(defaultMessages));
+      localStorage.setItem("m_amin_jobs", JSON.stringify(defaultJobs));
+      localStorage.setItem("m_amin_job_applications", JSON.stringify(defaultJobApplications));
       setClaims(defaultClaims);
       setComplaints(defaultComplaints);
       setTickets(defaultTickets);
       setPayments(defaultPayments);
       setMessages(defaultMessages);
+      setJobs(defaultJobs);
+      setJobApplications(defaultJobApplications);
       alert("Mock database has been reset successfully!");
     }
   };
@@ -275,11 +349,15 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_tickets", JSON.stringify([]));
       localStorage.setItem("m_amin_payments", JSON.stringify([]));
       localStorage.setItem("m_amin_contact_submissions", JSON.stringify([]));
+      localStorage.setItem("m_amin_jobs", JSON.stringify([]));
+      localStorage.setItem("m_amin_job_applications", JSON.stringify([]));
       setClaims([]);
       setComplaints([]);
       setTickets([]);
       setPayments([]);
       setMessages([]);
+      setJobs([]);
+      setJobApplications([]);
       alert("Mock database cleared successfully!");
     }
   };
@@ -304,7 +382,6 @@ export default function AdminDashboardPage() {
 
   const deleteComplaint = (id: string) => {
     const updated = complaints.filter((c) => c.id !== id);
-    setClaims((prevClaims) => prevClaims); // redundant update trigger helper
     setComplaints(updated);
     localStorage.setItem("m_amin_complaints", JSON.stringify(updated));
   };
@@ -331,6 +408,32 @@ export default function AdminDashboardPage() {
     const updated = messages.filter((m) => m.id !== id);
     setMessages(updated);
     localStorage.setItem("m_amin_contact_submissions", JSON.stringify(updated));
+  };
+
+  const toggleJobStatus = (id: string) => {
+    const updated: Job[] = jobs.map((j) =>
+      j.id === id ? { ...j, status: (j.status === "Open" ? "Closed" : "Open") as "Open" | "Closed" } : j
+    );
+    setJobs(updated);
+    localStorage.setItem("m_amin_jobs", JSON.stringify(updated));
+  };
+
+  const deleteJob = (id: string) => {
+    const updated = jobs.filter((j) => j.id !== id);
+    setJobs(updated);
+    localStorage.setItem("m_amin_jobs", JSON.stringify(updated));
+  };
+
+  const updateApplicationStatus = (id: string, status: JobApplication["status"]) => {
+    const updated = jobApplications.map((app) => (app.id === id ? { ...app, status } : app));
+    setJobApplications(updated);
+    localStorage.setItem("m_amin_job_applications", JSON.stringify(updated));
+  };
+
+  const deleteApplication = (id: string) => {
+    const updated = jobApplications.filter((app) => app.id !== id);
+    setJobApplications(updated);
+    localStorage.setItem("m_amin_job_applications", JSON.stringify(updated));
   };
 
   const handleLogout = () => {
@@ -655,7 +758,7 @@ export default function AdminDashboardPage() {
                               )}
                               <button
                                 onClick={() => deleteClaim(c.id)}
-                                className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Delete
                               </button>
@@ -808,12 +911,12 @@ export default function AdminDashboardPage() {
                         <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                           <td className="py-3.5 font-bold font-mono text-brand-blue text-sm">{p.id}</td>
                           <td className="py-3.5">
-                            <span className="font-extrabold text-slate-850 block">{p.name}</span>
+                            <span className="font-extrabold text-slate-855 block">{p.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">{p.phone}</span>
                           </td>
                           <td className="py-3.5 font-extrabold text-slate-700 uppercase">{p.gateway}</td>
                           <td className="py-3.5 font-black text-emerald-600 text-sm">৳{p.amount} BDT</td>
-                          <td className="py-3.5 text-slate-500">{p.date}</td>
+                          <td className="py-3.5 text-slate-550">{p.date}</td>
                           <td className="py-3.5 text-right">
                             <button
                               onClick={() => deletePayment(p.id)}
@@ -859,7 +962,7 @@ export default function AdminDashboardPage() {
                       tickets.map((t) => (
                         <tr key={t.id} className="hover:bg-slate-50/70 transition-colors">
                           <td className="py-3.5">
-                            <span className="font-extrabold text-slate-850 block">{t.name}</span>
+                            <span className="font-extrabold text-slate-855 block">{t.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">{t.phone}</span>
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{t.category}</td>
@@ -891,7 +994,7 @@ export default function AdminDashboardPage() {
                             )}
                             <button
                               onClick={() => deleteTicket(t.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Delete
                             </button>
@@ -966,7 +1069,7 @@ export default function AdminDashboardPage() {
                       messages.map((m) => (
                         <tr key={m.id} className="hover:bg-slate-50/70 transition-colors">
                           <td className="py-3.5">
-                            <span className="font-extrabold text-slate-850 block">{m.name}</span>
+                            <span className="font-extrabold text-slate-855 block">{m.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">{m.email} | {m.phone}</span>
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{m.subject}</td>
@@ -975,7 +1078,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 text-right">
                             <button
                               onClick={() => deleteMessage(m.id)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                             >
                               Delete Message
                             </button>
@@ -1012,13 +1115,13 @@ export default function AdminDashboardPage() {
                   <tbody className="divide-y divide-slate-100">
                     {complaints.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="py-8 text-center text-slate-400">No active complaints found.</td>
+                        <td colSpan={7} className="py-8 text-center text-slate-500">No active complaints found.</td>
                       </tr>
                     ) : (
                       complaints.map((c) => (
                         <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
                           <td className="py-3.5">
-                            <span className="font-extrabold text-slate-850 block">{c.name}</span>
+                            <span className="font-extrabold text-slate-855 block">{c.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">{c.clientId}</span>
                           </td>
                           <td className="py-3.5 font-mono">{c.phone}</td>
@@ -1065,7 +1168,148 @@ export default function AdminDashboardPage() {
             </div>
           )}
 
-          {/* 12. REALTIME DEMO VIEW */}
+          {/* 12. JOBS VIEW */}
+          {activeTab === "Jobs" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-lg font-extrabold text-slate-900">Careers & Active Openings</h2>
+                  <p className="text-xs text-slate-500 mt-1">Review, delete, or toggle status for current positions.</p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Job ID</th>
+                      <th className="pb-3">Position Title</th>
+                      <th className="pb-3">Department</th>
+                      <th className="pb-3">Job Type</th>
+                      <th className="pb-3">Publish Date</th>
+                      <th className="pb-3">Status</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {jobs.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-slate-400">No jobs listed.</td>
+                      </tr>
+                    ) : (
+                      jobs.map((j) => (
+                        <tr key={j.id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3.5 font-bold font-mono text-brand-blue">{j.id}</td>
+                          <td className="py-3.5 font-extrabold text-slate-850">{j.title}</td>
+                          <td className="py-3.5 text-slate-650">{j.department}</td>
+                          <td className="py-3.5 text-slate-600 font-semibold">{j.type}</td>
+                          <td className="py-3.5 text-slate-500">{j.date}</td>
+                          <td className="py-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                              j.status === "Open" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
+                              "bg-slate-500/10 text-slate-500 border border-slate-500/20"
+                            }`}>{j.status}</span>
+                          </td>
+                          <td className="py-3.5 text-right space-x-2">
+                            <button
+                              onClick={() => toggleJobStatus(j.id)}
+                              className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer"
+                            >
+                              Toggle Status
+                            </button>
+                            <button
+                              onClick={() => deleteJob(j.id)}
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 13. JOB APPLICATIONS VIEW */}
+          {activeTab === "Job Applications" && (
+            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-lg font-extrabold text-slate-900">Submitted Job Applications</h2>
+                  <p className="text-xs text-slate-500 mt-1">Review candidates, track review stages, and set application status.</p>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Candidate Details</th>
+                      <th className="pb-3">Position Applied</th>
+                      <th className="pb-3">Experience</th>
+                      <th className="pb-3">Submission Date</th>
+                      <th className="pb-3">Review Status</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {jobApplications.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-slate-400">No applications received.</td>
+                      </tr>
+                    ) : (
+                      jobApplications.map((app) => (
+                        <tr key={app.id} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3.5">
+                            <span className="font-extrabold text-slate-855 block">{app.name}</span>
+                            <span className="text-[10px] text-slate-500 font-mono">{app.email} | {app.phone}</span>
+                          </td>
+                          <td className="py-3.5 font-semibold text-brand-blue">{app.jobTitle}</td>
+                          <td className="py-3.5 text-slate-650">{app.experience}</td>
+                          <td className="py-3.5 text-slate-500">{app.date}</td>
+                          <td className="py-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                              app.status === "Accepted" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
+                              app.status === "Rejected" ? "bg-red-500/10 text-red-600 border border-red-500/20" :
+                              app.status === "Interview" ? "bg-purple-550/10 text-purple-600 border border-purple-500/20" :
+                              "bg-blue-500/10 text-blue-600 border border-blue-500/20"
+                            }`}>{app.status}</span>
+                          </td>
+                          <td className="py-3.5 text-right space-x-2">
+                            {app.status !== "Accepted" && (
+                              <button
+                                onClick={() => updateApplicationStatus(app.id, "Accepted")}
+                                className="px-2.5 py-1 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              >
+                                Accept
+                              </button>
+                            )}
+                            {app.status !== "Rejected" && (
+                              <button
+                                onClick={() => updateApplicationStatus(app.id, "Rejected")}
+                                className="px-2.5 py-1 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 text-red-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                              >
+                                Reject
+                              </button>
+                            )}
+                            <button
+                              onClick={() => deleteApplication(app.id)}
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* 14. REALTIME DEMO VIEW */}
           {activeTab === "Realtime Demo" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
