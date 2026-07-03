@@ -49,8 +49,12 @@ export default function AdminNavbar({
         {/* Clear Cache button */}
         <button
           onClick={() => {
+            const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+            const avatar = localStorage.getItem("m_amin_avatar_url");
             localStorage.clear();
             sessionStorage.clear();
+            if (auth) sessionStorage.setItem("m_amin_admin_authenticated", auth);
+            if (avatar) localStorage.setItem("m_amin_avatar_url", avatar);
             window.location.href = window.location.pathname + '?t=' + Date.now();
           }}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm"
