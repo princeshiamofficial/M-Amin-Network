@@ -151,11 +151,6 @@ export default function AdminNavbar({
                       </button>
                     </div>
 
-                    {/* Subtitle */}
-                    <p className="text-[10px] text-[#64748b] font-semibold leading-normal mt-2">
-                      Update your profile picture. Current email: <span className="font-mono text-slate-500 text-[9px] block mt-0.5 text-left">admin@maminnetwork.com</span>
-                    </p>
-
                     {/* Picture area */}
                     <div className="flex items-center gap-3 py-2">
                       <div className="w-14 h-14 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
