@@ -17,7 +17,14 @@ import {
   MapPin,
   Briefcase,
   Zap,
-  LayoutGrid
+  LayoutGrid,
+  Type,
+  Info,
+  Phone,
+  PanelTop,
+  Tv2,
+  Settings,
+  UserCog
 } from "lucide-react";
 
 interface Claim {
@@ -252,17 +259,24 @@ export default function AdminDashboardPage() {
   // Quick actions reordering state
   const [quickActionsList, setQuickActionsList] = useState([
     { label: "Packages",        path: "/admin/packages",        route: "/admin/packages",        icon: Package,      bg: "bg-blue-50",    text: "text-blue-600" },
-    { label: "Offers",          path: "/admin/offers",          route: "/admin/offers",          icon: Tag,          bg: "bg-violet-50",  text: "text-violet-600", showActions: true },
+    { label: "Offers",          path: "/admin/offers",          route: "/admin/offers",          icon: Tag,          bg: "bg-violet-50",  text: "text-violet-600" },
     { label: "Coverage Areas",  path: "/admin/coverage",        route: "/admin/coverage-areas",  icon: MapPin,       bg: "bg-emerald-50", text: "text-emerald-600" },
     { label: "Application",     path: "/admin/applications",    route: "/admin/applications",    icon: FileText,     bg: "bg-amber-50",   text: "text-amber-600" },
     { label: "Customer",        path: "/admin/customers",        route: "/admin/customers",        icon: Users,        bg: "bg-sky-50",     text: "text-sky-600" },
     { label: "Bills",           path: "/admin/bills",           route: "/admin/bills",           icon: Receipt,      bg: "bg-teal-50",    text: "text-teal-600" },
     { label: "Contact Messages",path: "/admin/contact",         route: "/admin/contact-messages", icon: Mail,         bg: "bg-pink-50",    text: "text-pink-600" },
-    { label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      icon: AlertTriangle, bg: "bg-red-50",    text: "text-red-500", showActions: true, dimActions: true },
+    { label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      icon: AlertTriangle, bg: "bg-red-50",    text: "text-red-500" },
     { label: "Jobs Add",        path: "/admin/jobs",            route: "/admin/jobs",            icon: Briefcase,    bg: "bg-orange-50",  text: "text-orange-600" },
     { label: "Job Applications",path: "/admin/job-applications",route: "/admin/job-applications",icon: FileText,     bg: "bg-indigo-50",  text: "text-indigo-600" },
     { label: "Site Content",    path: "/admin/content",         route: "/admin/site-content",    icon: Zap,          bg: "bg-yellow-50",  text: "text-yellow-600" },
     { label: "Home Sections",   path: "/admin/home-sections",   route: "/admin/home-sections",   icon: LayoutGrid,   bg: "bg-fuchsia-50", text: "text-fuchsia-600" },
+    { label: "Hero Typography", path: "/admin/hero-typography", route: "/admin/hero-typography", icon: Type,         bg: "bg-cyan-50",    text: "text-cyan-600" },
+    { label: "About Page",      path: "/admin/about",           route: "/admin/about-page",      icon: Info,         bg: "bg-lime-50",    text: "text-lime-600" },
+    { label: "Contact Page",    path: "/admin/contact-page",   route: "/admin/contact-page",    icon: Phone,        bg: "bg-rose-50",    text: "text-rose-600" },
+    { label: "Top Bar & Footer",path: "/admin/layout",          route: "/admin/topbar-footer",   icon: PanelTop,     bg: "bg-slate-100",  text: "text-slate-600" },
+    { label: "Multimedia",      path: "/admin/services",        route: "/admin/services-hub",    icon: Tv2,          bg: "bg-purple-50",  text: "text-purple-600" },
+    { label: "Settings",        path: "/admin/settings",        route: "/admin/settings",        icon: Settings,     bg: "bg-gray-100",   text: "text-gray-600" },
+    { label: "Users & Roles",   path: "/admin/users",           route: "/admin/users-roles",     icon: UserCog,      bg: "bg-blue-50",    text: "text-blue-700" },
   ]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
