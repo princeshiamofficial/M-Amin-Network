@@ -46,7 +46,7 @@ export default function AdminDashboard() {
 
   if (!mounted) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
+      <div className="w-full min-h-screen flex items-center justify-center bg-brand-dark text-slate-400">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-brand-cyan border-t-transparent rounded-full animate-spin" />
           <span className="font-mono text-sm tracking-widest">LOADING SECURE ACCESS CONTROL...</span>
@@ -60,12 +60,12 @@ export default function AdminDashboard() {
       <div
         className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
         style={{
-          backgroundImage: "linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(243, 244, 246, 0.95)), url('/sky_cloud_bg.png')"
+          backgroundImage: "linear-gradient(to bottom, rgba(10, 11, 16, 0.82), rgba(20, 24, 33, 0.95)), url('/sky_cloud_bg.png')"
         }}
       >
         {/* Background Decorative Arcs */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <svg className="w-[850px] h-[850px] text-brand-cyan/20" viewBox="0 0 800 800" fill="none" stroke="currentColor" strokeWidth="1.2">
+          <svg className="w-[850px] h-[850px] text-brand-cyan opacity-25" viewBox="0 0 800 800" fill="none" stroke="currentColor" strokeWidth="1.2">
             <circle cx="400" cy="400" r="160" strokeOpacity="0.3" />
             <circle cx="400" cy="400" r="260" strokeOpacity="0.22" />
             <circle cx="400" cy="400" r="360" strokeOpacity="0.15" />
@@ -79,6 +79,7 @@ export default function AdminDashboard() {
             src="/logo.png"
             alt="M-Amin Network"
             className="h-8 w-auto object-contain"
+            style={{ filter: "invert(1) hue-rotate(180deg)" }}
           />
         </div>
 
@@ -86,14 +87,14 @@ export default function AdminDashboard() {
         <div className="absolute top-6 right-6 z-20">
           <Link
             href="/"
-            className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
           >
             ← Back to Website
           </Link>
         </div>
 
         {/* Login Card Container */}
-        <div className="max-w-[400px] w-full bg-white/90 border border-slate-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
+        <div className="max-w-[400px] w-full bg-white/75 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
             <img
@@ -237,25 +238,25 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-slate-50 text-slate-800 flex flex-col">
+    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
 
       {/* Main empty workspace placeholder */}
       <div className="flex-grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
-        <div className="max-w-md w-full bg-white border border-slate-200/80 rounded-[32px] p-10 space-y-6 shadow-2xl backdrop-blur-xl">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-emerald-500/5">
+        <div className="max-w-md w-full glass-panel border-brand-border/50 rounded-[32px] p-10 space-y-6 shadow-2xl bg-brand-card/30 backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-emerald-500/5">
             🔑
           </div>
           <div className="space-y-2">
-            <h2 className="text-slate-950 font-extrabold text-xl tracking-tight">Access Securely Opened</h2>
-            <p className="text-xs text-slate-500 leading-relaxed px-4">
-              You are securely logged into the M-Amin Network operations administration console. 
+            <h2 className="text-white font-extrabold text-xl tracking-tight">Access Securely Opened</h2>
+            <p className="text-xs text-slate-400 leading-relaxed px-4">
+              You are securely logged into the M-Amin Network operations administration console.
               The system metrics dashboard has been removed from this profile.
             </p>
           </div>
-          <div className="pt-2 border-t border-slate-100 flex justify-center">
+          <div className="pt-2 border-t border-brand-border/40 flex justify-center">
             <button
               onClick={handleLogout}
-              className="px-6 py-2.5 bg-red-50 hover:bg-red-100 border border-red-100 text-red-600 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              className="px-6 py-2.5 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 hover:border-red-500/50 text-red-400 rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
               Log Out Session
             </button>

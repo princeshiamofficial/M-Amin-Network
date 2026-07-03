@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
 
   if (!mounted || !isAuthenticated) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-slate-50 text-slate-600">
+      <div className="w-full min-h-screen flex items-center justify-center bg-brand-dark text-slate-400">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-brand-cyan border-t-transparent rounded-full animate-spin" />
           <span className="font-mono text-sm tracking-widest">LOADING SECURE ACCESS CONTROL...</span>
@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
+    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
       {/* Blank Dashboard Workspace */}
     </div>
   );
