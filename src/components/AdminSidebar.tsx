@@ -7,9 +7,10 @@ interface AdminSidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onSignOut: () => void;
+  isCollapsed?: boolean;
 }
 
-export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: AdminSidebarProps) {
+export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCollapsed = false }: AdminSidebarProps) {
   // Navigation groupings matching the exact items in the user screenshot
   const menuGroups = [
     {
@@ -127,24 +128,36 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
   ];
 
   return (
-    <aside className="w-72 flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto">
+    <aside className={`flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto transition-all duration-300 ${
+      isCollapsed ? "w-20" : "w-72"
+    }`}>
       {/* Branded Header Area */}
-      <div className="flex flex-col gap-3 px-6 py-4.5 border-b border-[#1e293b]/65 bg-black">
-        <img
-          src="/logo.png"
-          alt="M Amin Network"
-          className="h-12 w-auto object-contain self-start"
-          style={{ filter: "invert(1) hue-rotate(180deg)" }}
-        />
+      <div className={`flex flex-col gap-3 py-4.5 border-b border-[#1e293b]/65 bg-black transition-all ${
+        isCollapsed ? "px-4 items-center justify-center" : "px-6"
+      }`}>
+        {isCollapsed ? (
+          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0 mx-auto">
+            <img src="/Xlogo.png" alt="M Amin Network" className="w-full h-full object-contain" />
+          </div>
+        ) : (
+          <img
+            src="/logo.png"
+            alt="M Amin Network"
+            className="h-8.5 w-auto object-contain self-start"
+            style={{ filter: "invert(1) hue-rotate(180deg)" }}
+          />
+        )}
       </div>
 
       {/* Navigation Group Items List */}
       <div className="flex-1 px-3 py-4 space-y-5">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1.5">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block px-3 mb-1">
-              {group.title}
-            </span>
+            {!isCollapsed && (
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block px-3 mb-1">
+                {group.title}
+              </span>
+            )}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const isActive = activeTab === item.name;
@@ -152,7 +165,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
                   <button
                     key={item.name}
                     onClick={() => setActiveTab(item.name)}
-                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer text-left ${
+                    title={isCollapsed ? item.name : undefined}
+                    className={`w-full flex items-center gap-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all cursor-pointer ${
+                      isCollapsed ? "justify-center px-0" : "px-3.5 text-left"
+                    } ${
                       isActive
                         ? "bg-[#0c1e35] text-white border border-[#1e293b]/80 shadow-md shadow-black/10"
                         : "text-slate-400 hover:text-slate-200 hover:bg-[#0c1e35]/35"
@@ -161,7 +177,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
                     <span className={isActive ? "text-brand-cyan" : "text-slate-400"}>
                       {item.icon}
                     </span>
-                    <span>{item.name}</span>
+                    {!isCollapsed && <span>{item.name}</span>}
                   </button>
                 );
               })}
@@ -172,30 +188,38 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
 
       {/* Sidebar Footer Area */}
       <div className="p-4 border-t border-[#1e293b]/55 bg-[#050b16]/40 space-y-2">
-        <div className="px-1 text-[10px] text-slate-500 font-mono tracking-tight font-medium overflow-hidden truncate">
-          admin@maminnetwork.test
-        </div>
+        {!isCollapsed && (
+          <div className="px-1 text-[10px] text-slate-500 font-mono tracking-tight font-medium overflow-hidden truncate">
+            admin@maminnetwork.test
+          </div>
+        )}
 
         {/* View Public Site Action */}
         <Link
           href="/"
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1e35]/35 text-[11px] font-semibold tracking-wide transition-colors"
+          title={isCollapsed ? "View public site" : undefined}
+          className={`w-full flex items-center gap-2.5 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-[#0c1e35]/35 text-[11px] font-semibold tracking-wide transition-colors ${
+            isCollapsed ? "justify-center px-0" : "px-3"
+          }`}
         >
           <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
           </svg>
-          <span>View public site</span>
+          {!isCollapsed && <span>View public site</span>}
         </Link>
 
         {/* Sign Out Action */}
         <button
           onClick={onSignOut}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 text-[11px] font-semibold tracking-wide transition-colors cursor-pointer text-left"
+          title={isCollapsed ? "Sign out" : undefined}
+          className={`w-full flex items-center gap-2.5 py-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 text-[11px] font-semibold tracking-wide transition-colors cursor-pointer text-left ${
+            isCollapsed ? "justify-center px-0" : "px-3"
+          }`}
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span>Sign out</span>
+          {!isCollapsed && <span>Sign out</span>}
         </button>
       </div>
     </aside>

@@ -65,6 +65,7 @@ export default function AdminDashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Database states
   const [claims, setClaims] = useState<Claim[]>([]);
@@ -354,7 +355,12 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden">
       {/* Reusable left sidebar component */}
-      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} onSignOut={handleLogout} />
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onSignOut={handleLogout}
+        isCollapsed={isSidebarCollapsed}
+      />
 
       {/* Main Dynamic View Content Pane */}
       <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
@@ -363,6 +369,8 @@ export default function AdminDashboardPage() {
           activeTab={activeTab}
           onResetDatabase={resetToDefaults}
           onSignOut={handleLogout}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
 
         {/* Scrollable content container */}

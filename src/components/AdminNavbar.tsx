@@ -7,13 +7,30 @@ interface AdminNavbarProps {
   activeTab: string;
   onResetDatabase: () => void;
   onSignOut: () => void;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
 }
 
-export default function AdminNavbar({ activeTab, onResetDatabase, onSignOut }: AdminNavbarProps) {
+export default function AdminNavbar({
+  activeTab,
+  onResetDatabase,
+  onSignOut,
+  isSidebarCollapsed = false,
+  onToggleSidebar,
+}: AdminNavbarProps) {
   return (
-    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-8 select-none">
-      {/* Left side: Active Page Title */}
+    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-6 select-none">
+      {/* Left side: Hamburger Toggle & Active Page Title */}
       <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleSidebar}
+          title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          className="p-1.5 hover:bg-[#e2e8f0] rounded-lg transition-colors cursor-pointer flex items-center justify-center text-[#475569]"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
         <h2 className="text-slate-800 font-extrabold text-sm tracking-wide uppercase">
           {activeTab} Workspace
         </h2>
