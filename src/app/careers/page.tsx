@@ -211,8 +211,9 @@ export default function Careers() {
           {/* Open Positions Section Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">{t("Open Positions", "উন্মুক্ত পদসমূহ")}</h2>
-              <p className="text-xs text-slate-500 mt-1 font-semibold">
+              <span className="text-[10px] font-bold text-brand-blue tracking-wider uppercase">{t("Join Our Journey", "আমাদের সাথে যুক্ত হোন")}</span>
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-0.5">{t("Open Positions", "উন্মুক্ত পদসমূহ")}</h2>
+              <p className="text-[11px] text-slate-400 font-bold uppercase mt-1">
                 {filteredJobs.length} {filteredJobs.length === 1 ? t("position found", "টি পদ পাওয়া গেছে") : t("positions found", "টি পদ পাওয়া গেছে")}
               </p>
             </div>
@@ -232,72 +233,64 @@ export default function Careers() {
                 salary: "Negotiable",
                 deadline: "Open Always"
               })}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all cursor-pointer"
             >
               <span>{t("General Application", "সাধারণ আবেদন")}</span>
-              <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <svg className="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
           </div>
 
-          {/* Search & Filter Bar Row */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-4 sm:p-5 mb-8 flex flex-col gap-4 shadow-inner">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-              {/* Search Input (Takes 5 cols) */}
-              <div className="lg:col-span-5 relative flex items-center">
-                <span className="absolute left-3.5 text-slate-400">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder={t("Search title, department, keyword...", "পদবি, বিভাগ বা কিওয়ার্ড অনুসন্ধান করুন...")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-brand-blue transition-all"
-                />
-              </div>
+          {/* Search & Filter Bar Row (Modern & Minimal) */}
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-8 pb-6 border-b border-slate-100">
+            {/* Search Input */}
+            <div className="relative w-full lg:max-w-md flex items-center">
+              <span className="absolute left-0 text-slate-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder={t("Search title, department, keyword...", "পদবি, বিভাগ বা কিওয়ার্ড অনুসন্ধান করুন...")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-transparent pl-7 pr-3 py-2 text-xs text-slate-700 placeholder-slate-400 focus:outline-none border-b border-slate-200 focus:border-brand-blue transition-all"
+              />
+            </div>
 
-              {/* Department Dropdown (Takes 3 cols) */}
-              <div className="lg:col-span-3">
-                <select
-                  value={selectedDept}
-                  onChange={(e) => setSelectedDept(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t("All departments", "সকল বিভাগ")}</option>
-                  <option value="Network Engineering & Maintenance">{t("Engineering & Maintenance", "ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ")}</option>
-                  <option value="Helpdesk Operations">{t("Helpdesk Operations", "হেল্পডেস্ক অপারেশনস")}</option>
-                  <option value="Infrastructure Operations">{t("Infrastructure Operations", "ইনফ্রাস্ট্রাকচার অপারেশনস")}</option>
-                </select>
-              </div>
+            {/* Dropdowns Filters */}
+            <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+              <select
+                value={selectedDept}
+                onChange={(e) => setSelectedDept(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-600 rounded-full px-4 py-2 text-[11px] font-bold tracking-tight transition-all focus:outline-none focus:border-brand-blue cursor-pointer"
+              >
+                <option value="All">{t("All departments", "সকল বিভাগ")}</option>
+                <option value="Network Engineering & Maintenance">{t("Engineering & Maintenance", "ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ")}</option>
+                <option value="Helpdesk Operations">{t("Helpdesk Operations", "হেল্পডেস্ক অপারেশনস")}</option>
+                <option value="Infrastructure Operations">{t("Infrastructure Operations", "ইনফ্রাস্ট্রাকচার অপারেশনস")}</option>
+              </select>
 
-              {/* Type Dropdown (Takes 2 cols) */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t("All types", "সকল টাইপ")}</option>
-                  <option value="Full-Time">{t("Full-Time", "পূর্ণকালীন")}</option>
-                </select>
-              </div>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-600 rounded-full px-4 py-2 text-[11px] font-bold tracking-tight transition-all focus:outline-none focus:border-brand-blue cursor-pointer"
+              >
+                <option value="All">{t("All types", "সকল টাইপ")}</option>
+                <option value="Full-Time">{t("Full-Time", "পূর্ণকালীন")}</option>
+              </select>
 
-              {/* Location Dropdown (Takes 2 cols) */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedLoc}
-                  onChange={(e) => setSelectedLoc(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t("All locations", "সকল লোকেশন")}</option>
-                  <option value="South Keraniganj">{t("South Keraniganj", "দক্ষিণ কেরানীগঞ্জ")}</option>
-                  <option value="Kadomtoli Office, Dhaka">{t("Kadomtoli Office, Dhaka", "কদমতলী অফিস, ঢাকা")}</option>
-                </select>
-              </div>
+              <select
+                value={selectedLoc}
+                onChange={(e) => setSelectedLoc(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-600 rounded-full px-4 py-2 text-[11px] font-bold tracking-tight transition-all focus:outline-none focus:border-brand-blue cursor-pointer"
+              >
+                <option value="All">{t("All locations", "সকল লোকেশন")}</option>
+                <option value="South Keraniganj">{t("South Keraniganj", "দক্ষিণ কেরানীগঞ্জ")}</option>
+                <option value="Kadomtoli Office, Dhaka">{t("Kadomtoli Office, Dhaka", "কদমতলী অফিস, ঢাকা")}</option>
+              </select>
             </div>
           </div>
 
@@ -307,60 +300,62 @@ export default function Careers() {
               filteredJobs.map((job, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-3xl bg-[#f8fafc] border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col gap-4 text-left relative"
+                  className="p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-100/50 hover:border-slate-200/80 transition-all duration-300 flex flex-col justify-between h-full relative"
                 >
-                  {/* Top Row: Title + Dept & Job Type Badge */}
-                  <div className="flex justify-between items-start w-full gap-4">
-                    <div>
-                      <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
-                      <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
+                  <div className="space-y-4">
+                    {/* Top Row: Title + Dept & Job Type Badge */}
+                    <div className="flex justify-between items-start w-full gap-4">
+                      <div>
+                        <h3 className="text-slate-900 font-bold text-lg tracking-tight leading-snug hover:text-brand-blue transition-colors duration-200">{translateJobTitle(job.title)}</h3>
+                        <p className="text-[10px] text-slate-400 font-mono tracking-wider uppercase mt-1">{translateDept(job.dept)}</p>
+                      </div>
+                      <span className="bg-slate-100 text-slate-700 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded flex-shrink-0">
+                        {translateJobType(job.type)}
+                      </span>
                     </div>
-                    <span className="bg-[#0f2d59] text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full flex-shrink-0">
-                      {translateJobType(job.type)}
-                    </span>
-                  </div>
 
-                  {/* Middle Row: Description */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-                    {translateJobDesc(job.desc)}
-                  </p>
+                    {/* Middle Row: Description */}
+                    <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
+                      {translateJobDesc(job.desc)}
+                    </p>
 
-                  {/* Third Row: Details Info Badges */}
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] sm:text-xs text-slate-500 items-center font-bold">
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {translateLocation(job.location)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      {job.vacancy} {t("vacancy", "vacancy")}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {job.salary}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {t("Deadline:", "Deadline:")} {job.deadline}
-                    </span>
+                    {/* Third Row: Details Info Badges */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-slate-450 items-center font-bold pt-3 border-t border-slate-50">
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {translateLocation(job.location)}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {job.vacancy} {t("vacancy", "vacancy")}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {job.salary}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {t("Deadline:", "Deadline:")} {job.deadline}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Fourth Row: Buttons */}
-                  <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-50">
                     <button
                       onClick={() => setSelectedJob(job)}
-                      className="w-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 py-3 rounded-2xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                      className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors duration-250 cursor-pointer"
                     >
-                      {t("Details", "বিস্তারিত")}
+                      {t("Details & Requirements", "বিস্তারিত ও যোগ্যতা")}
                     </button>
                     <button
                       onClick={() => {
@@ -370,7 +365,7 @@ export default function Careers() {
                           if (input) input.focus();
                         }, 100);
                       }}
-                      className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                      className="bg-brand-blue text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-brand-blue/90 transition-all duration-250 cursor-pointer shadow-sm shadow-brand-blue/10"
                     >
                       {t("Apply Now", "আবেদন করুন")}
                     </button>
@@ -378,7 +373,7 @@ export default function Careers() {
                 </div>
               ))
             ) : (
-              <div className="p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl">
+              <div className="col-span-1 md:col-span-2 p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl">
                 <svg className="w-12 h-12 text-slate-350 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
