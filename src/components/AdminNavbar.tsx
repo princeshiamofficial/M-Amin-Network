@@ -28,7 +28,7 @@ export default function AdminNavbar({
     return "/xlogo.png";
   });
   const [notifications, setNotifications] = useState([
-    { id: 1, title: "New ticket filed by Tanvir Ahmed", time: "5 mins ago", read: false },
+    { id: 1, title: "New ticket filed by Mehan Ahmed", time: "5 mins ago", read: false },
     { id: 2, title: "Payment of ৳1,250 BDT received via bKash", time: "12 mins ago", read: false },
     { id: 3, title: "New job application from Mehedi Hasan", time: "2 hours ago", read: true },
     { id: 4, title: "Complaint registered: Frequent Disconnections", time: "5 hours ago", read: true },

@@ -80,7 +80,7 @@ export default function Portal() {
       uptime: "14 Days, 6 Hours",
     },
     "man-9988": {
-      name: "Tanvir Ahmed",
+      name: "Mehan Ahmed",
       clientId: "MAN-9988",
       planName: "Home Standard",
       speed: "20 Mbps",

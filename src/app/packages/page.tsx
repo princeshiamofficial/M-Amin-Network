@@ -474,8 +474,9 @@ function PackagesContent() {
 
       {/* Order connection Modal */}
       {isModalOpen && selectedPlan && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm">
-          <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-left">
+        <div className="fixed inset-0 z-[100] overflow-y-auto bg-brand-dark/80 backdrop-blur-sm">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-left">
             <button
               onClick={resetForm}
               className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
@@ -504,7 +505,7 @@ function PackagesContent() {
                       required
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder="e.g. Tanvir Ahmed"
+                      placeholder="e.g. Mehan Ahmed"
                       className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
                     />
                   </div>
@@ -640,6 +641,7 @@ function PackagesContent() {
                 </button>
               </div>
             )}
+            </div>
           </div>
         </div>
       )}

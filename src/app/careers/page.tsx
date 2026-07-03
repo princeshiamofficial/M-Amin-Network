@@ -574,8 +574,9 @@ export default function Careers() {
 
         {/* Job Details Popup Modal */}
         {detailsJob && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-slate-800 text-left">
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-slate-800 text-left">
               <button
                 onClick={() => setDetailsJob(null)}
                 className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -661,12 +662,14 @@ export default function Careers() {
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
         {/* Multi-step Application Modal */}
         {selectedJob && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-3xl w-full relative max-h-[90vh] overflow-y-auto text-slate-800">
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-3xl w-full relative text-slate-800">
               <button
                 onClick={resetForm}
                 className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer z-10"
@@ -750,7 +753,7 @@ export default function Careers() {
                             required
                             value={applyForm.nameEn}
                             onChange={handleApplyChange}
-                            placeholder="e.g. Tanvir Ahmed"
+                            placeholder="e.g. Mehan Ahmed"
                             className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
                           />
                         </div>
@@ -762,7 +765,7 @@ export default function Careers() {
                             required
                             value={applyForm.nameBn}
                             onChange={handleApplyChange}
-                            placeholder="উদা. তানভীর আহমেদ"
+                            placeholder="উদা. মিহান আহমেদ"
                             className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
                           />
                         </div>
@@ -1674,7 +1677,8 @@ export default function Careers() {
               )}
             </div>
           </div>
-        )}
+        </div>
+      )}
       </div>
     </div>
   );

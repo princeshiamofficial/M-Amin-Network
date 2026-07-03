@@ -294,15 +294,15 @@ export default function Support() {
 
         {/* Right Column: Open Ticket Form */}
         <div className="lg:col-span-6">
-          <div className="glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl text-left">
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl text-left">
             {!ticketCreated ? (
               <form onSubmit={handleTicketSubmit} className="space-y-5 text-left">
                 <div>
-                  <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
+                  <span className="bg-brand-blue/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-blue/20 uppercase">
                     {t("Support Ticket", "সহায়তা টিকিট")}
                   </span>
-                  <h3 className="text-white font-extrabold text-xl mt-3">{t("Submit Connectivity Issue", "সংযোগের সমস্যা জানান")}</h3>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <h3 className="text-slate-900 font-extrabold text-xl mt-3">{t("Submit Connectivity Issue", "সংযোগের সমস্যা জানান")}</h3>
+                  <p className="text-xs text-slate-600 mt-1">
                     {t(
                       "Describe your issue and register a physical support ticket. Our team resolves all network line issues within 2-4 hours.",
                       "আপনার সমস্যা বর্ণনা করে টিকিট বুক করুন। আমাদের টিম ২-৪ ঘণ্টার মধ্যে সমস্ত ফাইবার লাইন মেরামত সম্পন্ন করে থাকে।"
@@ -313,7 +313,7 @@ export default function Support() {
                 <div className="grid grid-cols-1 gap-4 text-left">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Client ID (Required)", "ক্লায়েন্ট আইডি (আবশ্যক)")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Client ID (Required)", "ক্লায়েন্ট আইডি (আবশ্যক)")}</label>
                       <input
                         type="text"
                         name="clientId"
@@ -321,11 +321,11 @@ export default function Support() {
                         value={ticketForm.clientId}
                         onChange={handleTicketChange}
                         placeholder="e.g. MAN-5432"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan font-mono"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan font-mono"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
                       <input
                         type="text"
                         name="name"
@@ -333,14 +333,14 @@ export default function Support() {
                         value={ticketForm.name}
                         onChange={handleTicketChange}
                         placeholder="e.g. Kamrul Hasan"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -348,28 +348,28 @@ export default function Support() {
                         value={ticketForm.phone}
                         onChange={handleTicketChange}
                         placeholder="e.g. 01707009267"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Issue Category", "সমস্যার ধরন")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Issue Category", "সমস্যার ধরন")}</label>
                       <select
                         name="category"
                         value={ticketForm.category}
                         onChange={handleTicketChange}
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-cyan cursor-pointer text-slate-300"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer"
                       >
-                        <option value="Speed Issue" className="bg-brand-card">{t("Speed Drop / Sluggish Internet", "ধীরগতির ইন্টারনেট / স্পিড কম")}</option>
-                        <option value="Frequent Disconnect" className="bg-brand-card">{t("Frequent Disconnections", "বারবার ডিসকানেক্ট হওয়া")}</option>
-                        <option value="Billing Issue" className="bg-brand-card">{t("Billing / Invoice Query", "বিল বা চালান সংক্রান্ত জিজ্ঞাসা")}</option>
-                        <option value="Physical Cable Broken" className="bg-brand-card">{t("Physical Cable / Fiber line broken", "ফাইবার অপটিক তার কেটে যাওয়া")}</option>
-                        <option value="Other" className="bg-brand-card">{t("Other / Configuration support", "অন্যান্য / রাউটার কনফিগারেশন সাপোর্ট")}</option>
+                        <option value="Speed Issue">{t("Speed Drop / Sluggish Internet", "ধীরগতির ইন্টারনেট / স্পিড কম")}</option>
+                        <option value="Frequent Disconnect">{t("Frequent Disconnections", "বারবার ডিসকানেক্ট হওয়া")}</option>
+                        <option value="Billing Issue">{t("Billing / Invoice Query", "বিল বা চালান সংক্রান্ত জিজ্ঞাসা")}</option>
+                        <option value="Physical Cable Broken">{t("Physical Cable / Fiber line broken", "ফাইবার অপটিক তার কেটে যাওয়া")}</option>
+                        <option value="Other">{t("Other / Configuration support", "অন্যান্য / রাউটার কনফিগারেশন সাপোর্ট")}</option>
                       </select>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Describe the problem", "সমস্যার বিবরণ লিখুন")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Describe the problem", "সমস্যার বিবরণ লিখুন")}</label>
                     <textarea
                       name="desc"
                       required
@@ -377,7 +377,7 @@ export default function Support() {
                       value={ticketForm.desc}
                       onChange={handleTicketChange}
                       placeholder={t("Explain what lights are blinking on your router or when the problem started...", "আপনার রাউটারে কী লাইট জ্বলছে বা সমস্যাটি কখন শুরু হয়েছে তা লিখুন...")}
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
                 </div>
@@ -399,39 +399,39 @@ export default function Support() {
               </form>
             ) : (
               <div className="text-center py-6 space-y-6">
-                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400 animate-pulse">
+                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto text-emerald-600 animate-pulse">
                   <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-bold text-xl">{t("Ticket Created!", "টিকিট তৈরি হয়েছে!")}</h3>
-                  <p className="text-sm text-slate-400">
+                  <h3 className="text-slate-900 font-bold text-xl">{t("Ticket Created!", "টিকিট তৈরি হয়েছে!")}</h3>
+                  <p className="text-sm text-slate-600">
                     {t("We have successfully registered your support request.", "আমরা সফলভাবে আপনার সহায়তার অনুরোধটি নথিভুক্ত করেছি।")}
                   </p>
                 </div>
 
-                <div className="bg-brand-dark border border-brand-border rounded-2xl p-5 max-w-sm mx-auto font-mono text-left">
-                  <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left text-slate-700">
+                  <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
                     <span>{t("Ticket Reference", "টিকিট রেফারেন্স নম্বর")}</span>
-                    <span className="text-brand-cyan font-bold">{ticketCreated}</span>
+                    <span className="text-brand-blue font-bold">{ticketCreated}</span>
                   </div>
-                  <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
+                  <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
                     <span>{t("Client ID", "ক্লায়েন্ট আইডি")}</span>
-                    <span className="text-white font-bold">{ticketForm.clientId}</span>
+                    <span className="text-slate-800 font-bold">{ticketForm.clientId}</span>
                   </div>
-                  <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
+                  <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
                     <span>{t("Issue Type", "সমস্যার ধরন")}</span>
-                    <span className="text-white font-semibold">{translateCategory(ticketForm.category)}</span>
+                    <span className="text-slate-800 font-semibold">{translateCategory(ticketForm.category)}</span>
                   </div>
-                  <div className="flex justify-between text-xs text-slate-400">
+                  <div className="flex justify-between text-xs text-slate-500">
                     <span>{t("Assigned Queue", "নির্ধারিত কর্মীদল")}</span>
-                    <span className="text-emerald-400 font-bold">{t("Keraniganj Field Team", "কেরানীগঞ্জ ফিল্ড টিম")}</span>
+                    <span className="text-emerald-600 font-bold">{t("Keraniganj Field Team", "কেরানীগঞ্জ ফিল্ড টিম")}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+                <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
                   {t(
                     "A support coordinator is reviewing your details. In case a line splicing survey is required, a field worker will carry out inspection within 2 hours.",
                     "একজন কর্মকর্তা আপনার টিকিটটি পর্যালোচনা করছেন। যদি লাইন মেরামতের প্রয়োজন হয়, তবে ২ ঘণ্টার মধ্যে একজন কর্মী আপনার ঠিকানায় উপস্থিত হবেন।"
@@ -440,7 +440,7 @@ export default function Support() {
 
                 <button
                   onClick={resetTicketForm}
-                  className="px-6 py-2 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
+                  className="px-6 py-2 rounded-xl bg-slate-200 hover:bg-slate-350/80 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                 >
                   {t("Create Another Ticket", "আরেকটি টিকিট খুলুন")}
                 </button>

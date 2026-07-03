@@ -311,7 +311,7 @@ export default function AdminDashboardPage() {
   const defaultClaims: Claim[] = [
     {
       id: "CLM-72648-2849",
-      name: "Tanvir Ahmed",
+      name: "Mehan Ahmed",
       phone: "01707009267",
       address: "House 12, Road 4, Kadomtoli, South Keraniganj",
       promoCode: "ANNUAL10",
@@ -335,7 +335,7 @@ export default function AdminDashboardPage() {
     {
       id: "CMP-88239-1102",
       clientId: "SUB-88293",
-      name: "Tanvir Ahmed",
+      name: "Mehan Ahmed",
       phone: "01707009267",
       category: "Billing Dispute",
       desc: "Charged double for the standard premium plan subscription this month without notice.",
@@ -358,7 +358,7 @@ export default function AdminDashboardPage() {
     {
       id: "TCK-19482-9902",
       clientId: "SUB-88293",
-      name: "Tanvir Ahmed",
+      name: "Mehan Ahmed",
       phone: "01707009267",
       category: "Hardware",
       desc: "ONU device power indicator is red, no optical signal received.",
@@ -381,7 +381,7 @@ export default function AdminDashboardPage() {
     {
       id: "TXN-99883-29402",
       clientId: "SUB-88293",
-      name: "Tanvir Ahmed",
+      name: "Mehan Ahmed",
       phone: "01707009267",
       planName: "Premium Home",
       speed: "30 Mbps",
@@ -1353,7 +1353,7 @@ export default function AdminDashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {[
-                      { id: "SUB-88293", name: "Tanvir Ahmed", address: "Kadomtoli, South Keraniganj", signal: "-19.2 dBm (Optimal)" },
+                      { id: "SUB-88293", name: "Mehan Ahmed", address: "Kadomtoli, South Keraniganj", signal: "-19.2 dBm (Optimal)" },
                       { id: "SUB-19402", name: "Sheikh Nabil", address: "Aganagar Central, Dhaka", signal: "-24.1 dBm (Acceptable)" },
                       { id: "SUB-22839", name: "Nasrin Sultana", address: "Bashundhara R/A, South Keraniganj", signal: "-18.5 dBm (Optimal)" },
                     ].map((u) => (
@@ -1515,7 +1515,7 @@ export default function AdminDashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     <tr className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 font-bold font-mono text-brand-blue">SUB-88293 (Tanvir Ahmed)</td>
+                      <td className="py-3.5 font-bold font-mono text-brand-blue">SUB-88293 (Mehan Ahmed)</td>
                       <td className="py-3.5 font-extrabold text-slate-850">Upgrade to Enterprise Splice (100 Mbps)</td>
                       <td className="py-3.5 text-slate-555">Upgrade Speed</td>
                       <td className="py-3.5">

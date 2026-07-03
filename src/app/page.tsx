@@ -546,7 +546,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
             {[
               {
-                name: "Tanvir Ahmed",
+                name: "Mehan Ahmed",
                 role: "Local Freelance Web Developer",
                 comment:
                   "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!",
