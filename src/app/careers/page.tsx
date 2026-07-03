@@ -75,6 +75,11 @@ export default function Careers() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDept, setSelectedDept] = useState("All");
+  const [selectedType, setSelectedType] = useState("All");
+  const [selectedLoc, setSelectedLoc] = useState("All");
+
   const jobs: JobOpening[] = [
     {
       title: "Support Technician (Field Operations)",
@@ -116,6 +121,22 @@ export default function Careers() {
       ],
     },
   ];
+
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch =
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.dept.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.desc.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      translateJobTitle(job.title).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      translateDept(job.dept).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      translateJobDesc(job.desc).toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesDept = selectedDept === "All" || job.dept === selectedDept;
+    const matchesType = selectedType === "All" || job.type === selectedType;
+    const matchesLoc = selectedLoc === "All" || job.location === selectedLoc;
+
+    return matchesSearch && matchesDept && matchesType && matchesLoc;
+  });
 
   const handleApplyChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -174,34 +195,134 @@ export default function Careers() {
       {/* Job Postings Section - White Background */}
       <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-6">{t("Active Open Positions", "চলমান খালি পদসমূহ")}</h2>
           
-          <div className="space-y-6">
-            {jobs.map((job, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
-              >
-                <div className="space-y-2 max-w-2xl text-left">
-                  <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
-                      {translateDept(job.dept)}
-                    </span>
-                    <span className="text-slate-500 font-mono">
-                      {translateLocation(job.location)} | {translateJobType(job.type)}
-                    </span>
-                  </div>
-                  <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
-                </div>
-                <button
-                  onClick={() => setSelectedJob(job)}
-                  className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
-                >
-                  {t("View & Apply", "বিস্তারিত ও আবেদন")}
-                </button>
+          {/* Open Positions Section Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <h2 className="text-xl font-extrabold text-slate-900">{t("Open Positions", "উন্মুক্ত পদসমূহ")}</h2>
+              <p className="text-xs text-slate-500 mt-1 font-semibold">
+                {filteredJobs.length} {filteredJobs.length === 1 ? t("position found", "টি পদ পাওয়া গেছে") : t("positions found", "টি পদ পাওয়া গেছে")}
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedJob({
+                title: "General Application",
+                dept: "General Support",
+                location: "Any Location",
+                type: "Full-Time",
+                desc: "Submit your credentials for future openings if you don't find a matching active posting.",
+                requirements: [
+                  "Strong willingness to work with M Amin Network team",
+                  "Self-motivated & proactive learning attitude",
+                  "Basic telecommunication or computer knowledge"
+                ]
+              })}
+              className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
+            >
+              <span>{t("General Application", "সাধারণ আবেদন")}</span>
+              <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Search & Filter Bar Row */}
+          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-4 sm:p-5 mb-8 flex flex-col gap-4 shadow-inner">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+              {/* Search Input (Takes 5 cols) */}
+              <div className="lg:col-span-5 relative flex items-center">
+                <span className="absolute left-3.5 text-slate-400">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder={t("Search title, department, keyword...", "পদবি, বিভাগ বা কিওয়ার্ড অনুসন্ধান করুন...")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-brand-blue transition-all"
+                />
               </div>
-            ))}
+
+              {/* Department Dropdown (Takes 3 cols) */}
+              <div className="lg:col-span-3">
+                <select
+                  value={selectedDept}
+                  onChange={(e) => setSelectedDept(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t("All departments", "সকল বিভাগ")}</option>
+                  <option value="Network Engineering & Maintenance">{t("Engineering & Maintenance", "ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ")}</option>
+                  <option value="Helpdesk Operations">{t("Helpdesk Operations", "হেল্পডেস্ক অপারেশনস")}</option>
+                  <option value="Infrastructure Operations">{t("Infrastructure Operations", "ইনফ্রাস্ট্রাকচার অপারেশনস")}</option>
+                </select>
+              </div>
+
+              {/* Type Dropdown (Takes 2 cols) */}
+              <div className="lg:col-span-2">
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t("All types", "সকল টাইপ")}</option>
+                  <option value="Full-Time">{t("Full-Time", "পূর্ণকালীন")}</option>
+                </select>
+              </div>
+
+              {/* Location Dropdown (Takes 2 cols) */}
+              <div className="lg:col-span-2">
+                <select
+                  value={selectedLoc}
+                  onChange={(e) => setSelectedLoc(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t("All locations", "সকল লোকেশন")}</option>
+                  <option value="South Keraniganj">{t("South Keraniganj", "দক্ষিণ কেরানীগঞ্জ")}</option>
+                  <option value="Kadomtoli Office, Dhaka">{t("Kadomtoli Office, Dhaka", "কদমতলী অফিস, ঢাকা")}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Job Postings Grid */}
+          <div className="space-y-6">
+            {filteredJobs.length > 0 ? (
+              filteredJobs.map((job, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
+                >
+                  <div className="space-y-2 max-w-2xl text-left">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
+                        {translateDept(job.dept)}
+                      </span>
+                      <span className="text-slate-500 font-mono">
+                        {translateLocation(job.location)} | {translateJobType(job.type)}
+                      </span>
+                    </div>
+                    <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
+                    <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedJob(job)}
+                    className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
+                  >
+                    {t("View & Apply", "বিস্তারিত ও আবেদন")}
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl">
+                <svg className="w-12 h-12 text-slate-350 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-slate-700 font-bold text-sm">{t("No open positions match your search criteria", "কোনো পদের সন্ধান মেলেনি")}</h3>
+                <p className="text-xs text-slate-400 mt-1">{t("Try adjusting your keywords or clearing selected filters.", "অনুগ্রহ করে আপনার ফিল্টার বা কিওয়ার্ড পরিবর্তন করে পুনরায় চেষ্টা করুন।")}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -222,7 +343,7 @@ export default function Careers() {
                 <form onSubmit={handleApplySubmit} className="space-y-5 text-left">
                   <div>
                     <h3 className="text-slate-900 font-bold text-xl">{t("Apply for Job", "চাকরির জন্য আবেদন")}</h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-slate-505 mt-1">
                       {t("Position:", "পদবি:")} <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>
                     </p>
                   </div>
@@ -341,7 +462,7 @@ export default function Careers() {
                     </p>
                   </div>
 
-                  <p className="text-xs text-slate-550 leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed">
                     {t(
                       "Our HR coordinator will review your submitted resume link and credentials. In case your background aligns with our operational needs, our office team will contact you for an in-person interview at our Kadomtoli branch.",
                       "আমাদের এইচআর টিম আপনার জীবনবৃত্তান্ত এবং দক্ষতা পর্যালোচনা করবেন। আপনার প্রোফাইলটি যদি আমাদের চাহিদার সাথে মিলে যায়, তবে পরবর্তী সাক্ষাৎকারের জন্য আমাদের অফিস টিম সরাসরি কদমতলী শাখা থেকে যোগাযোগ করবেন।"
