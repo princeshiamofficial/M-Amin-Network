@@ -495,13 +495,7 @@ export default function AdminDashboard() {
             </button>
           </div>
 
-          {/* Demo helper banner */}
-          <div className="bg-[#f0f9ff]/70 border border-[#e0f2fe] rounded-2xl p-3.5 text-xs text-slate-500 leading-normal text-center shadow-inner">
-            <span className="text-[10px] bg-brand-cyan/20 text-[#0369a1] font-bold tracking-wider px-2 py-0.5 rounded border border-[#bae6fd] uppercase inline-block mb-1.5 font-mono">Demo credentials</span>
-            <div className="font-mono text-[11px] text-slate-700 font-bold">
-              User: <span className="text-[#0369a1]">admin</span> | Pass: <span className="text-[#0369a1]">admin123</span>
-            </div>
-          </div>
+
         </div>
       </div>
     );
