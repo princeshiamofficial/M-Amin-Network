@@ -371,7 +371,7 @@ export default function Careers() {
                           if (input) input.focus();
                         }, 100);
                       }}
-                      className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                      className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                     >
                       {t("Apply Now", "আবেদন করুন")}
                     </button>
@@ -470,7 +470,7 @@ export default function Careers() {
                       setSelectedJob(detailsJob);
                       setDetailsJob(null);
                     }}
-                    className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                    className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                   >
                     {t("Apply Now", "আবেদন করুন")}
                   </button>
