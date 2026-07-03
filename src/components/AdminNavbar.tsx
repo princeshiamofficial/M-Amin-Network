@@ -20,6 +20,13 @@ export default function AdminNavbar({
 }: AdminNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("m_amin_avatar_url") || "/ea82d2834f062ee8d73d8b99aebe0d31.jpg";
+    }
+    return "/ea82d2834f062ee8d73d8b99aebe0d31.jpg";
+  });
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New ticket filed by Tanvir Ahmed", time: "5 mins ago", read: false },
     { id: 2, title: "Payment of ৳1,250 BDT received via bKash", time: "12 mins ago", read: false },
@@ -109,7 +116,7 @@ export default function AdminNavbar({
             className="relative w-8 h-8 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
           >
             <img
-              src="/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
+              src={avatarUrl}
               alt="Admin Profile"
               className="w-full h-full object-cover"
             />
@@ -129,7 +136,7 @@ export default function AdminNavbar({
                 <button
                   onClick={() => {
                     setIsAvatarOpen(false);
-                    alert("Profile Edit under construction");
+                    setIsEditProfileOpen(true);
                   }}
                   className="w-full px-4 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold"
                 >
@@ -180,6 +187,120 @@ export default function AdminNavbar({
           )}
         </div>
       </div>
+
+      {/* Edit Profile Modal Dialog Box */}
+      {isEditProfileOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
+          <div className="bg-[#f1f5f9] border border-slate-200/60 rounded-[24px] shadow-2xl w-[450px] p-6 flex flex-col relative text-slate-800">
+            {/* Close icon */}
+            <button
+              onClick={() => setIsEditProfileOpen(false)}
+              className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Header section */}
+            <div className="flex gap-3 items-start mb-6">
+              <div className="w-9 h-9 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 mt-0.5">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <h3 className="text-base font-extrabold text-slate-800 tracking-wide">Edit Profile</h3>
+                <p className="text-[11px] text-[#64748b] font-medium leading-relaxed">
+                  Update your profile picture. Current email: <span className="font-mono text-slate-500">admin@maminnetwork.com</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Profile Picture section */}
+            <div className="space-y-4">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">Profile Picture</label>
+              
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
+                  <img
+                    src={avatarUrl}
+                    alt="Current Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <button
+                  onClick={() => {
+                    const input = document.getElementById("avatar-upload-input");
+                    input?.click();
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200/80 hover:border-slate-350 hover:bg-slate-50/50 rounded-xl text-xs font-bold text-slate-700 transition-all cursor-pointer shadow-sm"
+                >
+                  <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  <span>Upload Image</span>
+                </button>
+
+                <input
+                  id="avatar-upload-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        if (typeof reader.result === "string") {
+                          setAvatarUrl(reader.result);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Remove current avatar */}
+              <button
+                onClick={() => {
+                  setAvatarUrl("/ea82d2834f062ee8d73d8b99aebe0d31.jpg");
+                }}
+                className="flex items-center gap-2 text-xs font-bold text-red-500 hover:text-red-655 transition-colors cursor-pointer mt-1"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Remove Current Avatar</span>
+              </button>
+
+              <p className="text-[10px] text-slate-400 font-medium">Upload an image (JPG, PNG, GIF). Max 2MB.</p>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="flex justify-end gap-3 mt-8 border-t border-slate-200/50 pt-4">
+              <button
+                onClick={() => setIsEditProfileOpen(false)}
+                className="px-5 py-2.5 bg-white border border-slate-200/80 hover:bg-slate-50/70 hover:border-slate-300 rounded-xl text-xs font-bold text-slate-600 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.setItem("m_amin_avatar_url", avatarUrl);
+                  setIsEditProfileOpen(false);
+                  alert("Profile avatar updated successfully!");
+                }}
+                className="px-5 py-2.5 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm shadow-orange-500/10"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
