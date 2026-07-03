@@ -129,13 +129,13 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
   return (
     <aside className="w-72 flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto">
       {/* Branded Header Area */}
-      <div className="flex items-center gap-3 px-5 py-6 border-b border-[#1e293b]/65 bg-white">
-        <div className="w-9 h-9 rounded-lg bg-[#071120]/5 flex items-center justify-center p-1.5 shadow-sm flex-shrink-0 border border-slate-100">
-          <img src="/Xlogo.png" alt="M Amin Network" className="w-full h-full object-contain" />
+      <div className="flex items-center gap-3 px-5 py-6 border-b border-[#1e293b]/65">
+        <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0">
+          <img src="/logo.png" alt="M Amin Network" className="w-full h-full object-contain" />
         </div>
         <div>
-          <h2 className="text-slate-900 font-black text-sm tracking-tight leading-tight">M Amin Network</h2>
-          <span className="text-[10px] text-slate-500 font-extrabold block mt-0.5 tracking-wider uppercase">Admin Panel</span>
+          <h2 className="text-white font-extrabold text-sm tracking-tight leading-tight">M Amin Network</h2>
+          <span className="text-[10px] text-slate-500 font-bold block mt-0.5 tracking-wider uppercase">Admin Panel</span>
         </div>
       </div>
 
