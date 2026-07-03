@@ -1291,8 +1291,7 @@ export default function AdminDashboardPage() {
                   {snapshotCards.map((card, idx) => (
                     <div
                       key={idx}
-                      onClick={() => router.push(card.route)}
-                      className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg active:scale-95 sm:active:scale-100 bg-white p-2.5 sm:p-4 rounded-2xl sm:rounded-lg border-slate-100 sm:border border-solid shadow-sm sm:shadow-md cursor-pointer flex flex-col justify-center min-h-[84px]"
+                      className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg bg-white p-2.5 sm:p-4 rounded-2xl sm:rounded-lg border-slate-100 sm:border border-solid shadow-sm sm:shadow-md flex flex-col justify-center min-h-[84px]"
                     >
                       <div className={`absolute inset-0 opacity-[0.03] sm:hidden transition-opacity group-active:opacity-[0.06] ${card.color.bg}`} />
                       <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left relative z-10">
