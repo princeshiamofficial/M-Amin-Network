@@ -368,7 +368,7 @@ export default function AdminDashboard() {
 
           <div className="text-center space-y-1.5">
             <h2 className="text-[#111113] font-black text-[22px] tracking-tight text-center w-full block">Sign in with email</h2>
-            <p className="text-slate-500 text-xs font-medium leading-relaxed px-2 text-center w-full block">
+            <p className="text-[#4b5563] text-xs font-medium leading-relaxed px-2 text-center w-full block">
               Make a new doc to bring your words, data, and teams together. For free
             </p>
           </div>
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Email"
-                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-450 focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
             </div>
 
@@ -413,7 +413,7 @@ export default function AdminDashboard() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-11 py-3 text-sm text-slate-800 placeholder-slate-450 focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-11 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
               {/* Toggle visibility */}
               <button
@@ -442,7 +442,7 @@ export default function AdminDashboard() {
                   e.preventDefault();
                   alert("Demo: Password reset is not configured for admin profiles.");
                 }}
-                className="text-[11px] text-slate-500 font-bold hover:text-slate-800 transition-colors hover:underline"
+                className="text-[11px] text-[#4b5563] font-bold hover:text-[#111113] transition-colors hover:underline"
               >
                 Forgot password?
               </a>
@@ -460,7 +460,7 @@ export default function AdminDashboard() {
           {/* Divider */}
           <div className="flex items-center justify-center gap-3 my-1">
             <div className="border-t border-slate-200 flex-grow" />
-            <span className="text-[10px] text-slate-400 font-extrabold tracking-wider uppercase font-sans">Or sign in with</span>
+            <span className="text-[10px] text-[#8c94a0] font-black tracking-widest uppercase font-sans">Or sign in with</span>
             <div className="border-t border-slate-200 flex-grow" />
           </div>
 
