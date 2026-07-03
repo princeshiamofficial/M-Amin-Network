@@ -1091,6 +1091,150 @@ export default function AdminDashboardPage() {
   // Calculate totals
   const totalRevenue = payments.reduce((acc, curr) => acc + curr.amount, 0);
 
+  const snapshotCards = [
+    {
+      label: "Customers",
+      value: countCustomers,
+      color: {
+        bg: "bg-blue-50 dark:bg-blue-500/20",
+        text: "text-blue-600 dark:text-blue-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      route: "/admin/customers",
+    },
+    {
+      label: "Applications",
+      value: countApplications,
+      color: {
+        bg: "bg-indigo-50 dark:bg-indigo-500/20",
+        text: "text-indigo-600 dark:text-indigo-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+      route: "/admin/job-applications",
+    },
+    {
+      label: "Bills",
+      value: countBills,
+      color: {
+        bg: "bg-emerald-50 dark:bg-emerald-500/20",
+        text: "text-emerald-600 dark:text-emerald-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 8h6m-6 2h6m-6 2h6m-6 2h6M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
+        </svg>
+      ),
+      route: "/admin/bills",
+    },
+    {
+      label: "Tickets",
+      value: countTickets,
+      color: {
+        bg: "bg-rose-50 dark:bg-rose-500/20",
+        text: "text-rose-600 dark:text-rose-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      route: "/admin/tickets",
+    },
+    {
+      label: "Today's Complaints",
+      value: countComplaintsToday,
+      color: {
+        bg: "bg-amber-100 dark:bg-amber-500/20",
+        text: "text-amber-600 dark:text-amber-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      ),
+      route: "/admin/complaints",
+    },
+    {
+      label: "All Complaints",
+      value: countAllComplaints,
+      color: {
+        bg: "bg-red-50 dark:bg-red-500/20",
+        text: "text-red-600 dark:text-red-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      ),
+      route: "/admin/complaints",
+    },
+    {
+      label: "Contact Inbox",
+      value: countContactInbox,
+      color: {
+        bg: "bg-violet-50 dark:bg-violet-500/20",
+        text: "text-violet-600 dark:text-violet-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
+      route: "/admin/contact-messages",
+    },
+    {
+      label: "Packages",
+      value: countPackages,
+      color: {
+        bg: "bg-pink-50 dark:bg-pink-500/20",
+        text: "text-pink-600 dark:text-pink-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      ),
+      route: "/admin/packages",
+    },
+    {
+      label: "Offers",
+      value: countOffers,
+      color: {
+        bg: "bg-teal-50 dark:bg-teal-500/20",
+        text: "text-teal-600 dark:text-teal-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+      route: "/admin/offers",
+    },
+    {
+      label: "Coverage Areas",
+      value: countCoverageAreas,
+      color: {
+        bg: "bg-cyan-50 dark:bg-cyan-500/20",
+        text: "text-cyan-600 dark:text-cyan-400",
+      },
+      icon: (className: string) => (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className={className}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+      route: "/admin/coverage-areas",
+    },
+  ];
+
   return (
     <div className="w-full space-y-6">
       {/* 1. OVERVIEW VIEW */}
@@ -1120,9 +1264,7 @@ export default function AdminDashboardPage() {
                   </svg>
                 </h1>
                 <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here's an overview of your broadband network operations and subscriber analytics.</p>
-              </div>
-
-              {/* Today's Snapshot Section */}
+              </div>              {/* Today's Snapshot Section */}
               <div className="space-y-4 pt-4">
                 <div className="text-left">
                   <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Overview</h2>
@@ -1130,173 +1272,32 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {/* Card 1: Customers */}
-                  <div
-                    onClick={() => router.push("/admin/customers")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Customers</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
+                  {snapshotCards.map((card, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => router.push(card.route)}
+                      className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg active:scale-95 sm:active:scale-100 bg-white p-2.5 sm:p-4 rounded-2xl sm:rounded-lg border-slate-100 sm:border border-solid shadow-sm sm:shadow-md cursor-pointer flex flex-col justify-center min-h-[84px]"
+                    >
+                      <div className={`absolute inset-0 opacity-[0.03] sm:hidden transition-opacity group-active:opacity-[0.06] ${card.color.bg}`} />
+                      <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left relative z-10">
+                        <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm sm:shadow-none ${card.color.bg}`}>
+                          {card.icon(`h-5 w-5 sm:h-6 sm:w-6 ${card.color.text}`)}
+                        </div>
+                        <div className="flex-1 min-w-0 w-full">
+                          <p className="text-[10px] sm:text-sm font-bold sm:font-medium uppercase sm:capitalize tracking-widest sm:tracking-normal text-slate-400 sm:text-slate-500 truncate px-1">
+                            {card.label}
+                          </p>
+                          <p className="text-[15px] sm:text-2xl font-bold text-slate-800 font-mono mt-0.5 sm:mt-0 px-1 leading-tight">
+                            {card.value}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="absolute -right-4 -bottom-4 opacity-[0.04] sm:hidden pointer-events-none transform rotate-12 scale-110">
+                        {card.icon(`h-20 w-20 ${card.color.text}`)}
+                      </div>
+                      <div className={`absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent sm:hidden`} />
                     </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countCustomers}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">Active</span>
-                    </div>
-                  </div>
-
-                  {/* Card 2: Applications */}
-                  <div
-                    onClick={() => router.push("/admin/job-applications")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Applications</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countApplications}</span>
-                      <span className="text-[11px] text-emerald-600 font-bold block mt-1">{countApplications} new</span>
-                    </div>
-                  </div>
-
-                  {/* Card 3: Bills */}
-                  <div
-                    onClick={() => router.push("/admin/bills")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Bills</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 8h6m-6 2h6m-6 2h6m-6 2h6M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countBills}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">{countBills > 1 ? `${countBills - 1} unpaid` : "0 unpaid"}</span>
-                    </div>
-                  </div>
-
-                  {/* Card 4: Tickets */}
-                  <div
-                    onClick={() => router.push("/admin/tickets")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Tickets</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countTickets}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">{countTickets} open</span>
-                    </div>
-                  </div>
-
-                  {/* Card 5: Today's Complaints */}
-                  <div
-                    onClick={() => router.push("/admin/complaints")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Today's Complaints</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countComplaintsToday}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">Filed today</span>
-                    </div>
-                  </div>
-
-                  {/* Card 6: All Complaints */}
-                  <div
-                    onClick={() => router.push("/admin/complaints")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">All Complaints</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countAllComplaints}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">1 open</span>
-                    </div>
-                  </div>
-
-                  {/* Card 7: Contact Inbox */}
-                  <div
-                    onClick={() => router.push("/admin/contact-messages")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Contact Inbox</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countContactInbox}</span>
-                      <span className="text-[11px] text-slate-500 font-medium block mt-1">0 new</span>
-                    </div>
-                  </div>
-
-                  {/* Card 8: Packages */}
-                  <div
-                    onClick={() => router.push("/admin/packages")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Packages</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countPackages}</span>
-                    </div>
-                  </div>
-
-                  {/* Card 9: Offers */}
-                  <div
-                    onClick={() => router.push("/admin/offers")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-550 font-bold uppercase tracking-wider">Offers</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countOffers}</span>
-                    </div>
-                  </div>
-
-                  {/* Card 10: Coverage Areas */}
-                  <div
-                    onClick={() => router.push("/admin/coverage-areas")}
-                    className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <span className="text-[11px] text-slate-555 font-bold uppercase tracking-wider">Coverage Areas</span>
-                      <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <span className="text-3xl font-extrabold text-slate-900 block">{countCoverageAreas}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
