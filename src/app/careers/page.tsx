@@ -146,55 +146,63 @@ export default function Careers() {
   };
 
   return (
-    <div className="w-full bg-white text-slate-800 -mt-24 pt-24 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow text-left">
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="bg-brand-blue/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-blue/20 uppercase">
+    <div className="w-full min-h-screen flex flex-col relative">
+      {/* Background glow (decorative top background) */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
+
+      {/* Header Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full text-left relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-6">
+          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
             {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
           </span>
-          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mt-3 text-center w-full block">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
             {t("Careers & ", "ক্যারিয়ার ও ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-cyan">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
               {t("Opportunities", "সুযোগসমূহ")}
             </span>
           </h1>
-          <p className="text-slate-600 mt-4 text-sm sm:text-base leading-relaxed text-center">
+          <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
             {t(
               "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
               "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
             )}
           </p>
         </div>
+      </div>
 
-        {/* Job Postings Grid */}
-        <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Job Postings Section - White Background */}
+      <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-xl font-extrabold text-slate-900 mb-6">{t("Active Open Positions", "চলমান খালি পদসমূহ")}</h2>
-          {jobs.map((job, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
-            >
-              <div className="space-y-2 max-w-2xl text-left">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
-                    {translateDept(job.dept)}
-                  </span>
-                  <span className="text-slate-500 font-mono">
-                    {translateLocation(job.location)} | {translateJobType(job.type)}
-                  </span>
-                </div>
-                <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
-              </div>
-              <button
-                onClick={() => setSelectedJob(job)}
-                className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
+          
+          <div className="space-y-6">
+            {jobs.map((job, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
               >
-                {t("View & Apply", "বিস্তারিত ও আবেদন")}
-              </button>
-            </div>
-          ))}
+                <div className="space-y-2 max-w-2xl text-left">
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
+                      {translateDept(job.dept)}
+                    </span>
+                    <span className="text-slate-500 font-mono">
+                      {translateLocation(job.location)} | {translateJobType(job.type)}
+                    </span>
+                  </div>
+                  <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedJob(job)}
+                  className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
+                >
+                  {t("View & Apply", "বিস্তারিত ও আবেদন")}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Apply Modal */}
@@ -333,7 +341,7 @@ export default function Careers() {
                     </p>
                   </div>
 
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-550 leading-relaxed">
                     {t(
                       "Our HR coordinator will review your submitted resume link and credentials. In case your background aligns with our operational needs, our office team will contact you for an in-person interview at our Kadomtoli branch.",
                       "আমাদের এইচআর টিম আপনার জীবনবৃত্তান্ত এবং দক্ষতা পর্যালোচনা করবেন। আপনার প্রোফাইলটি যদি আমাদের চাহিদার সাথে মিলে যায়, তবে পরবর্তী সাক্ষাৎকারের জন্য আমাদের অফিস টিম সরাসরি কদমতলী শাখা থেকে যোগাযোগ করবেন।"
