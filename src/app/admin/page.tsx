@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
@@ -17,9 +19,10 @@ export default function AdminDashboard() {
       const auth = sessionStorage.getItem("m_amin_admin_authenticated");
       if (auth === "true") {
         setIsAuthenticated(true);
+        router.push("/admin/dashboard");
       }
     }
-  }, []);
+  }, [router]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +31,7 @@ export default function AdminDashboard() {
       setIsAuthenticated(true);
       setLoginError("");
       sessionStorage.setItem("m_amin_admin_authenticated", "true");
+      router.push("/admin/dashboard");
     } else {
       setLoginError("Invalid username or password. Please try again.");
     }
