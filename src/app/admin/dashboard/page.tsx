@@ -361,13 +361,16 @@ export default function AdminDashboardPage() {
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} onSignOut={handleLogout} />
 
       {/* Main Dynamic View Content Pane */}
-      <main className="flex-1 h-screen overflow-y-auto bg-brand-dark/20 p-8 space-y-6">
+      <main className="flex-1 h-screen flex flex-col bg-brand-dark/20 overflow-hidden">
         {/* Reusable Admin Top Navbar Component */}
         <AdminNavbar
           activeTab={activeTab}
           onResetDatabase={resetToDefaults}
           onSignOut={handleLogout}
         />
+
+        {/* Scrollable content container */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-6">
 
         {/* 1. OVERVIEW VIEW */}
         {activeTab === "Overview" && (
@@ -1095,6 +1098,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         )}
+        </div>
       </main>
     </div>
   );
