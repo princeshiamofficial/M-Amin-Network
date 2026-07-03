@@ -151,8 +151,26 @@ export default function Support() {
     e.preventDefault();
     setIsSubmitting(true);
     setTimeout(() => {
+      const generatedRef = `TKT-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      try {
+        const tickets = JSON.parse(localStorage.getItem("m_amin_tickets") || "[]");
+        const newTicket = {
+          id: generatedRef,
+          clientId: ticketForm.clientId,
+          name: ticketForm.name,
+          phone: ticketForm.phone,
+          category: ticketForm.category,
+          desc: ticketForm.desc,
+          date: new Date().toLocaleString(),
+          status: "Open"
+        };
+        tickets.push(newTicket);
+        localStorage.setItem("m_amin_tickets", JSON.stringify(tickets));
+      } catch (err) {
+        console.error("Error saving ticket:", err);
+      }
       setIsSubmitting(false);
-      setTicketCreated(`TKT-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`);
+      setTicketCreated(generatedRef);
     }, 1500);
   };
 

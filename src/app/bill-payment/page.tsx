@@ -108,9 +108,28 @@ export default function BillPayment() {
 
     setPaying(true);
     setTimeout(() => {
+      const generatedTxn = `TXN-${selectedGateway.toUpperCase()}-${Date.now().toString().slice(-6)}-${Math.floor(10000 + Math.random() * 90000)}`;
+      try {
+        const payments = JSON.parse(localStorage.getItem("m_amin_payments") || "[]");
+        const newPayment = {
+          id: generatedTxn,
+          clientId: billDetails.clientId,
+          name: billDetails.name,
+          phone: billDetails.phone,
+          planName: billDetails.planName,
+          speed: billDetails.speed,
+          amount: billDetails.dueBill,
+          gateway: selectedGateway,
+          date: new Date().toLocaleString()
+        };
+        payments.push(newPayment);
+        localStorage.setItem("m_amin_payments", JSON.stringify(payments));
+      } catch (err) {
+        console.error("Error saving payment:", err);
+      }
       setPaying(false);
       setPaymentSuccess(true);
-      setTxnId(`TXN-${selectedGateway.toUpperCase()}-${Date.now().toString().slice(-6)}-${Math.floor(10000 + Math.random() * 90000)}`);
+      setTxnId(generatedTxn);
       
       // Update local state to reflect paid status
       setBillDetails((prev) => (prev ? { ...prev, dueBill: 0 } : null));

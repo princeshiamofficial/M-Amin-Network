@@ -31,9 +31,27 @@ export default function Complain() {
     e.preventDefault();
     setSubmitting(true);
     setTimeout(() => {
+      const generatedRef = `CMP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      try {
+        const complaints = JSON.parse(localStorage.getItem("m_amin_complaints") || "[]");
+        const newComplaint = {
+          id: generatedRef,
+          clientId: form.clientId,
+          name: form.name,
+          phone: form.phone,
+          category: form.category,
+          desc: form.desc,
+          date: new Date().toLocaleString(),
+          status: "Pending"
+        };
+        complaints.push(newComplaint);
+        localStorage.setItem("m_amin_complaints", JSON.stringify(complaints));
+      } catch (err) {
+        console.error("Error saving complaint:", err);
+      }
       setSubmitting(false);
       setSuccess(true);
-      setComplaintRef(`CMP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`);
+      setComplaintRef(generatedRef);
     }, 1500);
   };
 

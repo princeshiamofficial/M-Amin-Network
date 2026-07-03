@@ -161,6 +161,23 @@ export default function Offers() {
     if (!selectedPromo) return;
     setSubmittingClaim(true);
     setTimeout(() => {
+      try {
+        const claims = JSON.parse(localStorage.getItem("m_amin_claims") || "[]");
+        const newClaim = {
+          id: `CLM-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
+          name: claimForm.name,
+          phone: claimForm.phone,
+          address: claimForm.address,
+          promoCode: selectedPromo.code,
+          promoTitle: selectedPromo.title,
+          date: new Date().toLocaleString(),
+          status: "Pending"
+        };
+        claims.push(newClaim);
+        localStorage.setItem("m_amin_claims", JSON.stringify(claims));
+      } catch (err) {
+        console.error("Error saving claim:", err);
+      }
       setSubmittingClaim(false);
       setClaimSuccess(true);
     }, 1500);
