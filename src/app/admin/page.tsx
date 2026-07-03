@@ -321,12 +321,12 @@ export default function AdminDashboard() {
       <div
         className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
         style={{
-          backgroundImage: "linear-gradient(to bottom, rgba(215, 238, 255, 0.75), rgba(255, 255, 255, 0.9)), url('/sky_cloud_bg.png')"
+          backgroundImage: "linear-gradient(to bottom, rgba(10, 11, 16, 0.82), rgba(20, 24, 33, 0.95)), url('/sky_cloud_bg.png')"
         }}
       >
         {/* Background Decorative Arcs */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <svg className="w-[850px] h-[850px] text-white opacity-45" viewBox="0 0 800 800" fill="none" stroke="currentColor" strokeWidth="1.2">
+          <svg className="w-[850px] h-[850px] text-brand-cyan opacity-25" viewBox="0 0 800 800" fill="none" stroke="currentColor" strokeWidth="1.2">
             <circle cx="400" cy="400" r="160" strokeOpacity="0.3" />
             <circle cx="400" cy="400" r="260" strokeOpacity="0.22" />
             <circle cx="400" cy="400" r="360" strokeOpacity="0.15" />
@@ -336,20 +336,20 @@ export default function AdminDashboard() {
 
         {/* Top-left logo: Ebolt */}
         <div className="absolute top-6 left-6 flex items-center z-20">
-          <div className="w-8 h-8 rounded-lg bg-[#111113] flex items-center justify-center text-white mr-2.5 shadow-sm">
-            <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="white" strokeWidth="2.5" />
-              <circle cx="12" cy="12" r="2.5" fill="white" />
+          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center mr-2.5 shadow-sm">
+            <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
+              <rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="black" strokeWidth="2.5" />
+              <circle cx="12" cy="12" r="2.5" fill="black" />
             </svg>
           </div>
-          <span className="font-extrabold text-sm tracking-tight text-[#111113]">Ebolt</span>
+          <span className="font-extrabold text-sm tracking-tight text-white">Ebolt</span>
         </div>
 
         {/* Back Link (Top Right) */}
         <div className="absolute top-6 right-6 z-20">
           <Link
             href="/"
-            className="flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-[#111113] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
           >
             ← Back to Website
           </Link>
