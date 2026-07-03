@@ -235,36 +235,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
-      {/* Top Banner Dashboard Nav */}
-      <div className="bg-brand-card/90 border-b border-brand-border/60 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan flex items-center justify-center font-bold text-brand-dark text-lg shadow-lg shadow-brand-cyan/10">
-              AM
-            </div>
-            <div>
-              <h1 className="text-lg font-black tracking-wider text-white">M-AMIN NETWORK</h1>
-              <span className="text-[10px] text-brand-cyan font-mono font-bold tracking-widest uppercase">
-                Operations Administration Console
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="px-4 py-2 border border-brand-border hover:border-brand-cyan/40 hover:bg-brand-border/40 text-slate-355 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
-            >
-              ← Back to Website
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 border border-red-500/30 hover:border-red-500/60 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-xs font-bold transition-all cursor-pointer"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Main empty workspace placeholder */}
       <div className="flex-grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
