@@ -19,6 +19,7 @@ export default function AdminNavbar({
   onToggleSidebar,
 }: AdminNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New ticket filed by Tanvir Ahmed", time: "5 mins ago", read: false },
     { id: 2, title: "Payment of ৳1,250 BDT received via bKash", time: "12 mins ago", read: false },
@@ -100,18 +101,56 @@ export default function AdminNavbar({
           )}
         </div>
 
-        {/* User avatar portrait with orange border ring */}
-        <button
-          onClick={onSignOut}
-          title="Sign Out Session"
-          className="relative w-8 h-8 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
-        >
-          <img
-            src="/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
-            alt="Admin Profile"
-            className="w-full h-full object-cover"
-          />
-        </button>
+        {/* User avatar portrait with orange border ring & dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setIsAvatarOpen(!isAvatarOpen)}
+            title="Admin Options"
+            className="relative w-8 h-8 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
+          >
+            <img
+              src="/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
+              alt="Admin Profile"
+              className="w-full h-full object-cover"
+            />
+          </button>
+
+          {isAvatarOpen && (
+            <div className="absolute right-0 top-9 mt-1 w-48 bg-white border border-slate-200/90 rounded-[20px] shadow-xl z-50 py-2.5 text-xs">
+              <div className="px-4 py-1.5 border-b border-slate-100 flex flex-col gap-0.5">
+                <span className="font-extrabold text-slate-800">Super Admin</span>
+                <span className="text-[10px] text-slate-400 font-mono">admin@maminnetwork.com</span>
+              </div>
+              <div className="py-1">
+                <Link
+                  href="/admin/dashboard"
+                  onClick={() => setIsAvatarOpen(false)}
+                  className="w-full px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left block"
+                >
+                  Dashboard Home
+                </Link>
+                <Link
+                  href="/admin/settings"
+                  onClick={() => setIsAvatarOpen(false)}
+                  className="w-full px-4 py-2 hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left block"
+                >
+                  System Settings
+                </Link>
+              </div>
+              <div className="border-t border-slate-100 mt-1 pt-1.5">
+                <button
+                  onClick={() => {
+                    setIsAvatarOpen(false);
+                    onSignOut();
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-655 hover:text-red-700 font-bold transition-colors cursor-pointer"
+                >
+                  Sign Out Session
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
