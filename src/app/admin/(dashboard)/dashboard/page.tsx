@@ -1017,6 +1017,19 @@ export default function AdminDashboardPage() {
       {/* 1. OVERVIEW VIEW */}
           {activeTab === "Overview" && (
             <div className="space-y-6">
+              {/* Welcome Banner */}
+              <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-[#111827] via-[#7c2d12] to-[#ea580c] p-6 sm:p-8 text-white shadow-sm flex flex-col justify-center min-h-[110px]">
+                <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
+                <div className="relative z-10">
+                  <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
+                    Welcome Mehan <span className="inline-block animate-pulse">👋</span>
+                  </h2>
+                  <p className="text-slate-200/90 text-xs sm:text-sm mt-1 font-medium">
+                    Here's an overview of your business activity.
+                  </p>
+                </div>
+              </div>
+
               {/* KPI Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
