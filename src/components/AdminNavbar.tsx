@@ -19,7 +19,7 @@ export default function AdminNavbar({
   onToggleSidebar,
 }: AdminNavbarProps) {
   return (
-    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-6 select-none">
+    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-6 select-none relative z-10 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
       {/* Left side: Active Page Title */}
       <div className="flex items-center gap-3">
         <h2 className="text-slate-800 font-extrabold text-sm tracking-wide uppercase">
