@@ -14,7 +14,10 @@ import {
   Mail,
   Package,
   Tag,
-  MapPin
+  MapPin,
+  Briefcase,
+  Zap,
+  LayoutGrid
 } from "lucide-react";
 
 interface Claim {
@@ -1211,6 +1214,87 @@ export default function AdminDashboardPage() {
       {/* 1. OVERVIEW VIEW */}
           {activeTab === "Overview" && (
             <div className="space-y-6">
+              {/* Quick actions Section */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-slate-800 tracking-tight">Quick actions</h2>
+                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-all shadow-sm active:scale-95">
+                    <span>+ Add</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {[
+                    { label: "Packages", path: "/admin/packages", route: "/admin/packages", icon: Package },
+                    { label: "Offers", path: "/admin/offers", route: "/admin/offers", icon: Tag, showActions: true },
+                    { label: "Coverage Areas", path: "/admin/coverage", route: "/admin/coverage-areas", icon: MapPin },
+                    { label: "Application", path: "/admin/applications", route: "/admin/applications", icon: FileText },
+                    { label: "Customer", path: "/admin/customers", route: "/admin/customers", icon: Users },
+                    { label: "Bills", path: "/admin/bills", route: "/admin/bills", icon: Receipt },
+                    { label: "Contact Messages", path: "/admin/contact", route: "/admin/contact-messages", icon: Mail },
+                    { label: "Complaints", path: "/admin/complaints", route: "/admin/complaints", icon: AlertTriangle, showActions: true, dimActions: true },
+                    { label: "Jobs Add", path: "/admin/jobs", route: "/admin/jobs", icon: Briefcase },
+                    { label: "Job Applications", path: "/admin/job-applications", route: "/admin/job-applications", icon: FileText },
+                    { label: "Site Content", path: "/admin/content", route: "/admin/site-content", icon: Zap },
+                    { label: "Home Sections", path: "/admin/home-sections", route: "/admin/home-sections", icon: LayoutGrid },
+                  ].map((action, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => router.push(action.route)}
+                      className="group bg-white border border-slate-100/90 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all cursor-pointer relative"
+                    >
+                      <div className="flex items-center">
+                        {/* Grab handle */}
+                        <div className="text-slate-300 mr-2 group-hover:text-slate-400 transition-colors">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm10-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                        </div>
+                        {/* Icon in circle */}
+                        <div className="p-2 bg-teal-50 dark:bg-teal-500/10 rounded-full mr-3 text-teal-600 dark:text-teal-400">
+                          <action.icon className="h-5 w-5" />
+                        </div>
+                        {/* Title and path */}
+                        <div className="text-left">
+                          <span className="font-bold text-slate-800 text-sm block group-hover:text-brand-blue transition-colors">{action.label}</span>
+                          <span className="text-[10px] text-slate-400 font-mono block mt-0.5">{action.path}</span>
+                        </div>
+                      </div>
+
+                      {/* Hover action buttons on right */}
+                      {action.showActions && (
+                        <div className={`flex gap-1.5 items-center ${action.dimActions ? "opacity-30 group-hover:opacity-100 transition-opacity" : ""}`}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(action.route);
+                            }}
+                            className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition-colors"
+                            title="Edit"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              alert("Remove shortcut requested");
+                            }}
+                            className="p-1 hover:bg-red-55 rounded text-red-500 hover:text-red-700 transition-colors"
+                            title="Remove"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Welcome Banner */}
               {/* Welcome Banner */}
               <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[hsl(var(--primary))] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
