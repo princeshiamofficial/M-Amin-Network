@@ -216,7 +216,7 @@ export default function Home() {
               )}
             </p>
 
-             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-4">
+             <div className="flex flex-row gap-3 justify-center lg:justify-start mt-4">
               <Link
                 href="/packages"
                 className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2 cursor-pointer"
