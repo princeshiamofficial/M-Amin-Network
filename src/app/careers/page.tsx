@@ -10,6 +10,9 @@ interface JobOpening {
   type: string;
   desc: string;
   requirements: string[];
+  vacancy: string;
+  salary: string;
+  deadline: string;
 }
 
 export default function Careers() {
@@ -37,7 +40,7 @@ export default function Careers() {
   };
 
   const translateJobType = (type: string) => {
-    if (type === "Full-Time") return t("Full-Time", "পূর্ণকালীন");
+    if (type === "Full-Time") return t("Full Time", "ফুল টাইম");
     return type;
   };
 
@@ -93,6 +96,9 @@ export default function Careers() {
         "Willingness to travel around South Keraniganj neighborhoods",
         "Excellent communication and problem-solving skills",
       ],
+      vacancy: "5",
+      salary: "14,000-20,000",
+      deadline: "2026-08-15"
     },
     {
       title: "Customer Support Executive",
@@ -106,6 +112,9 @@ export default function Careers() {
         "Basic computer knowledge (Google Sheets, ticket dashboards)",
         "Ability to speak fluent Bangla (English is a plus)",
       ],
+      vacancy: "3",
+      salary: "15,000-22,000",
+      deadline: "2026-08-20"
     },
     {
       title: "Junior Network Engineer",
@@ -119,6 +128,9 @@ export default function Careers() {
         "Understanding of IPv4 subnetting and dynamic BGP routing",
         "Willingness to work in rotating shifts",
       ],
+      vacancy: "2",
+      salary: "18,000-25,000",
+      deadline: "2026-08-25"
     },
   ];
 
@@ -215,7 +227,10 @@ export default function Careers() {
                   "Strong willingness to work with M Amin Network team",
                   "Self-motivated & proactive learning attitude",
                   "Basic telecommunication or computer knowledge"
-                ]
+                ],
+                vacancy: "N/A",
+                salary: "Negotiable",
+                deadline: "Open Always"
               })}
               className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
             >
@@ -292,26 +307,74 @@ export default function Careers() {
               filteredJobs.map((job, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
+                  className="p-6 rounded-3xl bg-[#f8fafc] border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col gap-4 text-left relative"
                 >
-                  <div className="space-y-2 max-w-2xl text-left">
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
-                        {translateDept(job.dept)}
-                      </span>
-                      <span className="text-slate-500 font-mono">
-                        {translateLocation(job.location)} | {translateJobType(job.type)}
-                      </span>
+                  {/* Top Row: Title + Dept & Job Type Badge */}
+                  <div className="flex justify-between items-start w-full gap-4">
+                    <div>
+                      <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
+                      <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
                     </div>
-                    <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
+                    <span className="bg-[#0f2d59] text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full flex-shrink-0">
+                      {translateJobType(job.type)}
+                    </span>
                   </div>
-                  <button
-                    onClick={() => setSelectedJob(job)}
-                    className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
-                  >
-                    {t("View & Apply", "বিস্তারিত ও আবেদন")}
-                  </button>
+
+                  {/* Middle Row: Description */}
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                    {translateJobDesc(job.desc)}
+                  </p>
+
+                  {/* Third Row: Details Info Badges */}
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-[11px] sm:text-xs text-slate-500 items-center font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {translateLocation(job.location)}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      {job.vacancy} {t("vacancy", "vacancy")}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {job.salary}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {t("Deadline:", "Deadline:")} {job.deadline}
+                    </span>
+                  </div>
+
+                  {/* Fourth Row: Buttons */}
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    <button
+                      onClick={() => setSelectedJob(job)}
+                      className="w-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 py-3 rounded-2xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                    >
+                      {t("Details", "বিস্তারিত")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedJob(job);
+                        setTimeout(() => {
+                          const input = document.getElementById("apply-name-input");
+                          if (input) input.focus();
+                        }, 100);
+                      }}
+                      className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                    >
+                      {t("Apply Now", "আবেদন করুন")}
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -365,6 +428,7 @@ export default function Careers() {
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
                       <input
+                        id="apply-name-input"
                         type="text"
                         name="name"
                         required
