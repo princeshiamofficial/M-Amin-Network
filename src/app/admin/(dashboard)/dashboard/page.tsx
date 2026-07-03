@@ -515,12 +515,14 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     setMounted(true);
     const hour = new Date().getHours();
-    if (hour < 12) {
+    if (hour >= 5 && hour < 12) {
       setGreeting("Good Morning");
-    } else if (hour < 17) {
+    } else if (hour >= 12 && hour < 17) {
       setGreeting("Good Afternoon");
-    } else {
+    } else if (hour >= 17 && hour < 22) {
       setGreeting("Good Evening");
+    } else {
+      setGreeting("Good Night");
     }
     if (typeof window !== "undefined") {
       const auth = sessionStorage.getItem("m_amin_admin_authenticated");
