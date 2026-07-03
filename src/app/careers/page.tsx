@@ -146,213 +146,212 @@ export default function Careers() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow text-left">
-      {/* Background glow */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
-
-      {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-          {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
-        </span>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-          {t("Careers & ", "ক্যারিয়ার ও ")}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-            {t("Opportunities", "সুযোগসমূহ")}
+    <div className="w-full bg-white text-slate-800 -mt-24 pt-24 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow text-left">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="bg-brand-blue/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-blue/20 uppercase">
+            {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
           </span>
-        </h1>
-        <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-          {t(
-            "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
-            "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
-          )}
-        </p>
-      </div>
-
-      {/* Job Postings Grid */}
-      <div className="space-y-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-bold text-white mb-6">{t("Active Open Positions", "চলমান খালি পদসমূহ")}</h2>
-        {jobs.map((job, idx) => (
-          <div
-            key={idx}
-            className="p-6 rounded-3xl bg-brand-card/40 border border-brand-border/60 glass-panel shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
-          >
-            <div className="space-y-2 max-w-2xl text-left">
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/20 px-2 py-0.5 rounded font-semibold">
-                  {translateDept(job.dept)}
-                </span>
-                <span className="text-slate-500 font-mono">
-                  {translateLocation(job.location)} | {translateJobType(job.type)}
-                </span>
-              </div>
-              <h3 className="text-white font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{translateJobDesc(job.desc)}</p>
-            </div>
-            <button
-              onClick={() => setSelectedJob(job)}
-              className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer"
-            >
-              {t("View & Apply", "বিস্তারিত ও আবেদন")}
-            </button>
-          </div>
-        ))}
-      </div>
-
-      {/* Apply Modal */}
-      {selectedJob && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm">
-          <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={resetForm}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            {!success ? (
-              <form onSubmit={handleApplySubmit} className="space-y-5 text-left">
-                <div>
-                  <h3 className="text-white font-bold text-xl">{t("Apply for Job", "চাকরির জন্য আবেদন")}</h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    {t("Position:", "পদবি:")} <span className="text-brand-cyan font-bold">{translateJobTitle(selectedJob.title)}</span>
-                  </p>
-                </div>
-
-                {/* Job requirements details list */}
-                <div className="bg-brand-dark border border-brand-border/60 rounded-2xl p-4 space-y-2 text-left">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">{t("Candidate Requirements:", "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:")}</h4>
-                  <ul className="space-y-1">
-                    {selectedJob.requirements.map((req, reqIdx) => (
-                      <li key={reqIdx} className="text-xs text-slate-300 flex items-start gap-1.5 leading-relaxed text-left">
-                        <span className="text-brand-cyan font-bold">•</span>
-                        <span>{translateRequirement(req)}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="space-y-4 text-left">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={applyForm.name}
-                      onChange={handleApplyChange}
-                      placeholder="e.g. Tanvir Ahmed"
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        required
-                        value={applyForm.phone}
-                        onChange={handleApplyChange}
-                        placeholder="e.g. 01707009267"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
-                      <input
-                        type="email"
-                        name="email"
-                        required
-                        value={applyForm.email}
-                        onChange={handleApplyChange}
-                        placeholder="e.g. name@example.com"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Experience Level", "অভিজ্ঞতার লেভেল")}</label>
-                      <select
-                        name="experience"
-                        value={applyForm.experience}
-                        onChange={handleApplyChange}
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:border-brand-cyan cursor-pointer"
-                      >
-                        <option value="Entry Level" className="bg-brand-card">{t("Entry Level (No experience)", "এন্ট্রি লেভেল (অভিজ্ঞতা প্রয়োজন নেই)")}</option>
-                        <option value="1-2 Years" className="bg-brand-card">{t("1 - 2 Years Experience", "১ - ২ বছরের অভিজ্ঞতা")}</option>
-                        <option value="3+ Years" className="bg-brand-card">{t("3+ Years Experience", "৩+ বছরের অভিজ্ঞতা")}</option>
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Resume Link (Google Drive / DropBox)", "জীবনবৃত্তান্ত (লিংক)")}</label>
-                      <input
-                        type="url"
-                        name="resumeLink"
-                        required
-                        value={applyForm.resumeLink}
-                        onChange={handleApplyChange}
-                        placeholder="e.g. https://drive.google.com/..."
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
-                >
-                  {submitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t("Submitting Application...", "আবেদন জমা দেওয়া হচ্ছে...")}
-                    </>
-                  ) : (
-                    t("Submit Application", "আবেদন জমা দিন")
-                  )}
-                </button>
-              </form>
-            ) : (
-              <div className="text-center py-6 space-y-6">
-                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400 animate-pulse">
-                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-white font-bold text-xl">{t("Application Received!", "আবেদনপত্র গৃহীত হয়েছে!")}</h3>
-                  <p className="text-sm text-slate-400">
-                    {t("Thank you", "ধন্যবাদ")}, <span className="text-slate-200 font-bold">{applyForm.name}</span>. {t("We have saved your application request for", "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:")}{" "}
-                    <span className="text-brand-cyan font-bold">{translateJobTitle(selectedJob.title)}</span>।
-                  </p>
-                </div>
-
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  {t(
-                    "Our HR coordinator will review your submitted resume link and credentials. In case your background aligns with our operational needs, our office team will contact you for an in-person interview at our Kadomtoli branch.",
-                    "আমাদের এইচআর টিম আপনার জীবনবৃত্তান্ত এবং দক্ষতা পর্যালোচনা করবেন। আপনার প্রোফাইলটি যদি আমাদের চাহিদার সাথে মিলে যায়, তবে পরবর্তী সাক্ষাৎকারের জন্য আপনার সাথে সরাসরি কদমতলী অফিস থেকে যোগাযোগ করা হবে।"
-                  )}
-                </p>
-
-                <button
-                  onClick={resetForm}
-                  className="px-6 py-2.5 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
-                >
-                  {t("Close Window", "উইন্ডো বন্ধ করুন")}
-                </button>
-              </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mt-3 text-center w-full block">
+            {t("Careers & ", "ক্যারিয়ার ও ")}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-cyan">
+              {t("Opportunities", "সুযোগসমূহ")}
+            </span>
+          </h1>
+          <p className="text-slate-600 mt-4 text-sm sm:text-base leading-relaxed text-center">
+            {t(
+              "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
+              "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
             )}
-          </div>
+          </p>
         </div>
-      )}
+
+        {/* Job Postings Grid */}
+        <div className="space-y-6 max-w-4xl mx-auto">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-6">{t("Active Open Positions", "চলমান খালি পদসমূহ")}</h2>
+          {jobs.map((job, idx) => (
+            <div
+              key={idx}
+              className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-left"
+            >
+              <div className="space-y-2 max-w-2xl text-left">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className="bg-cyan-50 text-cyan-700 border border-cyan-100 px-2 py-0.5 rounded font-semibold font-mono">
+                    {translateDept(job.dept)}
+                  </span>
+                  <span className="text-slate-500 font-mono">
+                    {translateLocation(job.location)} | {translateJobType(job.type)}
+                  </span>
+                </div>
+                <h3 className="text-slate-900 font-extrabold text-lg tracking-tight">{translateJobTitle(job.title)}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">{translateJobDesc(job.desc)}</p>
+              </div>
+              <button
+                onClick={() => setSelectedJob(job)}
+                className="bg-brand-blue text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors flex-shrink-0 cursor-pointer shadow-sm"
+              >
+                {t("View & Apply", "বিস্তারিত ও আবেদন")}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Apply Modal */}
+        {selectedJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-slate-800">
+              <button
+                onClick={resetForm}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              {!success ? (
+                <form onSubmit={handleApplySubmit} className="space-y-5 text-left">
+                  <div>
+                    <h3 className="text-slate-900 font-bold text-xl">{t("Apply for Job", "চাকরির জন্য আবেদন")}</h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {t("Position:", "পদবি:")} <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>
+                    </p>
+                  </div>
+
+                  {/* Job requirements details list */}
+                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-2 text-left">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Candidate Requirements:", "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:")}</h4>
+                    <ul className="space-y-1">
+                      {selectedJob.requirements.map((req, reqIdx) => (
+                        <li key={reqIdx} className="text-xs text-slate-600 flex items-start gap-1.5 leading-relaxed text-left">
+                          <span className="text-brand-blue font-bold">•</span>
+                          <span>{translateRequirement(req)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="space-y-4 text-left">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        value={applyForm.name}
+                        onChange={handleApplyChange}
+                        placeholder="e.g. Tanvir Ahmed"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          required
+                          value={applyForm.phone}
+                          onChange={handleApplyChange}
+                          placeholder="e.g. 01707009267"
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
+                        <input
+                          type="email"
+                          name="email"
+                          required
+                          value={applyForm.email}
+                          onChange={handleApplyChange}
+                          placeholder="e.g. name@example.com"
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Experience Level", "অভিজ্ঞতার লেভেল")}</label>
+                        <select
+                          name="experience"
+                          value={applyForm.experience}
+                          onChange={handleApplyChange}
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-brand-blue focus:bg-white transition-all cursor-pointer"
+                        >
+                          <option value="Entry Level" className="bg-white">{t("Entry Level (No experience)", "এন্ট্রি লেভেল (অভিজ্ঞতা প্রয়োজন নেই)")}</option>
+                          <option value="1-2 Years" className="bg-white">{t("1 - 2 Years Experience", "১ - ২ বছরের অভিজ্ঞতা")}</option>
+                          <option value="3+ Years" className="bg-white">{t("3+ Years Experience", "৩+ বছরের অভিজ্ঞতা")}</option>
+                        </select>
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Resume Link (Google Drive / DropBox)", "জীবনবৃত্তান্ত (লিংক)")}</label>
+                        <input
+                          type="url"
+                          name="resumeLink"
+                          required
+                          value={applyForm.resumeLink}
+                          onChange={handleApplyChange}
+                          placeholder="e.g. https://drive.google.com/..."
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-white py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  >
+                    {submitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        {t("Submitting Application...", "আবেদন জমা দেওয়া হচ্ছে...")}
+                      </>
+                    ) : (
+                      t("Submit Application", "আবেদন জমা দিন")
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <div className="text-center py-6 space-y-6">
+                  <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-500 animate-pulse">
+                    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-slate-900 font-bold text-xl">{t("Application Received!", "আবেদনপত্র গৃহীত হয়েছে!")}</h3>
+                    <p className="text-sm text-slate-600">
+                      {t("Thank you", "ধন্যবাদ")}, <span className="text-slate-800 font-bold">{applyForm.name}</span>. {t("We have saved your application request for", "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:")}{" "}
+                      <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>।
+                    </p>
+                  </div>
+
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {t(
+                      "Our HR coordinator will review your submitted resume link and credentials. In case your background aligns with our operational needs, our office team will contact you for an in-person interview at our Kadomtoli branch.",
+                      "আমাদের এইচআর টিম আপনার জীবনবৃত্তান্ত এবং দক্ষতা পর্যালোচনা করবেন। আপনার প্রোফাইলটি যদি আমাদের চাহিদার সাথে মিলে যায়, তবে পরবর্তী সাক্ষাৎকারের জন্য আমাদের অফিস টিম সরাসরি কদমতলী শাখা থেকে যোগাযোগ করবেন।"
+                    )}
+                  </p>
+
+                  <button
+                    onClick={resetForm}
+                    className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    {t("Close Window", "উইন্ডো বন্ধ করুন")}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
