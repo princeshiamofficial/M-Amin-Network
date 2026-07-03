@@ -29,26 +29,21 @@ export default function AdminNavbar({
 
       {/* Right side: Reference icons and avatar */}
       <div className="flex items-center gap-6">
-        {/* Dialogue button */}
+        {/* Clear Cache button */}
         <button
-          onClick={() => alert("Dialogue Panel opened.")}
+          onClick={() => {
+            if (confirm("Are you sure you want to clear the mock database cache? This will reset all records.")) {
+              localStorage.clear();
+              alert("Cache cleared successfully! Reloading...");
+              window.location.reload();
+            }
+          }}
           className="flex items-center gap-2 text-[13px] font-semibold text-[#1e293b] hover:text-[#0f172a] transition-colors cursor-pointer"
         >
           <svg className="w-[18px] h-[18px] text-[#475569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          <span>Dialogue</span>
-        </button>
-
-        {/* Case Study button */}
-        <button
-          onClick={() => alert("Case Study documentation loaded.")}
-          className="flex items-center gap-2 text-[13px] font-semibold text-[#1e293b] hover:text-[#0f172a] transition-colors cursor-pointer"
-        >
-          <svg className="w-[18px] h-[18px] text-[#475569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          <span>Case Study</span>
+          <span>Clear Cache</span>
         </button>
 
         {/* Refresh / database reset trigger */}
