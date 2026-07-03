@@ -237,3 +237,18 @@ body {
 .theme-light .bg-brand-dark\/95 a:hover {
   color: #00f0ff !important;
 }
+
+/* Admin Sidebar Custom Scrollbar styling without cyan hover */
+.admin-sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.admin-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+.admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #1e293b;
+}

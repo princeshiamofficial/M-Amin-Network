@@ -317,7 +317,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
       </div>
 
       {/* Navigation Group Items List */}
-      <div className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
+      <div className="flex-1 px-3 py-4 space-y-5 overflow-y-auto admin-sidebar-scroll">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1.5">
             {!isCollapsed && (
