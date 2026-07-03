@@ -68,6 +68,7 @@ export default function Careers() {
   };
 
   const [selectedJob, setSelectedJob] = useState<JobOpening | null>(null);
+  const [detailsJob, setDetailsJob] = useState<JobOpening | null>(null);
   const [applyForm, setApplyForm] = useState({
     name: "",
     phone: "",
@@ -302,7 +303,6 @@ export default function Careers() {
           </div>
 
           {/* Job Postings Grid */}
-          {/* Job Postings Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredJobs.length > 0 ? (
               filteredJobs.map((job, idx) => (
@@ -358,7 +358,7 @@ export default function Careers() {
                   {/* Fourth Row: Buttons */}
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <button
-                      onClick={() => setSelectedJob(job)}
+                      onClick={() => setDetailsJob(job)}
                       className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-2xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                     >
                       {t("Details", "বিস্তারিত")}
@@ -380,7 +380,7 @@ export default function Careers() {
               ))
             ) : (
               <div className="p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl col-span-1 md:col-span-2">
-                <svg className="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                <svg className="w-12 h-12 text-slate-350 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h3 className="text-slate-700 font-bold text-sm">{t("No open positions match your search criteria", "কোনো পদের সন্ধান মেলেনি")}</h3>
@@ -389,6 +389,96 @@ export default function Careers() {
             )}
           </div>
         </div>
+
+        {/* Job Details Popup Modal */}
+        {detailsJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-slate-800 text-left">
+              <button
+                onClick={() => setDetailsJob(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <div className="space-y-6">
+                <div>
+                  <span className="bg-[#0b2545] text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    {translateJobType(detailsJob.type)}
+                  </span>
+                  <h3 className="text-slate-900 font-extrabold text-2xl tracking-tight leading-tight mt-3">
+                    {translateJobTitle(detailsJob.title)}
+                  </h3>
+                  <p className="text-sm text-brand-blue font-bold tracking-wide uppercase mt-1">
+                    {translateDept(detailsJob.dept)}
+                  </p>
+                </div>
+
+                {/* Info List */}
+                <div className="grid grid-cols-2 gap-4 border-y border-slate-100 py-4 text-xs font-semibold text-slate-600">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-normal">{t("Location:", "অবস্থান:")}</span>
+                    <span>{translateLocation(detailsJob.location)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-normal">{t("Vacancy:", "শূন্যপদ:")}</span>
+                    <span>{detailsJob.vacancy} {t("position", "টি")}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-normal">{t("Salary:", "বেতন:")}</span>
+                    <span>{detailsJob.salary} BDT</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-normal">{t("Deadline:", "শেষ সময়:")}</span>
+                    <span>{detailsJob.deadline}</span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">{t("About the Role:", "ভূমিকা সম্পর্কে:")}</h4>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    {translateJobDesc(detailsJob.desc)}
+                  </p>
+                </div>
+
+                {/* Candidate Requirements */}
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Candidate Requirements:", "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:")}</h4>
+                  <ul className="space-y-2">
+                    {detailsJob.requirements.map((req, reqIdx) => (
+                      <li key={reqIdx} className="text-xs text-slate-600 flex items-start gap-1.5 leading-relaxed">
+                        <span className="text-brand-blue font-bold">•</span>
+                        <span>{translateRequirement(req)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Actions */}
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    onClick={() => setDetailsJob(null)}
+                    className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center"
+                  >
+                    {t("Close", "বন্ধ করুন")}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedJob(detailsJob);
+                      setDetailsJob(null);
+                    }}
+                    className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                  >
+                    {t("Apply Now", "আবেদন করুন")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Apply Modal */}
         {selectedJob && (
@@ -410,19 +500,6 @@ export default function Careers() {
                     <p className="text-xs text-slate-505 mt-1">
                       {t("Position:", "পদবি:")} <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>
                     </p>
-                  </div>
-
-                  {/* Job requirements details list */}
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-2 text-left">
-                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Candidate Requirements:", "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:")}</h4>
-                    <ul className="space-y-1">
-                      {selectedJob.requirements.map((req, reqIdx) => (
-                        <li key={reqIdx} className="text-xs text-slate-600 flex items-start gap-1.5 leading-relaxed text-left">
-                          <span className="text-brand-blue font-bold">•</span>
-                          <span>{translateRequirement(req)}</span>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
 
                   <div className="space-y-4 text-left">
