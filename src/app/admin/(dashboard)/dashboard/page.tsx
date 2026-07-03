@@ -1307,54 +1307,6 @@ export default function AdminDashboardPage() {
 
 
 
-              {/* Quick overview lists */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Claims summary */}
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 space-y-4 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-slate-900 font-bold text-sm">Recent Deal Claims</h3>
-                    <button onClick={() => router.push("/admin/offers")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
-                  </div>
-                  <div className="divide-y divide-slate-100 max-h-40 overflow-y-auto pr-1">
-                    {claims.length === 0 ? (
-                      <p className="text-xs text-slate-400 text-center py-4">No active deal claims.</p>
-                    ) : (
-                      claims.slice(0, 3).map((c) => (
-                        <div key={c.id} className="py-2.5 flex justify-between items-center gap-2">
-                          <div>
-                            <span className="text-xs font-bold text-slate-800 block">{c.name}</span>
-                            <span className="text-[10px] text-slate-500 font-mono">{c.phone}</span>
-                          </div>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600">{c.status}</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
-                {/* Tickets summary */}
-                <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 space-y-4 shadow-sm">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-slate-900 font-bold text-sm">Active Support Tickets</h3>
-                    <button onClick={() => router.push("/admin/tickets")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
-                  </div>
-                  <div className="divide-y divide-slate-100 max-h-40 overflow-y-auto pr-1">
-                    {tickets.length === 0 ? (
-                      <p className="text-xs text-slate-400 text-center py-4">No active support tickets.</p>
-                    ) : (
-                      tickets.slice(0, 3).map((t) => (
-                        <div key={t.id} className="py-2.5 flex justify-between items-center gap-2">
-                          <div>
-                            <span className="text-xs font-bold text-slate-855 block">{t.name} ({t.clientId})</span>
-                            <span className="text-[10px] text-slate-505">{t.category}</span>
-                          </div>
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600">{t.status}</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
 
               {/* Quick actions Section */}
               <div className="space-y-4 pt-4">
