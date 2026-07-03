@@ -1031,7 +1031,7 @@ export default function AdminDashboardPage() {
               {/* Welcome Banner */}
               <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[hsl(var(--primary))] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
                 <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
-                  {greeting} Mehan
+                  {greeting}, Mehan
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
