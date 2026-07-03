@@ -251,18 +251,18 @@ export default function AdminDashboardPage() {
 
   // Quick actions reordering state
   const [quickActionsList, setQuickActionsList] = useState([
-    { label: "Packages", path: "/admin/packages", route: "/admin/packages", icon: Package },
-    { label: "Offers", path: "/admin/offers", route: "/admin/offers", icon: Tag, showActions: true },
-    { label: "Coverage Areas", path: "/admin/coverage", route: "/admin/coverage-areas", icon: MapPin },
-    { label: "Application", path: "/admin/applications", route: "/admin/applications", icon: FileText },
-    { label: "Customer", path: "/admin/customers", route: "/admin/customers", icon: Users },
-    { label: "Bills", path: "/admin/bills", route: "/admin/bills", icon: Receipt },
-    { label: "Contact Messages", path: "/admin/contact", route: "/admin/contact-messages", icon: Mail },
-    { label: "Complaints", path: "/admin/complaints", route: "/admin/complaints", icon: AlertTriangle, showActions: true, dimActions: true },
-    { label: "Jobs Add", path: "/admin/jobs", route: "/admin/jobs", icon: Briefcase },
-    { label: "Job Applications", path: "/admin/job-applications", route: "/admin/job-applications", icon: FileText },
-    { label: "Site Content", path: "/admin/content", route: "/admin/site-content", icon: Zap },
-    { label: "Home Sections", path: "/admin/home-sections", route: "/admin/home-sections", icon: LayoutGrid },
+    { label: "Packages",        path: "/admin/packages",        route: "/admin/packages",        icon: Package,      bg: "bg-blue-50",    text: "text-blue-600" },
+    { label: "Offers",          path: "/admin/offers",          route: "/admin/offers",          icon: Tag,          bg: "bg-violet-50",  text: "text-violet-600", showActions: true },
+    { label: "Coverage Areas",  path: "/admin/coverage",        route: "/admin/coverage-areas",  icon: MapPin,       bg: "bg-emerald-50", text: "text-emerald-600" },
+    { label: "Application",     path: "/admin/applications",    route: "/admin/applications",    icon: FileText,     bg: "bg-amber-50",   text: "text-amber-600" },
+    { label: "Customer",        path: "/admin/customers",        route: "/admin/customers",        icon: Users,        bg: "bg-sky-50",     text: "text-sky-600" },
+    { label: "Bills",           path: "/admin/bills",           route: "/admin/bills",           icon: Receipt,      bg: "bg-teal-50",    text: "text-teal-600" },
+    { label: "Contact Messages",path: "/admin/contact",         route: "/admin/contact-messages", icon: Mail,         bg: "bg-pink-50",    text: "text-pink-600" },
+    { label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      icon: AlertTriangle, bg: "bg-red-50",    text: "text-red-500", showActions: true, dimActions: true },
+    { label: "Jobs Add",        path: "/admin/jobs",            route: "/admin/jobs",            icon: Briefcase,    bg: "bg-orange-50",  text: "text-orange-600" },
+    { label: "Job Applications",path: "/admin/job-applications",route: "/admin/job-applications",icon: FileText,     bg: "bg-indigo-50",  text: "text-indigo-600" },
+    { label: "Site Content",    path: "/admin/content",         route: "/admin/site-content",    icon: Zap,          bg: "bg-yellow-50",  text: "text-yellow-600" },
+    { label: "Home Sections",   path: "/admin/home-sections",   route: "/admin/home-sections",   icon: LayoutGrid,   bg: "bg-fuchsia-50", text: "text-fuchsia-600" },
   ]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
@@ -1348,7 +1348,7 @@ export default function AdminDashboardPage() {
                           </svg>
                         </div>
                         {/* Icon in circle */}
-                        <div className="p-2 bg-teal-50 dark:bg-teal-500/10 rounded-full mr-3 text-teal-600 dark:text-teal-400">
+                        <div className={`p-2 ${action.bg} rounded-full mr-3 ${action.text}`}>
                           <action.icon className="h-5 w-5" />
                         </div>
                         {/* Title and path */}
