@@ -297,46 +297,50 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </button>
       </div>
 
-      <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-y-auto">
-        <AdminNavbar
-          activeTab={activeTab}
-          onResetDatabase={handleResetDatabase}
-          onSignOut={handleLogout}
-          isSidebarCollapsed={isSidebarCollapsed}
-          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        />
-
-        <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-8 py-3 flex flex-wrap items-center gap-2">
-          <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none">My shortcuts:</span>
-          <div className="flex flex-wrap gap-2 items-center">
-            {shortcutsList.map((item) => {
-              const isActive = pathname === item.href || (item.name === "Packages" && pathname === "/admin/packages");
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => router.push(item.href)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 bg-white border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
-                    isActive
-                      ? "border-brand-blue bg-blue-50/20 text-brand-blue"
-                      : "border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-50/50"
-                  }`}
-                >
-                  {item.icon}
-                  <span>{item.name}</span>
-                </button>
-              );
-            })}
-            <button
-              onClick={() => router.push("/admin/my-shortcuts")}
-              className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/70 border border-slate-200/80 rounded-full text-[11px] font-bold text-slate-600 transition-all cursor-pointer"
-            >
-              <span>+ Manage</span>
-            </button>
-          </div>
+      <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
+        <div className="sticky top-0 z-30 bg-white shadow-sm flex-shrink-0">
+          <AdminNavbar
+            activeTab={activeTab}
+            onResetDatabase={handleResetDatabase}
+            onSignOut={handleLogout}
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
         </div>
 
-        <div className="flex-1 p-8 space-y-6 bg-[#f8fafc]">
-          {children}
+        <div className="flex-1 overflow-y-auto flex flex-col">
+          <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-8 py-3 flex flex-wrap items-center gap-2">
+            <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none">My shortcuts:</span>
+            <div className="flex flex-wrap gap-2 items-center">
+              {shortcutsList.map((item) => {
+                const isActive = pathname === item.href || (item.name === "Packages" && pathname === "/admin/packages");
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => router.push(item.href)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 bg-white border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
+                      isActive
+                        ? "border-brand-blue bg-blue-50/20 text-brand-blue"
+                        : "border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-50/50"
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => router.push("/admin/my-shortcuts")}
+                className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/70 border border-slate-200/80 rounded-full text-[11px] font-bold text-slate-600 transition-all cursor-pointer"
+              >
+                <span>+ Manage</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-grow p-8 space-y-6 bg-[#f8fafc]">
+            {children}
+          </div>
         </div>
       </main>
     </div>
