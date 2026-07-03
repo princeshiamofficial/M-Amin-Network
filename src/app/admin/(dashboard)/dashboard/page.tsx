@@ -232,6 +232,7 @@ export default function AdminDashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [greeting, setGreeting] = useState("Welcome");
 
   // Database states
   const [claims, setClaims] = useState<Claim[]>([]);
@@ -513,6 +514,14 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     setMounted(true);
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting("Good Morning");
+    } else if (hour < 17) {
+      setGreeting("Good Afternoon");
+    } else {
+      setGreeting("Good Evening");
+    }
     if (typeof window !== "undefined") {
       const auth = sessionStorage.getItem("m_amin_admin_authenticated");
       if (auth !== "true") {
@@ -1020,7 +1029,7 @@ export default function AdminDashboardPage() {
               {/* Welcome Banner */}
               <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[hsl(var(--primary))] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
                 <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
-                  Welcome Mehan
+                  {greeting} Mehan
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
