@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 
 interface AdminNavbarProps {
@@ -18,6 +18,15 @@ export default function AdminNavbar({
   isSidebarCollapsed = false,
   onToggleSidebar,
 }: AdminNavbarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: "New ticket filed by Tanvir Ahmed", time: "5 mins ago", read: false },
+    { id: 2, title: "Payment of ৳1,250 BDT received via bKash", time: "12 mins ago", read: false },
+    { id: 3, title: "New job application from Mehedi Hasan", time: "2 hours ago", read: true },
+    { id: 4, title: "Complaint registered: Frequent Disconnections", time: "5 hours ago", read: true },
+  ]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
   return (
     <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-6 select-none relative z-10 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
       {/* Left side: Active Page Title */}
@@ -46,16 +55,50 @@ export default function AdminNavbar({
           <span>Clear Cache</span>
         </button>
 
-        {/* Refresh / database reset trigger */}
-        <button
-          onClick={onResetDatabase}
-          title="Reset Database Seeds"
-          className="p-1 hover:bg-[#e2e8f0] rounded-lg transition-colors cursor-pointer flex items-center justify-center"
-        >
-          <svg className="w-[18px] h-[18px] text-[#475569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-          </svg>
-        </button>
+        {/* Notification Bell with Badge Dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            title="View Alerts & Notifications"
+            className="p-1 hover:bg-[#e2e8f0] rounded-lg transition-colors cursor-pointer flex items-center justify-center relative"
+          >
+            <svg className="w-[19px] h-[19px] text-[#475569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#eef2f5]" />
+            )}
+          </button>
+
+          {isOpen && (
+            <div className="absolute right-0 top-9 mt-1 w-80 bg-white border border-slate-200/90 rounded-[20px] shadow-xl z-50 py-3 text-xs">
+              <div className="flex justify-between items-center px-4 pb-2 border-b border-slate-100">
+                <span className="font-extrabold text-slate-800">Notifications</span>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => setNotifications(notifications.map(n => ({ ...n, read: true })))}
+                    className="text-[10px] text-brand-blue font-bold hover:underline"
+                  >
+                    Mark all read
+                  </button>
+                )}
+              </div>
+              <div className="divide-y divide-slate-100 max-h-60 overflow-y-auto">
+                {notifications.map((n) => (
+                  <div key={n.id} className={`p-3 transition-colors hover:bg-slate-50/70 flex flex-col gap-0.5 ${!n.read ? "bg-blue-50/20" : ""}`}>
+                    <div className="flex justify-between items-start gap-1">
+                      <span className={`text-[11px] leading-relaxed ${!n.read ? "text-slate-900 font-bold text-left block" : "text-slate-600 text-left block"}`}>
+                        {n.title}
+                      </span>
+                      {!n.read && <span className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1 flex-shrink-0" />}
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-mono text-left block">{n.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User avatar portrait with orange border ring */}
         <button
