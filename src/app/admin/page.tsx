@@ -457,11 +457,11 @@ export default function AdminDashboard() {
             </button>
           </form>
 
-          {/* Dotted Divider */}
+          {/* Divider */}
           <div className="flex items-center justify-center gap-3 my-1">
-            <div className="border-t border-dotted border-slate-350 flex-grow" />
+            <div className="border-t border-slate-200 flex-grow" />
             <span className="text-[10px] text-slate-400 font-extrabold tracking-wider uppercase font-sans">Or sign in with</span>
-            <div className="border-t border-dotted border-slate-350 flex-grow" />
+            <div className="border-t border-slate-200 flex-grow" />
           </div>
 
           {/* Social Sign-In Grid */}
