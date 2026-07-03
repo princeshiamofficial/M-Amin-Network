@@ -173,7 +173,7 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-20 pb-20 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-10 pb-16 overflow-hidden">
+      <section className="relative min-h-[85vh] lg:min-h-[90vh] flex flex-col items-center justify-center pt-16 pb-16 lg:pt-10 lg:pb-16 overflow-hidden">
         {/* Background Decorative Wrappers */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
           {/* Morph Carousel Background Animation */}
@@ -209,21 +209,21 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               {t(
                 "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
                 "এম আমিন নেটওয়ার্ক (AS150164) দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় আইএসপি, যা ডেডিকেটেড রাউটিংসহ উচ্চগতির এবং স্থিতিশীল ইন্টারনেট প্রদান করে।"
               )}
             </p>
 
-             <div className="flex flex-row gap-3 justify-center lg:justify-start mt-4">
+             <div className="flex flex-row flex-wrap gap-2.5 sm:gap-3 justify-center lg:justify-start mt-4">
               <Link
                 href="/packages"
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs sm:text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
               >
                 {t("View Packages", "প্যাকেজ সমূহ দেখুন")}
                 <svg
-                  className="w-4 h-4"
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="2.5"
@@ -234,7 +234,7 @@ export default function Home() {
               </Link>
               <Link
                 href="/coverage"
-                className="px-5 py-2.5 rounded-xl bg-brand-card hover:bg-brand-border/60 border border-brand-border text-white text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-brand-card hover:bg-brand-border/60 border border-brand-border text-white text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
               >
                 Check Coverage
               </Link>
