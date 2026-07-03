@@ -249,6 +249,35 @@ export default function AdminDashboardPage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [greeting, setGreeting] = useState("Welcome");
 
+  // Quick actions reordering state
+  const [quickActionsList, setQuickActionsList] = useState([
+    { label: "Packages", path: "/admin/packages", route: "/admin/packages", icon: Package },
+    { label: "Offers", path: "/admin/offers", route: "/admin/offers", icon: Tag, showActions: true },
+    { label: "Coverage Areas", path: "/admin/coverage", route: "/admin/coverage-areas", icon: MapPin },
+    { label: "Application", path: "/admin/applications", route: "/admin/applications", icon: FileText },
+    { label: "Customer", path: "/admin/customers", route: "/admin/customers", icon: Users },
+    { label: "Bills", path: "/admin/bills", route: "/admin/bills", icon: Receipt },
+    { label: "Contact Messages", path: "/admin/contact", route: "/admin/contact-messages", icon: Mail },
+    { label: "Complaints", path: "/admin/complaints", route: "/admin/complaints", icon: AlertTriangle, showActions: true, dimActions: true },
+    { label: "Jobs Add", path: "/admin/jobs", route: "/admin/jobs", icon: Briefcase },
+    { label: "Job Applications", path: "/admin/job-applications", route: "/admin/job-applications", icon: FileText },
+    { label: "Site Content", path: "/admin/content", route: "/admin/site-content", icon: Zap },
+    { label: "Home Sections", path: "/admin/home-sections", route: "/admin/home-sections", icon: LayoutGrid },
+  ]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const handleDragEnter = (targetIdx: number) => {
+    if (draggedIndex === null || draggedIndex === targetIdx) return;
+    setQuickActionsList((prevList) => {
+      const newList = [...prevList];
+      const draggedItem = newList[draggedIndex];
+      newList.splice(draggedIndex, 1);
+      newList.splice(targetIdx, 0, draggedItem);
+      return newList;
+    });
+    setDraggedIndex(targetIdx);
+  };
+
   // Database states
   const [claims, setClaims] = useState<Claim[]>([]);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
@@ -1412,28 +1441,31 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {[
-                    { label: "Packages", path: "/admin/packages", route: "/admin/packages", icon: Package },
-                    { label: "Offers", path: "/admin/offers", route: "/admin/offers", icon: Tag, showActions: true },
-                    { label: "Coverage Areas", path: "/admin/coverage", route: "/admin/coverage-areas", icon: MapPin },
-                    { label: "Application", path: "/admin/applications", route: "/admin/applications", icon: FileText },
-                    { label: "Customer", path: "/admin/customers", route: "/admin/customers", icon: Users },
-                    { label: "Bills", path: "/admin/bills", route: "/admin/bills", icon: Receipt },
-                    { label: "Contact Messages", path: "/admin/contact", route: "/admin/contact-messages", icon: Mail },
-                    { label: "Complaints", path: "/admin/complaints", route: "/admin/complaints", icon: AlertTriangle, showActions: true, dimActions: true },
-                    { label: "Jobs Add", path: "/admin/jobs", route: "/admin/jobs", icon: Briefcase },
-                    { label: "Job Applications", path: "/admin/job-applications", route: "/admin/job-applications", icon: FileText },
-                    { label: "Site Content", path: "/admin/content", route: "/admin/site-content", icon: Zap },
-                    { label: "Home Sections", path: "/admin/home-sections", route: "/admin/home-sections", icon: LayoutGrid },
-                  ].map((action, idx) => (
+                  {quickActionsList.map((action, idx) => (
                     <div
                       key={idx}
-                      onClick={() => router.push(action.route)}
-                      className="group bg-white border border-slate-100/90 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all cursor-pointer relative"
+                      draggable
+                      onDragStart={(e) => {
+                        setDraggedIndex(idx);
+                        e.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDragEnter={() => handleDragEnter(idx)}
+                      onDragEnd={() => setDraggedIndex(null)}
+                      onClick={() => {
+                        if (draggedIndex === null) {
+                          router.push(action.route);
+                        }
+                      }}
+                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all relative ${
+                        draggedIndex === idx
+                          ? "opacity-30 scale-95 border-dashed border-teal-350 bg-teal-50/10"
+                          : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
+                      }`}
                     >
                       <div className="flex items-center">
                         {/* Grab handle */}
-                        <div className="text-slate-300 mr-2 group-hover:text-slate-400 transition-colors">
+                        <div className="text-slate-300 mr-2 group-hover:text-slate-400 transition-colors cursor-grab active:cursor-grabbing">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M9 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm10-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
@@ -1457,7 +1489,7 @@ export default function AdminDashboardPage() {
                               e.stopPropagation();
                               router.push(action.route);
                             }}
-                            className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition-colors"
+                            className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -1469,7 +1501,7 @@ export default function AdminDashboardPage() {
                               e.stopPropagation();
                               alert("Remove shortcut requested");
                             }}
-                            className="p-1 hover:bg-red-55 rounded text-red-500 hover:text-red-700 transition-colors"
+                            className="p-1 hover:bg-red-55 rounded text-red-500 hover:text-red-700 transition-colors cursor-pointer"
                             title="Remove"
                           >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
