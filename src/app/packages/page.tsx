@@ -279,12 +279,24 @@ function PackagesContent() {
     },
   ];
 
+  const [plans, setPlans] = useState<Plan[]>([]);
+
+  useEffect(() => {
+    const savedPlans = localStorage.getItem("m_amin_packages");
+    if (savedPlans) {
+      setPlans(JSON.parse(savedPlans));
+    } else {
+      setPlans(allPlans);
+    }
+  }, []);
+
   // Auto-select plan from url query parameter if available
   useEffect(() => {
+    if (plans.length === 0) return;
     const planQuery = searchParams.get("plan");
     if (planQuery) {
       const parsedSpeed = parseInt(planQuery, 10);
-      const matchedPlan = allPlans.find(
+      const matchedPlan = plans.find(
         (p) => parseInt(p.speed, 10) === parsedSpeed
       );
       if (matchedPlan) {
@@ -293,9 +305,9 @@ function PackagesContent() {
         setIsModalOpen(true);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, plans]);
 
-  const filteredPlans = allPlans.filter((p) => p.category === activeTab);
+  const filteredPlans = plans.filter((p) => p.category === activeTab);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

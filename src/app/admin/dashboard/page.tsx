@@ -191,6 +191,16 @@ interface Shortcut {
   targetTab: string;
 }
 
+interface Plan {
+  speed: string;
+  price: number;
+  name: string;
+  category: "home" | "gaming" | "corporate";
+  tagline: string;
+  features: string[];
+  popular?: boolean;
+}
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -264,6 +274,28 @@ export default function AdminDashboardPage() {
   const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
   const [seoAuditReports, setSeoAuditReports] = useState<SEOAuditReport[]>([]);
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([]);
+
+  // Packages CMS state
+  const [packages, setPackages] = useState<Plan[]>([]);
+  const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
+  const [editingPlanName, setEditingPlanName] = useState<string | null>(null);
+  const [packageForm, setPackageForm] = useState<{
+    name: string;
+    speed: string;
+    price: number;
+    category: "home" | "gaming" | "corporate";
+    tagline: string;
+    features: string;
+    popular: boolean;
+  }>({
+    name: "",
+    speed: "",
+    price: 500,
+    category: "home",
+    tagline: "",
+    features: "",
+    popular: false,
+  });
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -476,6 +508,122 @@ export default function AdminDashboardPage() {
     { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs" },
   ];
 
+  const defaultPackages: Plan[] = [
+    {
+      speed: "10 Mbps",
+      price: 500,
+      name: "Home Basic",
+      category: "home",
+      tagline: "Great for casual browsing & SD streaming",
+      features: [
+        "Unlimited Bandwidth",
+        "Free Optical Fiber Router installation*",
+        "YouTube & Facebook cache sharing",
+        "24/7 Phone Support Helpline",
+        "Local LAN speeds up to 50 Mbps",
+      ],
+    },
+    {
+      speed: "20 Mbps",
+      price: 800,
+      name: "Home Standard",
+      category: "home",
+      tagline: "Perfect for families & HD streaming",
+      features: [
+        "Full HD buffer-free streaming",
+        "Multi-device connection (4-6 devices)",
+        "Premium BDIX connectivity",
+        "24/7 Chat & Ticket support",
+        "Local LAN speeds up to 100 Mbps",
+      ],
+    },
+    {
+      speed: "30 Mbps",
+      price: 1000,
+      name: "Home Elite",
+      category: "home",
+      tagline: "Most popular for smart homes",
+      popular: true,
+      features: [
+        "4K UHD Streaming capability",
+        "High-priority local peers (100 Mbps)",
+        "Ideal for smart home automation",
+        "Zero latency jitter control",
+        "Free Public IP on request",
+      ],
+    },
+    {
+      speed: "50 Mbps",
+      price: 1500,
+      name: "Home Ultra",
+      category: "home",
+      tagline: "Ultimate speed for heavy downloaders",
+      features: [
+        "Dedicated routing bandwidth",
+        "Best for remote work & file syncing",
+        "Static IPv4 Address Included",
+        "SLA support ticket < 2 hours",
+        "Super high speed FTP access",
+      ],
+    },
+    {
+      speed: "25 Mbps",
+      price: 950,
+      name: "Gamer Starter",
+      category: "gaming",
+      tagline: "Optimized routing for gaming hobbyists",
+      features: [
+        "Special low-latency paths",
+        "Direct peer routing (AS150164)",
+        "Zero packet loss guarantee",
+        "Optimized for PUBG & FreeFire",
+      ],
+    },
+    {
+      speed: "40 Mbps",
+      price: 1250,
+      name: "Gamer Professional",
+      category: "gaming",
+      tagline: "Best performance for competitive players",
+      popular: true,
+      features: [
+        "Lowest Ping routing to SG/HK servers",
+        "Ideal for streaming live gameplay",
+        "Static IP for stable lobby matching",
+        "BDIX peers up to 100 Mbps",
+        "Optimized for Steam, Epic Games, Valorant",
+      ],
+    },
+    {
+      speed: "60 Mbps",
+      price: 1800,
+      name: "Gamer Champion",
+      category: "gaming",
+      tagline: "Ultra-low jitter & maximum throughput",
+      features: [
+        "Ultra-low latency to Southeast Asia",
+        "Priority bandwidth allocation",
+        "Dual-stack IPv4 & IPv6 routing",
+        "No speed throttling, no cap",
+        "24/7 direct engineer support line",
+      ],
+    },
+    {
+      speed: "10 Mbps",
+      price: 5000,
+      name: "Corporate SME",
+      category: "corporate",
+      tagline: "Symmetric bandwidth for small businesses",
+      features: [
+        "1:1 Symmetric dedicated bandwidth",
+        "99.9% Uptime SLA Guarantee",
+        "1 Public IP Address Included",
+        "24/7 Dedicated account manager",
+        "4-hour resolution support SLA",
+      ],
+    },
+  ];
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -661,6 +809,14 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
       setShortcuts(defaultShortcuts);
     }
+
+    const savedPackages = localStorage.getItem("m_amin_packages");
+    if (savedPackages) {
+      setPackages(JSON.parse(savedPackages));
+    } else {
+      localStorage.setItem("m_amin_packages", JSON.stringify(defaultPackages));
+      setPackages(defaultPackages);
+    }
   };
 
   const resetToDefaults = () => {
@@ -681,6 +837,7 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_security_logs", JSON.stringify(defaultSecurityLogs));
       localStorage.setItem("m_amin_seo_audits", JSON.stringify(defaultSEOAuditReports));
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
+      localStorage.setItem("m_amin_packages", JSON.stringify(defaultPackages));
       
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
@@ -726,6 +883,7 @@ export default function AdminDashboardPage() {
       setSecurityLogs(defaultSecurityLogs);
       setSeoAuditReports(defaultSEOAuditReports);
       setShortcuts(defaultShortcuts);
+      setPackages(defaultPackages);
 
       alert("Mock database has been reset successfully!");
     }
@@ -749,6 +907,7 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_security_logs", JSON.stringify([]));
       localStorage.setItem("m_amin_seo_audits", JSON.stringify([]));
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify([]));
+      localStorage.setItem("m_amin_packages", JSON.stringify([]));
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -764,6 +923,7 @@ export default function AdminDashboardPage() {
       setSecurityLogs([]);
       setSeoAuditReports([]);
       setShortcuts([]);
+      setPackages([]);
       alert("Mock database cleared successfully!");
     }
   };
@@ -950,6 +1110,73 @@ export default function AdminDashboardPage() {
     localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(updated));
   };
 
+  // Package CMS Actions
+  const handleOpenAddPackage = () => {
+    setEditingPlanName(null);
+    setPackageForm({
+      name: "",
+      speed: "",
+      price: 500,
+      category: "home",
+      tagline: "",
+      features: "",
+      popular: false,
+    });
+    setIsPackageModalOpen(true);
+  };
+
+  const handleOpenEditPackage = (p: Plan) => {
+    setEditingPlanName(p.name);
+    setPackageForm({
+      name: p.name,
+      speed: p.speed,
+      price: p.price,
+      category: p.category,
+      tagline: p.tagline,
+      features: p.features.join(", "),
+      popular: p.popular || false,
+    });
+    setIsPackageModalOpen(true);
+  };
+
+  const handleSavePackage = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formattedFeatures = packageForm.features
+      .split(",")
+      .map((f) => f.trim())
+      .filter((f) => f.length > 0);
+
+    const newPlan: Plan = {
+      name: packageForm.name,
+      speed: packageForm.speed,
+      price: packageForm.price,
+      category: packageForm.category,
+      tagline: packageForm.tagline,
+      features: formattedFeatures,
+      popular: packageForm.popular,
+    };
+
+    let updated: Plan[];
+    if (editingPlanName) {
+      updated = packages.map((p) => (p.name === editingPlanName ? newPlan : p));
+    } else {
+      updated = [...packages, newPlan];
+    }
+
+    setPackages(updated);
+    localStorage.setItem("m_amin_packages", JSON.stringify(updated));
+    setIsPackageModalOpen(false);
+    alert(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
+  };
+
+  const handleDeletePackage = (name: string) => {
+    if (confirm(`Are you sure you want to delete package "${name}"?`)) {
+      const updated = packages.filter((p) => p.name !== name);
+      setPackages(updated);
+      localStorage.setItem("m_amin_packages", JSON.stringify(updated));
+    }
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem("m_amin_admin_authenticated");
     router.push("/admin");
@@ -1026,7 +1253,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Bandwidth</span>
                   <span className="text-3xl font-extrabold text-brand-blue mt-2">{totalBandwidthGbps} Gbps</span>
-                  <span className="text-xs text-slate-500 mt-1">Simulated Live Traffic (AS150164)</span>
+                  <span className="text-xs text-slate-555 mt-1">Simulated Live Traffic (AS150164)</span>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
@@ -1173,28 +1400,196 @@ export default function AdminDashboardPage() {
           {/* 2. PACKAGES VIEW */}
           {activeTab === "Packages" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
-              <div>
-                <h2 className="text-lg font-extrabold text-slate-900">Active Broadband Package Catalog</h2>
-                <p className="text-xs text-slate-500 mt-1">Simulated consumer and business plans rendered across Southern Keraniganj.</p>
+              <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-lg font-extrabold text-slate-900">Broadband Package Catalog Manager</h2>
+                  <p className="text-xs text-slate-500 mt-1">Add, update, or remove active packages rendered on the main landing catalog.</p>
+                </div>
+                <button
+                  onClick={handleOpenAddPackage}
+                  className="px-4 py-2 bg-brand-blue text-white text-xs font-bold rounded-xl hover:opacity-90 cursor-pointer shadow-md"
+                >
+                  + Add Package
+                </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { name: "Starter Lite", speed: "10 Mbps", price: "৳500/mo", type: "Standard" },
-                  { name: "Premium Home", speed: "30 Mbps", price: "৳1,250/mo", type: "Popular" },
-                  { name: "Enterprise Splice", speed: "100 Mbps", price: "৳5,000/mo", type: "Corporate" },
-                ].map((p) => (
-                  <div key={p.name} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
-                    <span className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">{p.type}</span>
+
+              {/* Package list table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                      <th className="pb-3">Package Name</th>
+                      <th className="pb-3">Category</th>
+                      <th className="pb-3">Speed Limit</th>
+                      <th className="pb-3">Price Plan</th>
+                      <th className="pb-3">Features Count</th>
+                      <th className="pb-3">Home Flag</th>
+                      <th className="pb-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {packages.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-slate-400">No packages defined.</td>
+                      </tr>
+                    ) : (
+                      packages.map((p) => (
+                        <tr key={p.name} className="hover:bg-slate-50/70 transition-colors">
+                          <td className="py-3.5">
+                            <span className="font-extrabold text-slate-800 block">{p.name}</span>
+                            <span className="text-[10px] text-slate-500 max-w-xs truncate block">{p.tagline}</span>
+                          </td>
+                          <td className="py-3.5 font-semibold text-slate-650 uppercase">{p.category}</td>
+                          <td className="py-3.5 font-bold text-brand-blue">{p.speed}</td>
+                          <td className="py-3.5 font-black text-emerald-600">৳{p.price} / mo</td>
+                          <td className="py-3.5 text-slate-500 font-mono">{p.features.length} features</td>
+                          <td className="py-3.5">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                              p.popular ? "bg-amber-500/10 text-amber-600 border border-amber-500/20 animate-pulse" : "bg-slate-100 text-slate-400 border border-slate-250"
+                            }`}>{p.popular ? "Popular" : "Standard"}</span>
+                          </td>
+                          <td className="py-3.5 text-right space-x-2">
+                            <button
+                              onClick={() => handleOpenEditPackage(p)}
+                              className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeletePackage(p.name)}
+                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Add/Edit Package Modal */}
+              {isPackageModalOpen && (
+                <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                  <div className="bg-white border border-slate-200 rounded-[32px] max-w-md w-full p-8 shadow-2xl relative space-y-6">
+                    <button
+                      onClick={() => setIsPackageModalOpen(false)}
+                      className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer"
+                    >
+                      ✕
+                    </button>
                     <div>
-                      <h3 className="text-base font-extrabold text-slate-800">{p.name}</h3>
-                      <p className="text-2xl font-black text-emerald-600 mt-1">{p.price}</p>
+                      <h3 className="text-slate-900 font-black text-lg">
+                        {editingPlanName ? "Edit Package Details" : "Create New Package"}
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">Define speed values, category target, monthly pricing, and client-facing taglines.</p>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      Capped Speed: <strong className="text-slate-800">{p.speed}</strong>
-                    </div>
+
+                    <form onSubmit={handleSavePackage} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Plan Name</label>
+                          <input
+                            type="text"
+                            required
+                            value={packageForm.name}
+                            onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Category</label>
+                          <select
+                            value={packageForm.category}
+                            onChange={(e) => setPackageForm({ ...packageForm, category: e.target.value as any })}
+                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                          >
+                            <option value="home">Home</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="corporate">Corporate</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Speed Limit (e.g. 20 Mbps)</label>
+                          <input
+                            type="text"
+                            required
+                            value={packageForm.speed}
+                            onChange={(e) => setPackageForm({ ...packageForm, speed: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Price (৳ / mo)</label>
+                          <input
+                            type="number"
+                            required
+                            value={packageForm.price}
+                            onChange={(e) => setPackageForm({ ...packageForm, price: Number(e.target.value) })}
+                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Tagline / Short Subtitle</label>
+                        <input
+                          type="text"
+                          required
+                          value={packageForm.tagline}
+                          onChange={(e) => setPackageForm({ ...packageForm, tagline: e.target.value })}
+                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Features List (Comma Separated)</label>
+                        <textarea
+                          rows={3}
+                          required
+                          value={packageForm.features}
+                          onChange={(e) => setPackageForm({ ...packageForm, features: e.target.value })}
+                          placeholder="Unlimited Bandwidth, Premium BDIX, 24/7 Phone Support"
+                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2 py-1.5">
+                        <input
+                          type="checkbox"
+                          id="pop_flag"
+                          checked={packageForm.popular}
+                          onChange={(e) => setPackageForm({ ...packageForm, popular: e.target.checked })}
+                          className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue"
+                        />
+                        <label htmlFor="pop_flag" className="text-xs font-bold text-slate-800 select-none cursor-pointer">
+                          Mark as Popular Plan (Render with glowing badge)
+                        </label>
+                      </div>
+
+                      <div className="flex justify-end gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsPackageModalOpen(false)}
+                          className="px-4 py-2 border border-slate-200 rounded-xl text-xs hover:bg-slate-50 cursor-pointer font-bold"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 bg-brand-blue text-white rounded-xl text-xs hover:opacity-90 cursor-pointer font-bold shadow-md"
+                        >
+                          Save Package
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -1245,7 +1640,7 @@ export default function AdminDashboardPage() {
                             </td>
                             <td className="py-3.5 text-slate-600">{c.address}</td>
                             <td className="py-3.5 font-semibold text-brand-blue">{c.promoCode}</td>
-                            <td className="py-3.5 text-slate-500">{c.date}</td>
+                            <td className="py-3.5 text-slate-555">{c.date}</td>
                             <td className="py-3.5">
                               <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                                 c.status === "Approved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1264,7 +1659,7 @@ export default function AdminDashboardPage() {
                                   </button>
                                   <button
                                     onClick={() => updateClaimStatus(c.id, "Cancelled")}
-                                    className="px-2.5 py-1 bg-slate-500/15 hover:bg-slate-500/25 border border-slate-500/30 text-slate-500 rounded-lg font-bold text-[10px] cursor-pointer"
+                                    className="px-2.5 py-1 bg-slate-500/15 hover:bg-slate-500/25 border border-slate-500/30 text-slate-550 rounded-lg font-bold text-[10px] cursor-pointer"
                                   >
                                     Cancel
                                   </button>
@@ -1307,11 +1702,11 @@ export default function AdminDashboardPage() {
                         <span className="text-slate-900 font-bold">{c.load}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Backbone Latending:</span>
+                        <span className="text-slate-500">Backbone Latency:</span>
                         <span className="text-brand-blue font-bold">{c.latency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Status:</span>
+                        <span className="text-slate-550">Status:</span>
                         <span className={`font-bold ${c.status === "Optimal" ? "text-emerald-600" : "text-yellow-600"}`}>{c.status}</span>
                       </div>
                     </div>
@@ -1370,7 +1765,7 @@ export default function AdminDashboardPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
+                    <tr className="border-b border-slate-250 text-slate-400 uppercase font-semibold">
                       <th className="pb-3">Subscriber ID</th>
                       <th className="pb-3">Client Name</th>
                       <th className="pb-3">Address</th>
@@ -1481,7 +1876,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{t.category}</td>
                           <td className="py-3.5 max-w-xxs truncate text-slate-600">{t.desc}</td>
-                          <td className="py-3.5 text-slate-500">{t.date}</td>
+                          <td className="py-3.5 text-slate-555">{t.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               t.status === "Resolved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1587,7 +1982,7 @@ export default function AdminDashboardPage() {
                             <span className="text-[10px] text-slate-500 font-mono">{m.email} | {m.phone}</span>
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{m.subject}</td>
-                          <td className="py-3.5 max-w-xs truncate text-slate-600">{m.message}</td>
+                          <td className="py-3.5 max-w-xs truncate text-slate-650">{m.message}</td>
                           <td className="py-3.5 text-slate-500">{m.date}</td>
                           <td className="py-3.5 text-right">
                             <button
@@ -1641,7 +2036,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 font-mono">{c.phone}</td>
                           <td className="py-3.5 font-semibold text-brand-blue">{c.category}</td>
                           <td className="py-3.5 max-w-xxs truncate text-slate-600">{c.desc}</td>
-                          <td className="py-3.5 text-slate-500">{c.date}</td>
+                          <td className="py-3.5 text-slate-555">{c.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               c.status === "Resolved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1653,7 +2048,7 @@ export default function AdminDashboardPage() {
                             {c.status === "Pending" && (
                               <button
                                 onClick={() => updateComplaintStatus(c.id, "Investigating")}
-                                className="px-2.5 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-650 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Investigate
                               </button>
@@ -2003,7 +2398,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Hero Screen Headings</h2>
-                <p className="text-xs text-slate-500 mt-1">Modify main advertising messages visible to visitors on landing.</p>
+                <p className="text-xs text-slate-555 mt-1">Modify main advertising messages visible to visitors on landing.</p>
               </div>
               <form onSubmit={saveHeroTypography} className="space-y-4 max-w-lg">
                 <div className="space-y-1">
@@ -2361,7 +2756,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* 28. USERS & ROLES VIEW */}
-          {activeTab === "Users & Roles" && (
+          {activeTab === "Access" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Administrator Accounts & Team Roles</h2>
@@ -2385,12 +2780,12 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 font-bold font-mono text-brand-blue">{u.id}</td>
                         <td className="py-3.5 font-extrabold text-slate-800">{u.username}</td>
                         <td className="py-3.5 font-semibold text-slate-650">{u.role}</td>
-                        <td className="py-3.5 text-slate-500 font-mono">{u.email}</td>
+                        <td className="py-3.5 text-slate-555 font-mono">{u.email}</td>
                         <td className="py-3.5 text-slate-500">{u.lastLogin}</td>
                         <td className="py-3.5 text-right">
                           <button
                             onClick={() => deleteAdminUser(u.id)}
-                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                           >
                             Revoke User
                           </button>
@@ -2428,7 +2823,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 font-bold font-mono text-brand-blue">{l.id}</td>
                         <td className="py-3.5 font-extrabold text-slate-800">{l.event}</td>
                         <td className="py-3.5 font-mono text-slate-650">{l.ipAddress}</td>
-                        <td className="py-3.5 text-slate-500">{l.timestamp}</td>
+                        <td className="py-3.5 text-slate-555">{l.timestamp}</td>
                         <td className="py-3.5">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                             l.severity === "Critical" ? "bg-red-500/10 text-red-600 border border-red-500/20 animate-pulse" :
@@ -2439,7 +2834,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 text-right">
                           <button
                             onClick={() => deleteSecurityLog(l.id)}
-                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                           >
                             Purge Log
                           </button>
@@ -2513,7 +2908,7 @@ export default function AdminDashboardPage() {
                       </button>
                       <button
                         onClick={() => deleteShortcut(s.id)}
-                        className="px-3.5 py-1.5 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                        className="px-3.5 py-1.5 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                       >
                         Remove
                       </button>
@@ -2541,7 +2936,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setActiveClients(Number(e.target.value))}
                       className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 max-w-[120px] focus:outline-none focus:border-brand-blue"
                     />
-                    <span className="text-[11px] text-slate-500 flex items-center">Active subscribers in simulated GPON map</span>
+                    <span className="text-[11px] text-slate-555 flex items-center">Active subscribers in simulated GPON map</span>
                   </div>
                 </div>
 
@@ -2555,7 +2950,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setTotalBandwidthGbps(Number(e.target.value))}
                       className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 max-w-[120px] focus:outline-none focus:border-brand-blue"
                     />
-                    <span className="text-[11px] text-slate-500 flex items-center">Gbps real-time peering bandwidth rate</span>
+                    <span className="text-[11px] text-slate-555 flex items-center">Gbps real-time peering bandwidth rate</span>
                   </div>
                 </div>
               </div>
