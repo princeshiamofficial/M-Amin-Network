@@ -1282,10 +1282,6 @@ export default function AdminDashboardPage() {
                 <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here's an overview of your broadband network operations and subscriber analytics.</p>
               </div>              {/* Today's Snapshot Section */}
               <div className="space-y-4 pt-4">
-                <div className="text-left">
-                  <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Overview</h2>
-                  <p className="text-xs text-slate-500 mt-1">Today's snapshot.</p>
-                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {snapshotCards.map((card, idx) => (
