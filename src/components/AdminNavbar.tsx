@@ -126,53 +126,150 @@ export default function AdminNavbar({
           </button>
 
           {isAvatarOpen && (
-            <>
-              {/* Main Menu Dropdown */}
-              <div className="absolute right-0 top-9 mt-1.5 w-56 bg-white border border-slate-200/90 rounded-2xl shadow-xl z-50 p-3 text-[13px] text-slate-700">
-                {/* Header */}
-                <div className="px-1 pb-2 border-b border-slate-100 flex flex-col gap-0.5">
-                  <span className="font-extrabold text-[#1e293b] text-sm">M Amin</span>
-                  <span className="text-[11px] text-[#94a3b8] font-medium">admin@maminnetwork.com</span>
-                  <span className="text-[10px] text-[#94a3b8] font-bold uppercase tracking-wide mt-0.5">ROLE: SYSTEM ADMIN</span>
-                </div>
-                
-                {/* Middle Action Links */}
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      setAvatarView(avatarView === "edit" ? "menu" : "edit");
-                    }}
-                    className={`w-full px-1.5 py-2 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold rounded-xl ${avatarView === "edit" ? "bg-slate-100/80" : "hover:bg-slate-50"}`}
-                  >
-                    <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                    <span>Edit Profile</span>
-                  </button>
-
-                  {/* Profile (Soon) */}
-                  <div className="w-full px-1.5 py-2 flex items-center gap-3 text-slate-400 select-none font-semibold">
-                    <svg className="w-[17px] h-[17px] text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>Profile (Soon)</span>
+            <div className="absolute right-0 top-9 mt-1.5 bg-white border border-slate-200/90 rounded-2xl shadow-xl z-50 p-3 text-[13px] text-slate-700 flex w-[464px] gap-4">
+              {/* Left Column: Edit Profile */}
+              <div className="w-56 flex flex-col gap-3 text-slate-800 pr-4 border-r border-slate-100/80 justify-between">
+                <div>
+                  {/* Header */}
+                  <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500">
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <span className="font-extrabold text-[#1e293b] text-xs">Edit Profile</span>
+                    </div>
                   </div>
 
-                  {/* Settings (Active) */}
-                  <Link
-                    href="/admin/settings"
-                    onClick={() => setIsAvatarOpen(false)}
-                    className="w-full px-1.5 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold block rounded-xl"
+                  {/* Subtitle */}
+                  <p className="text-[10px] text-[#64748b] font-semibold leading-normal mt-2">
+                    Update your profile picture. Current email: <span className="font-mono text-slate-500 text-[9px] block mt-0.5 text-left">admin@maminnetwork.com</span>
+                  </p>
+
+                  {/* Picture area */}
+                  <div className="flex items-center gap-3 py-2">
+                    <div className="w-14 h-14 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
+                      <img
+                        src={avatarUrl}
+                        alt="Current Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const input = document.getElementById("avatar-upload-input-dropdown-side");
+                        input?.click();
+                      }}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-[10px] font-bold text-slate-700 transition-all cursor-pointer shadow-sm"
+                    >
+                      <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      <span>Upload Image</span>
+                    </button>
+
+                    <input
+                      id="avatar-upload-input-dropdown-side"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            if (typeof reader.result === "string") {
+                              setAvatarUrl(reader.result);
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {/* Remove Link */}
+                  <button
+                    onClick={() => {
+                      setAvatarUrl("/ea82d2834f062ee8d73d8b99aebe0d31.jpg");
+                    }}
+                    className="flex items-center gap-1.5 text-[10.5px] font-bold text-red-500 hover:text-red-655 transition-colors cursor-pointer w-fit"
                   >
-                    <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31-2.37 2.37.996.608 2.296.07 2.572-1.065z" />
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    <span>Settings</span>
-                  </Link>
+                    <span>Remove Current Avatar</span>
+                  </button>
+
+                  <p className="text-[9px] text-slate-400 font-medium text-left mt-1">Upload JPG, PNG, GIF. Max 2MB.</p>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex justify-end gap-2 border-t border-slate-100 pt-2 mt-2">
+                  <button
+                    onClick={() => setIsAvatarOpen(false)}
+                    className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-[10px] font-bold text-slate-600 transition-all cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("m_amin_avatar_url", avatarUrl);
+                      setIsAvatarOpen(false);
+                      alert("Profile avatar updated successfully!");
+                    }}
+                    className="px-2.5 py-1.5 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-xl text-[10px] font-bold transition-all cursor-pointer shadow-sm"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Main Menu Dropdown */}
+              <div className="w-56 flex flex-col justify-between">
+                <div>
+                  {/* Header */}
+                  <div className="px-1 pb-2 border-b border-slate-100 flex flex-col gap-0.5 text-left">
+                    <span className="font-extrabold text-[#1e293b] text-sm">M Amin</span>
+                    <span className="text-[11px] text-[#94a3b8] font-medium">admin@maminnetwork.com</span>
+                    <span className="text-[10px] text-[#94a3b8] font-bold uppercase tracking-wide mt-0.5">ROLE: SYSTEM ADMIN</span>
+                  </div>
+                  
+                  {/* Middle Action Links */}
+                  <div className="py-1">
+                    <div className="w-full px-1.5 py-2 flex items-center gap-3 text-slate-700 bg-slate-100/80 font-semibold rounded-xl">
+                      <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                      <span>Edit Profile</span>
+                    </div>
+
+                    {/* Profile (Soon) */}
+                    <div className="w-full px-1.5 py-2 flex items-center gap-3 text-slate-400 select-none font-semibold text-left">
+                      <svg className="w-[17px] h-[17px] text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span>Profile (Soon)</span>
+                    </div>
+
+                    {/* Settings (Active) */}
+                    <Link
+                      href="/admin/settings"
+                      onClick={() => setIsAvatarOpen(false)}
+                      className="w-full px-1.5 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold block rounded-xl"
+                    >
+                      <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31-2.37 2.37.996.608 2.296.07 2.572-1.065z" />
+                      </svg>
+                      <span>Settings</span>
+                    </Link>
+                  </div>
                 </div>
                 
                 {/* Footer */}
-                <div className="border-t border-slate-100 mt-1 pt-1.5">
+                <div className="border-t border-slate-100 pt-2 mt-2 text-left">
                   <button
                     onClick={() => {
                       setIsAvatarOpen(false);
@@ -187,117 +284,7 @@ export default function AdminNavbar({
                   </button>
                 </div>
               </div>
-
-              {/* Edit Profile panel - rendered on the left side of the main menu dropdown */}
-              {avatarView === "edit" && (
-                <div className="absolute right-[232px] top-9 mt-1.5 w-56 bg-white border border-slate-200/90 rounded-2xl shadow-xl z-50 p-3 text-[13px] text-slate-700">
-                  <div className="flex flex-col gap-3 text-slate-800">
-                    {/* Header */}
-                    <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                        <span className="font-extrabold text-[#1e293b] text-xs">Edit Profile</span>
-                      </div>
-                      <button
-                        onClick={() => setAvatarView("menu")}
-                        className="text-slate-400 hover:text-slate-600 cursor-pointer"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Subtitle */}
-                    <p className="text-[10px] text-[#64748b] font-semibold leading-normal">
-                      Update your profile picture. Current email: <span className="font-mono text-slate-500 text-[9px] block mt-0.5 text-left">admin@maminnetwork.com</span>
-                    </p>
-
-                    {/* Picture area */}
-                    <div className="flex items-center gap-3 py-1">
-                      <div className="w-14 h-14 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
-                        <img
-                          src={avatarUrl}
-                          alt="Current Avatar"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          const input = document.getElementById("avatar-upload-input-dropdown-side");
-                          input?.click();
-                        }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-[10.5px] font-bold text-slate-700 transition-all cursor-pointer shadow-sm"
-                      >
-                        <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                        </svg>
-                        <span>Upload Image</span>
-                      </button>
-
-                      <input
-                        id="avatar-upload-input-dropdown-side"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              if (typeof reader.result === "string") {
-                                setAvatarUrl(reader.result);
-                              }
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                    </div>
-
-                    {/* Remove Link */}
-                    <button
-                      onClick={() => {
-                        setAvatarUrl("/ea82d2834f062ee8d73d8b99aebe0d31.jpg");
-                      }}
-                      className="flex items-center gap-1.5 text-[10.5px] font-bold text-red-500 hover:text-red-655 transition-colors cursor-pointer w-fit"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      <span>Remove Current Avatar</span>
-                    </button>
-
-                    <p className="text-[9px] text-slate-400 font-medium text-left">Upload JPG, PNG, GIF. Max 2MB.</p>
-
-                    {/* Footer Actions */}
-                    <div className="flex justify-end gap-2 border-t border-slate-100 pt-2.5 mt-1">
-                      <button
-                        onClick={() => setAvatarView("menu")}
-                        className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-[10.5px] font-bold text-slate-600 transition-all cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          localStorage.setItem("m_amin_avatar_url", avatarUrl);
-                          setAvatarView("menu");
-                          alert("Profile avatar updated successfully!");
-                        }}
-                        className="px-3 py-1.5 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-xl text-[10.5px] font-bold transition-all cursor-pointer shadow-sm"
-                      >
-                        Save Changes
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </>
+            </div>
           )}
         </div>
       </div>
