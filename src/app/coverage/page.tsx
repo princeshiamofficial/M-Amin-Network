@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CoverageZone {
   name: string;
@@ -10,6 +11,9 @@ interface CoverageZone {
 }
 
 export default function Coverage() {
+  const lang = useTranslation();
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeKadomtoliRef = useRef<SVGGElement>(null);
   const nodeAganagarRef = useRef<SVGGElement>(null);
@@ -131,11 +135,12 @@ export default function Coverage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow">
-      {/* Background Glows */}
+    <div className="w-full flex-grow relative">
+      {/* Top Section Wrapper (Confined to max-w-1440) */}
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        {/* Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
-
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col items-center">
         <div className="w-12 h-12 rounded-2xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center mb-4 text-brand-cyan shadow-[0_0_15px_rgba(0,240,255,0.1)]">
@@ -145,13 +150,16 @@ export default function Coverage() {
           </svg>
         </div>
         <h1 className="text-4xl font-extrabold text-white tracking-tight">
-          Fiber Network{" "}
+          {t("Fiber Network", "ফাইবার নেটওয়ার্ক")}{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-            Coverage Area
+            {t("Coverage Area", "কাভারেজ এলাকা")}
           </span>
         </h1>
         <p className="text-slate-400 mt-4 text-sm sm:text-base">
-          M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.
+          {t(
+            "M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.",
+            "এম আমিন নেটওয়ার্ক দক্ষিণ কেরানীগঞ্জ জুড়ে একটি বিস্তৃত ফাইবার অপটিক নেটওয়ার্ক পরিচালনা করে। আমাদের সক্রিয় কাভারেজ এলাকা দেখুন অথবা নতুন সংযোগের সম্ভাব্যতা অনুরোধ জানান।"
+          )}
         </p>
       </div>
 
@@ -164,15 +172,14 @@ export default function Coverage() {
             
             <div className="flex justify-between items-center mb-6 z-10">
               <div>
-                <h3 className="text-white font-bold text-base">South Keraniganj Grid</h3>
-                <p className="text-xs text-slate-400">Digital Fiber Backbone Topology (AS150164)</p>
+                <h3 className="text-white font-bold text-base">{t("South Keraniganj Grid", "দক্ষিণ কেরানীগঞ্জ গ্রিড")}</h3>
+                <p className="text-xs text-slate-400">{t("Digital Fiber Backbone Topology (AS150164)", "ডিজিটাল ফাইবার ব্যাকবোন টপোলজি (AS150164)")}</p>
               </div>
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Network Online
+                {t("Network Online", "নেটওয়ার্ক অনলাইন")}
               </span>
             </div>
-
             {/* Connection Beams (Lightswind Pro) */}
             <MeteorsBeam containerRef={containerRef} fromRef={nodeKadomtoliRef} toRef={nodeAganagarRef} color="#0072ff" meteorColor="#00f0ff" duration={4} delay={0} />
             <MeteorsBeam containerRef={containerRef} fromRef={nodeAganagarRef} toRef={nodeZinjiraRef} color="#0072ff" meteorColor="#00f0ff" duration={3.5} delay={0.5} />
@@ -271,125 +278,20 @@ export default function Coverage() {
                 </g>
               </svg>
             </div>
-
             {/* Map Legend */}
             <div className="flex flex-wrap gap-4 text-xs border-t border-brand-border/40 pt-4 z-10">
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan shadow-[0_0_8px_rgba(0,240,255,0.6)]" />
-                Active Fiber Coverage
+                {t("Active Fiber Coverage", "সক্রিয় ফাইবার কাভারেজ")}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-blue shadow-[0_0_8px_rgba(0,114,255,0.6)]" />
-                Expanding Fiber Lines
+                {t("Expanding Fiber Lines", "সম্প্রসারণাধীন ফাইবার লাইন")}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-500" />
-                Planned Coverage
+                {t("Planned Coverage", "পরিকল্পিত কাভারেজ")}
               </span>
-            </div>
-          </div>
-
-          {/* Controls & Area Listing */}
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-brand-card/30 p-4 rounded-2xl border border-brand-border/40 glass-panel">
-              {/* Search */}
-              <div className="relative w-full sm:max-w-xs">
-                <input
-                  type="text"
-                  placeholder="Filter by area..."
-                  value={search}
-                  onChange={handleSearchChange}
-                  className="w-full bg-brand-dark border border-brand-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
-                />
-                <svg
-                  className="w-5 h-5 text-slate-500 absolute left-3 top-3"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-
-              {/* Status Filters */}
-              <div className="flex gap-2 flex-wrap">
-                {[
-                  { id: "all", label: "Show All" },
-                  { id: "active", label: "Active Only" },
-                  { id: "expanding", label: "Expanding" },
-                  { id: "planned", label: "Planned" },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setFilter(item.id as any)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      filter === item.id
-                        ? "bg-brand-border border border-brand-cyan text-brand-cyan"
-                        : "bg-brand-card hover:bg-brand-border/40 text-slate-400 hover:text-white border border-transparent"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredZones.length > 0 ? (
-                filteredZones.map((zone, i) => (
-                  <div
-                    key={i}
-                    className="p-6 rounded-2xl bg-brand-card/40 border border-brand-border/40 glass-panel flex flex-col gap-4 text-left"
-                  >
-                    <div className="flex items-center justify-between border-b border-brand-border/40 pb-3">
-                      <div className="flex items-center gap-1.5 text-brand-cyan">
-                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <h4 className="text-white font-bold text-base">{zone.name}</h4>
-                      </div>
-                      <span
-                        className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border ${
-                          zone.status === "active"
-                            ? "bg-brand-cyan/10 border-brand-cyan/30 text-brand-cyan"
-                            : zone.status === "expanding"
-                            ? "bg-brand-blue/10 border-brand-blue/30 text-brand-blue"
-                            : "bg-slate-500/10 border-slate-500/30 text-slate-400"
-                        }`}
-                      >
-                        {zone.status === "active"
-                          ? "Active Fiber"
-                          : zone.status === "expanding"
-                          ? "Expanding"
-                          : "Planned"}
-                      </span>
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">
-                        Active Sub-areas / Road Peering:
-                      </p>
-                      <ul className="space-y-1.5">
-                        {zone.subAreas.map((sub, subIdx) => (
-                          <li key={subIdx} className="text-xs text-slate-300 flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            {sub}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-2 text-center py-12 bg-brand-card/20 rounded-2xl border border-brand-border/40">
-                  <p className="text-slate-400">No coverage zones match your search query.</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -400,15 +302,18 @@ export default function Coverage() {
             {!submitted ? (
               <form onSubmit={handleRequestSubmit} className="space-y-5">
                 <div>
-                  <h3 className="text-white font-bold text-lg">Request Coverage</h3>
+                  <h3 className="text-white font-bold text-lg">{t("Request Coverage", "কাভারেজের অনুরোধ")}</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Don&apos;t see your area on the list? Submit a request so our engineers can perform a fiber routing survey.
+                    {t(
+                      "Don't see your area on the list? Submit a request so our engineers can perform a fiber routing survey.",
+                      "তালিকায় আপনার এলাকাটি দেখছেন না? একটি অনুরোধ জমা দিন যাতে আমাদের প্রকৌশলীরা ফাইবার রাউটিং সমীক্ষা করতে পারেন।"
+                    )}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Your Name</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Your Name", "আপনার নাম")}</label>
                     <input
                       type="text"
                       name="name"
@@ -421,7 +326,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Phone Number</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
                     <input
                       type="tel"
                       name="phone"
@@ -434,7 +339,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Target Area</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Target Area", "কাঙ্ক্ষিত এলাকা")}</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -453,14 +358,14 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Descriptive Address</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Descriptive Address", "বিস্তারিত ঠিকানা")}</label>
                     <textarea
                       name="address"
                       required
                       rows={3}
                       value={requestData.address}
                       onChange={handleRequestChange}
-                      placeholder="Specify landmarks, mosque, or school names near your premises"
+                      placeholder={t("Specify landmarks, mosque, or school names near your premises", "আপনার বাড়ির নিকটবর্তী ল্যান্ডমার্ক, মসজিদ বা স্কুলের নাম উল্লেখ করুন")}
                       className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
@@ -474,10 +379,10 @@ export default function Coverage() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      Saving Request...
+                      {t("Saving Request...", "অনুরোধ সংরক্ষণ করা হচ্ছে...")}
                     </>
                   ) : (
-                    "Submit Feasibility Request"
+                    t("Submit Feasibility Request", "সম্ভাব্যতা যাচাইয়ের আবেদন জমা দিন")
                   )}
                 </button>
               </form>
@@ -490,22 +395,132 @@ export default function Coverage() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-bold text-xl">Survey Registered!</h3>
+                  <h3 className="text-white font-bold text-xl">{t("Survey Registered!", "সমীক্ষা নিবন্ধিত হয়েছে!")}</h3>
                   <p className="text-sm text-slate-400">
-                    We have saved your request for <span className="text-slate-200 font-bold">{requestData.area}</span>.
+                    {t("We have saved your request for", "আমরা আপনার অনুরোধটি সংরক্ষণ করেছি: ")} <span className="text-slate-200 font-bold">{requestData.area}</span>.
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.
+                  {t(
+                    "Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.",
+                    "আমাদের নেটওয়ার্ক পরিকল্পনা ইউনিট নতুন সংযোগ প্রদানের জন্য নিয়মিত অনুরোধগুলো মূল্যায়ন করে। আপনার এলাকায় ফাইবার লাইন সম্প্রসারিত হলে আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবেন।"
+                  )}
                 </p>
 
                 <button
                   onClick={resetRequestForm}
                   className="px-6 py-2 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  Submit Another Area
+                  {t("Submit Another Area", "অন্য কোনো এলাকার অনুরোধ দিন")}
                 </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div> {/* Close top max-w-1440 section wrapper */}
+
+    {/* Controls & Area Listing (Truly Full Width White Background) */}
+    <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+            {/* Search */}
+            <div className="relative w-full sm:max-w-xs">
+              <input
+                type="text"
+                placeholder={t("Filter by area...", "এলাকা দিয়ে ফিল্টার করুন...")}
+                value={search}
+                onChange={handleSearchChange}
+                className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
+              />
+              <svg
+                className="w-5 h-5 text-slate-450 absolute left-3 top-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            {/* Status Filters */}
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { id: "all", label: t("Show All", "সবগুলো দেখুন") },
+                { id: "active", label: t("Active Only", "শুধুমাত্র সক্রিয়") },
+                { id: "expanding", label: t("Expanding", "সম্প্রসারণাধীন") },
+                { id: "planned", label: t("Planned", "পরিকল্পিত") },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setFilter(item.id as any)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    filter === item.id
+                      ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
+                      : "bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border border-slate-200"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* List */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredZones.length > 0 ? (
+              filteredZones.map((zone, i) => (
+                <div
+                  key={i}
+                  className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-4 text-left"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-1.5 text-brand-blue">
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <h4 className="text-slate-900 font-extrabold text-base">{zone.name}</h4>
+                    </div>
+                    <span
+                      className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border ${
+                        zone.status === "active"
+                          ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                          : zone.status === "expanding"
+                          ? "bg-blue-50 border-blue-200 text-blue-600"
+                          : "bg-slate-100 border-slate-200 text-slate-500"
+                      }`}
+                    >
+                      {zone.status === "active"
+                        ? t("Active Fiber", "সক্রিয় ফাইবার")
+                        : zone.status === "expanding"
+                        ? t("Expanding", "সম্প্রসারণাধীন")
+                        : t("Planned", "পরিকল্পিত")}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
+                      {t("Active Sub-areas / Road Peering:", "সক্রিয় উপ-এলাকা / সড়কসমূহ:")}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {zone.subAreas.map((sub, subIdx) => (
+                        <li key={subIdx} className="text-xs text-slate-650 flex items-center gap-1.5 font-medium">
+                          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {sub}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="col-span-4 text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
+                <p className="text-slate-500">{t("No coverage zones match your search query.", "আপনার অনুসন্ধানের সাথে মেলে এমন কোনো এলাকা পাওয়া যায়নি।")}</p>
               </div>
             )}
           </div>

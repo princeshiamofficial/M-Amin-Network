@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Plan {
   speed: string;
@@ -15,6 +16,9 @@ interface Plan {
 
 function PackagesContent() {
   const searchParams = useSearchParams();
+  const lang = useTranslation();
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+
   const [activeTab, setActiveTab] = useState<"home" | "gaming" | "corporate">("home");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +35,86 @@ function PackagesContent() {
     "Char Kaliganj",
     "Doleshwar",
   ];
+
+  const translateName = (n: string) => {
+    if (n === "Home Basic") return t("Home Basic", "হোম বেসিক");
+    if (n === "Home Standard") return t("Home Standard", "হোম স্ট্যান্ডার্ড");
+    if (n === "Home Elite") return t("Home Elite", "হোম এলিট");
+    if (n === "Home Ultra") return t("Home Ultra", "হোম আল্ট্রা");
+    if (n === "Gamer Starter") return t("Gamer Starter", "গেমার স্টার্টার");
+    if (n === "Gamer Professional") return t("Gamer Professional", "গেমার প্রফেশনাল");
+    if (n === "Gamer Champion") return t("Gamer Champion", "গেমার চ্যাম্পিয়ন");
+    if (n === "Corporate SME") return t("Corporate SME", "কর্পোরেট এসএমই");
+    if (n === "Corporate Medium") return t("Corporate Medium", "কর্পোরেট মিডিয়াম");
+    if (n === "Corporate Ultimate") return t("Corporate Ultimate", "কর্পোরেট আল্টিমেট");
+    return n;
+  };
+
+  const translateTagline = (tag: string) => {
+    if (tag === "Great for casual browsing & SD streaming") return t("Great for casual browsing & SD streaming", "সাধারণ ব্রাউজিং এবং এসডি স্ট্রিমিংয়ের জন্য চমৎকার");
+    if (tag === "Perfect for families & HD streaming") return t("Perfect for families & HD streaming", "পরিবার এবং এইচডি স্ট্রিমিংয়ের জন্য পারফেক্ট");
+    if (tag === "Most popular for smart homes") return t("Most popular for smart homes", "স্মার্ট হোমের জন্য সবচেয়ে জনপ্রিয়");
+    if (tag === "Ultimate speed for heavy downloaders") return t("Ultimate speed for heavy downloaders", "ভারী ডাউনলোডারদের জন্য সর্বোচ্চ গতি");
+    if (tag === "Optimized routing for gaming hobbyists") return t("Optimized routing for gaming hobbyists", "গেমিং অনুরাগী ও শখের গেমারদের জন্য অপ্টিমাইজড রাউটিং");
+    if (tag === "Best performance for competitive players") return t("Best performance for competitive players", "প্রতিযোগিতামূলক গেমারদের জন্য সেরা পারফরম্যান্স");
+    if (tag === "Ultra-low jitter & maximum throughput") return t("Ultra-low jitter & maximum throughput", "আল্ট্রা-লো জিটার এবং ওয়ান-ট্যাপ ব্যান্ডউইথ থ্রুপুট");
+    if (tag === "Symmetric bandwidth for small businesses") return t("Symmetric bandwidth for small businesses", "ছোট ব্যবসার জন্য সিমেট্রিক ডেডিকেটেড ব্যান্ডউইথ");
+    if (tag === "Powerful link for active office networks") return t("Powerful link for active office networks", "সক্রিয় অফিস নেটওয়ার্কের জন্য শক্তিশালী লিংক");
+    if (tag === "High-capacity bandwidth for heavy tasks") return t("High-capacity bandwidth for heavy tasks", "ভারী ডেটা ও কাজের জন্য উচ্চ ক্ষমতাসম্পন্ন ব্যান্ডউইথ");
+    return tag;
+  };
+
+  const translateFeature = (f: string) => {
+    if (f === "Unlimited Bandwidth") return t("Unlimited Bandwidth", "আনলিমিটেড ব্যান্ডউইথ");
+    if (f === "Free Optical Fiber Router installation*") return t("Free Optical Fiber Router installation*", "ফ্রি অপটিক্যাল ফাইবার রাউটার ইনস্টলেশন*");
+    if (f === "YouTube & Facebook cache sharing") return t("YouTube & Facebook cache sharing", "ইউটিউব এবং ফেসবুক ক্যাশ শেয়ারিং");
+    if (f === "24/7 Phone Support Helpline") return t("24/7 Phone Support Helpline", "২৪/৭ ফোন সাপোর্ট হেল্পলাইন");
+    if (f === "Local LAN speeds up to 50 Mbps") return t("Local LAN speeds up to 50 Mbps", "লোকাল ল্যান স্পিড ৫০ এমবিপিএস পর্যন্ত");
+    if (f === "Full HD buffer-free streaming") return t("Full HD buffer-free streaming", "বাফার-মুক্ত ফুল এইচডি স্ট্রিমিং");
+    if (f === "Multi-device connection (4-6 devices)") return t("Multi-device connection (4-6 devices)", "মাল্টি-ডিভাইস কানেকশন (৪-৬টি ডিভাইস)");
+    if (f === "Premium BDIX connectivity") return t("Premium BDIX connectivity", "প্রিমিয়াম বিডিআইএক্স কানেক্টিভিটি");
+    if (f === "24/7 Chat & Ticket support") return t("24/7 Chat & Ticket support", "২৪/৭ চ্যাট এবং টিকিট সাপোর্ট");
+    if (f === "Local LAN speeds up to 100 Mbps") return t("Local LAN speeds up to 100 Mbps", "লোকাল ল্যান স্পিড ১০০ এমবিপিএস পর্যন্ত");
+    if (f === "4K UHD Streaming capability") return t("4K UHD Streaming capability", "৪কে ইউএইচডি স্ট্রিমিং সুবিধা");
+    if (f === "High-priority local peers (100 Mbps)") return t("High-priority local peers (100 Mbps)", "উচ্চ অগ্রাধিকার লোকাল পিয়ার্স (১০০ এমবিপিএস)");
+    if (f === "Ideal for smart home automation") return t("Ideal for smart home automation", "স্মার্ট হোম অটোমেশনের জন্য আদর্শ");
+    if (f === "Zero latency jitter control") return t("Zero latency jitter control", "জিরো ল্যাটেন্সি জিটার কন্ট্রোল");
+    if (f === "Free Public IP on request") return t("Free Public IP on request", "অনুরোধে ফ্রি পাবলিক আইপি");
+    if (f === "Dedicated routing bandwidth") return t("Dedicated routing bandwidth", "ডেডিকেটেড রাউটিং ব্যান্ডউইথ");
+    if (f === "Best for remote work & file syncing") return t("Best for remote work & file syncing", "রিমোট কাজ এবং ফাইল সিঙ্কিংয়ের জন্য সেরা");
+    if (f === "Static IPv4 Address Included") return t("Static IPv4 Address Included", "স্ট্যাটিক আইপিভি৪ অ্যাড্রেস অন্তর্ভুক্ত");
+    if (f === "SLA support ticket < 2 hours") return t("SLA support ticket < 2 hours", "২ ঘণ্টার কম সময়ে টিকিট সমাধান এসএলএ");
+    if (f === "Super high speed FTP access") return t("Super high speed FTP access", "সুপার হাই স্পিড এফটিপি অ্যাক্সেস");
+    if (f === "Special low-latency paths") return t("Special low-latency paths", "বিশেষ লো-ল্যাটেন্সি অপ্টিমাইজড পাথ");
+    if (f === "Direct peer routing (AS150164)") return t("Direct peer routing (AS150164)", "সরাসরি পিয়ার রাউটিং (AS150164)");
+    if (f === "Zero packet loss guarantee") return t("Zero packet loss guarantee", "জিরো প্যাকেট লস গ্যারান্টি");
+    if (f === "Optimized for PUBG & FreeFire") return t("Optimized for PUBG & FreeFire", "পাবজি এবং ফ্রি ফায়ারের জন্য অপ্টিমাইজড");
+    if (f === "Dedicated 24/7 hotline support") return t("Dedicated 24/7 hotline support", "ডেডিকেটেড ২৪/৭ হটলাইন সাপোর্ট");
+    if (f === "Lowest Ping routing to SG/HK servers") return t("Lowest Ping routing to SG/HK servers", "সিঙ্গাপুর ও হংকং সার্ভারে সর্বনিম্ন পিং রাউটিং");
+    if (f === "Ideal for streaming live gameplay") return t("Ideal for streaming live gameplay", "লাইভ গেমপ্লে স্ট্রিমিংয়ের জন্য উপযুক্ত");
+    if (f === "Static IP for stable lobby matching") return t("Static IP for stable lobby matching", "স্থির লবি ম্যাচিংয়ের জন্য স্ট্যাটিক আইপি");
+    if (f === "BDIX peers up to 100 Mbps") return t("BDIX peers up to 100 Mbps", "১০০ এমবিপিএস পর্যন্ত বিডিআইএক্স পিয়ার্স");
+    if (f === "Optimized for Steam, Epic Games, Valorant") return t("Optimized for Steam, Epic Games, Valorant", "স্টিম, এপিক গেমস ও ভ্যালোরেন্ট-এ অপ্টিমাইজড");
+    if (f === "Ultra-low latency to Southeast Asia") return t("Ultra-low latency to Southeast Asia", "দক্ষিণ-পূর্ব এশিয়ায় আল্ট্রা-লো ল্যাটেন্সি");
+    if (f === "Priority bandwidth allocation") return t("Priority bandwidth allocation", "অগ্রাধিকার ব্যান্ডউইথ বরাদ্দ");
+    if (f === "Dual-stack IPv4 & IPv6 routing") return t("Dual-stack IPv4 & IPv6 routing", "ডুয়াল-স্ট্যাক আইপিভি৪ এবং আইপিভি৬ রাউটিং");
+    if (f === "No speed throttling, no cap") return t("No speed throttling, no cap", "কোনো স্পিড থ্রটলিং বা সীমা নেই");
+    if (f === "24/7 direct engineer support line") return t("24/7 direct engineer support line", "২৪/৭ সরাসরি ইঞ্জিনিয়ার সাপোর্ট লাইন");
+    if (f === "1:1 Symmetric dedicated bandwidth") return t("1:1 Symmetric dedicated bandwidth", "১:১ সিমেট্রিক ডেডিকেটেড ব্যান্ডউইথ");
+    if (f === "99.9% Uptime SLA Guarantee") return t("99.9% Uptime SLA Guarantee", "৯৯.৯% আপটাইম এসএলএ গ্যারান্টি");
+    if (f === "1 Public IP Address Included") return t("1 Public IP Address Included", "১টি পাবলিক আইপি অ্যাড্রেস অন্তর্ভুক্ত");
+    if (f === "24/7 Dedicated account manager") return t("24/7 Dedicated account manager", "২৪/৭ ডেডিকেটেড অ্যাকাউন্ট ম্যানেজার");
+    if (f === "4-hour resolution support SLA") return t("4-hour resolution support SLA", "৪-ঘণ্টার মধ্যে সমস্যা সমাধানের এসএলএ");
+    if (f === "Dual-WAN router installation backup") return t("Dual-WAN router installation backup", "ডুয়াল-ওয়ান রাউটার ইনস্টলেশন ব্যাকআপ");
+    if (f === "2 Static Public IPs Included") return t("2 Static Public IPs Included", "২টি স্ট্যাটিক পাবলিক আইপি অন্তর্ভুক্ত");
+    if (f === "Peering with AS150164 BGP backbone") return t("Peering with AS150164 BGP backbone", "AS150164 বিজিপি ব্যাকবোনের সাথে পিয়ারিং");
+    if (f === "2-hour support resolution SLA") return t("2-hour support resolution SLA", "২-ঘণ্টার মধ্যে সমস্যা সমাধানের এসএলএ");
+    if (f === "Redundant upstream connection routing") return t("Redundant upstream connection routing", "রেডান্ড্যান্ট আপস্ট্রিম কানেকশন রাউটিং");
+    if (f === "Subnet of 4 Public IPs") return t("Subnet of 4 Public IPs", "৪টি পাবলিক আইপির সাবনেট");
+    if (f === "Direct fiber optic ring configuration") return t("Direct fiber optic ring configuration", "সরাসরি ফাইবার অপটিক রিং কনফিগারেশন");
+    if (f === "1-hour support resolution SLA") return t("1-hour support resolution SLA", "১-ঘণ্টার মধ্যে সমস্যা সমাধানের এসএলএ");
+    return f;
+  };
   
   // Order Form State
   const [formData, setFormData] = useState({
@@ -245,132 +329,143 @@ function PackagesContent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow">
-      {/* Background glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
+    <div className="w-full flex-grow relative text-left">
+      {/* Top Section Wrapper (Confined to max-w-7xl) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        {/* Background glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
 
-      {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <h1 className="text-4xl font-extrabold text-white tracking-tight">
-          Flexible &amp; Premium{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-            Broadband Plans
-          </span>
-        </h1>
-        <p className="text-slate-400 mt-4 text-sm sm:text-base">
-          Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.
-        </p>
-      </div>
-
-      {/* Tab Selectors */}
-      <div className="flex justify-center mb-16">
-        <div className="inline-flex p-1 rounded-2xl bg-brand-card/80 border border-brand-border">
-          {[
-            { id: "home", label: "Home Internet" },
-            { id: "gaming", label: "Gamer Packs" },
-            { id: "corporate", label: "Corporate Dedicated" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
-                activeTab === tab.id
-                  ? "bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark shadow-md"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Pricing Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-        {filteredPlans.map((plan, i) => (
-          <div
-            key={i}
-            className={`rounded-3xl border p-8 flex flex-col justify-between relative transition-all glass-panel ${
-              plan.popular
-                ? "border-brand-cyan bg-brand-card/90 shadow-[0_0_30px_rgba(0,240,255,0.1)] scale-105 md:scale-100 lg:scale-105 z-10"
-                : "border-brand-border/60 bg-brand-card/50 hover:border-brand-blue/60"
-            }`}
-          >
-            {plan.popular && (
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black tracking-widest px-4 py-1.5 rounded-full uppercase shadow">
-                Most Popular
-              </span>
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
+            {t("Flexible & Premium", "ফ্লেক্সিবল ও প্রিমিয়াম")}{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+              {t("Broadband Plans", "ব্রডব্যান্ড প্ল্যান")}
+            </span>
+          </h1>
+          <p className="text-slate-400 mt-4 text-sm sm:text-base text-center">
+            {t(
+              "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
+              "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।"
             )}
+          </p>
+        </div>
+      </div> {/* Close Top Section Wrapper */}
 
-            <div>
-              <div className="mb-6">
-                <h3 className="text-white text-xl font-bold">{plan.name}</h3>
-                <p className="text-xs text-slate-400 mt-1">{plan.tagline}</p>
-              </div>
-
-              {/* Speed Circular indicator */}
-              <div className="flex items-baseline gap-1.5 mb-6">
-                <span className="text-5xl font-black text-white font-mono tracking-tight">
-                  {plan.speed.split(" ")[0]}
-                </span>
-                <span className="text-brand-cyan font-bold text-lg">Mbps</span>
-              </div>
-
-              <div className="border-t border-brand-border/40 pt-6 mb-8">
-                <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-4">
-                  What&apos;s Included
-                </p>
-                <ul className="space-y-3.5 text-sm text-slate-300">
-                  {plan.features.map((feat, featIdx) => (
-                    <li key={featIdx} className="flex gap-2.5 items-start">
-                      <svg
-                        className="w-5 h-5 text-brand-cyan flex-shrink-0 mt-0.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="border-t border-brand-border/40 pt-6 mt-auto">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs text-slate-400 font-semibold">Monthly Price</span>
-                <span className="text-2xl font-bold text-white font-mono">
-                  ৳{plan.price} BDT
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  setSelectedPlan(plan);
-                  setIsModalOpen(true);
-                }}
-                className={`w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all cursor-pointer ${
-                  plan.popular
-                    ? "bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 shadow-lg shadow-brand-blue/15"
-                    : "bg-brand-border hover:bg-brand-border/80 text-white border border-brand-border"
-                }`}
-              >
-                Order Connection
-              </button>
+      {/* Bottom Section: Plan Grid & Tab Selectors (Truly Full Width White Background) */}
+      <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10 text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Tab Selectors */}
+          <div className="flex justify-center mb-16">
+            <div className="inline-flex p-1 rounded-2xl bg-slate-50 border border-slate-200">
+              {[
+                { id: "home", label: t("Home Internet", "হোম ইন্টারনেট") },
+                { id: "gaming", label: t("Gamer Packs", "গেমার প্যাক") },
+                { id: "corporate", label: t("Corporate Dedicated", "কর্পোরেট ডেডিকেটেড") },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-brand-blue text-white shadow-md"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
-        ))}
+
+          {/* Pricing Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
+            {filteredPlans.map((plan, i) => (
+              <div
+                key={i}
+                className={`rounded-3xl border p-8 flex flex-col justify-between relative transition-all text-left ${
+                  plan.popular
+                    ? "border-brand-blue bg-white shadow-[0_4px_30px_rgba(0,114,255,0.15)] scale-105 md:scale-100 lg:scale-105 z-10"
+                    : "border-slate-200 bg-white shadow-sm hover:border-slate-350 hover:shadow-md"
+                }`}
+              >
+                {plan.popular && (
+                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md">
+                    {t("Most Popular", "সবচেয়ে জনপ্রিয়")}
+                  </span>
+                )}
+
+                <div>
+                  <div className="mb-6">
+                    <h3 className="text-slate-900 text-xl font-extrabold">{translateName(plan.name)}</h3>
+                    <p className="text-xs text-slate-500 mt-1">{translateTagline(plan.tagline)}</p>
+                  </div>
+
+                  {/* Speed Circular indicator */}
+                  <div className="flex items-baseline gap-1.5 mb-6">
+                    <span className="text-5xl font-black text-slate-900 font-mono tracking-tight">
+                      {plan.speed.split(" ")[0]}
+                    </span>
+                    <span className="text-brand-blue font-bold text-lg">Mbps</span>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-6 mb-8">
+                    <p className="text-xs text-slate-455 uppercase tracking-widest font-bold mb-4">
+                      {t("What's Included", "যা যা অন্তর্ভুক্ত")}
+                    </p>
+                    <ul className="space-y-3.5 text-sm">
+                      {plan.features.map((feat, featIdx) => (
+                        <li key={featIdx} className="flex gap-2.5 items-start">
+                          <svg
+                            className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                          </svg>
+                          <span className="text-slate-650 font-medium">{translateFeature(feat)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 pt-6 mt-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs text-slate-455 font-semibold">{t("Monthly Price", "মাসিক মূল্য")}</span>
+                    <span className="text-2xl font-black text-slate-900 font-mono">
+                      ৳{plan.price} BDT
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedPlan(plan);
+                      setIsModalOpen(true);
+                    }}
+                    className={`w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all cursor-pointer ${
+                      plan.popular
+                        ? "bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 shadow-md"
+                        : "bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200"
+                    }`}
+                  >
+                    {t("Order Connection", "অর্ডার করুন")}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Order connection Modal */}
       {isModalOpen && selectedPlan && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-dark/80 backdrop-blur-sm">
-          <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-left">
             <button
               onClick={resetForm}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -378,18 +473,18 @@ function PackagesContent() {
             </button>
 
             {!orderSuccess ? (
-              <form onSubmit={handleOrderSubmit} className="space-y-5">
+              <form onSubmit={handleOrderSubmit} className="space-y-5 text-left">
                 <div>
-                  <h3 className="text-white font-bold text-xl">New Internet Connection</h3>
+                  <h3 className="text-white font-bold text-xl">{t("New Internet Connection", "নতুন ইন্টারনেট সংযোগ")}</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Complete this form to request optical fiber setup for{" "}
-                    <span className="text-brand-cyan font-bold">{selectedPlan.name} ({selectedPlan.speed})</span>
+                    {t("Complete this form to request optical fiber setup for", "অপটিক্যাল ফাইবার সংযোগের অনুরোধ জানাতে এই ফর্মটি পূরণ করুন: ")}{" "}
+                    <span className="text-brand-cyan font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Full Name</label>
+                <div className="grid grid-cols-1 gap-4 text-left">
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
                     <input
                       type="text"
                       name="name"
@@ -401,9 +496,9 @@ function PackagesContent() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Phone Number</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -414,22 +509,22 @@ function PackagesContent() {
                         className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
                       />
                     </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Email Address</label>
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="optional"
+                        placeholder={t("optional", "ঐচ্ছিক")}
                         className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Coverage Zone</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Coverage Zone", "কাভারেজ এলাকা")}</label>
                       <select
                         name="area"
                         value={formData.area}
@@ -443,17 +538,17 @@ function PackagesContent() {
                         ))}
                       </select>
                     </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Monthly Pricing</label>
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Monthly Pricing", "মাসিক মূল্য")}</label>
                       <div className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-slate-300 font-mono flex items-center justify-between">
-                        <span>Rate</span>
+                        <span>{t("Rate", "মূল্য")}</span>
                         <span className="font-bold text-white">৳{selectedPlan.price} BDT</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Installation Address</label>
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Installation Address", "সংযোগের ঠিকানা")}</label>
                     <textarea
                       name="address"
                       required
@@ -461,17 +556,17 @@ function PackagesContent() {
                       value={formData.address}
                       onChange={handleInputChange}
                       placeholder="e.g. House No. 25, Lane 3, Kadomtoli, South Keraniganj"
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
+                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none font-sans"
                     />
                   </div>
                 </div>
 
-                <div className="bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl p-3.5 text-xs text-brand-cyan leading-relaxed flex gap-2">
+                <div className="bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl p-3.5 text-xs text-brand-cyan leading-relaxed flex gap-2 text-left">
                   <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <span>
-                    Our field representative will contact you within 4 hours to verify feasibility and schedule installation. Connection setups take less than 24 hours.
+                    {t("Our field representative will contact you within 4 hours to verify feasibility and schedule installation. Connection setups take less than 24 hours.", "আমাদের ফিল্ড প্রতিনিধি সম্ভাব্যতা যাচাই এবং সংযোগ সেটআপের সময় নির্ধারণ করতে ৪ ঘণ্টার মধ্যে আপনার সাথে যোগাযোগ করবেন। সংযোগ প্রক্রিয়া সম্পূর্ণ হতে ২৪ ঘণ্টারও কম সময় লাগে।")}
                   </span>
                 </div>
 
@@ -483,10 +578,10 @@ function PackagesContent() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      Processing Request...
+                      {t("Processing Request...", "অনুরোধ প্রসেস করা হচ্ছে...")}
                     </>
                   ) : (
-                    "Submit Connection Request"
+                    t("Submit Connection Request", "সংযোগের অনুরোধ জমা দিন")
                   )}
                 </button>
               </form>
@@ -499,36 +594,36 @@ function PackagesContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-extrabold text-2xl">Request Submitted!</h3>
+                  <h3 className="text-white font-extrabold text-2xl">{t("Request Submitted!", "অনুরোধ জমা দেওয়া হয়েছে!")}</h3>
                   <p className="text-sm text-slate-400">
-                    Thank you, <span className="text-slate-200 font-bold">{formData.name}</span>. Your internet connection ticket has been successfully registered.
+                    {t("Thank you, ", "ধন্যবাদ, ")} <span className="text-slate-200 font-bold">{formData.name}</span>. {t("Your internet connection ticket has been successfully registered.", "আপনার internet সংযোগ অনুরোধ টিকিটটি সফলভাবে নিবন্ধিত হয়েছে।")}
                   </p>
                 </div>
 
                 <div className="bg-brand-dark border border-brand-border rounded-2xl p-5 max-w-sm mx-auto font-mono text-left">
                   <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
-                    <span>Order Reference</span>
+                    <span>{t("Order Reference", "অর্ডার রেফারেন্স")}</span>
                     <span className="text-brand-cyan font-bold">{orderRef}</span>
                   </div>
                   <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
-                    <span>Selected Plan</span>
-                    <span className="text-white font-bold">{selectedPlan.name} ({selectedPlan.speed})</span>
+                    <span>{t("Selected Plan", "নির্বাচিত প্ল্যান")}</span>
+                    <span className="text-white font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
                   </div>
                   <div className="flex justify-between text-xs text-slate-400">
-                    <span>Contact Phone</span>
+                    <span>{t("Contact Phone", "যোগাযোগের ফোন নম্বর")}</span>
                     <span className="text-white font-bold">{formData.phone}</span>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-                  A support representative will call you at your number shortly to coordinate fiber line routing and router installation. Please keep your phone active.
+                  {t("A support representative will call you at your number shortly to coordinate fiber line routing and router installation. Please keep your phone active.", "ফাইবার লাইন রুট নির্ধারণ এবং রাউটার ইনস্টলেশনের জন্য শিগগিরই একজন প্রতিনিধি আপনার নম্বরে কল করবেন। অনুগ্রহ করে মোবাইল সচল রাখুন।")}
                 </p>
 
                 <button
                   onClick={resetForm}
                   className="px-6 py-2.5 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-sm font-bold transition-colors cursor-pointer"
                 >
-                  Close Window
+                  {t("Close Window", "উইন্ডো বন্ধ করুন")}
                 </button>
               </div>
             )}

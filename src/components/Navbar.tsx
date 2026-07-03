@@ -8,8 +8,24 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const [lang, setLang] = useState("EN");
+
+  const handleLangChange = (newLang: string) => {
+    setLang(newLang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("app-lang", newLang);
+      window.dispatchEvent(new Event("languageChange"));
+    }
+  };
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.documentElement.classList.remove("theme-light");
+    }
+
+    const savedLang = localStorage.getItem("app-lang") || "EN";
+    setLang(savedLang);
+
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setScrolled(true);
@@ -21,76 +37,140 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Internet Packages", href: "/packages" },
-    { name: "About Us", href: "/about" },
-    { name: "Special Offers", href: "/offers" },
-    { name: "Coverage Area", href: "/coverage" },
-    { name: "FTP & Multimedia", href: "/multimedia" },
-    { name: "Diagnostics & Support", href: "/support" },
-    { name: "Quick Pay", href: "/bill-payment" },
-    { name: "Careers", href: "/careers" },
-    { name: "Contact Us", href: "/contact" },
+    { name: t("Home", "হোম"), href: "/" },
+    { name: t("Packages", "প্যাকেজ"), href: "/packages" },
+    { name: t("Offers", "অফার"), href: "/offers" },
+    { name: t("Coverage", "কাভারেজ"), href: "/coverage" },
+    { name: t("Multimedia", "মাল্টিমিডিয়া"), href: "/multimedia" },
+    { name: t("Complain", "অভিযোগ"), href: "/complain" },
+    { name: t("Pay Bill", "বিল পরিশোধ"), href: "/bill-payment" },
+    { name: t("Careers", "ক্যারিয়ার"), href: "/careers" },
+    { name: t("Contact", "যোগাযোগ"), href: "/contact" },
+    { name: t("About", "আমাদের সম্পর্কে"), href: "/about" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-brand-dark/80 backdrop-blur-md border-b border-brand-border/60 py-3 shadow-lg shadow-brand-dark/20"
-          : "bg-transparent py-5"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      {/* Top Utility Bar */}
+      <div className={`bg-brand-dark/95 border-b border-brand-border/20 text-slate-300 text-xs py-1.5 transition-all duration-300 overflow-hidden ${
+        scrolled ? "max-h-0 opacity-0 py-0 border-b-0" : "max-h-12 opacity-100"
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-brand-cyan/10 border border-brand-cyan/20 rounded-full px-2 py-0.5 text-brand-cyan">
+              <svg
+                className="w-3 h-3 animate-pulse"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 0 1-7.108-7.108c-.155-.44.01-1.029.387-1.31l1.293-.97c.362-.271.528-.733.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                />
+              </svg>
+              <span className="text-[10px] font-black tracking-wider uppercase">{t("Hotline", "হটলাইন")}</span>
+            </div>
+            <a href="tel:+8801901348400" className="hover:text-brand-cyan transition-colors font-bold font-mono text-slate-200">
+              +880 1901-348400
+            </a>
+          </div>
+          
+          <div className="flex items-center gap-1.5 font-semibold text-slate-400">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+            </span>
+            <span>{t("24/7 — Call Any Time", "২৪/৭ — যেকোনো সময় কল")}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className={`w-full px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
+        scrolled ? "py-1.5" : "py-2.5"
+      }`}>
+        <div className="flex items-center justify-between h-11">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.4)] group-hover:scale-105 transition-transform">
-                M
-              </div>
-              <div className="flex flex-col">
-                <span className="text-white font-bold text-lg tracking-wide leading-none group-hover:text-brand-cyan transition-colors">
-                  M AMIN
-                </span>
-                <span className="text-brand-cyan text-xs font-semibold tracking-widest leading-none mt-1">
-                  NETWORK
-                </span>
-              </div>
+            <Link href="/" className="flex items-center py-1">
+              <img
+                src="/logo.png"
+                alt="M Amin Network"
+                className="h-10 w-auto object-contain"
+              />
             </Link>
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium transition-all duration-200 hover:text-brand-cyan relative py-1 ${
-                    isActive ? "text-brand-cyan font-semibold" : "text-slate-300"
+                  className={`text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-full ${
+                    isActive
+                      ? "bg-brand-blue/10 text-brand-blue"
+                      : "text-slate-600 hover:text-brand-blue hover:bg-slate-100/50"
                   }`}
                 >
                   {link.name}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-brand-blue to-brand-cyan rounded-full animate-pulse" />
-                  )}
                 </Link>
               );
             })}
           </div>
 
-          {/* Client Portal Button */}
-          <div className="hidden lg:block">
+          {/* Client Portal Button & Language Selector */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Language Switcher Dropdown */}
+            <div className="relative group py-1">
+              <button className="flex items-center gap-1 hover:text-brand-blue transition-colors font-semibold text-sm text-slate-600">
+                <svg className="w-4 h-4 text-slate-500 group-hover:text-brand-blue transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                </svg>
+                <span>{lang}</span>
+                <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180 text-slate-500 group-hover:text-brand-blue" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+              </button>
+
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-1 w-24 rounded-lg bg-white border border-slate-200 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-1 font-sans">
+                <button
+                  onClick={() => handleLangChange("EN")}
+                  className={`w-full text-left px-3 py-1.5 hover:bg-slate-100 transition-colors text-xs font-semibold flex items-center justify-between ${
+                    lang === "EN" ? "text-brand-blue bg-brand-blue/5" : "text-slate-700"
+                  }`}
+                >
+                  <span>English</span>
+                  {lang === "EN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue"></span>}
+                </button>
+                <button
+                  onClick={() => handleLangChange("BN")}
+                  className={`w-full text-left px-3 py-1.5 hover:bg-slate-100 transition-colors text-xs font-semibold flex items-center justify-between ${
+                    lang === "BN" ? "text-brand-blue bg-brand-blue/5" : "text-slate-700"
+                  }`}
+                >
+                  <span>বাংলা</span>
+                  {lang === "BN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue"></span>}
+                </button>
+              </div>
+            </div>
+
+            {/* Client Portal Button */}
             <Link
               href="/portal"
-              className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-xs font-semibold text-white rounded-xl group bg-gradient-to-br from-brand-blue to-brand-cyan group-hover:from-brand-blue group-hover:to-brand-cyan hover:text-white focus:ring-2 focus:outline-none focus:ring-brand-cyan/50 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark font-extrabold text-xs shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/20 hover:scale-[1.02] transition-all cursor-pointer"
             >
-              <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-brand-dark rounded-x[10px] group-hover:bg-opacity-0">
-                Client Portal
-              </span>
+              {t("Client Portal", "গ্রাহক পোর্টাল")}
             </Link>
           </div>
 
@@ -99,14 +179,14 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-white hover:bg-brand-border/40 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              className="inline-flex items-center justify-center p-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 focus:outline-none focus:ring-2 focus:ring-brand-blue"
               aria-controls="mobile-menu"
-              aria-expanded="false"
+              aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>
               {!isOpen ? (
                 <svg
-                  className="block h-6 w-6"
+                  className="block h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -121,7 +201,7 @@ export default function Navbar() {
                 </svg>
               ) : (
                 <svg
-                  className="block h-6 w-6"
+                  className="block h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -149,7 +229,7 @@ export default function Navbar() {
         }`}
         id="mobile-menu"
       >
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-brand-dark/95 border-b border-brand-border/60 backdrop-blur-lg px-4">
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-b border-slate-200/80 backdrop-blur-lg px-4">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -159,21 +239,43 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
                   isActive
-                    ? "bg-brand-blue/20 text-brand-cyan border-l-4 border-brand-cyan"
-                    : "text-slate-300 hover:bg-brand-border/30 hover:text-white"
+                    ? "bg-brand-blue/10 text-brand-blue border-l-4 border-brand-blue"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
                 {link.name}
               </Link>
             );
           })}
-          <div className="pt-4 pb-2 border-t border-brand-border/40 mt-4">
+          <div className="flex items-center justify-between py-3 border-t border-slate-100 mt-2 px-2">
+            <span className="text-slate-500 text-sm font-semibold">{t("Language", "ভাষা")}</span>
+            <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg">
+              <button
+                onClick={() => handleLangChange("EN")}
+                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                  lang === "EN" ? "bg-white text-brand-blue shadow-sm" : "text-slate-500"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => handleLangChange("BN")}
+                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                  lang === "BN" ? "bg-white text-brand-blue shadow-sm" : "text-slate-500"
+                }`}
+              >
+                বাংলা
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-2 pb-2 mt-2">
             <Link
               href="/portal"
               onClick={() => setIsOpen(false)}
               className="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white text-base font-semibold shadow-lg shadow-brand-blue/20"
             >
-              Client Portal
+              {t("Client Portal", "গ্রাহক পোর্টাল")}
             </Link>
           </div>
         </div>

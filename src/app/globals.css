@@ -68,7 +68,9 @@
 html,
 body {
   max-width: 100%;
+  width: 100%;
   overflow-x: hidden;
+  position: relative;
   background-color: var(--background);
   color: var(--foreground);
 }
@@ -97,4 +99,141 @@ body {
 }
 .text-glow-blue {
   text-shadow: 0 0 12px rgba(0, 114, 255, 0.4);
+}
+
+/* Light Mode Theme Overrides */
+.theme-light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+.theme-light body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* Light mode specific adjustments */
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6 {
+  color: #0f172a !important;
+}
+
+.theme-light p {
+  color: #475569 !important;
+}
+
+.theme-light .glass-panel {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.theme-light .glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 114, 255, 0.4) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 114, 255, 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+.theme-light .text-slate-400 {
+  color: #475569 !important;
+}
+
+.theme-light .text-slate-300 {
+  color: #334155 !important;
+}
+
+.theme-light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.theme-light .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light .bg-brand-card\/60,
+.theme-light .bg-brand-card\/40 {
+  background-color: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+.theme-light .bg-brand-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .text-brand-cyan {
+  color: #0072ff !important;
+  text-shadow: none !important;
+}
+
+.theme-light .text-glow {
+  text-shadow: 0 0 12px rgba(0, 114, 255, 0.2) !important;
+}
+
+.theme-light .border-brand-border\/60,
+.theme-light .border-brand-border\/40,
+.theme-light .border-brand-border {
+  border-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+/* Hero Section Overlay - Theme Aware */
+.hero-overlay {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  transition: background-color 0.3s ease;
+}
+
+.theme-light .hero-overlay {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Revert text overrides for dark sections (Footer, Top Utility Bar) in Light Mode */
+.theme-light footer,
+.theme-light footer *,
+.theme-light .bg-brand-dark\/95,
+.theme-light .bg-brand-dark\/95 * {
+  color: inherit;
+}
+
+.theme-light footer .text-slate-400,
+.theme-light .bg-brand-dark\/95 .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.theme-light footer .text-slate-300,
+.theme-light .bg-brand-dark\/95 .text-slate-300 {
+  color: #cbd5e1 !important;
+}
+
+.theme-light footer .text-slate-100,
+.theme-light .bg-brand-dark\/95 .text-slate-100,
+.theme-light footer .hover\:text-slate-100:hover,
+.theme-light .bg-brand-dark\/95 .hover\:text-slate-100:hover {
+  color: #f1f5f9 !important;
+}
+
+.theme-light footer .text-white,
+.theme-light .bg-brand-dark\/95 .text-white {
+  color: #ffffff !important;
+}
+
+.theme-light footer .text-brand-cyan,
+.theme-light .bg-brand-dark\/95 .text-brand-cyan {
+  color: #00f0ff !important;
+}
+
+.theme-light footer h3,
+.theme-light footer h4,
+.theme-light .bg-brand-dark\/95 h3 {
+  color: #ffffff !important;
+}
+
+.theme-light footer a:hover,
+.theme-light .bg-brand-dark\/95 a:hover {
+  color: #00f0ff !important;
 }

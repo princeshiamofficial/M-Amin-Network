@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function Contact() {
+  const lang = useTranslation();
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -42,16 +46,19 @@ export default function Contact() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-          Get In Touch
+          {t("Get In Touch", "যোগাযোগ করুন")}
         </span>
-        <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-          Contact{" "}
+        <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
+          {t("Contact ", "আমাদের সাথে ")}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-            Our Team
+            {t("Our Team", "যোগাযোগ")}
           </span>
         </h1>
         <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-          Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.
+          {t(
+            "Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.",
+            "সংযোগের সম্ভাব্যতা যাচাই, বিশেষ ছাড় বা কর্পোরেট ডেডিকেটেড ইন্টারনেট সম্পর্কে কোনো জিজ্ঞাসা আছে? সরাসরি যোগাযোগ করুন অথবা নিচের ফর্মটি পূরণ করুন।"
+          )}
         </p>
       </div>
 
@@ -60,53 +67,53 @@ export default function Contact() {
         <div className="lg:col-span-5 space-y-8">
           {/* Details */}
           <div className="glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl">
-            <h3 className="text-white font-extrabold text-lg">Contact Information</h3>
-            <ul className="space-y-6 text-sm">
-              <li className="flex gap-4 items-start">
+            <h3 className="text-white font-extrabold text-lg">{t("Contact Information", "যোগাযোগের তথ্য")}</h3>
+            <ul className="space-y-6 text-sm text-left">
+              <li className="flex gap-4 items-start text-left">
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/20 text-brand-cyan flex items-center justify-center border border-brand-cyan/20 flex-shrink-0 mt-0.5">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-white font-bold block mb-1">Corporate Office</h4>
+                <div className="text-left">
+                  <h4 className="text-white font-bold block mb-1">{t("Corporate Office", "প্রধান কার্যালয়")}</h4>
                   <p className="text-slate-350 leading-relaxed text-xs">
-                    House No. 68, Kadomtoli, Aganagar,
+                    {t("House No. 68, Kadomtoli, Aganagar,", "বাসা নং ৬৮, কদমতলী, আগানগর,")}
                     <br />
-                    South Keraniganj, Dhaka-1310, Bangladesh.
+                    {t("South Keraniganj, Dhaka-1310, Bangladesh.", "দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।")}
                   </p>
                 </div>
               </li>
 
-              <li className="flex gap-4 items-start">
+              <li className="flex gap-4 items-start text-left">
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/20 text-brand-cyan flex items-center justify-center border border-brand-cyan/20 flex-shrink-0 mt-0.5">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-white font-bold block mb-1">Telephone Hotlines</h4>
+                <div className="text-left">
+                  <h4 className="text-white font-bold block mb-1">{t("Telephone Hotlines", "হটলাইন নম্বরসমূহ")}</h4>
                   <p className="text-slate-350 text-xs">
-                    Residential Support: <a href="tel:+8801707009267" className="hover:text-brand-cyan text-white font-mono font-bold">+880 1707-009267</a>
+                    {t("Residential Support:", "গ্রাহক সেবা:")} <a href="tel:+8801707009267" className="hover:text-brand-cyan text-white font-mono font-bold">+880 1707-009267</a>
                     <br />
-                    Corporate Desk: +880 1707-009267
+                    {t("Corporate Desk:", "কর্পোরেট ডেস্ক:")} +880 1707-009267
                   </p>
                 </div>
               </li>
 
-              <li className="flex gap-4 items-start">
+              <li className="flex gap-4 items-start text-left">
                 <div className="w-10 h-10 rounded-xl bg-brand-blue/20 text-brand-cyan flex items-center justify-center border border-brand-cyan/20 flex-shrink-0 mt-0.5">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <div>
-                  <h4 className="text-white font-bold block mb-1">Email Correspondence</h4>
+                <div className="text-left">
+                  <h4 className="text-white font-bold block mb-1">{t("Email Correspondence", "ইমেইল যোগাযোগ")}</h4>
                   <p className="text-slate-350 text-xs">
-                    General Queries: <a href="mailto:info@m-aminnetwork.com" className="hover:text-brand-cyan text-white">info@m-aminnetwork.com</a>
+                    {t("General Queries:", "সাধারণ জিজ্ঞাসা:")} <a href="mailto:info@m-aminnetwork.com" className="hover:text-brand-cyan text-white font-mono">info@m-aminnetwork.com</a>
                     <br />
-                    Network Ops: <a href="mailto:mibappy00@gmail.com" className="hover:text-brand-cyan text-white">mibappy00@gmail.com</a>
+                    {t("Network Ops:", "নেটওয়ার্ক অপস:")} <a href="mailto:mibappy00@gmail.com" className="hover:text-brand-cyan text-white font-mono">mibappy00@gmail.com</a>
                   </p>
                 </div>
               </li>
@@ -119,28 +126,28 @@ export default function Contact() {
               <svg className="w-8 h-8 text-brand-cyan animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               </svg>
-              <span className="text-white text-xs font-bold mt-2">Kadomtoli Chowrasta, Aganagar</span>
-              <span className="text-slate-500 text-[10px] mt-1 text-center">House No. 68, Kadomtoli Office Location</span>
+              <span className="text-white text-xs font-bold mt-2">{t("Kadomtoli Chowrasta, Aganagar", "কদমতলী চৌরাস্তা, আগানগর")}</span>
+              <span className="text-slate-500 text-[10px] mt-1 text-center">{t("House No. 68, Kadomtoli Office Location", "বাসা নং ৬৮, কদমতলী অফিস অবস্থান")}</span>
             </div>
             <div className="w-full h-full bg-slate-900 absolute inset-0 opacity-15" />
           </div>
         </div>
 
         {/* Right Column: Contact form */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 text-left">
           <div className="glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 shadow-xl text-left">
             {!success ? (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-5 text-left">
                 <div>
-                  <h3 className="text-white font-extrabold text-xl">Send an Inquiry</h3>
+                  <h3 className="text-white font-extrabold text-xl">{t("Send an Inquiry", "অনুসন্ধান জানান")}</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    Fill out the form below and our operations support manager will follow up with you.
+                    {t("Fill out the form below and our operations support manager will follow up with you.", "নিচের ফর্মটি পূরণ করুন এবং আমাদের অপারেশন ম্যানেজার আপনার সাথে যোগাযোগ করবেন।")}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Your Full Name</label>
+                <div className="grid grid-cols-1 gap-4 text-left">
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Your Full Name", "আপনার নাম")}</label>
                     <input
                       type="text"
                       required
@@ -151,9 +158,9 @@ export default function Contact() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Contact Phone</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Contact Phone", "মোবাইল নম্বর")}</label>
                       <input
                         type="tel"
                         required
@@ -163,8 +170,8 @@ export default function Contact() {
                         className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
                       />
                     </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Email Address</label>
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
                       <input
                         type="email"
                         value={form.email}
@@ -175,29 +182,29 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Subject Type</label>
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Subject Type", "জিজ্ঞাসার বিষয়")}</label>
                     <select
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-cyan cursor-pointer"
+                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-brand-cyan cursor-pointer"
                     >
-                      <option value="Inquiry">General Business Inquiry</option>
-                      <option value="Corporate Connection">Dedicated Corporate Internet Connection</option>
-                      <option value="Reseller Panel">Sub-ISP / Reseller Panel request</option>
-                      <option value="Billing Query">Billing invoice queries</option>
+                      <option value="Inquiry" className="bg-brand-card">{t("General Business Inquiry", "সাধারণ ব্যবসায়িক জিজ্ঞাসা")}</option>
+                      <option value="Corporate Connection" className="bg-brand-card">{t("Dedicated Corporate Internet Connection", "ডেডিকেটেড কর্পোরেট ইন্টারনেট সংযোগ")}</option>
+                      <option value="Reseller Panel" className="bg-brand-card">{t("Sub-ISP / Reseller Panel request", "সাব-আইএসপি / রিসেলার প্যানেলের অনুরোধ")}</option>
+                      <option value="Billing Query" className="bg-brand-card">{t("Billing invoice queries", "বিল ও ইনভয়েস সংক্রান্ত জিজ্ঞাসা")}</option>
                     </select>
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">Detailed Message</label>
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Detailed Message", "বিস্তারিত বার্তা")}</label>
                     <textarea
                       required
                       rows={4}
                       value={form.msg}
                       onChange={(e) => setForm({ ...form, msg: e.target.value })}
-                      placeholder="Write your connection query, location details, or requirements here..."
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
+                      placeholder={t("Write your connection query, location details, or requirements here...", "আপনার সংযোগের জিজ্ঞাসা, কাঙ্ক্ষিত সংযোগের ঠিকানা বা প্রয়োজনীয়তা এখানে লিখুন...")}
+                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none font-sans"
                     />
                   </div>
                 </div>
@@ -210,10 +217,10 @@ export default function Contact() {
                   {submitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      Sending Inquiry...
+                      {t("Sending Inquiry...", "অনুসন্ধান পাঠানো হচ্ছে...")}
                     </>
                   ) : (
-                    "Submit Inquiry Form"
+                    t("Submit Inquiry Form", "অনুসন্ধান জমা দিন")
                   )}
                 </button>
               </form>
@@ -226,21 +233,24 @@ export default function Contact() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-bold text-2xl">Message Dispatched!</h3>
+                  <h3 className="text-white font-bold text-2xl">{t("Message Dispatched!", "বার্তা সফলভাবে পাঠানো হয়েছে!")}</h3>
                   <p className="text-sm text-slate-400">
-                    Thank you for reaching out, <span className="text-slate-200 font-bold">{form.name}</span>.
+                    {t("Thank you for reaching out,", "যোগাযোগ করার জন্য ধন্যবাদ,")} <span className="text-slate-200 font-bold">{form.name}</span>.
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-                  Your general inquiry form has been recorded. Our front-desk coordinator will review your topic and contact you back at your number shortly.
+                  {t(
+                    "Your general inquiry form has been recorded. Our front-desk coordinator will review your topic and contact you back at your number shortly.",
+                    "আপনার বার্তাটি রেকর্ড করা হয়েছে। আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।"
+                  )}
                 </p>
 
                 <button
                   onClick={handleReset}
                   className="px-6 py-2.5 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  Send Another Message
+                  {t("Send Another Message", "আরেকটি বার্তা পাঠান")}
                 </button>
               </div>
             )}
