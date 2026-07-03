@@ -23,9 +23,9 @@ export default function AdminNavbar({
   const [avatarView, setAvatarView] = useState<"menu" | "edit">("menu");
   const [avatarUrl, setAvatarUrl] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("m_amin_avatar_url") || "/ea82d2834f062ee8d73d8b99aebe0d31.jpg";
+      return localStorage.getItem("m_amin_avatar_url") || "/xlogo.png";
     }
-    return "/ea82d2834f062ee8d73d8b99aebe0d31.jpg";
+    return "/xlogo.png";
   });
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New ticket filed by Tanvir Ahmed", time: "5 mins ago", read: false },
@@ -118,7 +118,7 @@ export default function AdminNavbar({
               setAvatarView("menu");
             }}
             title="Admin Options"
-            className="relative w-8 h-8 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
+            className="relative w-10 h-10 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
           >
             <img
               src={avatarUrl}
@@ -155,7 +155,7 @@ export default function AdminNavbar({
 
                     {/* Picture area */}
                     <div className="flex items-center gap-3 py-2">
-                      <div className="w-14 h-14 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
+                      <div className="w-16 h-16 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
                         <img
                           src={avatarUrl}
                           alt="Current Avatar"
@@ -199,7 +199,7 @@ export default function AdminNavbar({
                     {/* Remove Link */}
                     <button
                       onClick={() => {
-                        setAvatarUrl("/ea82d2834f062ee8d73d8b99aebe0d31.jpg");
+                        setAvatarUrl("/xlogo.png");
                       }}
                       className="flex items-center gap-1.5 text-[10.5px] font-bold text-red-500 hover:text-red-655 transition-colors cursor-pointer w-fit"
                     >
