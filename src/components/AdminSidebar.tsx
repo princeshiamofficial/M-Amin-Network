@@ -131,7 +131,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
       {/* Branded Header Area */}
       <div className="flex flex-col gap-3 px-6 py-6 border-b border-[#1e293b]/65">
         <div className="bg-white rounded-xl px-4 py-2.5 shadow-md w-full flex items-center justify-center">
-          <img src="/logo.png" alt="M Amin Network" className="h-7 w-auto object-contain" />
+          <img src="/logo.png" alt="M Amin Network" className="h-14 w-auto object-contain" />
         </div>
         <span className="text-[10px] text-slate-500 font-bold block mt-0.5 tracking-wider uppercase">Admin Panel</span>
       </div>
