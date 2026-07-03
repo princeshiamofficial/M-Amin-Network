@@ -131,19 +131,18 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     <aside className={`flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto transition-all duration-300 ${
       isCollapsed ? "w-20" : "w-72"
     }`}>
-      {/* Branded Header Area */}
-      <div className={`flex flex-col gap-3 py-4.5 border-b border-[#1e293b]/65 bg-black transition-all ${
-        isCollapsed ? "px-4 items-center justify-center" : "px-6"
+      <div className={`flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-black transition-all ${
+        isCollapsed ? "px-4" : "px-6"
       }`}>
         {isCollapsed ? (
-          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0 mx-auto">
+          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0">
             <img src="/Xlogo.png" alt="M Amin Network" className="w-full h-full object-contain" />
           </div>
         ) : (
           <img
             src="/logo.png"
             alt="M Amin Network"
-            className="h-8.5 w-auto object-contain self-start"
+            className="h-14 w-full object-contain"
             style={{ filter: "invert(1) hue-rotate(180deg)" }}
           />
         )}
