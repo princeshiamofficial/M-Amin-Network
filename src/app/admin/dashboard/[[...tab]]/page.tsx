@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
 
@@ -191,18 +191,43 @@ interface Shortcut {
   targetTab: string;
 }
 
-interface Plan {
-  speed: string;
-  price: number;
-  name: string;
-  category: "home" | "gaming" | "corporate";
-  tagline: string;
-  features: string[];
-  popular?: boolean;
-}
+const tabUrls: Record<string, string> = {
+  "Overview": "/admin/dashboard",
+  "Packages": "/admin/packages",
+  "Offers": "/admin/dashboard/offers",
+  "Coverage Areas": "/admin/dashboard/coverage-areas",
+  "Applications": "/admin/dashboard/applications",
+  "Customers": "/admin/dashboard/customers",
+  "Bills": "/admin/dashboard/bills",
+  "Tickets": "/admin/dashboard/tickets",
+  "Package Requests": "/admin/dashboard/package-requests",
+  "Contact Messages": "/admin/dashboard/contact-messages",
+  "Complaints": "/admin/dashboard/complaints",
+  "Realtime Demo": "/admin/dashboard/realtime-demo",
+  "Jobs": "/admin/dashboard/jobs",
+  "Job Applications": "/admin/dashboard/job-applications",
+  "Testimonials": "/admin/dashboard/testimonials",
+  "FAQs": "/admin/dashboard/faqs",
+  "Site Content": "/admin/dashboard/site-content",
+  "Home Sections": "/admin/dashboard/home-sections",
+  "Hero Typography": "/admin/dashboard/hero-typography",
+  "SEO & Sharing": "/admin/dashboard/seo-sharing",
+  "About Page": "/admin/dashboard/about-page",
+  "Contact Page": "/admin/dashboard/contact-page",
+  "Complaint Page": "/admin/dashboard/complaint-page",
+  "Top Bar & Footer": "/admin/dashboard/topbar-footer",
+  "Services Hub": "/admin/dashboard/services-hub",
+  "Service Reviews": "/admin/dashboard/service-reviews",
+  "Settings": "/admin/dashboard/settings",
+  "Users & Roles": "/admin/dashboard/users-roles",
+  "Security": "/admin/dashboard/security",
+  "SEO Audit": "/admin/dashboard/seo-audit",
+  "My Shortcuts": "/admin/dashboard/my-shortcuts",
+};
 
 export default function AdminDashboardPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
@@ -274,28 +299,6 @@ export default function AdminDashboardPage() {
   const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
   const [seoAuditReports, setSeoAuditReports] = useState<SEOAuditReport[]>([]);
   const [shortcuts, setShortcuts] = useState<Shortcut[]>([]);
-
-  // Packages CMS state
-  const [packages, setPackages] = useState<Plan[]>([]);
-  const [isPackageModalOpen, setIsPackageModalOpen] = useState(false);
-  const [editingPlanName, setEditingPlanName] = useState<string | null>(null);
-  const [packageForm, setPackageForm] = useState<{
-    name: string;
-    speed: string;
-    price: number;
-    category: "home" | "gaming" | "corporate";
-    tagline: string;
-    features: string;
-    popular: boolean;
-  }>({
-    name: "",
-    speed: "",
-    price: 500,
-    category: "home",
-    tagline: "",
-    features: "",
-    popular: false,
-  });
 
   // Search/Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -508,122 +511,6 @@ export default function AdminDashboardPage() {
     { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs" },
   ];
 
-  const defaultPackages: Plan[] = [
-    {
-      speed: "10 Mbps",
-      price: 500,
-      name: "Home Basic",
-      category: "home",
-      tagline: "Great for casual browsing & SD streaming",
-      features: [
-        "Unlimited Bandwidth",
-        "Free Optical Fiber Router installation*",
-        "YouTube & Facebook cache sharing",
-        "24/7 Phone Support Helpline",
-        "Local LAN speeds up to 50 Mbps",
-      ],
-    },
-    {
-      speed: "20 Mbps",
-      price: 800,
-      name: "Home Standard",
-      category: "home",
-      tagline: "Perfect for families & HD streaming",
-      features: [
-        "Full HD buffer-free streaming",
-        "Multi-device connection (4-6 devices)",
-        "Premium BDIX connectivity",
-        "24/7 Chat & Ticket support",
-        "Local LAN speeds up to 100 Mbps",
-      ],
-    },
-    {
-      speed: "30 Mbps",
-      price: 1000,
-      name: "Home Elite",
-      category: "home",
-      tagline: "Most popular for smart homes",
-      popular: true,
-      features: [
-        "4K UHD Streaming capability",
-        "High-priority local peers (100 Mbps)",
-        "Ideal for smart home automation",
-        "Zero latency jitter control",
-        "Free Public IP on request",
-      ],
-    },
-    {
-      speed: "50 Mbps",
-      price: 1500,
-      name: "Home Ultra",
-      category: "home",
-      tagline: "Ultimate speed for heavy downloaders",
-      features: [
-        "Dedicated routing bandwidth",
-        "Best for remote work & file syncing",
-        "Static IPv4 Address Included",
-        "SLA support ticket < 2 hours",
-        "Super high speed FTP access",
-      ],
-    },
-    {
-      speed: "25 Mbps",
-      price: 950,
-      name: "Gamer Starter",
-      category: "gaming",
-      tagline: "Optimized routing for gaming hobbyists",
-      features: [
-        "Special low-latency paths",
-        "Direct peer routing (AS150164)",
-        "Zero packet loss guarantee",
-        "Optimized for PUBG & FreeFire",
-      ],
-    },
-    {
-      speed: "40 Mbps",
-      price: 1250,
-      name: "Gamer Professional",
-      category: "gaming",
-      tagline: "Best performance for competitive players",
-      popular: true,
-      features: [
-        "Lowest Ping routing to SG/HK servers",
-        "Ideal for streaming live gameplay",
-        "Static IP for stable lobby matching",
-        "BDIX peers up to 100 Mbps",
-        "Optimized for Steam, Epic Games, Valorant",
-      ],
-    },
-    {
-      speed: "60 Mbps",
-      price: 1800,
-      name: "Gamer Champion",
-      category: "gaming",
-      tagline: "Ultra-low jitter & maximum throughput",
-      features: [
-        "Ultra-low latency to Southeast Asia",
-        "Priority bandwidth allocation",
-        "Dual-stack IPv4 & IPv6 routing",
-        "No speed throttling, no cap",
-        "24/7 direct engineer support line",
-      ],
-    },
-    {
-      speed: "10 Mbps",
-      price: 5000,
-      name: "Corporate SME",
-      category: "corporate",
-      tagline: "Symmetric bandwidth for small businesses",
-      features: [
-        "1:1 Symmetric dedicated bandwidth",
-        "99.9% Uptime SLA Guarantee",
-        "1 Public IP Address Included",
-        "24/7 Dedicated account manager",
-        "4-hour resolution support SLA",
-      ],
-    },
-  ];
-
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -633,12 +520,6 @@ export default function AdminDashboardPage() {
       } else {
         setIsAuthenticated(true);
         loadDatabase();
-        
-        const redirectTab = sessionStorage.getItem("m_amin_active_tab_redirect");
-        if (redirectTab) {
-          setActiveTab(redirectTab);
-          sessionStorage.removeItem("m_amin_active_tab_redirect");
-        }
       }
     }
 
@@ -647,6 +528,14 @@ export default function AdminDashboardPage() {
     }, 4000);
     return () => clearInterval(interval);
   }, [router]);
+
+  // Sync tab active selection dynamically with the pathname
+  useEffect(() => {
+    const currentTab = Object.entries(tabUrls).find(([name, url]) => url === pathname)?.[0];
+    if (currentTab) {
+      setActiveTab(currentTab);
+    }
+  }, [pathname]);
 
   const loadDatabase = () => {
     if (typeof window === "undefined") return;
@@ -815,14 +704,6 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
       setShortcuts(defaultShortcuts);
     }
-
-    const savedPackages = localStorage.getItem("m_amin_packages");
-    if (savedPackages) {
-      setPackages(JSON.parse(savedPackages));
-    } else {
-      localStorage.setItem("m_amin_packages", JSON.stringify(defaultPackages));
-      setPackages(defaultPackages);
-    }
   };
 
   const resetToDefaults = () => {
@@ -843,7 +724,6 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_security_logs", JSON.stringify(defaultSecurityLogs));
       localStorage.setItem("m_amin_seo_audits", JSON.stringify(defaultSEOAuditReports));
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(defaultShortcuts));
-      localStorage.setItem("m_amin_packages", JSON.stringify(defaultPackages));
       
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
@@ -889,7 +769,6 @@ export default function AdminDashboardPage() {
       setSecurityLogs(defaultSecurityLogs);
       setSeoAuditReports(defaultSEOAuditReports);
       setShortcuts(defaultShortcuts);
-      setPackages(defaultPackages);
 
       alert("Mock database has been reset successfully!");
     }
@@ -913,7 +792,6 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_security_logs", JSON.stringify([]));
       localStorage.setItem("m_amin_seo_audits", JSON.stringify([]));
       localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify([]));
-      localStorage.setItem("m_amin_packages", JSON.stringify([]));
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -929,7 +807,6 @@ export default function AdminDashboardPage() {
       setSecurityLogs([]);
       setSeoAuditReports([]);
       setShortcuts([]);
-      setPackages([]);
       alert("Mock database cleared successfully!");
     }
   };
@@ -1116,73 +993,6 @@ export default function AdminDashboardPage() {
     localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(updated));
   };
 
-  // Package CMS Actions
-  const handleOpenAddPackage = () => {
-    setEditingPlanName(null);
-    setPackageForm({
-      name: "",
-      speed: "",
-      price: 500,
-      category: "home",
-      tagline: "",
-      features: "",
-      popular: false,
-    });
-    setIsPackageModalOpen(true);
-  };
-
-  const handleOpenEditPackage = (p: Plan) => {
-    setEditingPlanName(p.name);
-    setPackageForm({
-      name: p.name,
-      speed: p.speed,
-      price: p.price,
-      category: p.category,
-      tagline: p.tagline,
-      features: p.features.join(", "),
-      popular: p.popular || false,
-    });
-    setIsPackageModalOpen(true);
-  };
-
-  const handleSavePackage = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formattedFeatures = packageForm.features
-      .split(",")
-      .map((f) => f.trim())
-      .filter((f) => f.length > 0);
-
-    const newPlan: Plan = {
-      name: packageForm.name,
-      speed: packageForm.speed,
-      price: packageForm.price,
-      category: packageForm.category,
-      tagline: packageForm.tagline,
-      features: formattedFeatures,
-      popular: packageForm.popular,
-    };
-
-    let updated: Plan[];
-    if (editingPlanName) {
-      updated = packages.map((p) => (p.name === editingPlanName ? newPlan : p));
-    } else {
-      updated = [...packages, newPlan];
-    }
-
-    setPackages(updated);
-    localStorage.setItem("m_amin_packages", JSON.stringify(updated));
-    setIsPackageModalOpen(false);
-    alert(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
-  };
-
-  const handleDeletePackage = (name: string) => {
-    if (confirm(`Are you sure you want to delete package "${name}"?`)) {
-      const updated = packages.filter((p) => p.name !== name);
-      setPackages(updated);
-      localStorage.setItem("m_amin_packages", JSON.stringify(updated));
-    }
-  };
-
   const handleLogout = () => {
     sessionStorage.removeItem("m_amin_admin_authenticated");
     router.push("/admin");
@@ -1190,7 +1000,7 @@ export default function AdminDashboardPage() {
 
   if (!mounted || !isAuthenticated) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-600">
+      <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-650">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin" />
           <span className="font-mono text-sm tracking-widest text-slate-500">LOADING SECURE ACCESS CONTROL...</span>
@@ -1209,10 +1019,9 @@ export default function AdminDashboardPage() {
         <AdminSidebar
           activeTab={activeTab}
           setActiveTab={(tab) => {
-            if (tab === "Packages") {
-              router.push("/admin/packages");
-            } else {
-              setActiveTab(tab);
+            const url = tabUrls[tab];
+            if (url) {
+              router.push(url);
             }
           }}
           onSignOut={handleLogout}
@@ -1265,7 +1074,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Bandwidth</span>
                   <span className="text-3xl font-extrabold text-brand-blue mt-2">{totalBandwidthGbps} Gbps</span>
-                  <span className="text-xs text-slate-555 mt-1">Simulated Live Traffic (AS150164)</span>
+                  <span className="text-xs text-slate-500 mt-1">Simulated Live Traffic (AS150164)</span>
                 </div>
 
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
@@ -1277,7 +1086,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 shadow-sm flex flex-col">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Revenue</span>
                   <span className="text-3xl font-extrabold text-emerald-600 mt-2">৳{totalRevenue} BDT</span>
-                  <span className="text-xs text-slate-500 mt-1">Processed from {payments.length} transactions</span>
+                  <span className="text-xs text-slate-550 mt-1">Processed from {payments.length} transactions</span>
                 </div>
               </div>
 
@@ -1289,7 +1098,7 @@ export default function AdminDashboardPage() {
                     <h3 className="text-slate-900 font-extrabold text-sm tracking-wide">Processed Revenue Trend</h3>
                     <p className="text-[11px] text-slate-500 mt-0.5">Mock analytics (past 6 months in BDT)</p>
                   </div>
-                  <div className="w-full h-48 bg-slate-50 rounded-2xl flex items-end justify-center p-3 relative border border-slate-100 overflow-hidden">
+                  <div className="w-full h-48 bg-slate-55 rounded-2xl flex items-end justify-center p-3 relative border border-slate-100 overflow-hidden">
                     <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
                       <defs>
                         <linearGradient id="gradient-chart" x1="0" y1="0" x2="0" y2="1">
@@ -1364,7 +1173,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 space-y-4 shadow-sm">
                   <div className="flex justify-between items-center">
                     <h3 className="text-slate-900 font-bold text-sm">Recent Deal Claims</h3>
-                    <button onClick={() => setActiveTab("Offers")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
+                    <button onClick={() => router.push("/admin/dashboard/offers")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
                   </div>
                   <div className="divide-y divide-slate-100 max-h-40 overflow-y-auto pr-1">
                     {claims.length === 0 ? (
@@ -1387,7 +1196,7 @@ export default function AdminDashboardPage() {
                 <div className="bg-white border border-slate-200/90 rounded-[20px] p-5 space-y-4 shadow-sm">
                   <div className="flex justify-between items-center">
                     <h3 className="text-slate-900 font-bold text-sm">Active Support Tickets</h3>
-                    <button onClick={() => setActiveTab("Tickets")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
+                    <button onClick={() => router.push("/admin/dashboard/tickets")} className="text-[10px] text-brand-blue font-bold hover:underline">Manage All →</button>
                   </div>
                   <div className="divide-y divide-slate-100 max-h-40 overflow-y-auto pr-1">
                     {tickets.length === 0 ? (
@@ -1397,7 +1206,7 @@ export default function AdminDashboardPage() {
                         <div key={t.id} className="py-2.5 flex justify-between items-center gap-2">
                           <div>
                             <span className="text-xs font-bold text-slate-855 block">{t.name} ({t.clientId})</span>
-                            <span className="text-[10px] text-slate-500">{t.category}</span>
+                            <span className="text-[10px] text-slate-505">{t.category}</span>
                           </div>
                           <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 border border-amber-500/20 text-amber-600">{t.status}</span>
                         </div>
@@ -1406,202 +1215,6 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* 2. PACKAGES VIEW */}
-          {activeTab === "Packages" && (
-            <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
-              <div className="flex justify-between items-center border-b border-slate-100 pb-4">
-                <div>
-                  <h2 className="text-lg font-extrabold text-slate-900">Broadband Package Catalog Manager</h2>
-                  <p className="text-xs text-slate-500 mt-1">Add, update, or remove active packages rendered on the main landing catalog.</p>
-                </div>
-                <button
-                  onClick={handleOpenAddPackage}
-                  className="px-4 py-2 bg-brand-blue text-white text-xs font-bold rounded-xl hover:opacity-90 cursor-pointer shadow-md"
-                >
-                  + Add Package
-                </button>
-              </div>
-
-              {/* Package list table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                      <th className="pb-3">Package Name</th>
-                      <th className="pb-3">Category</th>
-                      <th className="pb-3">Speed Limit</th>
-                      <th className="pb-3">Price Plan</th>
-                      <th className="pb-3">Features Count</th>
-                      <th className="pb-3">Home Flag</th>
-                      <th className="pb-3 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {packages.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="py-8 text-center text-slate-400">No packages defined.</td>
-                      </tr>
-                    ) : (
-                      packages.map((p) => (
-                        <tr key={p.name} className="hover:bg-slate-50/70 transition-colors">
-                          <td className="py-3.5">
-                            <span className="font-extrabold text-slate-800 block">{p.name}</span>
-                            <span className="text-[10px] text-slate-500 max-w-xs truncate block">{p.tagline}</span>
-                          </td>
-                          <td className="py-3.5 font-semibold text-slate-650 uppercase">{p.category}</td>
-                          <td className="py-3.5 font-bold text-brand-blue">{p.speed}</td>
-                          <td className="py-3.5 font-black text-emerald-600">৳{p.price} / mo</td>
-                          <td className="py-3.5 text-slate-500 font-mono">{p.features.length} features</td>
-                          <td className="py-3.5">
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                              p.popular ? "bg-amber-500/10 text-amber-600 border border-amber-500/20 animate-pulse" : "bg-slate-100 text-slate-400 border border-slate-250"
-                            }`}>{p.popular ? "Popular" : "Standard"}</span>
-                          </td>
-                          <td className="py-3.5 text-right space-x-2">
-                            <button
-                              onClick={() => handleOpenEditPackage(p)}
-                              className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeletePackage(p.name)}
-                              className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Add/Edit Package Modal */}
-              {isPackageModalOpen && (
-                <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                  <div className="bg-white border border-slate-200 rounded-[32px] max-w-md w-full p-8 shadow-2xl relative space-y-6">
-                    <button
-                      onClick={() => setIsPackageModalOpen(false)}
-                      className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-lg cursor-pointer"
-                    >
-                      ✕
-                    </button>
-                    <div>
-                      <h3 className="text-slate-900 font-black text-lg">
-                        {editingPlanName ? "Edit Package Details" : "Create New Package"}
-                      </h3>
-                      <p className="text-xs text-slate-500 mt-1">Define speed values, category target, monthly pricing, and client-facing taglines.</p>
-                    </div>
-
-                    <form onSubmit={handleSavePackage} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Plan Name</label>
-                          <input
-                            type="text"
-                            required
-                            value={packageForm.name}
-                            onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Category</label>
-                          <select
-                            value={packageForm.category}
-                            onChange={(e) => setPackageForm({ ...packageForm, category: e.target.value as any })}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          >
-                            <option value="home">Home</option>
-                            <option value="gaming">Gaming</option>
-                            <option value="corporate">Corporate</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Speed Limit (e.g. 20 Mbps)</label>
-                          <input
-                            type="text"
-                            required
-                            value={packageForm.speed}
-                            onChange={(e) => setPackageForm({ ...packageForm, speed: e.target.value })}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Price (৳ / mo)</label>
-                          <input
-                            type="number"
-                            required
-                            value={packageForm.price}
-                            onChange={(e) => setPackageForm({ ...packageForm, price: Number(e.target.value) })}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Tagline / Short Subtitle</label>
-                        <input
-                          type="text"
-                          required
-                          value={packageForm.tagline}
-                          onChange={(e) => setPackageForm({ ...packageForm, tagline: e.target.value })}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-700 uppercase tracking-wide">Features List (Comma Separated)</label>
-                        <textarea
-                          rows={3}
-                          required
-                          value={packageForm.features}
-                          onChange={(e) => setPackageForm({ ...packageForm, features: e.target.value })}
-                          placeholder="Unlimited Bandwidth, Premium BDIX, 24/7 Phone Support"
-                          className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2 py-1.5">
-                        <input
-                          type="checkbox"
-                          id="pop_flag"
-                          checked={packageForm.popular}
-                          onChange={(e) => setPackageForm({ ...packageForm, popular: e.target.checked })}
-                          className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue"
-                        />
-                        <label htmlFor="pop_flag" className="text-xs font-bold text-slate-800 select-none cursor-pointer">
-                          Mark as Popular Plan (Render with glowing badge)
-                        </label>
-                      </div>
-
-                      <div className="flex justify-end gap-3 pt-2">
-                        <button
-                          type="button"
-                          onClick={() => setIsPackageModalOpen(false)}
-                          className="px-4 py-2 border border-slate-200 rounded-xl text-xs hover:bg-slate-50 cursor-pointer font-bold"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-5 py-2 bg-brand-blue text-white rounded-xl text-xs hover:opacity-90 cursor-pointer font-bold shadow-md"
-                        >
-                          Save Package
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -1652,7 +1265,7 @@ export default function AdminDashboardPage() {
                             </td>
                             <td className="py-3.5 text-slate-600">{c.address}</td>
                             <td className="py-3.5 font-semibold text-brand-blue">{c.promoCode}</td>
-                            <td className="py-3.5 text-slate-555">{c.date}</td>
+                            <td className="py-3.5 text-slate-500">{c.date}</td>
                             <td className="py-3.5">
                               <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                                 c.status === "Approved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1679,7 +1292,7 @@ export default function AdminDashboardPage() {
                               )}
                               <button
                                 onClick={() => deleteClaim(c.id)}
-                                className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Delete
                               </button>
@@ -1718,7 +1331,7 @@ export default function AdminDashboardPage() {
                         <span className="text-brand-blue font-bold">{c.latency}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-550">Status:</span>
+                        <span className="text-slate-500">Status:</span>
                         <span className={`font-bold ${c.status === "Optimal" ? "text-emerald-600" : "text-yellow-600"}`}>{c.status}</span>
                       </div>
                     </div>
@@ -1750,7 +1363,7 @@ export default function AdminDashboardPage() {
                       <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
                         <td className="py-3.5 font-bold font-mono text-brand-blue">{c.id}</td>
                         <td className="py-3.5">
-                          <span className="font-extrabold text-slate-800 block">{c.name}</span>
+                          <span className="font-extrabold text-slate-805 block">{c.name}</span>
                           <span className="text-[10px] text-slate-500 font-mono">{c.phone} | {c.address}</span>
                         </td>
                         <td className="py-3.5 font-semibold text-slate-600">{c.promoTitle || "General Link Booking"}</td>
@@ -1771,13 +1384,13 @@ export default function AdminDashboardPage() {
           {activeTab === "Customers" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
-                <h2 className="text-lg font-extrabold text-slate-905">Active Subscriber Accounts</h2>
+                <h2 className="text-lg font-extrabold text-slate-900">Active Subscriber Accounts</h2>
                 <p className="text-xs text-slate-500 mt-1">Simulated listing of active optical fiber subscribers (AS150164).</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-250 text-slate-400 uppercase font-semibold">
+                    <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
                       <th className="pb-3">Subscriber ID</th>
                       <th className="pb-3">Client Name</th>
                       <th className="pb-3">Address</th>
@@ -1888,7 +1501,7 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{t.category}</td>
                           <td className="py-3.5 max-w-xxs truncate text-slate-600">{t.desc}</td>
-                          <td className="py-3.5 text-slate-555">{t.date}</td>
+                          <td className="py-3.5 text-slate-505">{t.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               t.status === "Resolved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -1994,7 +1607,7 @@ export default function AdminDashboardPage() {
                             <span className="text-[10px] text-slate-500 font-mono">{m.email} | {m.phone}</span>
                           </td>
                           <td className="py-3.5 font-semibold text-brand-blue">{m.subject}</td>
-                          <td className="py-3.5 max-w-xs truncate text-slate-650">{m.message}</td>
+                          <td className="py-3.5 max-w-xs truncate text-slate-600">{m.message}</td>
                           <td className="py-3.5 text-slate-500">{m.date}</td>
                           <td className="py-3.5 text-right">
                             <button
@@ -2048,7 +1661,7 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 font-mono">{c.phone}</td>
                           <td className="py-3.5 font-semibold text-brand-blue">{c.category}</td>
                           <td className="py-3.5 max-w-xxs truncate text-slate-600">{c.desc}</td>
-                          <td className="py-3.5 text-slate-555">{c.date}</td>
+                          <td className="py-3.5 text-slate-500">{c.date}</td>
                           <td className="py-3.5">
                             <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                               c.status === "Resolved" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
@@ -2060,7 +1673,7 @@ export default function AdminDashboardPage() {
                             {c.status === "Pending" && (
                               <button
                                 onClick={() => updateComplaintStatus(c.id, "Investigating")}
-                                className="px-2.5 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                                className="px-2.5 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 rounded-lg font-bold text-[10px] cursor-pointer"
                               >
                                 Investigate
                               </button>
@@ -2410,7 +2023,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Hero Screen Headings</h2>
-                <p className="text-xs text-slate-555 mt-1">Modify main advertising messages visible to visitors on landing.</p>
+                <p className="text-xs text-slate-500 mt-1">Modify main advertising messages visible to visitors on landing.</p>
               </div>
               <form onSubmit={saveHeroTypography} className="space-y-4 max-w-lg">
                 <div className="space-y-1">
@@ -2445,7 +2058,7 @@ export default function AdminDashboardPage() {
           {activeTab === "SEO & Sharing" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
-                <h2 className="text-lg font-extrabold text-slate-900">Meta Tags & Search Visibility Settings</h2>
+                <h2 className="text-lg font-extrabold text-slate-905">Meta Tags & Search Visibility Settings</h2>
                 <p className="text-xs text-slate-500 mt-1">Configure keywords, titles, and site description variables to optimize SEO ranking.</p>
               </div>
               <form onSubmit={saveSEOSettings} className="space-y-4 max-w-lg">
@@ -2572,7 +2185,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Formal Grievance Guidelines</h2>
-                <p className="text-xs text-slate-500 mt-1">Configure layout instructions visible to customers filing formal complaints.</p>
+                <p className="text-xs text-slate-555 mt-1">Configure layout instructions visible to customers filing formal complaints.</p>
               </div>
               <form onSubmit={saveComplaintContent} className="space-y-4 max-w-lg">
                 <div className="space-y-1">
@@ -2653,7 +2266,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Featured Network Highlights</h2>
-                <p className="text-xs text-slate-500 mt-1">Review features highlighting the M Amin Network infrastructure.</p>
+                <p className="text-xs text-slate-505 mt-1">Review features highlighting the M Amin Network infrastructure.</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -2715,7 +2328,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 text-right">
                           <button
                             onClick={() => deleteServiceReview(r.id)}
-                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
                           >
                             Delete
                           </button>
@@ -2768,7 +2381,7 @@ export default function AdminDashboardPage() {
           )}
 
           {/* 28. USERS & ROLES VIEW */}
-          {activeTab === "Access" && (
+          {activeTab === "Users & Roles" && (
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Administrator Accounts & Team Roles</h2>
@@ -2792,7 +2405,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 font-bold font-mono text-brand-blue">{u.id}</td>
                         <td className="py-3.5 font-extrabold text-slate-800">{u.username}</td>
                         <td className="py-3.5 font-semibold text-slate-650">{u.role}</td>
-                        <td className="py-3.5 text-slate-555 font-mono">{u.email}</td>
+                        <td className="py-3.5 text-slate-500 font-mono">{u.email}</td>
                         <td className="py-3.5 text-slate-500">{u.lastLogin}</td>
                         <td className="py-3.5 text-right">
                           <button
@@ -2815,7 +2428,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Security Incident Logs</h2>
-                <p className="text-xs text-slate-500 mt-1">Audit security login traces and suspicious connection attempts.</p>
+                <p className="text-xs text-slate-505 mt-1">Audit security login traces and suspicious connection attempts.</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -2835,7 +2448,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 font-bold font-mono text-brand-blue">{l.id}</td>
                         <td className="py-3.5 font-extrabold text-slate-800">{l.event}</td>
                         <td className="py-3.5 font-mono text-slate-650">{l.ipAddress}</td>
-                        <td className="py-3.5 text-slate-555">{l.timestamp}</td>
+                        <td className="py-3.5 text-slate-500">{l.timestamp}</td>
                         <td className="py-3.5">
                           <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
                             l.severity === "Critical" ? "bg-red-500/10 text-red-600 border border-red-500/20 animate-pulse" :
@@ -2846,7 +2459,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3.5 text-right">
                           <button
                             onClick={() => deleteSecurityLog(l.id)}
-                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-655 rounded-lg font-bold text-[10px] cursor-pointer"
+                            className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-650 rounded-lg font-bold text-[10px] cursor-pointer"
                           >
                             Purge Log
                           </button>
@@ -2864,7 +2477,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">SEO Audit & Page Speed Index</h2>
-                <p className="text-xs text-slate-500 mt-1">Audit Lighthouse scores, SSL certification, and mobile friendliness tags for search engines.</p>
+                <p className="text-xs text-slate-505 mt-1">Audit Lighthouse scores, SSL certification, and mobile friendliness tags for search engines.</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -2902,7 +2515,7 @@ export default function AdminDashboardPage() {
             <div className="bg-white border border-slate-200 shadow-sm rounded-[24px] p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-extrabold text-slate-900">Dashboard Shortcuts Panel</h2>
-                <p className="text-xs text-slate-500 mt-1">Customize quick shortcuts to switch between workspace layouts.</p>
+                <p className="text-xs text-slate-500 mt-1">Customize quick shortcuts to switch between active tabs.</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {shortcuts.map((s) => (
@@ -2913,7 +2526,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setActiveTab(s.targetTab)}
+                        onClick={() => router.push(tabUrls[s.targetTab] || "/admin/dashboard")}
                         className="px-3.5 py-1.5 bg-brand-blue text-white rounded-lg font-bold text-[10px] hover:opacity-95 cursor-pointer shadow-sm"
                       >
                         Launch
@@ -2948,7 +2561,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setActiveClients(Number(e.target.value))}
                       className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 max-w-[120px] focus:outline-none focus:border-brand-blue"
                     />
-                    <span className="text-[11px] text-slate-555 flex items-center">Active subscribers in simulated GPON map</span>
+                    <span className="text-[11px] text-slate-500 flex items-center">Active subscribers in simulated GPON map</span>
                   </div>
                 </div>
 
@@ -2962,7 +2575,7 @@ export default function AdminDashboardPage() {
                       onChange={(e) => setTotalBandwidthGbps(Number(e.target.value))}
                       className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 max-w-[120px] focus:outline-none focus:border-brand-blue"
                     />
-                    <span className="text-[11px] text-slate-555 flex items-center">Gbps real-time peering bandwidth rate</span>
+                    <span className="text-[11px] text-slate-500 flex items-center">Gbps real-time peering bandwidth rate</span>
                   </div>
                 </div>
               </div>
