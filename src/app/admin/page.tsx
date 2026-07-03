@@ -335,15 +335,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top-left logo: M-Amin Network */}
-        <div className="absolute top-6 left-6 flex items-center z-20 gap-2.5">
+        <div className="absolute top-6 left-6 flex items-center z-20">
           <img
             src="/logo.png"
             alt="M-Amin Network"
             className="h-8 w-auto object-contain"
           />
-          <span className="font-extrabold text-sm tracking-wider text-white uppercase font-sans">
-            M-Amin Network
-          </span>
         </div>
 
         {/* Back Link (Top Right) */}
