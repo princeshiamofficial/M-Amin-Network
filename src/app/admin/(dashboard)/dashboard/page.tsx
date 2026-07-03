@@ -1126,7 +1126,7 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Bills",
-      value: countBills,
+      value: `৳${totalRevenue}`,
       color: {
         bg: "bg-emerald-50 dark:bg-emerald-500/20",
         text: "text-emerald-600 dark:text-emerald-400",
