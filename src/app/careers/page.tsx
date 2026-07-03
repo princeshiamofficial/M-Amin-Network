@@ -69,13 +69,72 @@ export default function Careers() {
 
   const [selectedJob, setSelectedJob] = useState<JobOpening | null>(null);
   const [detailsJob, setDetailsJob] = useState<JobOpening | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // PDF Parsed form fields state definition
   const [applyForm, setApplyForm] = useState({
-    name: "",
-    phone: "",
+    experienceType: "Fresh", // Experienced / Fresh
+    nameEn: "",
+    nameBn: "",
+    fatherName: "",
+    fatherOccupation: "",
+    motherName: "",
+    motherOccupation: "",
+    dob: "",
+    placeOfBirth: "",
+    gender: "Male",
+    maritalStatus: "Single",
+    spouseName: "",
+    childrenCount: "",
+    bloodGroup: "",
+    religion: "",
+    nationality: "Bangladeshi",
     email: "",
-    experience: "Entry Level",
-    resumeLink: "",
+    phone: "",
+    nidBrc: "",
+    emergencyContact: "",
+
+    presentAddress: "",
+    permanentAddress: "",
+    sameAsPresent: false,
+
+    // Education
+    eduMBA_Uni: "", eduMBA_Year: "", eduMBA_CGPA: "", eduMBA_Major: "",
+    eduBBA_Uni: "", eduBBA_Year: "", eduBBA_CGPA: "", eduBBA_Major: "",
+    eduHSC_Uni: "", eduHSC_Year: "", eduHSC_CGPA: "", eduHSC_Major: "",
+    eduSSC_Uni: "", eduSSC_Year: "", eduSSC_CGPA: "", eduSSC_Major: "",
+    eduJSC_Uni: "", eduJSC_Year: "", eduJSC_CGPA: "", eduJSC_Major: "",
+
+    // Skills & EC
+    otherQualifications: "",
+    extracurricular: "",
+
+    // Questionnaire
+    motivationReason: "",
+    workComfort: "As a part of a team",
+    expectations: "",
+    criminalOffence: "No",
+    criminalDetails: "",
+
+    relativeWorking: "No",
+    relativeName: "",
+    relativeDesignation: "",
+    relativeWorkstation: "",
+    relativeRelation: "",
+
+    ref1_name: "", ref1_designation: "", ref1_organization: "", ref1_address: "", ref1_phone: "",
+    ref2_name: "", ref2_designation: "", ref2_organization: "", ref2_address: "", ref2_phone: "",
+
+    expectedSalary: "",
+    agreed: false,
+    signature: "",
+    dateOfApply: new Date().toISOString().split("T")[0]
   });
+
+  const [workExperiences, setWorkExperiences] = useState([
+    { company: "", designation: "", duration: "", salary: "", reason: "" }
+  ]);
+
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -152,29 +211,152 @@ export default function Careers() {
   });
 
   const handleApplyChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setApplyForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setApplyForm((prev) => {
+        const updated = { ...prev, [name]: checked };
+        if (name === "sameAsPresent" && checked) {
+          updated.permanentAddress = prev.presentAddress;
+        }
+        return updated;
+      });
+    } else {
+      setApplyForm((prev) => {
+        const updated = { ...prev, [name]: value };
+        if (name === "presentAddress" && prev.sameAsPresent) {
+          updated.permanentAddress = value;
+        }
+        return updated;
+      });
+    }
+  };
+
+  const handleExperienceChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updated = [...workExperiences];
+    updated[index] = { ...updated[index], [field]: value };
+    setWorkExperiences(updated);
+  };
+
+  const addExperience = () => {
+    setWorkExperiences([...workExperiences, { company: "", designation: "", duration: "", salary: "", reason: "" }]);
+  };
+
+  const removeExperience = (index: number) => {
+    if (workExperiences.length > 1) {
+      setWorkExperiences(workExperiences.filter((_, idx) => idx !== index));
+    }
+  };
+
+  const validateAndNext = () => {
+    if (currentStep === 1) {
+      if (!applyForm.nameEn || !applyForm.nameBn || !applyForm.email || !applyForm.phone || !applyForm.nidBrc) {
+        alert(t("Please fill in all required fields (marked with *).", "অনুগ্রহ করে সকল তারকা চিহ্নিত (*) প্রয়োজনীয় ক্ষেত্রগুলো পূরণ করুন।"));
+        return;
+      }
+    }
+    if (currentStep === 2) {
+      if (!applyForm.presentAddress || (!applyForm.sameAsPresent && !applyForm.permanentAddress)) {
+        alert(t("Please enter present and permanent address details.", "অনুগ্রহ করে বর্তমান এবং স্থায়ী ঠিকানা বিবরণ প্রদান করুন।"));
+        return;
+      }
+    }
+    setCurrentStep((prev) => prev + 1);
   };
 
   const handleApplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!applyForm.agreed || !applyForm.signature) {
+      alert(t("Please agree to the certification terms and provide your signature.", "আবেদনপত্র জমা দিতে আপনার সম্মতি দিন এবং স্বাক্ষর প্রদান করুন।"));
+      return;
+    }
+
     setSubmitting(true);
     setTimeout(() => {
+      try {
+        const applications = JSON.parse(localStorage.getItem("m_amin_job_applications") || "[]");
+        const newApplication = {
+          id: `APP-${Date.now().toString().slice(-6)}`,
+          position: selectedJob?.title,
+          ...applyForm,
+          workExperiences,
+          dateApplied: new Date().toLocaleString()
+        };
+        applications.push(newApplication);
+        localStorage.setItem("m_amin_job_applications", JSON.stringify(applications));
+      } catch (err) {
+        console.error("Error saving job application:", err);
+      }
       setSubmitting(false);
       setSuccess(true);
-    }, 1500);
+    }, 1800);
   };
 
   const resetForm = () => {
     setApplyForm({
-      name: "",
-      phone: "",
+      experienceType: "Fresh",
+      nameEn: "",
+      nameBn: "",
+      fatherName: "",
+      fatherOccupation: "",
+      motherName: "",
+      motherOccupation: "",
+      dob: "",
+      placeOfBirth: "",
+      gender: "Male",
+      maritalStatus: "Single",
+      spouseName: "",
+      childrenCount: "",
+      bloodGroup: "",
+      religion: "",
+      nationality: "Bangladeshi",
       email: "",
-      experience: "Entry Level",
-      resumeLink: "",
+      phone: "",
+      nidBrc: "",
+      emergencyContact: "",
+
+      presentAddress: "",
+      permanentAddress: "",
+      sameAsPresent: false,
+
+      eduMBA_Uni: "", eduMBA_Year: "", eduMBA_CGPA: "", eduMBA_Major: "",
+      eduBBA_Uni: "", eduBBA_Year: "", eduBBA_CGPA: "", eduBBA_Major: "",
+      eduHSC_Uni: "", eduHSC_Year: "", eduHSC_CGPA: "", eduHSC_Major: "",
+      eduSSC_Uni: "", eduSSC_Year: "", eduSSC_CGPA: "", eduSSC_Major: "",
+      eduJSC_Uni: "", eduJSC_Year: "", eduJSC_CGPA: "", eduJSC_Major: "",
+
+      otherQualifications: "",
+      extracurricular: "",
+
+      motivationReason: "",
+      workComfort: "As a part of a team",
+      expectations: "",
+      criminalOffence: "No",
+      criminalDetails: "",
+
+      relativeWorking: "No",
+      relativeName: "",
+      relativeDesignation: "",
+      relativeWorkstation: "",
+      relativeRelation: "",
+
+      ref1_name: "", ref1_designation: "", ref1_organization: "", ref1_address: "", ref1_phone: "",
+      ref2_name: "", ref2_designation: "", ref2_organization: "", ref2_address: "", ref2_phone: "",
+
+      expectedSalary: "",
+      agreed: false,
+      signature: "",
+      dateOfApply: new Date().toISOString().split("T")[0]
     });
+    setWorkExperiences([{ company: "", designation: "", duration: "", salary: "", reason: "" }]);
+    setCurrentStep(1);
     setSuccess(false);
     setSelectedJob(null);
   };
@@ -218,21 +400,24 @@ export default function Careers() {
               </p>
             </div>
             <button
-              onClick={() => setSelectedJob({
-                title: "General Application",
-                dept: "General Support",
-                location: "Any Location",
-                type: "Full-Time",
-                desc: "Submit your credentials for future openings if you don't find a matching active posting.",
-                requirements: [
-                  "Strong willingness to work with M Amin Network team",
-                  "Self-motivated & proactive learning attitude",
-                  "Basic telecommunication or computer knowledge"
-                ],
-                vacancy: "N/A",
-                salary: "Negotiable",
-                deadline: "Open Always"
-              })}
+              onClick={() => {
+                setCurrentStep(1);
+                setSelectedJob({
+                  title: "General Application",
+                  dept: "General Support",
+                  location: "Any Location",
+                  type: "Full-Time",
+                  desc: "Submit your credentials for future openings if you don't find a matching active posting.",
+                  requirements: [
+                    "Strong willingness to work with M Amin Network team",
+                    "Self-motivated & proactive learning attitude",
+                    "Basic telecommunication or computer knowledge"
+                  ],
+                  vacancy: "N/A",
+                  salary: "Negotiable",
+                  deadline: "Open Always"
+                });
+              }}
               className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
             >
               <span>{t("General Application", "সাধারণ আবেদন")}</span>
@@ -365,11 +550,8 @@ export default function Careers() {
                     </button>
                     <button
                       onClick={() => {
+                        setCurrentStep(1);
                         setSelectedJob(job);
-                        setTimeout(() => {
-                          const input = document.getElementById("apply-name-input");
-                          if (input) input.focus();
-                        }, 100);
                       }}
                       className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                     >
@@ -467,6 +649,7 @@ export default function Careers() {
                   </button>
                   <button
                     onClick={() => {
+                      setCurrentStep(1);
                       setSelectedJob(detailsJob);
                       setDetailsJob(null);
                     }}
@@ -480,13 +663,13 @@ export default function Careers() {
           </div>
         )}
 
-        {/* Apply Modal */}
+        {/* Multi-step Application Modal */}
         {selectedJob && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative max-h-[90vh] overflow-y-auto text-slate-800">
+            <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-3xl w-full relative max-h-[90vh] overflow-y-auto text-slate-800">
               <button
                 onClick={resetForm}
-                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer z-10"
               >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -494,99 +677,969 @@ export default function Careers() {
               </button>
 
               {!success ? (
-                <form onSubmit={handleApplySubmit} className="space-y-5 text-left">
+                <form onSubmit={handleApplySubmit} className="space-y-6 text-left">
+                  {/* Step Header */}
                   <div>
-                    <h3 className="text-slate-900 font-bold text-xl">{t("Apply for Job", "চাকরির জন্য আবেদন")}</h3>
-                    <p className="text-xs text-slate-505 mt-1">
-                      {t("Position:", "পদবি:")} <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>
+                    <h3 className="text-slate-900 font-extrabold text-xl">{t("Employment Application", "কর্মসংস্থান আবেদনপত্র")}</h3>
+                    <p className="text-xs text-slate-500 mt-1 font-semibold">
+                      {t("Position Applied For:", "আবেদনকৃত পদ:")} <span className="text-brand-blue font-black">{translateJobTitle(selectedJob.title)}</span>
                     </p>
                   </div>
 
-                  <div className="space-y-4 text-left">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
-                      <input
-                        id="apply-name-input"
-                        type="text"
-                        name="name"
-                        required
-                        value={applyForm.name}
-                        onChange={handleApplyChange}
-                        placeholder="e.g. Tanvir Ahmed"
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          required
-                          value={applyForm.phone}
-                          onChange={handleApplyChange}
-                          placeholder="e.g. 01707009267"
-                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
-                        />
+                  {/* Stepper Progress Bar */}
+                  <div className="relative flex justify-between items-center w-full bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    {[1, 2, 3, 4, 5].map((stepNum) => (
+                      <div key={stepNum} className="flex items-center gap-1.5">
+                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                          currentStep === stepNum
+                            ? "bg-brand-blue text-white ring-4 ring-brand-blue/15"
+                            : currentStep > stepNum
+                            ? "bg-emerald-500 text-white"
+                            : "bg-slate-200 text-slate-500"
+                        }`}>
+                          {currentStep > stepNum ? "✓" : stepNum}
+                        </span>
+                        <span className={`text-[10px] hidden md:inline font-bold ${
+                          currentStep === stepNum ? "text-slate-900" : "text-slate-400"
+                        }`}>
+                          {stepNum === 1 && t("Personal", "ব্যক্তিগত")}
+                          {stepNum === 2 && t("Education", "শিক্ষা")}
+                          {stepNum === 3 && t("Experience", "অভিজ্ঞতা")}
+                          {stepNum === 4 && t("Questions", "প্রশ্নাবলী")}
+                          {stepNum === 5 && t("Review & Submit", "রিভিউ ও সাবমিট")}
+                        </span>
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
-                        <input
-                          type="email"
-                          name="email"
-                          required
-                          value={applyForm.email}
-                          onChange={handleApplyChange}
-                          placeholder="e.g. name@example.com"
-                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Experience Level", "অভিজ্ঞতার লেভেল")}</label>
-                        <select
-                          name="experience"
-                          value={applyForm.experience}
-                          onChange={handleApplyChange}
-                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-brand-blue focus:bg-white transition-all cursor-pointer"
-                        >
-                          <option value="Entry Level" className="bg-white">{t("Entry Level (No experience)", "এন্ট্রি লেভেল (অভিজ্ঞতা প্রয়োজন নেই)")}</option>
-                          <option value="1-2 Years" className="bg-white">{t("1 - 2 Years Experience", "১ - ২ বছরের অভিজ্ঞতা")}</option>
-                          <option value="3+ Years" className="bg-white">{t("3+ Years Experience", "৩+ বছরের অভিজ্ঞতা")}</option>
-                        </select>
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Resume Link (Google Drive / DropBox)", "জীবনবৃত্তান্ত (লিংক)")}</label>
-                        <input
-                          type="url"
-                          name="resumeLink"
-                          required
-                          value={applyForm.resumeLink}
-                          onChange={handleApplyChange}
-                          placeholder="e.g. https://drive.google.com/..."
-                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue focus:bg-white transition-all"
-                        />
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-white py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
-                  >
-                    {submitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t("Submitting Application...", "আবেদন জমা দেওয়া হচ্ছে...")}
-                      </>
+                  {/* STEP 1: Personal Details */}
+                  {currentStep === 1 && (
+                    <div className="space-y-4">
+                      <div className="flex gap-4 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                        <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="experienceType"
+                            value="Experienced"
+                            checked={applyForm.experienceType === "Experienced"}
+                            onChange={handleApplyChange}
+                            className="text-brand-blue focus:ring-brand-blue"
+                          />
+                          {t("Experienced", "অভিজ্ঞ")}
+                        </label>
+                        <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="experienceType"
+                            value="Fresh"
+                            checked={applyForm.experienceType === "Fresh"}
+                            onChange={handleApplyChange}
+                            className="text-brand-blue focus:ring-brand-blue"
+                          />
+                          {t("Fresh", "নতুন (অভিজ্ঞতাহীন)")}
+                        </label>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name (English as per Certificate) *", "পূর্ণ নাম (সার্টিফিকেট অনুযায়ী ইংরেজি) *")}</label>
+                          <input
+                            id="apply-name-input"
+                            type="text"
+                            name="nameEn"
+                            required
+                            value={applyForm.nameEn}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. Tanvir Ahmed"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name (Bangla) *", "পূর্ণ নাম (বাংলা) *")}</label>
+                          <input
+                            type="text"
+                            name="nameBn"
+                            required
+                            value={applyForm.nameBn}
+                            onChange={handleApplyChange}
+                            placeholder="উদা. তানভীর আহমেদ"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Fathers Name", "পিতার নাম")}</label>
+                            <input
+                              type="text"
+                              name="fatherName"
+                              value={applyForm.fatherName}
+                              onChange={handleApplyChange}
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Father's Occupation", "পিতার পেশা")}</label>
+                            <input
+                              type="text"
+                              name="fatherOccupation"
+                              value={applyForm.fatherOccupation}
+                              onChange={handleApplyChange}
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Mothers Name", "মাতার নাম")}</label>
+                            <input
+                              type="text"
+                              name="motherName"
+                              value={applyForm.motherName}
+                              onChange={handleApplyChange}
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Mother's Occupation", "মাতার পেশা")}</label>
+                            <input
+                              type="text"
+                              name="motherOccupation"
+                              value={applyForm.motherOccupation}
+                              onChange={handleApplyChange}
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Date of Birth *", "জন্ম তারিখ *")}</label>
+                          <input
+                            type="date"
+                            name="dob"
+                            required
+                            value={applyForm.dob}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Place of Birth", "জন্মস্থান")}</label>
+                          <input
+                            type="text"
+                            name="placeOfBirth"
+                            value={applyForm.placeOfBirth}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. Dhaka"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Gender", "লিঙ্গ")}</label>
+                            <select
+                              name="gender"
+                              value={applyForm.gender}
+                              onChange={handleApplyChange}
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:outline-none cursor-pointer"
+                            >
+                              <option value="Male">{t("Male", "পুরুষ")}</option>
+                              <option value="Female">{t("Female", "নারী")}</option>
+                              <option value="Other">{t("Other", "অন্যান্য")}</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Blood Group", "রক্তের গ্রুপ")}</label>
+                            <input
+                              type="text"
+                              name="bloodGroup"
+                              value={applyForm.bloodGroup}
+                              onChange={handleApplyChange}
+                              placeholder="e.g. A+"
+                              className="bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Marital Status", "বৈবাহিক অবস্থা")}</label>
+                          <select
+                            name="maritalStatus"
+                            value={applyForm.maritalStatus}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none cursor-pointer"
+                          >
+                            <option value="Single">{t("Single", "অবিবাহিত")}</option>
+                            <option value="Married">{t("Married", "বিবাহিত")}</option>
+                            <option value="Divorced">{t("Divorced", "তালাকপ্রাপ্ত")}</option>
+                            <option value="Widowed">{t("Widowed", "বিধবা/বিপত্নীক")}</option>
+                          </select>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Spouse's Name", "স্বামী/স্ত্রীর নাম")}</label>
+                          <input
+                            type="text"
+                            name="spouseName"
+                            disabled={applyForm.maritalStatus !== "Married"}
+                            value={applyForm.spouseName}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("No. of Children", "সন্তানের সংখ্যা")}</label>
+                          <input
+                            type="number"
+                            name="childrenCount"
+                            min="0"
+                            value={applyForm.childrenCount}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Religion", "ধর্ম")}</label>
+                          <input
+                            type="text"
+                            name="religion"
+                            value={applyForm.religion}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. Islam"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Nationality", "জাতীয়তা")}</label>
+                          <input
+                            type="text"
+                            name="nationality"
+                            value={applyForm.nationality}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("NID or BRC Card No *", "এনআইডি অথবা জন্ম নিবন্ধন নং *")}</label>
+                          <input
+                            type="text"
+                            name="nidBrc"
+                            required
+                            value={applyForm.nidBrc}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Contact Mobile Number *", "মোবাইল নম্বর *")}</label>
+                          <input
+                            type="tel"
+                            name="phone"
+                            required
+                            value={applyForm.phone}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. 01707009267"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address *", "ইমেইল ঠিকানা *")}</label>
+                          <input
+                            type="email"
+                            name="email"
+                            required
+                            value={applyForm.email}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. name@example.com"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Emergency Contact Phone", "জরুরি যোগাযোগ নম্বর")}</label>
+                          <input
+                            type="tel"
+                            name="emergencyContact"
+                            value={applyForm.emergencyContact}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 2: Addresses & Educational Qualifications */}
+                  {currentStep === 2 && (
+                    <div className="space-y-6">
+                      {/* Addresses */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Present Address *", "বর্তমান ঠিকানা *")}</label>
+                          <textarea
+                            name="presentAddress"
+                            required
+                            rows={3}
+                            value={applyForm.presentAddress}
+                            onChange={handleApplyChange}
+                            placeholder="Street, Police Station, District"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <div className="flex justify-between items-center">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Permanent Address *", "স্থায়ী ঠিকানা *")}</label>
+                            <label className="flex items-center gap-1.5 text-[10px] font-bold text-brand-blue cursor-pointer">
+                              <input
+                                type="checkbox"
+                                name="sameAsPresent"
+                                checked={applyForm.sameAsPresent}
+                                onChange={handleApplyChange}
+                                className="rounded text-brand-blue focus:ring-brand-blue w-3 h-3"
+                              />
+                              {t("Same as Present", "বর্তমান ঠিকানার অনুরূপ")}
+                            </label>
+                          </div>
+                          <textarea
+                            name="permanentAddress"
+                            required
+                            disabled={applyForm.sameAsPresent}
+                            rows={3}
+                            value={applyForm.permanentAddress}
+                            onChange={handleApplyChange}
+                            placeholder="Street, Police Station, District"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue resize-none disabled:opacity-50"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Education Grid */}
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t("Educational Qualifications", "শিক্ষাগত যোগ্যতা")}</h4>
+                        <div className="space-y-4">
+                          {/* MBA */}
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t("Master's (MBA/MSc/MA)", "মাস্টার্স (এমবিএ/এমএসসি)")}</span>
+                            <input
+                              type="text"
+                              name="eduMBA_Uni"
+                              value={applyForm.eduMBA_Uni}
+                              onChange={handleApplyChange}
+                              placeholder="Board / University"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                              <input
+                                type="text"
+                                name="eduMBA_Year"
+                                value={applyForm.eduMBA_Year}
+                                onChange={handleApplyChange}
+                                placeholder="Year"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                name="eduMBA_CGPA"
+                                value={applyForm.eduMBA_CGPA}
+                                onChange={handleApplyChange}
+                                placeholder="CGPA / Class"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* BBA */}
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t("Bachelor's (BBA/BSc/BA)", "স্নাতক (বিবিএ/বিএসসি)")}</span>
+                            <input
+                              type="text"
+                              name="eduBBA_Uni"
+                              value={applyForm.eduBBA_Uni}
+                              onChange={handleApplyChange}
+                              placeholder="Board / University"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                              <input
+                                type="text"
+                                name="eduBBA_Year"
+                                value={applyForm.eduBBA_Year}
+                                onChange={handleApplyChange}
+                                placeholder="Year"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                name="eduBBA_CGPA"
+                                value={applyForm.eduBBA_CGPA}
+                                onChange={handleApplyChange}
+                                placeholder="CGPA / Class"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* HSC */}
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t("HSC / Diploma", "এইচএসসি / ডিপ্লোমা")}</span>
+                            <input
+                              type="text"
+                              name="eduHSC_Uni"
+                              value={applyForm.eduHSC_Uni}
+                              onChange={handleApplyChange}
+                              placeholder="Board / Institute"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                              <input
+                                type="text"
+                                name="eduHSC_Year"
+                                value={applyForm.eduHSC_Year}
+                                onChange={handleApplyChange}
+                                placeholder="Year"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                name="eduHSC_CGPA"
+                                value={applyForm.eduHSC_CGPA}
+                                onChange={handleApplyChange}
+                                placeholder="GPA / CGPA"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* SSC */}
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t("SSC / O' Level", "এসএসসি / ও লেভেল")}</span>
+                            <input
+                              type="text"
+                              name="eduSSC_Uni"
+                              value={applyForm.eduSSC_Uni}
+                              onChange={handleApplyChange}
+                              placeholder="Board / School"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                              <input
+                                type="text"
+                                name="eduSSC_Year"
+                                value={applyForm.eduSSC_Year}
+                                onChange={handleApplyChange}
+                                placeholder="Year"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                name="eduSSC_CGPA"
+                                value={applyForm.eduSSC_CGPA}
+                                onChange={handleApplyChange}
+                                placeholder="GPA / CGPA"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                            </div>
+                          </div>
+
+                          {/* JSC */}
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t("JSC / Equivalent", "জেএসসি / সমমান")}</span>
+                            <input
+                              type="text"
+                              name="eduJSC_Uni"
+                              value={applyForm.eduJSC_Uni}
+                              onChange={handleApplyChange}
+                              placeholder="School"
+                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                              <input
+                                type="text"
+                                name="eduJSC_Year"
+                                value={applyForm.eduJSC_Year}
+                                onChange={handleApplyChange}
+                                placeholder="Year"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                name="eduJSC_CGPA"
+                                value={applyForm.eduJSC_CGPA}
+                                onChange={handleApplyChange}
+                                placeholder="GPA"
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 3: Experience & Other Qualifications */}
+                  {currentStep === 3 && (
+                    <div className="space-y-6">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Other Qualifications (Licenses, Skills, Trainings, Awards, Achievements)", "অন্যান্য যোগ্যতা (লাইসেন্স, দক্ষতা, প্রশিক্ষণ, পুরষ্কার, অর্জন)")}</label>
+                        <textarea
+                          name="otherQualifications"
+                          rows={3}
+                          value={applyForm.otherQualifications}
+                          onChange={handleApplyChange}
+                          placeholder="e.g. Cisco CCNA Certification, Driver's License, Fiber laser splicing training..."
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                        />
+                      </div>
+
+                      {/* Work Experience dynamic list */}
+                      <div>
+                        <div className="flex justify-between items-center mb-3">
+                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Work Experience", "কাজের অভিজ্ঞতা (পূর্ববর্তী চাকরি)")}</h4>
+                          <button
+                            type="button"
+                            onClick={addExperience}
+                            className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer"
+                          >
+                            + {t("Add Experience Row", "চাকরি যোগ করুন")}
+                          </button>
+                        </div>
+
+                        <div className="space-y-4">
+                          {workExperiences.map((exp, idx) => (
+                            <div key={idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 relative space-y-3">
+                              {workExperiences.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeExperience(idx)}
+                                  className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold cursor-pointer"
+                                >
+                                  {t("Remove", "বাতিল")}
+                                </button>
+                              )}
+                              
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div className="flex flex-col gap-1">
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Company Name", "প্রতিষ্ঠানের নাম")}</label>
+                                  <input
+                                    type="text"
+                                    value={exp.company}
+                                    onChange={(e) => handleExperienceChange(idx, "company", e.target.value)}
+                                    placeholder="e.g. Amber IT"
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Designation", "পদবি")}</label>
+                                  <input
+                                    type="text"
+                                    value={exp.designation}
+                                    onChange={(e) => handleExperienceChange(idx, "designation", e.target.value)}
+                                    placeholder="e.g. Support Executive"
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div className="flex flex-col gap-1">
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Duration (From & To)", "সময়সীমা (শুরু ও শেষ)")}</label>
+                                  <input
+                                    type="text"
+                                    value={exp.duration}
+                                    onChange={(e) => handleExperienceChange(idx, "duration", e.target.value)}
+                                    placeholder="e.g. 2024 - 2025"
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Monthly Salary (TK)", "মাসিক বেতন (টাকা)")}</label>
+                                  <input
+                                    type="text"
+                                    value={exp.salary}
+                                    onChange={(e) => handleExperienceChange(idx, "salary", e.target.value)}
+                                    placeholder="e.g. 18,000"
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800"
+                                  />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Reason for Leaving", "চাকরি ছাড়ার কারণ")}</label>
+                                  <input
+                                    type="text"
+                                    value={exp.reason}
+                                    onChange={(e) => handleExperienceChange(idx, "reason", e.target.value)}
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Extra-Curricular Activities", "সহ-শিক্ষা কার্যক্রম")}</label>
+                        <input
+                          type="text"
+                          name="extracurricular"
+                          value={applyForm.extracurricular}
+                          onChange={handleApplyChange}
+                          placeholder="e.g. Sports, Debate Club, Volunteering..."
+                          className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 4: Questionnaire & References */}
+                  {currentStep === 4 && (
+                    <div className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Do you consider yourself a highly motivated person? Why?", "আপনি কি নিজেকে উচ্চ অনুপ্রাণিত ব্যক্তি মনে করেন? কেন?")}</label>
+                          <textarea
+                            name="motivationReason"
+                            rows={2}
+                            value={applyForm.motivationReason}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("What environments are you comfortable working in?", "কোন পরিবেশে কাজ করতে আপনি সবচেয়ে স্বাচ্ছন্দ্য বোধ করেন?")}</label>
+                          <div className="flex flex-wrap gap-4 p-3 bg-slate-50 border border-slate-100 rounded-xl">
+                            <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="workComfort"
+                                value="As a part of a team"
+                                checked={applyForm.workComfort === "As a part of a team"}
+                                onChange={handleApplyChange}
+                                className="text-brand-blue"
+                              />
+                              {t("As a part of a team", "টিমের অংশ হিসেবে")}
+                            </label>
+                            <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="workComfort"
+                                value="Leading a team"
+                                checked={applyForm.workComfort === "Leading a team"}
+                                onChange={handleApplyChange}
+                                className="text-brand-blue"
+                              />
+                              {t("Leading a team", "টিম লিড হিসেবে")}
+                            </label>
+                            <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="workComfort"
+                                value="Work Individually"
+                                checked={applyForm.workComfort === "Work Individually"}
+                                onChange={handleApplyChange}
+                                className="text-brand-blue"
+                              />
+                              {t("Work Individually", "এককভাবে")}
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("What are your expectations from M Amin Network?", "আমাদের সংস্থার নিকট আপনার প্রত্যাশা কি?")}</label>
+                          <textarea
+                            name="expectations"
+                            rows={2}
+                            value={applyForm.expectations}
+                            onChange={handleApplyChange}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-2">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Criminal offence history?", "ফৌজদারি মামলার রেকর্ড রয়েছে?")}</label>
+                            <div className="flex gap-4">
+                              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="criminalOffence"
+                                  value="Yes"
+                                  checked={applyForm.criminalOffence === "Yes"}
+                                  onChange={handleApplyChange}
+                                  className="text-brand-blue"
+                                />
+                                {t("Yes", "হ্যাঁ")}
+                              </label>
+                              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="criminalOffence"
+                                  value="No"
+                                  checked={applyForm.criminalOffence === "No"}
+                                  onChange={handleApplyChange}
+                                  className="text-brand-blue"
+                                />
+                                {t("No", "না")}
+                              </label>
+                            </div>
+                            {applyForm.criminalOffence === "Yes" && (
+                              <input
+                                type="text"
+                                name="criminalDetails"
+                                placeholder="Provide case details"
+                                value={applyForm.criminalDetails}
+                                onChange={handleApplyChange}
+                                className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs mt-1"
+                              />
+                            )}
+                          </div>
+
+                          <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-2">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Any relative working in M Amin Network?", "কোন আত্মীয় আমাদের সংস্থায় কর্মরত আছেন?")}</label>
+                            <div className="flex gap-4">
+                              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="relativeWorking"
+                                  value="Yes"
+                                  checked={applyForm.relativeWorking === "Yes"}
+                                  onChange={handleApplyChange}
+                                  className="text-brand-blue"
+                                />
+                                {t("Yes", "হ্যাঁ")}
+                              </label>
+                              <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                                <input
+                                  type="radio"
+                                  name="relativeWorking"
+                                  value="No"
+                                  checked={applyForm.relativeWorking === "No"}
+                                  onChange={handleApplyChange}
+                                  className="text-brand-blue"
+                                />
+                                {t("No", "না")}
+                              </label>
+                            </div>
+                            {applyForm.relativeWorking === "Yes" && (
+                              <div className="grid grid-cols-2 gap-1 text-[10px] mt-1">
+                                <input
+                                  type="text"
+                                  name="relativeName"
+                                  placeholder="Relative Name"
+                                  value={applyForm.relativeName}
+                                  onChange={handleApplyChange}
+                                  className="bg-white border border-slate-200 rounded-lg px-2 py-1"
+                                />
+                                <input
+                                  type="text"
+                                  name="relativeDesignation"
+                                  placeholder="Designation"
+                                  value={applyForm.relativeDesignation}
+                                  onChange={handleApplyChange}
+                                  className="bg-white border border-slate-200 rounded-lg px-2 py-1"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* References */}
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t("References (Provide Two)", "তথ্য সূত্র/রেফারেন্স (দুটি প্রদান করুন)")}</h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {/* Reference 1 */}
+                          <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl space-y-2">
+                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t("Reference 1", "রেফারেন্স ১")}</h5>
+                            <input
+                              type="text"
+                              name="ref1_name"
+                              placeholder="Name"
+                              value={applyForm.ref1_name}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                            <input
+                              type="text"
+                              name="ref1_designation"
+                              placeholder="Designation & Organization"
+                              value={applyForm.ref1_designation}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                            <input
+                              type="tel"
+                              name="ref1_phone"
+                              placeholder="Phone"
+                              value={applyForm.ref1_phone}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                          </div>
+
+                          {/* Reference 2 */}
+                          <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl space-y-2">
+                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t("Reference 2", "রেফারেন্স ২")}</h5>
+                            <input
+                              type="text"
+                              name="ref2_name"
+                              placeholder="Name"
+                              value={applyForm.ref2_name}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                            <input
+                              type="text"
+                              name="ref2_designation"
+                              placeholder="Designation & Organization"
+                              value={applyForm.ref2_designation}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                            <input
+                              type="tel"
+                              name="ref2_phone"
+                              placeholder="Phone"
+                              value={applyForm.ref2_phone}
+                              onChange={handleApplyChange}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 5: Review & Submit */}
+                  {currentStep === 5 && (
+                    <div className="space-y-6">
+                      {/* Read-only Review Summary */}
+                      <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 text-xs space-y-3">
+                        <h4 className="font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2">{t("Confirm Application Summary", "আবেদনপত্রের সারসংক্ষেপ নিশ্চিত করুন")}</h4>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                          <div><span className="text-slate-400">{t("Candidate Type:", "আবেদনকারীর ধরন:")}</span> <strong className="text-slate-700">{applyForm.experienceType}</strong></div>
+                          <div><span className="text-slate-400">{t("Applicant Name (EN):", "নাম (ইংরেজি):")}</span> <strong className="text-slate-700">{applyForm.nameEn}</strong></div>
+                          <div><span className="text-slate-400">{t("Mobile Phone:", "মোবাইল নম্বর:")}</span> <strong className="text-slate-700">{applyForm.phone}</strong></div>
+                          <div><span className="text-slate-400">{t("Email ID:", "ইমেইল:")}</span> <strong className="text-slate-700">{applyForm.email}</strong></div>
+                          <div><span className="text-slate-400">{t("NID/BRC NO:", "এনআইডি/জন্ম নিবন্ধন:")}</span> <strong className="text-slate-700">{applyForm.nidBrc}</strong></div>
+                          <div><span className="text-slate-400">{t("Date of Birth:", "জন্ম তারিখ:")}</span> <strong className="text-slate-700">{applyForm.dob}</strong></div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Expected Salary Range (Monthly TK) *", "প্রত্যাশিত মাসিক বেতন (টাকা) *")}</label>
+                          <input
+                            type="text"
+                            name="expectedSalary"
+                            required
+                            value={applyForm.expectedSalary}
+                            onChange={handleApplyChange}
+                            placeholder="e.g. 20,000"
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-brand-blue focus:bg-white"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Application Date", "আবেদনের তারিখ")}</label>
+                          <input
+                            type="date"
+                            name="dateOfApply"
+                            readOnly
+                            value={applyForm.dateOfApply}
+                            className="bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none cursor-not-allowed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Declaration */}
+                      <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl space-y-4">
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Applicant Certification", "আবেদনকারীর ঘোষণা")}</h4>
+                        <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed text-justify">
+                          {t(
+                            "I certify that the information contained in this employment application is true and complete to the best of my knowledge. I understand that false or misleading information or omissions may result in immediate rejection of my application or termination of employment if hired.",
+                            "আমি ঘোষণা করছি যে, এই আবেদনপত্রে আমার প্রদত্ত সকল তথ্য সত্য, সঠিক এবং সম্পূর্ণ। আমি বুঝতে পারছি যে, কোনো অসত্য, মিথ্যা বা বিভ্রান্তিকর তথ্য প্রদান করা হলে বা কোনো গুরুত্বপূর্ণ তথ্য গোপন রাখা হলে আমার আবেদনপত্র সরাসরি বাতিল করা হতে পারে বা চাকরিতে যোগদানের পরও যেকোনো সময় চাকরি থেকে অব্যাহতি দেওয়া হতে পারে।"
+                          )}
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Applicant Signature (Type Name) *", "আবেদনকারীর স্বাক্ষর (আপনার নাম) *")}</label>
+                            <input
+                              type="text"
+                              name="signature"
+                              required
+                              value={applyForm.signature}
+                              onChange={handleApplyChange}
+                              placeholder="Type name for digital signature"
+                              className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-800 focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div className="flex items-center pt-5">
+                            <label className="flex items-start gap-2.5 text-xs text-slate-700 font-bold cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                name="agreed"
+                                required
+                                checked={applyForm.agreed}
+                                onChange={handleApplyChange}
+                                className="rounded text-brand-blue focus:ring-brand-blue mt-0.5"
+                              />
+                              <span>{t("I certify and agree to the above terms *", "আমি স্বাক্ষর করছি এবং উপরোক্ত শর্তাবলীতে সম্মত আছি *")}</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions buttons */}
+                  <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <button
+                      type="button"
+                      disabled={currentStep === 1}
+                      onClick={() => setCurrentStep((prev) => prev - 1)}
+                      className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {t("Back", "পূর্ববর্তী")}
+                    </button>
+                    
+                    {currentStep < 5 ? (
+                      <button
+                        type="button"
+                        onClick={validateAndNext}
+                        className="px-6 py-2.5 rounded-xl bg-brand-blue text-white text-xs font-extrabold transition-colors cursor-pointer hover:bg-brand-blue/90"
+                      >
+                        {t("Continue", "পরবর্তী")}
+                      </button>
                     ) : (
-                      t("Submit Application", "আবেদন জমা দিন")
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="px-8 py-2.5 bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-extrabold rounded-xl text-xs transition-all shadow-md hover:opacity-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      >
+                        {submitting ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            {t("Submitting...", "জমাদান হচ্ছে...")}
+                          </>
+                        ) : (
+                          t("Submit Application", "আবেদন জমা দিন")
+                        )}
+                      </button>
                     )}
-                  </button>
+                  </div>
                 </form>
               ) : (
                 <div className="text-center py-6 space-y-6">
@@ -597,17 +1650,17 @@ export default function Careers() {
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="text-slate-900 font-bold text-xl">{t("Application Received!", "আবেদনপত্র গৃহীত হয়েছে!")}</h3>
+                    <h3 className="text-slate-900 font-bold text-xl">{t("Application Received Successfully!", "আবেদনপত্র সফলভাবে গৃহীত হয়েছে!")}</h3>
                     <p className="text-sm text-slate-600">
-                      {t("Thank you", "ধন্যবাদ")}, <span className="text-slate-800 font-bold">{applyForm.name}</span>. {t("We have saved your application request for", "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:")}{" "}
+                      {t("Thank you", "ধন্যবাদ")}, <span className="text-slate-800 font-bold">{applyForm.nameEn}</span>. {t("We have saved your application request for", "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:")}{" "}
                       <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>।
                     </p>
                   </div>
 
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
                     {t(
-                      "Our HR coordinator will review your submitted resume link and credentials. In case your background aligns with our operational needs, our office team will contact you for an in-person interview at our Kadomtoli branch.",
-                      "আমাদের এইচআর টিম আপনার জীবনবৃত্তান্ত এবং দক্ষতা পর্যালোচনা করবেন। আপনার প্রোফাইলটি যদি আমাদের চাহিদার সাথে মিলে যায়, তবে পরবর্তী সাক্ষাৎকারের জন্য আমাদের অফিস টিম সরাসরি কদমতলী শাখা থেকে যোগাযোগ করবেন।"
+                      "Our HR team will review your qualifications, references, and credentials as per your submitted employment form. If your background aligns with our operational needs, our office coordinator will contact you to schedule an interview at our Kadomtoli branch.",
+                      "আমাদের এইচআর বিভাগ আপনার প্রদত্ত তথ্য সূত্র, শিক্ষাগত যোগ্যতা এবং অভিজ্ঞতার রেকর্ড পর্যালোচনা করবে। আপনার আবেদনটি যদি আমাদের চাহিদার সাথে সামঞ্জস্যপূর্ণ হয়, তবে পরবর্তী সরাসরি সাক্ষাৎকারের জন্য আমাদের অফিস কো-অর্ডিনেটর কদমতলী শাখা থেকে আপনার সাথে যোগাযোগ করবেন।"
                     )}
                   </p>
 
