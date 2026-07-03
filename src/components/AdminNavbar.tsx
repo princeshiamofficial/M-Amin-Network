@@ -38,9 +38,9 @@ export default function AdminNavbar({
               window.location.reload();
             }
           }}
-          className="flex items-center gap-2 text-[13px] font-semibold text-[#1e293b] hover:text-[#0f172a] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm"
         >
-          <svg className="w-[18px] h-[18px] text-[#475569]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <svg className="w-[15px] h-[15px] text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
           <span>Clear Cache</span>
