@@ -49,11 +49,9 @@ export default function AdminNavbar({
         {/* Clear Cache button */}
         <button
           onClick={() => {
-            if (confirm("Are you sure you want to clear the mock database cache? This will reset all records.")) {
-              localStorage.clear();
-              alert("Cache cleared successfully! Reloading...");
-              window.location.reload();
-            }
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = window.location.pathname + '?t=' + Date.now();
           }}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm"
         >
