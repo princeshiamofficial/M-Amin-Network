@@ -1482,7 +1482,7 @@ export default function AdminDashboardPage() {
                       </div>
 
                       {/* Hover action buttons on right */}
-                      <div className="flex gap-1.5 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+                      <div className="flex flex-col gap-1 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
