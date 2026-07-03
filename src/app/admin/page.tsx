@@ -365,7 +365,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="text-center space-y-1.5">
-            <h2 className="text-[#111113] font-black text-[22px] tracking-tight text-center w-full block">Sign in with email</h2>
+            <h2 className="text-[#111113] font-black text-[22px] tracking-tight text-center w-full block">Admin Portal Sign In</h2>
             <p className="text-[#4b5563] text-xs font-medium leading-relaxed px-2 text-center w-full block">
               Access the administrative console to manage client databases, payments, and system alerts.
             </p>
