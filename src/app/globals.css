@@ -255,3 +255,11 @@ body {
 .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
   background: #1e293b;
 }
+
+/* Force white text inside elements like banners in light mode */
+.text-white-force {
+  color: #ffffff !important;
+}
+.text-white-muted-force {
+  color: rgba(255, 255, 255, 0.9) !important;
+}

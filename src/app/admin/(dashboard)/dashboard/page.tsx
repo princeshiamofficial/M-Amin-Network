@@ -1019,7 +1019,7 @@ export default function AdminDashboardPage() {
             <div className="space-y-6">
               {/* Welcome Banner */}
               <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[hsl(var(--primary))] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
-                <h1 className="text-3xl sm:text-4xl font-bold flex items-center">
+                <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
                   Welcome Mehan
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1039,7 +1039,7 @@ export default function AdminDashboardPage() {
                     <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
                   </svg>
                 </h1>
-                <p className="text-md sm:text-lg text-primary-foreground/90 mt-1">Here's an overview of your business activity.</p>
+                <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here's an overview of your business activity.</p>
               </div>
 
               {/* KPI Cards Grid */}
