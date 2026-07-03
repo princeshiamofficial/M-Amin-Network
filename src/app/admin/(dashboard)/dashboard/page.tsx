@@ -1406,8 +1406,68 @@ export default function AdminDashboardPage() {
                   ))}
                 </div>
               </div>
+
+              {/* ───── Recent Activity ───── */}
+              <div className="space-y-4 pt-2">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-slate-800 tracking-tight">Recent Activity</h2>
+                  <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wide">Live Feed</span>
+                </div>
+
+                <div className="bg-white border border-slate-100 rounded-[20px] shadow-sm overflow-hidden">
+                  {(() => {
+                    const activities: { time: string; label: string; sub: string; type: string; color: string; dot: string }[] = [];
+                    payments.slice(0, 3).forEach((p) =>
+                      activities.push({ time: p.date, label: `${p.name} paid ৳${p.amount}`, sub: `${p.planName} · ${p.gateway}`, type: "Payment", color: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" })
+                    );
+                    complaints.slice(0, 3).forEach((c) =>
+                      activities.push({ time: c.date, label: `Complaint: ${c.name}`, sub: `${c.category} · ${c.status}`, type: "Complaint", color: "bg-red-50 text-red-600 border-red-200", dot: "bg-red-500" })
+                    );
+                    messages.slice(0, 3).forEach((m) =>
+                      activities.push({ time: m.date, label: `Message from ${m.name}`, sub: m.subject, type: "Contact", color: "bg-sky-50 text-sky-700 border-sky-200", dot: "bg-sky-500" })
+                    );
+                    claims.slice(0, 3).forEach((c) =>
+                      activities.push({ time: c.date, label: `Deal claim: ${c.name}`, sub: `${c.promoTitle} · ${c.status}`, type: "Claim", color: "bg-violet-50 text-violet-700 border-violet-200", dot: "bg-violet-500" })
+                    );
+                    jobApplications.slice(0, 2).forEach((j) =>
+                      activities.push({ time: j.date, label: `Application: ${j.name}`, sub: `${j.jobTitle} · ${j.status}`, type: "Job App", color: "bg-amber-50 text-amber-700 border-amber-200", dot: "bg-amber-500" })
+                    );
+                    activities.sort((a, b) => (a.time < b.time ? 1 : -1));
+                    const list = activities.slice(0, 10);
+
+                    if (list.length === 0) {
+                      return (
+                        <div className="flex flex-col items-center justify-center py-12 text-slate-300">
+                          <svg className="w-10 h-10 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-sm font-medium text-slate-400">No recent activity yet</p>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div className="divide-y divide-slate-50">
+                        {list.map((item, i) => (
+                          <div key={i} className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50/60 transition-colors">
+                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${item.dot}`} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-slate-800 truncate">{item.label}</p>
+                              <p className="text-[11px] text-slate-400 truncate mt-0.5">{item.sub}</p>
+                            </div>
+                            <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full border flex-shrink-0 ${item.color}`}>{item.type}</span>
+                            <span className="text-[10px] text-slate-350 font-mono flex-shrink-0 hidden sm:block">{item.time}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
             </div>
           )}
+
 
           {/* 3. OFFERS VIEW */}
           {activeTab === "Offers" && (
