@@ -1411,7 +1411,7 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {[
                     { label: "Packages", path: "/admin/packages", route: "/admin/packages", icon: Package },
                     { label: "Offers", path: "/admin/offers", route: "/admin/offers", icon: Tag, showActions: true },
