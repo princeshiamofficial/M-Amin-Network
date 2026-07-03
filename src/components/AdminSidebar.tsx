@@ -130,9 +130,12 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut }: Adm
     <aside className="w-72 flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-y-auto">
       {/* Branded Header Area */}
       <div className="flex flex-col gap-3 px-6 py-6 border-b border-[#1e293b]/65">
-        <div className="bg-white rounded-xl px-4 py-2.5 shadow-md w-full flex items-center justify-center">
-          <img src="/logo.png" alt="M Amin Network" className="h-14 w-auto object-contain" />
-        </div>
+        <img
+          src="/logo.png"
+          alt="M Amin Network"
+          className="h-10 w-auto object-contain self-start"
+          style={{ filter: "invert(1) hue-rotate(180deg)" }}
+        />
       </div>
 
       {/* Navigation Group Items List */}
