@@ -334,15 +334,16 @@ export default function AdminDashboard() {
           </svg>
         </div>
 
-        {/* Top-left logo: Ebolt */}
-        <div className="absolute top-6 left-6 flex items-center z-20">
-          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center mr-2.5 shadow-sm">
-            <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
-              <rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="black" strokeWidth="2.5" />
-              <circle cx="12" cy="12" r="2.5" fill="black" />
-            </svg>
-          </div>
-          <span className="font-extrabold text-sm tracking-tight text-white">Ebolt</span>
+        {/* Top-left logo: M-Amin Network */}
+        <div className="absolute top-6 left-6 flex items-center z-20 gap-2.5">
+          <img
+            src="/logo.png"
+            alt="M-Amin Network"
+            className="h-8 w-auto object-contain"
+          />
+          <span className="font-extrabold text-sm tracking-wider text-white uppercase font-sans">
+            M-Amin Network
+          </span>
         </div>
 
         {/* Back Link (Top Right) */}
@@ -359,9 +360,10 @@ export default function AdminDashboard() {
         <div className="max-w-[400px] w-full bg-white/75 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl">
-            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5">
-              <rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="black" strokeWidth="2.5" />
-              <circle cx="12" cy="12" r="2.5" fill="black" />
+            <svg className="w-6 h-6 text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 20h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4" />
+              <polyline points="10 16 14 12 10 8" />
+              <line x1="14" y1="12" x2="3" y2="12" />
             </svg>
           </div>
 
