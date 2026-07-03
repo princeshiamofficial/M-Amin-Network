@@ -308,78 +308,58 @@ export default function Careers() {
               filteredJobs.map((job, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-3xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col gap-4 text-left relative"
+                  className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col gap-4 text-left relative"
                 >
-                  {/* Hiring Pulse indicator */}
-                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[9px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-100/50">
-                    <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                  {/* Top Row: Title + Dept & Job Type Badge */}
+                  <div className="flex justify-between items-start w-full gap-4">
+                    <div>
+                      <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
+                      <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
+                    </div>
+                    <span className="bg-[#0b2545] text-white text-[10px] sm:text-xs font-bold px-3.5 py-1 rounded-full flex-shrink-0">
+                      {translateJobType(job.type)}
                     </span>
-                    {t("HIRING", "নিয়োগ চলছে")}
                   </div>
 
-                  {/* Header: Title & Dept */}
-                  <div className="pr-16">
-                    <h3 className="text-slate-900 font-extrabold text-lg sm:text-xl tracking-tight leading-snug hover:text-brand-blue transition-colors">
-                      {translateJobTitle(job.title)}
-                    </h3>
-                    <p className="text-xs text-brand-blue font-bold tracking-wide uppercase mt-1">
-                      {translateDept(job.dept)}
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
+                  {/* Middle Row: Description */}
+                  <p className="text-sm text-slate-600 leading-relaxed font-medium">
                     {translateJobDesc(job.desc)}
                   </p>
 
-                  {/* Details Badges */}
-                  <div className="flex flex-wrap gap-2 text-[10px] sm:text-xs font-semibold mt-1">
-                    {/* Location */}
-                    <span className="flex items-center gap-1 bg-slate-50 border border-slate-100 text-slate-600 px-2.5 py-1 rounded-xl">
-                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  {/* Third Row: Details Info Badges */}
+                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 items-center font-bold">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       {translateLocation(job.location)}
                     </span>
-                    
-                    {/* Vacancy */}
-                    <span className="flex items-center gap-1 bg-slate-50 border border-slate-100 text-slate-600 px-2.5 py-1 rounded-xl">
-                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                       {job.vacancy} {t("vacancy", "vacancy")}
                     </span>
-
-                    {/* Salary */}
-                    <span className="flex items-center gap-1 bg-emerald-50/70 border border-emerald-100/50 text-emerald-700 px-2.5 py-1 rounded-xl">
-                      <svg className="w-3.5 h-3.5 text-emerald-600/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      {job.salary} BDT
+                      {job.salary}
                     </span>
-
-                    {/* Deadline */}
-                    <span className="flex items-center gap-1 bg-amber-50/70 border border-amber-100/50 text-amber-700 px-2.5 py-1 rounded-xl">
-                      <svg className="w-3.5 h-3.5 text-amber-600/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <span className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       {t("Deadline:", "Deadline:")} {job.deadline}
                     </span>
-
-                    {/* Job Type Badge */}
-                    <span className="flex items-center gap-1 bg-[#0f2d59]/10 border border-[#0f2d59]/15 text-[#0f2d59] px-2.5 py-1 rounded-xl uppercase tracking-wider text-[9px] font-extrabold">
-                      {translateJobType(job.type)}
-                    </span>
                   </div>
 
-                  {/* Actions buttons */}
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                  {/* Fourth Row: Buttons */}
+                  <div className="grid grid-cols-2 gap-4 mt-2">
                     <button
                       onClick={() => setSelectedJob(job)}
-                      className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-2.5 rounded-xl font-bold transition-all text-xs cursor-pointer text-center"
+                      className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-2xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                     >
                       {t("Details", "বিস্তারিত")}
                     </button>
@@ -391,7 +371,7 @@ export default function Careers() {
                           if (input) input.focus();
                         }, 100);
                       }}
-                      className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-2.5 rounded-xl font-extrabold transition-all text-xs cursor-pointer text-center"
+                      className="w-full bg-[#0ed3cf] hover:bg-[#0bc0bd] text-slate-900 py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                     >
                       {t("Apply Now", "আবেদন করুন")}
                     </button>
