@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import React from "react";
 import Link from "next/link";
@@ -13,7 +14,12 @@ export default function Footer() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-brand-dark border-t border-brand-border/60 text-slate-300 pt-16 pb-8 mt-auto">
+    <footer
+      className="relative border-t border-brand-border/60 text-slate-300 pt-16 pb-8 mt-auto bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.93), rgba(9, 13, 24, 0.97)), url("/footer-bg.jpg")'
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
           {/* Logo and About */}
@@ -119,7 +125,7 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-slate-400">
               <li className="flex gap-2.5 items-start">
                 <svg
-                  className="w-5 h-5 text-brand-cyan flex-shrink-0 mt-0.5"
+                  className="w-5 h-5 text-brand-cyan shrink-0 mt-0.5"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -145,7 +151,7 @@ export default function Footer() {
               </li>
               <li className="flex gap-2.5 items-center">
                 <svg
-                  className="w-5 h-5 text-brand-cyan flex-shrink-0"
+                  className="w-5 h-5 text-brand-cyan shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -163,7 +169,7 @@ export default function Footer() {
               </li>
               <li className="flex gap-2.5 items-center">
                 <svg
-                  className="w-5 h-5 text-brand-cyan flex-shrink-0"
+                  className="w-5 h-5 text-brand-cyan shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"

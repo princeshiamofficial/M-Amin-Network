@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -13,6 +14,7 @@ interface JobOpening {
   vacancy: string;
   salary: string;
   deadline: string;
+  image?: string;
 }
 
 export default function Careers() {
@@ -158,7 +160,8 @@ export default function Careers() {
       ],
       vacancy: "5",
       salary: "14,000-20,000",
-      deadline: "2026-08-15"
+      deadline: "2026-08-15",
+      image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
     },
     {
       title: "Customer Support Executive",
@@ -174,7 +177,8 @@ export default function Careers() {
       ],
       vacancy: "3",
       salary: "15,000-22,000",
-      deadline: "2026-08-20"
+      deadline: "2026-08-20",
+      image: "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg"
     },
     {
       title: "Junior Network Engineer",
@@ -190,7 +194,8 @@ export default function Careers() {
       ],
       vacancy: "2",
       salary: "18,000-25,000",
-      deadline: "2026-08-25"
+      deadline: "2026-08-25",
+      image: "/933503ea823535235e8159f65709292f.jpg"
     },
   ];
 
@@ -366,29 +371,36 @@ export default function Careers() {
       {/* Background glow (decorative top background) */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
-      {/* Header Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full text-left relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-6">
-          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
-          </span>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-            {t("Careers & ", "ক্যারিয়ার ও ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-              {t("Opportunities", "সুযোগসমূহ")}
+      {/* Header Area Banner */}
+      <div 
+        className="relative w-full overflow-hidden bg-slate-950 py-20 border-b border-white/5 bg-cover bg-center"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.35), rgba(9, 13, 24, 0.65)), url("/footer-bg.jpg")'
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
+              {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
             </span>
-          </h1>
-          <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            {t(
-              "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
-              "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
-            )}
-          </p>
+            <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
+              {t("Careers & ", "ক্যারিয়ার ও ")}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+                {t("Opportunities", "সুযোগসমূহ")}
+              </span>
+            </h1>
+            <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
+              {t(
+                "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
+                "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
+              )}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Job Postings Section - White Background */}
-      <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
+      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Open Positions Section Header */}
@@ -428,7 +440,7 @@ export default function Careers() {
           </div>
 
           {/* Search & Filter Bar Row */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-4 sm:p-5 mb-8 flex flex-col gap-4 shadow-inner">
+          <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 sm:p-5 mb-8 flex flex-col gap-4 shadow-inner">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
               {/* Search Input (Takes 5 cols) */}
               <div className="lg:col-span-5 relative flex items-center">
@@ -493,70 +505,82 @@ export default function Careers() {
               filteredJobs.map((job, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col gap-4 text-left relative"
+                  className="rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden text-left relative"
                 >
-                  {/* Top Row: Title + Dept & Job Type Badge */}
-                  <div className="flex justify-between items-start w-full gap-4">
-                    <div>
-                      <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
-                      <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
+                  {job.image && (
+                    <div className="w-full h-44 overflow-hidden border-b border-slate-100">
+                      <img
+                        src={job.image}
+                        alt={translateJobTitle(job.title)}
+                        className="w-full h-full object-cover select-none"
+                      />
                     </div>
-                    <span className="bg-[#0b2545] text-white text-[10px] sm:text-xs font-bold px-3.5 py-1 rounded-full flex-shrink-0">
-                      {translateJobType(job.type)}
-                    </span>
-                  </div>
+                  )}
 
-                  {/* Middle Row: Description */}
-                  <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                    {translateJobDesc(job.desc)}
-                  </p>
+                  <div className="p-6 flex flex-col gap-4 grow">
+                    {/* Top Row: Title + Dept & Job Type Badge */}
+                    <div className="flex justify-between items-start w-full gap-4">
+                      <div>
+                        <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
+                        <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
+                      </div>
+                      <span className="bg-[#0b2545] text-white text-[10px] sm:text-xs font-bold px-3.5 py-1 rounded-full shrink-0">
+                        {translateJobType(job.type)}
+                      </span>
+                    </div>
 
-                  {/* Third Row: Details Info Badges */}
-                  <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 items-center font-bold">
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {translateLocation(job.location)}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      {job.vacancy} {t("vacancy", "vacancy")}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {job.salary}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {t("Deadline:", "Deadline:")} {job.deadline}
-                    </span>
-                  </div>
+                    {/* Middle Row: Description */}
+                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                      {translateJobDesc(job.desc)}
+                    </p>
 
-                  {/* Fourth Row: Buttons */}
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    <button
-                      onClick={() => setDetailsJob(job)}
-                      className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-2xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
-                    >
-                      {t("Details", "বিস্তারিত")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setCurrentStep(1);
-                        setSelectedJob(job);
-                      }}
-                      className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white py-3 rounded-2xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
-                    >
-                      {t("Apply Now", "আবেদন করুন")}
-                    </button>
+                    {/* Third Row: Details Info Badges */}
+                    <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 items-center font-bold mt-auto">
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {translateLocation(job.location)}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {job.vacancy} {t("vacancy", "vacancy")}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {job.salary}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {t("Deadline:", "Deadline:")} {job.deadline}
+                      </span>
+                    </div>
+
+                    {/* Fourth Row: Buttons */}
+                    <div className="grid grid-cols-2 gap-4 mt-2">
+                      <button
+                        onClick={() => setDetailsJob(job)}
+                        className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                      >
+                        {t("Details", "বিস্তারিত")}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCurrentStep(1);
+                          setSelectedJob(job);
+                        }}
+                        className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-lg shadow-brand-blue/20"
+                      >
+                        {t("Apply Now", "আবেদন করুন")}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
@@ -574,9 +598,9 @@ export default function Careers() {
 
         {/* Job Details Popup Modal */}
         {detailsJob && (
-          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
             <div className="flex min-h-full items-center justify-center p-4">
-              <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-slate-800 text-left">
+              <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 sm:p-8 max-w-lg w-full relative text-slate-800 text-left">
               <button
                 onClick={() => setDetailsJob(null)}
                 className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -654,7 +678,7 @@ export default function Careers() {
                       setSelectedJob(detailsJob);
                       setDetailsJob(null);
                     }}
-                    className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                    className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-lg shadow-brand-blue/15"
                   >
                     {t("Apply Now", "আবেদন করুন")}
                   </button>
@@ -667,9 +691,9 @@ export default function Careers() {
 
         {/* Multi-step Application Modal */}
         {selectedJob && (
-          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
             <div className="flex min-h-full items-center justify-center p-4">
-              <div className="bg-white border border-slate-200 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-3xl w-full relative text-slate-800">
+              <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 sm:p-8 max-w-3xl w-full relative text-slate-800">
               <button
                 onClick={resetForm}
                 className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer z-10"
@@ -1630,7 +1654,7 @@ export default function Careers() {
                       <button
                         type="submit"
                         disabled={submitting}
-                        className="px-8 py-2.5 bg-gradient-to-r from-brand-blue to-brand-cyan text-white font-extrabold rounded-xl text-xs transition-all shadow-md hover:opacity-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                        className="px-8 py-2.5 bg-linear-to-r from-brand-blue to-brand-cyan text-white font-extrabold rounded-xl text-xs transition-all shadow-md hover:opacity-95 flex items-center gap-2 cursor-pointer disabled:opacity-50"
                       >
                         {submitting ? (
                           <>

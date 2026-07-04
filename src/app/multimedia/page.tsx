@@ -76,7 +76,7 @@ export default function Multimedia() {
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
             Multimedia{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               &amp; BDIX Portal
             </span>
           </h1>
@@ -87,7 +87,7 @@ export default function Multimedia() {
       </div>
 
       {/* Grid of portals - White Background Section */}
-      <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
+      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {portals.map((portal, i) => (

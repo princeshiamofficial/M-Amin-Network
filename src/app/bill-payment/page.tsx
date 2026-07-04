@@ -156,7 +156,7 @@ export default function BillPayment() {
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
             {t("Secure Online ", "নিরাপদ অনলাইন ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               {t("Bill Payment", "বিল পরিশোধ")}
             </span>
           </h1>
@@ -170,7 +170,7 @@ export default function BillPayment() {
       </div>
 
       {/* Bill Content - White Background Section */}
-      <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
+      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           {/* Form panel */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm text-left">
@@ -217,7 +217,7 @@ export default function BillPayment() {
                 <button
                   type="submit"
                   disabled={searching}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {searching ? (
                     <>
@@ -321,7 +321,7 @@ export default function BillPayment() {
 
                         {/* Info warning */}
                         <div className="bg-blue-50 border border-blue-100 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed flex gap-2">
-                          <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-5 h-5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                           </svg>
                           <span>
@@ -335,7 +335,7 @@ export default function BillPayment() {
                         <button
                           type="submit"
                           disabled={paying || !selectedGateway}
-                          className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 disabled:opacity-50 cursor-pointer"
+                          className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 disabled:opacity-50 cursor-pointer"
                         >
                           {paying ? (
                             <>
@@ -418,7 +418,7 @@ export default function BillPayment() {
                       </button>
                       <button
                         onClick={() => alert(lang === "BN" ? "রসিদ ডাউনলোড: Receipt-MAN-2026.pdf তৈরি করা হয়েছে।" : "Receipt download simulated: Receipt-MAN-2026.pdf has been generated.")}
-                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black transition-opacity cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black transition-opacity cursor-pointer"
                       >
                         {t("Download Receipt", "রসিদ ডাউনলোড")}
                       </button>

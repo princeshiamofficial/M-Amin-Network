@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -14,14 +15,17 @@ export default function AdminDashboard() {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    if (typeof window !== "undefined") {
-      const auth = sessionStorage.getItem("m_amin_admin_authenticated");
-      if (auth === "true") {
-        setIsAuthenticated(true);
-        router.push("/admin/dashboard");
+    const timer = setTimeout(() => {
+      setMounted(true);
+      if (typeof window !== "undefined") {
+        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        if (auth === "true") {
+          setIsAuthenticated(true);
+          router.push("/admin/dashboard");
+        }
       }
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [router]);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -75,11 +79,14 @@ export default function AdminDashboard() {
 
         {/* Top-left logo: M-Amin Network */}
         <div className="absolute top-6 left-6 flex items-center z-20">
-          <img
+          <Image
             src="/logo.png"
             alt="M-Amin Network"
+            width={120}
+            height={32}
             className="h-8 w-auto object-contain"
             style={{ filter: "invert(1) hue-rotate(180deg)" }}
+            priority
           />
         </div>
 
@@ -97,9 +104,11 @@ export default function AdminDashboard() {
         <div className="max-w-[400px] w-full bg-white/75 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
-            <img
+            <Image
               src="/Xlogo.png"
               alt="Logo"
+              width={56}
+              height={56}
               className="w-full h-full object-contain"
             />
           </div>
@@ -113,7 +122,7 @@ export default function AdminDashboard() {
 
           {loginError && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-600 px-4 py-2.5 rounded-xl text-xs font-semibold flex gap-2 items-center">
-              <svg className="w-4 h-4 text-red-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 9v2m0 4h.01M5.071 19a9 9 0 1112.728 0m-12.728 0h12.728" />
               </svg>
               <span>{loginError}</span>
@@ -197,9 +206,9 @@ export default function AdminDashboard() {
 
           {/* Divider */}
           <div className="flex items-center justify-center gap-3 my-1">
-            <div className="border-t border-slate-200 flex-grow" />
+            <div className="border-t border-slate-200 grow" />
             <span className="text-[10px] text-[#8c94a0] font-black tracking-widest uppercase font-sans">Or sign in with</span>
-            <div className="border-t border-slate-200 flex-grow" />
+            <div className="border-t border-slate-200 grow" />
           </div>
 
           {/* Social Sign-In Grid */}
@@ -241,7 +250,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
 
       {/* Main empty workspace placeholder */}
-      <div className="flex-grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
+      <div className="grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
         <div className="max-w-md w-full glass-panel border-brand-border/50 rounded-[32px] p-10 space-y-6 shadow-2xl bg-brand-card/30 backdrop-blur-xl">
           <div className="w-16 h-16 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-emerald-500/5">
             🔑

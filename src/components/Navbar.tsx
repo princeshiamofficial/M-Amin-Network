@@ -2,13 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const [lang, setLang] = useState("EN");
+  const [lang, setLang] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("app-lang") || "EN";
+    }
+    return "EN";
+  });
 
   const handleLangChange = (newLang: string) => {
     setLang(newLang);
@@ -22,9 +28,6 @@ export default function Navbar() {
     if (typeof window !== "undefined") {
       document.documentElement.classList.remove("theme-light");
     }
-
-    const savedLang = localStorage.getItem("app-lang") || "EN";
-    setLang(savedLang);
 
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -100,12 +103,15 @@ export default function Navbar() {
       }`}>
         <div className="flex items-center justify-between h-11">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <Link href="/" className="flex items-center py-1">
-              <img
+              <Image
                 src="/logo.png"
                 alt="M Amin Network"
+                width={160}
+                height={40}
                 className="h-10 w-auto object-contain"
+                priority
               />
             </Link>
           </div>
@@ -170,7 +176,7 @@ export default function Navbar() {
             {/* Client Portal Button */}
             <Link
               href="/portal"
-              className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark font-extrabold text-xs shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/20 hover:scale-[1.02] transition-all cursor-pointer"
+              className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark font-extrabold text-xs shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/20 hover:scale-[1.02] transition-all cursor-pointer"
             >
               {t("Client Portal", "গ্রাহক পোর্টাল")}
             </Link>
@@ -231,7 +237,7 @@ export default function Navbar() {
         }`}
         id="mobile-menu"
       >
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-b border-slate-200/80 backdrop-blur-lg px-4">
+        <div className="px-4 pt-2 pb-3 space-y-1 bg-white border-b border-slate-200/80 backdrop-blur-lg">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -275,7 +281,7 @@ export default function Navbar() {
             <Link
               href="/portal"
               onClick={() => setIsOpen(false)}
-              className="block w-full text-center px-4 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-white text-base font-semibold shadow-lg shadow-brand-blue/20"
+              className="block w-full text-center px-4 py-3 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-white text-base font-semibold shadow-lg shadow-brand-blue/20"
             >
               {t("Client Portal", "গ্রাহক পোর্টাল")}
             </Link>

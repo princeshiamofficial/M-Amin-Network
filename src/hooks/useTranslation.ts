@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 
 export function useTranslation() {
-  const [lang, setLang] = useState("EN");
+  const [lang, setLang] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("app-lang") || "EN";
+    }
+    return "EN";
+  });
 
   useEffect(() => {
-    // Initial load
-    if (typeof window !== "undefined") {
-      const savedLang = localStorage.getItem("app-lang") || "EN";
-      setLang(savedLang);
-    }
-
     const handleLanguageChange = () => {
       const savedLang = localStorage.getItem("app-lang") || "EN";
       setLang(savedLang);

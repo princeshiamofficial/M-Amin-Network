@@ -296,14 +296,14 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
   ];
 
   return (
-    <aside className={`flex-shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-hidden transition-all duration-300 ${
+    <aside className={`shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-hidden transition-all duration-300 ${
       isCollapsed ? "w-20" : "w-72"
     }`}>
       <div className={`sticky top-0 z-20 flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-black transition-all ${
         isCollapsed ? "px-4" : "px-6"
       }`}>
         {isCollapsed ? (
-          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md shrink-0">
             <img src="/Xlogo.png" alt="M Amin Network" className="w-full h-full object-contain" />
           </div>
         ) : (

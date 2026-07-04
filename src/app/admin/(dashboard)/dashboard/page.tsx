@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import AdminSidebar from "@/components/AdminSidebar";
-import AdminNavbar from "@/components/AdminNavbar";
 import {
   Users,
   FileText,
@@ -253,7 +251,6 @@ export default function AdminDashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [greeting, setGreeting] = useState("Welcome");
 
   // Quick actions reordering state
@@ -304,7 +301,6 @@ export default function AdminDashboardPage() {
   // Snapshot counts states
   const [countCustomers, setCountCustomers] = useState(3);
   const [countApplications, setCountApplications] = useState(1);
-  const [countBills, setCountBills] = useState(2);
   const [countTickets, setCountTickets] = useState(1);
   const [countComplaintsToday, setCountComplaintsToday] = useState(0);
   const [countAllComplaints, setCountAllComplaints] = useState(3);
@@ -376,7 +372,6 @@ export default function AdminDashboardPage() {
 
   // System stats mockup states
   const [activeClients, setActiveClients] = useState(1482);
-  const [networkUptime, setNetworkUptime] = useState("99.98%");
   const [totalBandwidthGbps, setTotalBandwidthGbps] = useState(4.2);
 
   const defaultClaims: Claim[] = [
@@ -582,43 +577,7 @@ export default function AdminDashboardPage() {
     { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs" },
   ];
 
-  useEffect(() => {
-    setMounted(true);
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) {
-      setGreeting("Good Morning");
-    } else if (hour >= 12 && hour < 17) {
-      setGreeting("Good Afternoon");
-    } else if (hour >= 17 && hour < 22) {
-      setGreeting("Good Evening");
-    } else {
-      setGreeting("Good Night");
-    }
-    if (typeof window !== "undefined") {
-      const auth = sessionStorage.getItem("m_amin_admin_authenticated");
-      if (auth !== "true") {
-        router.push("/admin");
-      } else {
-        setIsAuthenticated(true);
-        loadDatabase();
-      }
-    }
-
-    const interval = setInterval(() => {
-      setTotalBandwidthGbps((prev) => +(prev + (Math.random() * 0.4 - 0.2)).toFixed(2));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [router]);
-
-  // Sync tab active selection dynamically with the pathname
-  useEffect(() => {
-    const currentTab = Object.entries(tabUrls).find(([name, url]) => url === pathname)?.[0];
-    if (currentTab) {
-      setActiveTab(currentTab);
-    }
-  }, [pathname]);
-
-  const loadDatabase = () => {
+  function loadDatabase() {
     if (typeof window === "undefined") return;
 
     const savedClaims = localStorage.getItem("m_amin_claims");
@@ -800,11 +759,6 @@ export default function AdminDashboardPage() {
         setCountApplications(JSON.parse(savedApps).length);
       }
 
-      const savedPayments = localStorage.getItem("m_amin_payments");
-      if (savedPayments) {
-        setCountBills(JSON.parse(savedPayments).length);
-      }
-
       const savedTickets = localStorage.getItem("m_amin_tickets");
       if (savedTickets) {
         setCountTickets(JSON.parse(savedTickets).length);
@@ -815,7 +769,7 @@ export default function AdminDashboardPage() {
         const list = JSON.parse(savedComplaints);
         setCountAllComplaints(list.length);
         const todayStr = new Date().toLocaleDateString();
-        const filedToday = list.filter((c: any) => c.date && c.date.includes(todayStr));
+        const filedToday = list.filter((c: Complaint) => c.date && c.date.includes(todayStr));
         setCountComplaintsToday(filedToday.length);
       }
 
@@ -841,7 +795,54 @@ export default function AdminDashboardPage() {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMounted(true);
+      const hour = new Date().getHours();
+      if (hour >= 5 && hour < 12) {
+        setGreeting("Good Morning");
+      } else if (hour >= 12 && hour < 17) {
+        setGreeting("Good Afternoon");
+      } else if (hour >= 17 && hour < 22) {
+        setGreeting("Good Evening");
+      } else {
+        setGreeting("Good Night");
+      }
+      if (typeof window !== "undefined") {
+        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        if (auth !== "true") {
+          router.push("/admin");
+        } else {
+          setIsAuthenticated(true);
+          loadDatabase();
+        }
+      }
+    }, 0);
+
+    const interval = setInterval(() => {
+      setTotalBandwidthGbps((prev) => +(prev + (Math.random() * 0.4 - 0.2)).toFixed(2));
+    }, 4000);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
+
+  // Sync tab active selection dynamically with the pathname
+  useEffect(() => {
+    const currentTab = Object.entries(tabUrls).find(([, url]) => url === pathname)?.[0];
+    if (currentTab) {
+      const timer = setTimeout(() => {
+        setActiveTab(currentTab);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
+
+
 
   const resetToDefaults = () => {
     if (typeof window === "undefined") return;
@@ -1130,10 +1131,7 @@ export default function AdminDashboardPage() {
     localStorage.setItem("m_amin_dashboard_shortcuts", JSON.stringify(updated));
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("m_amin_admin_authenticated");
-    router.push("/admin");
-  };
+
 
   if (!mounted || !isAuthenticated) {
     return (
@@ -1258,7 +1256,7 @@ export default function AdminDashboardPage() {
           {activeTab === "Overview" && (
             <div className="space-y-6">
               {/* Welcome Banner */}
-              <div className="bg-gradient-to-r from-[hsl(var(--sidebar-background))] to-[#81C9FE] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
+              <div className="bg-linear-to-r from-[hsl(var(--sidebar-background))] to-[#81C9FE] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
                 <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
                   {greeting}, Mehan Ahmed
                   <svg
@@ -1271,7 +1269,7 @@ export default function AdminDashboardPage() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="lucide lucide-hand ml-2 h-8 w-8 transform rotate-[20deg] text-yellow-300"
+                    className="lucide lucide-hand ml-2 h-8 w-8 transform rotate-20 text-yellow-300"
                   >
                     <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path>
                     <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"></path>
@@ -1279,7 +1277,7 @@ export default function AdminDashboardPage() {
                     <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
                   </svg>
                 </h1>
-                <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here's an overview of your broadband network operations and subscriber analytics.</p>
+                <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here&apos;s an overview of your broadband network operations and subscriber analytics.</p>
               </div>              {/* Today's Snapshot Section */}
               <div className="space-y-4 pt-4">
 
@@ -1306,7 +1304,7 @@ export default function AdminDashboardPage() {
                       <div className="absolute -right-4 -bottom-4 opacity-[0.04] sm:hidden pointer-events-none transform rotate-12 scale-110">
                         <card.icon className={`h-20 w-20 ${card.color.text}`} />
                       </div>
-                      <div className={`absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent sm:hidden`} />
+                      <div className={`absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/10 to-transparent sm:hidden`} />
                     </div>
                   ))}
                 </div>
@@ -2739,7 +2737,7 @@ export default function AdminDashboardPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-slate-200">
                 <div className="space-y-4">
-                  <h4 className="text-slate-800 font-bold text-xs uppercase tracking-wider text-brand-blue">Simulated Active Clients</h4>
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-brand-blue">Simulated Active Clients</h4>
                   <div className="flex gap-4">
                     <input
                       type="number"
@@ -2752,7 +2750,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-slate-800 font-bold text-xs uppercase tracking-wider text-brand-blue">Virtual Peering Flow</h4>
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-brand-blue">Virtual Peering Flow</h4>
                   <div className="flex gap-4">
                     <input
                       type="number"

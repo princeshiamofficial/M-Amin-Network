@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -72,6 +73,23 @@ export default function Home() {
   const [speedSlider, setSpeedSlider] = useState(2); // index of default package (30 Mbps)
   const [coverageSearch, setCoverageSearch] = useState("");
   const [coverageResult, setCoverageResult] = useState<string | null>(null);
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
+    if (!hasSeen) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    sessionStorage.setItem("hasSeenOfferPopup", "true");
+  };
 
   const coverageAreas = [
     "Kadomtoli",
@@ -204,7 +222,7 @@ export default function Home() {
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               {t("Blazing Fast Fiber", "দ্রুতগতির ফাইবার")} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
                 {t("Internet in Keraniganj", "ইন্টারনেট কেরানীগঞ্জে")}
               </span>
             </h1>
@@ -219,7 +237,7 @@ export default function Home() {
              <div className="flex flex-row flex-wrap gap-2.5 sm:gap-3 justify-center lg:justify-start mt-4">
               <Link
                 href="/packages"
-                className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs sm:text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs sm:text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
               >
                 {t("View Packages", "প্যাকেজ সমূহ দেখুন")}
                 <svg
@@ -249,7 +267,7 @@ export default function Home() {
                   placeholder="e.g. Kadomtoli, Aganagar"
                   value={coverageSearch}
                   onChange={(e) => setCoverageSearch(e.target.value)}
-                  className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan flex-grow min-w-0"
+                  className="bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan grow min-w-0"
                 />
                 <button
                   type="submit"
@@ -330,7 +348,7 @@ export default function Home() {
                 </div>
                 <Link
                   href={`/packages?plan=${selectedPlan.speed}`}
-                  className="bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
+                  className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
                 >
                   Order Plan
                 </Link>
@@ -362,17 +380,119 @@ export default function Home() {
       </div>
     </section>
 
-      {/* Network Features Section */}
-      <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-20 -mb-20">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
+      {/* Packages Section */}
+      <section className="w-full bg-white py-16 relative overflow-hidden border-t border-slate-100 shadow-inner text-slate-900 -mt-20">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs font-bold tracking-widest text-brand-blue uppercase mb-3">{t("Core Infrastructure", "মূল অবকাঠামো")}</h2>
+            <h2 className="text-xs font-bold tracking-widest text-brand-blue uppercase mb-3">
+              {t("Broadband Packages", "ব্রডব্যান্ড প্যাকেজ সমূহ")}
+            </h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+              {t("Choose the Perfect Plan for You", "আপনার জন্য সেরা প্ল্যানটি বেছে নিন")}
+            </h3>
+            <p className="text-slate-650 mt-4 leading-relaxed">
+              {t(
+                "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
+                "সিমলেস স্ট্রিমিং, বাফার-মুক্ত গেমিং এবং উচ্চ-ক্ষমতাসম্পন্ন কর্পোরেট নেটওয়ার্কের জন্য ডিজাইন করা উচ্চগতির ফাইবার অপটিক ইন্টারনেট প্যাকেজ সমূহ।"
+              )}
+            </p>
+          </div>
+
+          {/* Pricing Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-stretch">
+            {packages.map((plan, i) => {
+              const allFeatures = [
+                t(`Speed: ${plan.speed} Mbps`, `গতি: ${plan.speed} এমবিপিএস`),
+                ...plan.features,
+              ];
+              return (
+                <div
+                  key={i}
+                  className={`relative w-full transition-all duration-300 hover:scale-[1.02] ${
+                    plan.popular ? "lg:scale-105 z-20" : "z-10"
+                  }`}
+                >
+                  {plan.popular && (
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#0273b3] to-[#014c77] text-white text-xs font-black tracking-widest px-5 py-2 rounded-full shadow-[0_4px_12px_rgba(2,115,179,0.3)] border border-white/20 z-30 uppercase">
+                      {t("POPULAR", "জনপ্রিয়")}
+                    </span>
+                  )}
+
+                  <div className="overflow-hidden rounded-2xl bg-linear-to-b from-[#0273b3] to-[#015c90] shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between w-full text-center relative border border-white/10 min-h-[540px] h-full hover:shadow-[0_15px_35px_rgba(2,115,179,0.25)] transition-shadow duration-300">
+                    {/* Top Green Section */}
+                    <div
+                      className="bg-linear-to-br from-[#10b981] to-[#047857] pt-10 pb-12 px-6 flex flex-col items-center justify-center text-white select-none"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 80%, 0 88%)" }}
+                    >
+                      <h3 className="text-white text-xl font-extrabold uppercase tracking-wider mb-1.5">
+                        {plan.type}
+                      </h3>
+                      <div className="flex items-baseline justify-center text-white">
+                        <span className="text-3xl font-bold mr-0.5 opacity-90">৳</span>
+                        <span className="text-5xl font-black font-sans tracking-tight leading-none">
+                          {plan.price}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest ml-1.5 opacity-80">
+                          /{t("Monthly", "মাসিক")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Blue Section */}
+                    <div className="pt-4 pb-8 px-6 sm:px-8 flex flex-col justify-between grow">
+                      {/* Features List */}
+                      <ul className="flex flex-col gap-3.5 text-left text-white/95 max-w-[280px] mx-auto mb-8 w-full">
+                        {allFeatures.map((feat, featIdx) => (
+                          <li key={featIdx} className="flex gap-3 items-center">
+                            <div className="w-5 h-5 rounded-full border border-emerald-400/30 bg-emerald-500/20 text-[#d1fae5] shrink-0 flex items-center justify-center shadow-sm">
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="3.5"
+                                stroke="currentColor"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium tracking-wide leading-tight">
+                              {feat}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* BUY NOW Button */}
+                      <div className="mt-auto">
+                        <Link
+                          href={`/packages?plan=${plan.speed}`}
+                          className="mx-auto w-full max-w-[180px] py-3 bg-linear-to-r from-[#10b981] to-[#047857] hover:scale-[1.03] active:scale-[0.98] text-white text-xs font-black tracking-widest rounded-full transition-all duration-300 text-center block shadow-md hover:shadow-lg hover:shadow-emerald-500/10 uppercase cursor-pointer"
+                        >
+                          {t("BUY NOW", "অর্ডার করুন")}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Network Features Section */}
+      <section className="w-full bg-black py-16 relative overflow-hidden border-t border-brand-border/40 text-white -mt-20 -mb-20">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-xs font-bold tracking-widest text-brand-cyan uppercase mb-3">{t("Core Infrastructure", "মূল অবকাঠামো")}</h2>
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
               {t("Why Choose M Amin Network?", "কেন এম আমিন নেটওয়ার্ক বেছে নেবেন?")}
             </h3>
-            <p className="text-slate-600 mt-4 leading-relaxed">
+            <p className="text-slate-400 mt-4 leading-relaxed">
               {t(
                 "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
                 "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।"
@@ -439,15 +559,15 @@ export default function Home() {
           ].map((feat, i) => (
             <div
               key={i}
-              className="p-8 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left"
+              className="p-8 rounded-3xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left glass-panel"
             >
-              <div className="w-12 h-12 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center border border-brand-blue/25">
+              <div className="w-12 h-12 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center border border-brand-cyan/15">
                 {feat.icon}
               </div>
-              <h4 className="text-lg font-bold text-slate-900 tracking-wide">
+              <h4 className="text-lg font-bold text-white tracking-wide">
                 {t(feat.title, feat.title === "100% Fiber Optic (FTTH)" ? "১০০% ফাইবার অপটিক (FTTH)" : feat.title === "Dedicated BGP Routing" ? "ডেডিকেটেড বিজিপি রাউটিং" : feat.title === "Low-Ping Gamer Optimizations" ? "লো-পিং গেমার অপ্টিমাইজেশান" : feat.title === "24/7 Priority SLA Support" ? "২৪/৭ অগ্রাধিকার SLA সাপোর্ট" : feat.title === "BDIX & Local FTP Access" ? "BDIX ও লোকাল এফটিপি অ্যাক্সেস" : "কর্পোরেট ডেডিকেটেড ব্যাকআপ")}
               </h4>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-400 leading-relaxed">
                 {t(feat.desc, feat.desc.startsWith("Pure") ? "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।" : feat.desc.startsWith("Operating") ? "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।" : feat.desc.startsWith("Specialized") ? "দক্ষিণ-পূর্ব এশিয়া ও ইউরোপীয় সার্ভারে বিশেষায়িত লো-লেটেন্সি পাথ (PUBG, Free Fire, CS2, Valorant)। শূন্য প্যাকেট লস, স্থির পিং এবং জিটার কন্ট্রোল।" : feat.desc.startsWith("No waiting") ? "ঘণ্টার পর ঘণ্টা অপেক্ষা করতে হবে না। দক্ষিণ কেরানীগঞ্জে আমাদের লোকাল সাপোর্ট হাব নিশ্চিত করে যে আমাদের টেকনিশিয়ানরা রেকর্ড সময়ে আপনার বাসা বা অফিসে পৌঁছে যাবে।" : feat.desc.startsWith("Get unlimited") ? "বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) রিসোর্স, লোকাল এফটিপি মুভি, লাইভ টিভি এবং গেম ক্যাশে ১০০ এমবিপিএস পর্যন্ত আনলিমিটেড স্পিড পান।" : "অটো-ফেইলওভার সহ ডুয়াল ব্যাকবোন, যা অব্যাহত SLA-সমর্থিত ব্যবসায়িক কার্যক্রম নিশ্চিত করে। স্ট্যাটিক আইপি এবং ডিরেক্ট ক্লায়েন্ট সাপোর্ট।")}
               </p>
             </div>
@@ -593,7 +713,7 @@ export default function Home() {
       {/* CTA Box */}
       <section className="w-full bg-white py-16 relative overflow-hidden border-b border-slate-100 shadow-inner -mt-20 -mb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-12 rounded-3xl bg-gradient-to-r from-slate-50 to-slate-100/80 border border-slate-200 text-center relative overflow-hidden shadow-xl">
+          <div className="p-12 rounded-3xl bg-linear-to-r from-slate-50 to-slate-100/80 border border-slate-200 text-center relative overflow-hidden shadow-xl">
             <div className="absolute inset-0 bg-brand-blue/5 animate-pulse-slow pointer-events-none" />
             <h3 className="text-3xl font-extrabold text-slate-900 mb-4">
               {t("Ready to Experience True High-Speed Internet?", "আপনি কি সত্যিকারের উচ্চগতির ইন্টারনেট উপভোগ করতে প্রস্তুত?")}
@@ -607,7 +727,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/packages"
-                className="bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark px-8 py-4 rounded-xl text-base font-bold shadow-lg shadow-brand-blue/20 hover:opacity-90 transition-opacity cursor-pointer"
+                className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark px-8 py-4 rounded-xl text-base font-bold shadow-lg shadow-brand-blue/20 hover:opacity-90 transition-opacity cursor-pointer"
               >
                 {t("Get Connected Now", "আজই সংযোগ নিন")}
               </Link>
@@ -624,6 +744,36 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Home Page Pop-up Offer Modal */}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-all duration-300">
+          {/* Backdrop Click Dismiss */}
+          <div className="absolute inset-0" onClick={handleClosePopup} />
+          
+          <div className="relative max-w-[550px] w-full bg-transparent overflow-visible rounded-2xl shadow-2xl z-10 animate-in fade-in zoom-in-95 duration-200">
+            {/* Close Button */}
+            <button
+              onClick={handleClosePopup}
+              className="absolute top-0 right-0 w-9 h-9 bg-white hover:bg-slate-100 text-slate-900 rounded-bl-2xl rounded-tr-2xl flex items-center justify-center shadow-lg transition-all z-20 cursor-pointer"
+              aria-label="Close offer"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Offer Banner Image */}
+            <div className="overflow-hidden rounded-2xl border border-white/10 shadow-2xl w-full">
+              <img
+                src="/popup.webp"
+                alt="Special Internet Offer"
+                className="w-full h-auto object-contain rounded-2xl block select-none"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

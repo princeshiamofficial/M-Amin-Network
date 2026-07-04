@@ -80,7 +80,7 @@ export default function Complain() {
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
             {t("Complain Box & ", "অভিযোগ বক্স ও ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               {t("Grievances", "আপত্তি")}
             </span>
           </h1>
@@ -94,7 +94,7 @@ export default function Complain() {
       </div>
 
       {/* Complain Card Section - White Background */}
-      <div className="w-full bg-white text-slate-800 py-16 flex-grow border-t border-slate-200 relative z-10">
+      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm text-left space-y-6">
             {!success ? (
@@ -181,7 +181,7 @@ export default function Complain() {
 
                 {/* BTRC Warning Info */}
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed flex gap-2">
-                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <span>
@@ -195,7 +195,7 @@ export default function Complain() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {submitting ? (
                     <>

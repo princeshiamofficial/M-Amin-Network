@@ -186,7 +186,7 @@ export default function Support() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 grow">
       {/* Background glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
 
@@ -194,7 +194,7 @@ export default function Support() {
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
           {t("Smart Diagnostics & ", "স্মার্ট ডায়াগনস্টিকস ও ")}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
             {t("Support Center", "সহায়তা কেন্দ্র")}
           </span>
         </h1>
@@ -229,7 +229,7 @@ export default function Support() {
                 required
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
-                className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan flex-grow font-mono"
+                className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan grow font-mono"
               />
               <button
                 type="submit"
@@ -263,7 +263,7 @@ export default function Support() {
                   {/* Typing animation or spinner */}
                   {diagStep < 4 && (
                     <div className="flex items-center gap-2 text-slate-500">
-                      <div className="w-3.5 h-3.5 border border-slate-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                      <div className="w-3.5 h-3.5 border border-slate-500 border-t-transparent rounded-full animate-spin shrink-0" />
                       <span className="animate-pulse">{t("Measuring metrics...", "মেট্রিক্স পরিমাপ করা হচ্ছে...")}</span>
                     </div>
                   )}
@@ -385,7 +385,7 @@ export default function Support() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -471,7 +471,7 @@ export default function Support() {
                 >
                   <span>{faq.q}</span>
                   <svg
-                    className={`w-5 h-5 text-brand-cyan transition-transform duration-200 flex-shrink-0 ml-4 ${
+                    className={`w-5 h-5 text-brand-cyan transition-transform duration-200 shrink-0 ml-4 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                     fill="none"

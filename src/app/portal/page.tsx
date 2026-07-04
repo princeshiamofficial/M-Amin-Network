@@ -160,7 +160,7 @@ export default function Portal() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 flex-grow flex flex-col justify-center text-left">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 grow flex flex-col justify-center text-left">
       {/* Background glow */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
@@ -169,8 +169,8 @@ export default function Portal() {
         // Login View
         <div className="max-w-md mx-auto w-full text-left">
           <div className="glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 shadow-xl text-left space-y-6">
-            <div className="text-center text-left">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.4)] mx-auto mb-4">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-xl bg-linear-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.4)] mx-auto mb-4">
                 M
               </div>
               <h2 className="text-2xl font-extrabold text-white">{t("Client Self-Care", "গ্রাহক সেলফ-কেয়ার")}</h2>
@@ -209,7 +209,7 @@ export default function Portal() {
               <button
                 type="submit"
                 disabled={loggingIn}
-                className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
               >
                 {loggingIn ? (
                   <>
@@ -235,7 +235,7 @@ export default function Portal() {
           {/* Dashboard Header Bar */}
           <div className="glass-panel border-brand-border/60 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-lg text-left">
             <div className="flex items-center gap-4 text-left">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+              <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.3)]">
                 {profile?.name.charAt(0)}
               </div>
               <div className="text-left">
@@ -304,7 +304,7 @@ export default function Portal() {
               </div>
 
               {/* Dynamic Wave Chart SVG */}
-              <div className="w-full flex-grow flex items-end justify-center py-6 relative text-left">
+              <div className="w-full grow flex items-end justify-center py-6 relative text-left">
                 <svg className="w-full h-48" viewBox="0 0 500 100" preserveAspectRatio="none">
                   {/* Download curve */}
                   <path
@@ -365,7 +365,7 @@ export default function Portal() {
                   </div>
                   <Link
                     href={`/bill-payment?id=${profile.clientId}`}
-                    className="w-full text-center bg-gradient-to-r from-amber-500 to-amber-600 text-brand-dark py-2.5 rounded-xl font-bold text-xs shadow-md transition-opacity hover:opacity-90 cursor-pointer"
+                    className="w-full text-center bg-linear-to-r from-amber-500 to-amber-600 text-brand-dark py-2.5 rounded-xl font-bold text-xs shadow-md transition-opacity hover:opacity-90 cursor-pointer"
                   >
                     {t("Quick Pay Bill", "দ্রুত বিল পরিশোধ")}
                   </Link>
@@ -400,7 +400,7 @@ export default function Portal() {
                     <button
                       type="submit"
                       disabled={upgrading}
-                      className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3 rounded-xl font-bold text-xs tracking-wide transition-all shadow-md hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                      className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-3 rounded-xl font-bold text-xs tracking-wide transition-all shadow-md hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                     >
                       {upgrading ? (
                         <>

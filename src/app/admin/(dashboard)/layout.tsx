@@ -225,21 +225,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    if (typeof window !== "undefined") {
-      const auth = sessionStorage.getItem("m_amin_admin_authenticated");
-      if (auth !== "true") {
-        router.push("/admin");
-      } else {
-        setIsAuthenticated(true);
+    const timer = setTimeout(() => {
+      setMounted(true);
+      if (typeof window !== "undefined") {
+        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        if (auth !== "true") {
+          router.push("/admin");
+        } else {
+          setIsAuthenticated(true);
+        }
       }
-    }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [router]);
 
   useEffect(() => {
-    const currentTab = Object.entries(tabUrls).find(([name, url]) => url === pathname)?.[0];
+    const currentTab = Object.entries(tabUrls).find(([, url]) => url === pathname)?.[0];
     if (currentTab) {
-      setActiveTab(currentTab);
+      const timer = setTimeout(() => {
+        setActiveTab(currentTab);
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [pathname]);
 
@@ -248,11 +254,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push("/admin");
   };
 
-  const handleResetDatabase = () => {
-    if (typeof window !== "undefined" && confirm("Are you sure you want to reset mock database to default seeded values?")) {
-      window.dispatchEvent(new Event("m_amin_reset_db"));
-    }
-  };
 
   if (!mounted || !isAuthenticated) {
     return (
@@ -267,7 +268,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden">
-      <div className="relative flex-shrink-0">
+      <div className="relative shrink-0">
         <AdminSidebar
           activeTab={activeTab}
           setActiveTab={(tab) => {
@@ -298,13 +299,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
-        <div className="sticky top-0 z-30 bg-white shadow-sm flex-shrink-0">
+        <div className="sticky top-0 z-30 bg-white shadow-sm shrink-0">
           <AdminNavbar
             activeTab={activeTab}
-            onResetDatabase={handleResetDatabase}
             onSignOut={handleLogout}
-            isSidebarCollapsed={isSidebarCollapsed}
-            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           />
         </div>
 
@@ -338,7 +336,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
 
-          <div className="flex-grow p-8 space-y-6 bg-[#f8fafc]">
+          <div className="grow p-8 space-y-6 bg-[#f8fafc]">
             {children}
           </div>
         </div>

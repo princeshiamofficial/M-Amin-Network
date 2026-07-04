@@ -9,7 +9,7 @@ export default function About() {
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   return (
-    <div className="w-full flex-grow relative text-left">
+    <div className="w-full grow relative text-left">
       {/* Top Section Wrapper (Confined to max-w-7xl) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Background glow */}
@@ -17,13 +17,13 @@ export default function About() {
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto">
           <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
             {t("Corporate Profile", "কর্পোরেট প্রোফাইল")}
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
             {t("About ", "আমাদের ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               {t("M Amin Network", "এম আমিন নেটওয়ার্ক")}
             </span>
           </h1>
@@ -145,7 +145,7 @@ export default function About() {
           </div>
 
           {/* Corporate Integrity pledge */}
-          <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-slate-50 to-slate-100/85 border border-slate-200 text-center relative overflow-hidden shadow-sm">
+          <div className="p-8 sm:p-12 rounded-3xl bg-linear-to-r from-slate-50 to-slate-100/85 border border-slate-200 text-center relative overflow-hidden shadow-sm">
             <h3 className="text-2xl font-extrabold text-slate-900 mb-4">{t("Our Integrity Guarantee", "আমাদের সততার নিশ্চয়তা")}</h3>
             <p className="text-slate-650 max-w-2xl mx-auto mb-8 text-sm sm:text-base leading-relaxed">
               {t(

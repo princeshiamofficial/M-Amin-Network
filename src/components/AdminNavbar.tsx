@@ -2,21 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface AdminNavbarProps {
   activeTab: string;
-  onResetDatabase: () => void;
   onSignOut: () => void;
-  isSidebarCollapsed?: boolean;
-  onToggleSidebar?: () => void;
 }
 
 export default function AdminNavbar({
   activeTab,
-  onResetDatabase,
   onSignOut,
-  isSidebarCollapsed = false,
-  onToggleSidebar,
 }: AdminNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
@@ -100,7 +95,7 @@ export default function AdminNavbar({
                       <span className={`text-[11px] leading-relaxed ${!n.read ? "text-slate-900 font-bold text-left block" : "text-slate-600 text-left block"}`}>
                         {n.title}
                       </span>
-                      {!n.read && <span className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1 flex-shrink-0" />}
+                      {!n.read && <span className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1 shrink-0" />}
                     </div>
                     <span className="text-[9px] text-slate-400 font-mono text-left block">{n.time}</span>
                   </div>
@@ -118,11 +113,13 @@ export default function AdminNavbar({
               setAvatarView("menu");
             }}
             title="Admin Options"
-            className="relative w-10 h-10 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer flex-shrink-0"
+            className="relative w-10 h-10 rounded-full border-2 border-[#f97316] overflow-hidden hover:scale-105 transition-transform cursor-pointer shrink-0"
           >
-            <img
+            <Image
               src={avatarUrl}
               alt="Admin Profile"
+              width={40}
+              height={40}
               className="w-full h-full object-cover"
             />
           </button>
@@ -155,11 +152,14 @@ export default function AdminNavbar({
 
                     {/* Picture area */}
                     <div className="flex items-center gap-3 py-2">
-                      <div className="w-16 h-16 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 flex-shrink-0">
-                        <img
+                      <div className="w-16 h-16 rounded-full border-2 border-white shadow-md overflow-hidden bg-slate-100 shrink-0">
+                        <Image
                           src={avatarUrl}
                           alt="Current Avatar"
+                          width={64}
+                          height={64}
                           className="w-full h-full object-cover"
+                          unoptimized
                         />
                       </div>
 
@@ -270,7 +270,7 @@ export default function AdminNavbar({
                     <Link
                       href="/admin/settings"
                       onClick={() => setIsAvatarOpen(false)}
-                      className="w-full px-1.5 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold block rounded-xl"
+                      className="w-full px-1.5 py-2 hover:bg-slate-50 flex items-center gap-3 text-slate-700 hover:text-slate-900 transition-colors cursor-pointer text-left font-semibold rounded-xl"
                     >
                       <svg className="w-[17px] h-[17px] text-[#64748b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31-2.37 2.37.996.608 2.296.07 2.572-1.065z" />

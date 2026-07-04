@@ -190,7 +190,7 @@ export default function Offers() {
   };
 
   return (
-    <div className="w-full flex-grow relative text-left">
+    <div className="w-full grow relative text-left">
       {/* Top Section Wrapper (Confined to max-w-7xl) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Background glow */}
@@ -198,13 +198,13 @@ export default function Offers() {
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto">
           <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
             {t("Promotions & Deals", "প্রোমোশন ও ডিল")}
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
             {t("Special ", "বিশেষ ")}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               {t("Internet Offers", "ইন্টারনেট অফার")}
             </span>
           </h1>
@@ -277,7 +277,7 @@ export default function Offers() {
                     placeholder="e.g. ANNUAL10"
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
-                    className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue flex-grow font-mono uppercase"
+                    className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue grow font-mono uppercase"
                   />
                   <button
                     type="submit"
@@ -396,7 +396,7 @@ export default function Offers() {
                 <button
                   type="submit"
                   disabled={submittingClaim}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {submittingClaim ? (
                     <>

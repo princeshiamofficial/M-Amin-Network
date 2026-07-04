@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -342,28 +343,45 @@ function PackagesContent() {
   };
 
   return (
-    <div className="w-full flex-grow relative text-left">
-      {/* Top Section Wrapper (Confined to max-w-7xl) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        {/* Background glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
-
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
-            {t("Flexible & Premium", "ফ্লেক্সিবল ও প্রিমিয়াম")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
-              {t("Broadband Plans", "ব্রডব্যান্ড প্ল্যান")}
-            </span>
-          </h1>
-          <p className="text-slate-400 mt-4 text-sm sm:text-base text-center">
-            {t(
-              "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
-              "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।"
-            )}
-          </p>
+    <div className="w-full grow relative text-left">
+      {/* Full-width Header Hero Section with background video */}
+      <div className="relative w-full overflow-hidden bg-slate-950 py-16 border-b border-white/5">
+        {/* Background video */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            loop
+            muted={true}
+            playsInline
+            className="w-full h-full object-cover opacity-50"
+          >
+            <source src="/video/package-header.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
         </div>
-      </div> {/* Close Top Section Wrapper */}
+
+        {/* Top Section Wrapper (Confined to max-w-7xl) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Background glow */}
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
+
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
+              {t("Flexible & Premium", "ফ্লেক্সিবল ও প্রিমিয়াম")}{" "}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+                {t("Broadband Plans", "ব্রডব্যান্ড প্ল্যান")}
+              </span>
+            </h1>
+            <p className="text-slate-400 mt-4 text-sm sm:text-base text-center">
+              {t(
+                "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
+                "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।"
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Bottom Section: Plan Grid & Tab Selectors (Truly Full Width White Background) */}
       <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10 text-left">
@@ -378,7 +396,7 @@ function PackagesContent() {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
                   className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? "bg-brand-blue text-white shadow-md"
@@ -392,89 +410,96 @@ function PackagesContent() {
           </div>
 
           {/* Pricing Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-            {filteredPlans.map((plan, i) => (
-              <div
-                key={i}
-                className={`rounded-3xl border p-8 flex flex-col justify-between relative transition-all text-left ${
-                  plan.popular
-                    ? "border-brand-blue bg-white shadow-[0_4px_30px_rgba(0,114,255,0.15)] scale-105 md:scale-100 lg:scale-105 z-10"
-                    : "border-slate-200 bg-white shadow-sm hover:border-slate-350 hover:shadow-md"
-                }`}
-              >
-                {plan.popular && (
-                  <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black tracking-widest px-4 py-1.5 rounded-full uppercase shadow-md">
-                    {t("Most Popular", "সবচেয়ে জনপ্রিয়")}
-                  </span>
-                )}
-
-                <div>
-                  <div className="mb-6">
-                    <h3 className="text-slate-900 text-xl font-extrabold">{translateName(plan.name)}</h3>
-                    <p className="text-xs text-slate-500 mt-1">{translateTagline(plan.tagline)}</p>
-                  </div>
-
-                  {/* Speed Circular indicator */}
-                  <div className="flex items-baseline gap-1.5 mb-6">
-                    <span className="text-5xl font-black text-slate-900 font-mono tracking-tight">
-                      {plan.speed.split(" ")[0]}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-stretch">
+            {filteredPlans.map((plan, i) => {
+              const allFeatures = [
+                t(`Speed: ${plan.speed}`, `গতি: ${plan.speed}`),
+                ...plan.features,
+              ];
+              return (
+                <div
+                  key={i}
+                  className={`relative w-full transition-all duration-300 hover:scale-[1.02] ${
+                    plan.popular ? "lg:scale-105 z-20" : "z-10"
+                  }`}
+                >
+                  {plan.popular && (
+                    <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#0273b3] to-[#014c77] text-white text-xs font-black tracking-widest px-5 py-2 rounded-full shadow-[0_4px_12px_rgba(2,115,179,0.3)] border border-white/20 z-30 uppercase">
+                      {t("POPULAR", "জনপ্রিয়")}
                     </span>
-                    <span className="text-brand-blue font-bold text-lg">Mbps</span>
-                  </div>
+                  )}
 
-                  <div className="border-t border-slate-100 pt-6 mb-8">
-                    <p className="text-xs text-slate-455 uppercase tracking-widest font-bold mb-4">
-                      {t("What's Included", "যা যা অন্তর্ভুক্ত")}
-                    </p>
-                    <ul className="space-y-3.5 text-sm">
-                      {plan.features.map((feat, featIdx) => (
-                        <li key={featIdx} className="flex gap-2.5 items-start">
-                          <svg
-                            className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="2"
-                            stroke="currentColor"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                          </svg>
-                          <span className="text-slate-650 font-medium">{translateFeature(feat)}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="overflow-hidden rounded-2xl bg-linear-to-b from-[#0273b3] to-[#015c90] shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col justify-between w-full text-center relative border border-white/10 min-h-[540px] h-full hover:shadow-[0_15px_35px_rgba(2,115,179,0.25)] transition-shadow duration-300">
+                    {/* Top Green Section */}
+                    <div
+                      className="bg-linear-to-br from-[#10b981] to-[#047857] pt-10 pb-12 px-6 flex flex-col items-center justify-center text-white select-none"
+                      style={{ clipPath: "polygon(0 0, 100% 0, 100% 80%, 0 88%)" }}
+                    >
+                      <h3 className="text-white text-xl font-extrabold uppercase tracking-wider">
+                        {translateName(plan.name)}
+                      </h3>
+                      <p className="text-[10px] text-white/80 font-medium tracking-wide mb-2 text-center max-w-[240px] truncate">
+                        {translateTagline(plan.tagline)}
+                      </p>
+                      <div className="flex items-baseline justify-center text-white">
+                        <span className="text-3xl font-bold mr-0.5 opacity-90">৳</span>
+                        <span className="text-5xl font-black font-sans tracking-tight leading-none">
+                          {plan.price}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest ml-1.5 opacity-80">
+                          /{t("Monthly", "মাসিক")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Bottom Blue Section */}
+                    <div className="pt-4 pb-8 px-6 sm:px-8 flex flex-col justify-between grow">
+                      {/* Features List */}
+                      <ul className="flex flex-col gap-3.5 text-left text-white/95 max-w-[280px] mx-auto mb-8 w-full">
+                        {allFeatures.map((feat, featIdx) => (
+                          <li key={featIdx} className="flex gap-3 items-center">
+                            <div className="w-5 h-5 rounded-full border border-emerald-400/30 bg-emerald-500/20 text-[#d1fae5] shrink-0 flex items-center justify-center shadow-sm">
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="3.5"
+                                stroke="currentColor"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium tracking-wide leading-tight">
+                              {translateFeature(feat)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* BUY NOW Button */}
+                      <div className="mt-auto">
+                        <button
+                          onClick={() => {
+                            setSelectedPlan(plan);
+                            setIsModalOpen(true);
+                          }}
+                          className="mx-auto w-full max-w-[180px] py-3 bg-linear-to-r from-[#10b981] to-[#047857] hover:scale-[1.03] active:scale-[0.98] text-white text-xs font-black tracking-widest rounded-full transition-all duration-300 text-center block shadow-md hover:shadow-lg hover:shadow-emerald-500/10 uppercase cursor-pointer"
+                        >
+                          {t("BUY NOW", "অর্ডার করুন")}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="border-t border-slate-100 pt-6 mt-auto">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs text-slate-455 font-semibold">{t("Monthly Price", "মাসিক মূল্য")}</span>
-                    <span className="text-2xl font-black text-slate-900 font-mono">
-                      ৳{plan.price} BDT
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setSelectedPlan(plan);
-                      setIsModalOpen(true);
-                    }}
-                    className={`w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all cursor-pointer ${
-                      plan.popular
-                        ? "bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 shadow-md"
-                        : "bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200"
-                    }`}
-                  >
-                    {t("Order Connection", "অর্ডার করুন")}
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Order connection Modal */}
       {isModalOpen && selectedPlan && (
-        <div className="fixed inset-0 z-[100] overflow-y-auto bg-brand-dark/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 overflow-y-auto bg-brand-dark/80 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
             <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-left">
             <button
@@ -576,7 +601,7 @@ function PackagesContent() {
                 </div>
 
                 <div className="bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl p-3.5 text-xs text-brand-cyan leading-relaxed flex gap-2 text-left">
-                  <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <span>
@@ -587,7 +612,7 @@ function PackagesContent() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -652,7 +677,7 @@ function PackagesContent() {
 export default function Packages() {
   return (
     <Suspense fallback={
-      <div className="flex-grow flex items-center justify-center min-h-[50vh]">
+      <div className="grow flex items-center justify-center min-h-[50vh]">
         <div className="w-10 h-10 border-4 border-brand-cyan border-t-transparent rounded-full animate-spin" />
       </div>
     }>

@@ -135,7 +135,7 @@ export default function Coverage() {
   });
 
   return (
-    <div className="w-full flex-grow relative">
+    <div className="w-full grow relative">
       {/* Top Section Wrapper (Confined to max-w-1440) */}
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Background Glows */}
@@ -151,7 +151,7 @@ export default function Coverage() {
         </div>
         <h1 className="text-4xl font-extrabold text-white tracking-tight">
           {t("Fiber Network", "ফাইবার নেটওয়ার্ক")}{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-blue text-glow">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
             {t("Coverage Area", "কাভারেজ এলাকা")}
           </span>
         </h1>
@@ -374,7 +374,7 @@ export default function Coverage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-3.5 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -454,7 +454,7 @@ export default function Coverage() {
               ].map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setFilter(item.id as any)}
+                  onClick={() => setFilter(item.id as "all" | "active" | "expanding" | "planned")}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     filter === item.id
                       ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
@@ -477,7 +477,7 @@ export default function Coverage() {
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-1.5 text-brand-blue">
-                      <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -507,7 +507,7 @@ export default function Coverage() {
                     <ul className="space-y-1.5">
                       {zone.subAreas.map((sub, subIdx) => (
                         <li key={subIdx} className="text-xs text-slate-650 flex items-center gap-1.5 font-medium">
-                          <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
