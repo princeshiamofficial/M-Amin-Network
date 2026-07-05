@@ -4,9 +4,9 @@ import React, { useEffect, useState, RefObject } from "react";
 
 export interface MeteorsBeamProps {
   className?: string;
-  containerRef: RefObject<any>;
-  fromRef: RefObject<any>;
-  toRef: RefObject<any>;
+  containerRef: RefObject<Element | null>;
+  fromRef: RefObject<Element | null>;
+  toRef: RefObject<Element | null>;
   curvature?: number;
   strokeWidth?: number;
   color?: string;
@@ -23,9 +23,9 @@ export const MeteorsBeam: React.FC<MeteorsBeamProps> = ({
   toRef,
   curvature = 0,
   strokeWidth = 2,
-  color = "#0072ff",
-  meteorColor = "#00f0ff",
-  duration = 3,
+  color = "#3b82f6",
+  meteorColor = "#60a5fa",
+  duration = 2.5,
   delay = 0,
   dashed = false,
 }) => {
@@ -38,12 +38,16 @@ export const MeteorsBeam: React.FC<MeteorsBeamProps> = ({
   }, []);
 
   useEffect(() => {
-    const updateCoords = () => {
-      if (!containerRef.current || !fromRef.current || !toRef.current) return;
+    const container = containerRef.current;
+    const fromEl = fromRef.current;
+    const toEl = toRef.current;
 
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const fromRect = fromRef.current.getBoundingClientRect();
-      const toRect = toRef.current.getBoundingClientRect();
+    const updateCoords = () => {
+      if (!container || !fromEl || !toEl) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const fromRect = fromEl.getBoundingClientRect();
+      const toRect = toEl.getBoundingClientRect();
 
       const x1 = fromRect.left - containerRect.left + fromRect.width / 2;
       const y1 = fromRect.top - containerRect.top + fromRect.height / 2;
@@ -57,18 +61,18 @@ export const MeteorsBeam: React.FC<MeteorsBeamProps> = ({
 
     // Use ResizeObserver for responsive recalculation
     let resizeObserver: ResizeObserver | null = null;
-    if (typeof window !== "undefined" && window.ResizeObserver && containerRef.current) {
+    if (typeof window !== "undefined" && window.ResizeObserver && container) {
       resizeObserver = new ResizeObserver(() => {
         updateCoords();
       });
-      resizeObserver.observe(containerRef.current);
+      resizeObserver.observe(container);
     }
 
     window.addEventListener("resize", updateCoords);
     return () => {
       window.removeEventListener("resize", updateCoords);
-      if (resizeObserver && containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
+      if (resizeObserver && container) {
+        resizeObserver.unobserve(container);
       }
     };
   }, [containerRef, fromRef, toRef]);

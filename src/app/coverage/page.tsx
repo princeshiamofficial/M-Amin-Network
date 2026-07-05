@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -9,6 +9,64 @@ interface CoverageZone {
   status: "active" | "expanding" | "planned";
   subAreas: string[];
 }
+
+const defaultZones: CoverageZone[] = [
+  {
+    name: "Kadomtoli",
+    status: "active",
+    subAreas: ["Kadomtoli Chowrasta", "Aganagar Road", "Babu Mia Mosque Road", "Al-Hira Goli"],
+  },
+  {
+    name: "Aganagar",
+    status: "active",
+    subAreas: ["Main Bazaar Road", "Haji Market area", "Aganagar Union Parishad", "Aganagar High School Road"],
+  },
+  {
+    name: "Chunkutia",
+    status: "active",
+    subAreas: ["Chunkutia East", "Chunkutia West", "Vidyut Office Road", "Girls School Goli"],
+  },
+  {
+    name: "Zinjira",
+    status: "active",
+    subAreas: ["Bazar Road", "Zinjira Launch Ghat Road", "Pachpara", "Rahmatpur"],
+  },
+  {
+    name: "Kaliganj",
+    status: "active",
+    subAreas: ["Iron Market", "Doli Market Road", "Kaliganj Canal Road"],
+  },
+  {
+    name: "Telghat",
+    status: "active",
+    subAreas: ["Lauchat Road", "River view road", "Telghat Ferry Ghat"],
+  },
+  {
+    name: "Kholamura",
+    status: "expanding",
+    subAreas: ["Kholamura Bazar", "Kholamura Ghat", "Model Town Block A & B"],
+  },
+  {
+    name: "East Aganagar",
+    status: "expanding",
+    subAreas: ["East Union Road", "Bypass road sector 2", "Munshiganj Link Road"],
+  },
+  {
+    name: "Char Kaliganj",
+    status: "expanding",
+    subAreas: ["Char Kaliganj Ferry Ghat Road", "Riverbank Road"],
+  },
+  {
+    name: "Doleshwar",
+    status: "planned",
+    subAreas: ["Doleshwar Bazar", "Doleshwar Madrasah Road", "Doleshwar High School"],
+  },
+  {
+    name: "Hasnabad",
+    status: "planned",
+    subAreas: ["Hasnabad Housing", "Hasnabad Cargo Terminal area", "N8 Highway Link"],
+  },
+];
 
 export default function Coverage() {
   const lang = useTranslation();
@@ -36,63 +94,18 @@ export default function Coverage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const zones: CoverageZone[] = [
-    {
-      name: "Kadomtoli",
-      status: "active",
-      subAreas: ["Kadomtoli Chowrasta", "Aganagar Road", "Babu Mia Mosque Road", "Al-Hira Goli"],
-    },
-    {
-      name: "Aganagar",
-      status: "active",
-      subAreas: ["Main Bazaar Road", "Haji Market area", "Aganagar Union Parishad", "Aganagar High School Road"],
-    },
-    {
-      name: "Chunkutia",
-      status: "active",
-      subAreas: ["Chunkutia East", "Chunkutia West", "Vidyut Office Road", "Girls School Goli"],
-    },
-    {
-      name: "Zinjira",
-      status: "active",
-      subAreas: ["Bazar Road", "Zinjira Launch Ghat Road", "Pachpara", "Rahmatpur"],
-    },
-    {
-      name: "Kaliganj",
-      status: "active",
-      subAreas: ["Iron Market", "Doli Market Road", "Kaliganj Canal Road"],
-    },
-    {
-      name: "Telghat",
-      status: "active",
-      subAreas: ["Lauchat Road", "River view road", "Telghat Ferry Ghat"],
-    },
-    {
-      name: "Kholamura",
-      status: "expanding",
-      subAreas: ["Kholamura Bazar", "Kholamura Ghat", "Model Town Block A & B"],
-    },
-    {
-      name: "East Aganagar",
-      status: "expanding",
-      subAreas: ["East Union Road", "Bypass road sector 2", "Munshiganj Link Road"],
-    },
-    {
-      name: "Char Kaliganj",
-      status: "expanding",
-      subAreas: ["Char Kaliganj Ferry Ghat Road", "Riverbank Road"],
-    },
-    {
-      name: "Doleshwar",
-      status: "planned",
-      subAreas: ["Doleshwar Bazar", "Doleshwar Madrasah Road", "Doleshwar High School"],
-    },
-    {
-      name: "Hasnabad",
-      status: "planned",
-      subAreas: ["Hasnabad Housing", "Hasnabad Cargo Terminal area", "N8 Highway Link"],
-    },
-  ];
+  const [zones, setZones] = useState<CoverageZone[]>(defaultZones);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("m_amin_coverage_zones");
+      if (saved) {
+        setZones(JSON.parse(saved));
+      } else {
+        localStorage.setItem("m_amin_coverage_zones", JSON.stringify(defaultZones));
+      }
+    }
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

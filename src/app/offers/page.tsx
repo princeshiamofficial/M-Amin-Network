@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -70,40 +70,54 @@ export default function Offers() {
   const [submittingClaim, setSubmittingClaim] = useState(false);
   const [claimSuccess, setClaimSuccess] = useState(false);
 
-  const activeOffers: PromoOffer[] = [
-    {
-      title: "Zero Installation Fee",
-      badge: "New Connection",
-      badgeColor: "bg-brand-cyan/15 border-brand-cyan/30 text-brand-cyan",
-      details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
-      code: "FREEINSTALL2026",
-      validUntil: "31 Dec 2026",
-    },
-    {
-      title: "Pay 10 Months, Get 12",
-      badge: "Best Value",
-      badgeColor: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 animate-pulse",
-      details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
-      code: "ANNUAL10",
-      validUntil: "Ongoing Promotion",
-    },
-    {
-      title: "Free Public IP for Gamers",
-      badge: "Gamer Special",
-      badgeColor: "bg-brand-blue/15 border-brand-blue/30 text-brand-blue",
-      details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
-      code: "GAMERIP",
-      validUntil: "31 Oct 2026",
-    },
-    {
-      title: "Refer a Friend",
-      badge: "Community Deal",
-      badgeColor: "bg-purple-500/10 border-purple-500/30 text-purple-400",
-      details: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.",
-      code: "REFER50",
-      validUntil: "Ongoing Promotion",
-    },
-  ];
+  const [activeOffers, setActiveOffers] = useState<PromoOffer[]>([]);
+
+  useEffect(() => {
+    const defaultOffers: PromoOffer[] = [
+      {
+        title: "Zero Installation Fee",
+        badge: "New Connection",
+        badgeColor: "bg-brand-cyan/15 border-brand-cyan/30 text-brand-cyan",
+        details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
+        code: "FREEINSTALL2026",
+        validUntil: "31 Dec 2026",
+      },
+      {
+        title: "Pay 10 Months, Get 12",
+        badge: "Best Value",
+        badgeColor: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 animate-pulse",
+        details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
+        code: "ANNUAL10",
+        validUntil: "Ongoing Promotion",
+      },
+      {
+        title: "Free Public IP for Gamers",
+        badge: "Gamer Special",
+        badgeColor: "bg-brand-blue/15 border-brand-blue/30 text-brand-blue",
+        details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
+        code: "GAMERIP",
+        validUntil: "31 Oct 2026",
+      },
+      {
+        title: "Refer a Friend",
+        badge: "Community Deal",
+        badgeColor: "bg-purple-500/10 border-purple-500/30 text-purple-400",
+        details: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.",
+        code: "REFER50",
+        validUntil: "Ongoing Promotion",
+      },
+    ];
+
+    if (typeof window !== "undefined") {
+      const savedOffers = localStorage.getItem("m_amin_promo_offers");
+      if (savedOffers) {
+        setActiveOffers(JSON.parse(savedOffers));
+      } else {
+        localStorage.setItem("m_amin_promo_offers", JSON.stringify(defaultOffers));
+        setActiveOffers(defaultOffers);
+      }
+    }
+  }, []);
 
   const handlePromoCheck = (e: React.FormEvent) => {
     e.preventDefault();

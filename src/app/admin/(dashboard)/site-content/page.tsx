@@ -1,8 +1,88 @@
 "use client";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-import React from "react";
-import AdminDashboardPage from "../dashboard/page";
+interface SiteContent {
+  hotline: string;
+  supportEmail: string;
+  address: string;
+}
 
-export default function Page() {
-  return <AdminDashboardPage />;
+const defaultSiteContent: SiteContent = {
+  hotline: "+880 1707-009267",
+  supportEmail: "support@maminnetwork.com",
+  address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh",
+};
+
+export default function SiteContentPage() {
+  const router = useRouter();
+  const [auth, setAuth] = useState(false);
+  const [siteContent, setSiteContent] = useState<SiteContent>(defaultSiteContent);
+
+  useEffect(() => {
+    if (!localStorage.getItem("m_amin_admin_token")) {
+      router.replace("/admin");
+      return;
+    }
+    setAuth(true);
+    const saved = localStorage.getItem("m_amin_site_content");
+    if (saved) {
+      setSiteContent(JSON.parse(saved));
+    } else {
+      localStorage.setItem("m_amin_site_content", JSON.stringify(defaultSiteContent));
+      setSiteContent(defaultSiteContent);
+    }
+  }, [router]);
+
+  const saveSiteContent = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("m_amin_site_content", JSON.stringify(siteContent));
+    alert("Global details saved successfully!");
+  };
+
+  if (!auth) return null;
+
+  return (
+    <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 space-y-6">
+      <div>
+        <h2 className="text-lg font-extrabold text-slate-900">Site Contact &amp; Global Details</h2>
+        <p className="text-xs text-slate-500 mt-1">Edit standard global contact information displayed across footer and portal headers.</p>
+      </div>
+      <form onSubmit={saveSiteContent} className="space-y-4 max-w-md">
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 block">Support Hotline Number</label>
+          <input
+            type="text"
+            value={siteContent.hotline}
+            onChange={(e) => setSiteContent({ ...siteContent, hotline: e.target.value })}
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 block">Support Email Address</label>
+          <input
+            type="email"
+            value={siteContent.supportEmail}
+            onChange={(e) => setSiteContent({ ...siteContent, supportEmail: e.target.value })}
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+          />
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 block">HQ Office Address</label>
+          <textarea
+            rows={2}
+            value={siteContent.address}
+            onChange={(e) => setSiteContent({ ...siteContent, address: e.target.value })}
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
+          />
+        </div>
+        <button
+          type="submit"
+          className="px-5 py-3 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+        >
+          Save Global Details
+        </button>
+      </form>
+    </div>
+  );
 }

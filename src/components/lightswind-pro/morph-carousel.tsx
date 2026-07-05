@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 export interface MorphCarouselProps {
   className?: string;
@@ -10,6 +10,14 @@ export interface MorphCarouselProps {
   aspectRatio?: string;
   showPagination?: boolean;
 }
+
+// Fallback procedural gradient color schemes (in case no images are supplied or fail to load)
+const PROCEDURAL_GRADIENTS = [
+  { c1: [0.03, 0.05, 0.15], c2: [0.0, 0.94, 1.0] }, // Cyber Cyan
+  { c1: [0.03, 0.05, 0.15], c2: [0.0, 0.45, 1.0] }, // Cyber Blue
+  { c1: [0.05, 0.03, 0.15], c2: [0.55, 0.0, 1.0] }, // Neon Purple
+  { c1: [0.03, 0.08, 0.10], c2: [0.1, 0.9, 0.55] }, // BGP Green
+];
 
 export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   className = "",
@@ -27,15 +35,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   const activeTextureIndex = useRef(0);
   const nextTextureIndex = useRef(0);
 
-  // Fallback procedural gradient color schemes (in case no images are supplied or fail to load)
-  const proceduralGradients = [
-    { c1: [0.03, 0.05, 0.15], c2: [0.0, 0.94, 1.0] }, // Cyber Cyan
-    { c1: [0.03, 0.05, 0.15], c2: [0.0, 0.45, 1.0] }, // Cyber Blue
-    { c1: [0.05, 0.03, 0.15], c2: [0.55, 0.0, 1.0] }, // Neon Purple
-    { c1: [0.03, 0.08, 0.10], c2: [0.1, 0.9, 0.55] }, // BGP Green
-  ];
-
-  const totalSlides = images.length > 0 ? images.length : proceduralGradients.length;
+  const totalSlides = images.length > 0 ? images.length : PROCEDURAL_GRADIENTS.length;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -258,7 +258,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
 
     // Animation Loop
     let animationFrameId: number;
-    let startTime = Date.now();
+    const startTime = Date.now();
 
     const render = () => {
       const currentTime = (Date.now() - startTime) / 1000;
@@ -294,8 +294,8 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
         }
       } else {
         // Bind gradient colors
-        const currentGrad = proceduralGradients[activeTextureIndex.current];
-        const nextGrad = proceduralGradients[nextTextureIndex.current];
+        const currentGrad = PROCEDURAL_GRADIENTS[activeTextureIndex.current];
+        const nextGrad = PROCEDURAL_GRADIENTS[nextTextureIndex.current];
 
         gl.uniform3fv(uColorActive1Loc, currentGrad.c1);
         gl.uniform3fv(uColorActive2Loc, currentGrad.c2);
@@ -334,16 +334,16 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
         if (tex) gl.deleteTexture(tex);
       });
     };
-  }, [isTransitioning]);
+  }, [isTransitioning, images]);
 
   // Handle slide transitions
-  const triggerTransition = (targetIndex: number) => {
+  const triggerTransition = useCallback((targetIndex: number) => {
     if (isTransitioning) return;
     nextTextureIndex.current = targetIndex;
     targetProgress.current = 1.0;
     setIsTransitioning(true);
     setActiveIndex(targetIndex);
-  };
+  }, [isTransitioning]);
 
   // Autoplay hook
   useEffect(() => {
@@ -355,10 +355,10 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     }, autoplayInterval);
 
     return () => clearInterval(timer);
-  }, [autoplay, activeIndex, isTransitioning, totalSlides, autoplayInterval]);
+  }, [autoplay, activeIndex, isTransitioning, totalSlides, autoplayInterval, triggerTransition]);
 
   return (
-    <div className={`relative w-full h-full overflow-hidden ${className}`}>
+    <div className={`relative w-full h-full overflow-hidden ${aspectRatio} ${className}`}>
       {/* WebGL Canvas */}
       <canvas
         ref={canvasRef}

@@ -20,6 +20,7 @@ export default function AdminDashboard() {
       if (typeof window !== "undefined") {
         const auth = sessionStorage.getItem("m_amin_admin_authenticated");
         if (auth === "true") {
+          localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
           setIsAuthenticated(true);
           router.push("/admin/dashboard");
         }
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
       setIsAuthenticated(true);
       setLoginError("");
       sessionStorage.setItem("m_amin_admin_authenticated", "true");
+      localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
       router.push("/admin/dashboard");
     } else {
       setLoginError("Invalid username or password. Please try again.");
@@ -44,6 +46,7 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem("m_amin_admin_authenticated");
+    localStorage.removeItem("m_amin_admin_token");
     setUsername("");
     setPassword("");
   };
