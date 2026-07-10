@@ -1,6 +1,17 @@
 "use server";
 
 import pool from "@/lib/db";
+import fs from "fs";
+import path from "path";
+
+function logDbError(action: string, key: string, error: any) {
+  const logMsg = `[${new Date().toISOString()}] Action: ${action}, Key: ${key}\nError: ${error?.message || error}\nStack: ${error?.stack}\n\n`;
+  try {
+    fs.appendFileSync(path.join(process.cwd(), "db_error.log"), logMsg);
+  } catch (e) {
+    console.error("Failed to write to db_error.log", e);
+  }
+}
 
 /**
  * Fetch a setting (either legacy JSON, or from its dedicated table)
@@ -55,6 +66,7 @@ export async function getSetting(key: string): Promise<unknown> {
         if (e.code === 'ER_NO_SUCH_TABLE') {
           return isArray ? [] : null;
         }
+        logDbError("getSetting SELECT", key, e);
         throw e;
       }
     }
@@ -62,6 +74,7 @@ export async function getSetting(key: string): Promise<unknown> {
     return legacyData;
   } catch (error) {
     console.error("Database error fetching setting:", key, error);
+    logDbError("getSetting", key, error);
     return null;
   }
 }
@@ -124,6 +137,7 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
           
           await pool.query(`CREATE TABLE \`${tableName}\` (${colDefs.join(', ')})`);
         } else {
+          logDbError("setSetting CREATE/ALTER", key, e);
           throw e;
         }
       }
@@ -137,6 +151,7 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
         
         const values = keys.map(k => {
           const val = (item as any)[k];
+          if (val === undefined) return null;
           if (typeof val === 'object' && val !== null) return JSON.stringify(val);
           if (typeof val === 'boolean') return val ? 1 : 0;
           return val;
@@ -158,6 +173,8 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     return true;
   } catch (error) {
     console.error("Database error updating setting:", key, error);
+    logDbError("setSetting", key, error);
     return false;
   }
 }
+
