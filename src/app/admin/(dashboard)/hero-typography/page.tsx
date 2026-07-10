@@ -56,35 +56,29 @@ export default function HeroTypographyPage() {
     setAuth(true);
     
     // Load hero info
-    const savedHero = localStorage.getItem("m_amin_hero_typography");
-    if (savedHero) {
-      try {
-        const parsed = JSON.parse(savedHero);
+    getSetting("m_amin_hero_typography").then(saved => {
+      if (saved) {
+        const parsed = saved as any;
         setHeroTypography({
           mainTitle: parsed.mainTitle || defaultHeroTypography.mainTitle,
           subtitle: parsed.subtitle || defaultHeroTypography.subtitle,
           slides: parsed.slides && parsed.slides.length > 0 ? parsed.slides : defaultHeroTypography.slides
         });
-      } catch {
+      } else {
+        setSetting("m_amin_hero_typography", defaultHeroTypography as any);
         setHeroTypography(defaultHeroTypography);
       }
-    } else {
-      setSetting("m_amin_hero_typography", defaultHeroTypography as any);
-      setHeroTypography(defaultHeroTypography);
-    }
+    });
 
     // Load hero metrics
-    const savedMetrics = localStorage.getItem("m_amin_hero_metrics");
-    if (savedMetrics) {
-      try {
-        setHeroMetrics(JSON.parse(savedMetrics));
-      } catch {
+    getSetting("m_amin_hero_metrics").then(saved => {
+      if (saved) {
+        setHeroMetrics(saved as any);
+      } else {
+        setSetting("m_amin_hero_metrics", defaultHeroMetrics as any);
         setHeroMetrics(defaultHeroMetrics);
       }
-    } else {
-      setSetting("m_amin_hero_metrics", defaultHeroMetrics as any);
-      setHeroMetrics(defaultHeroMetrics);
-    }
+    });
   }, [router]);
 
   // Preview background slide rotator hook

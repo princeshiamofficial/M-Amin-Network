@@ -158,87 +158,69 @@ export default function TopbarFooterPage() {
     setAuth(true);
     
     // Load footer config
-    const savedFooter = localStorage.getItem("m_amin_footer_content");
-    if (savedFooter) {
-      try {
-        const parsed = JSON.parse(savedFooter);
+    getSetting("m_amin_footer_content").then(saved => {
+      if (saved) {
         setFooterContent(prev => ({
           ...prev,
-          ...parsed
+          ...(saved as any)
         }));
-      } catch (e) {
-        console.error("Error parsing footer config:", e);
+      } else {
+        setSetting("m_amin_footer_content", defaultFooterContent as any);
+        setFooterContent(defaultFooterContent);
       }
-    } else {
-      setSetting("m_amin_footer_content", defaultFooterContent as any);
-      setFooterContent(defaultFooterContent);
-    }
+    });
 
     // Load nav links
-    const savedNavLinks = localStorage.getItem("m_amin_nav_links");
-    if (savedNavLinks) {
-      try {
-        setNavLinks(JSON.parse(savedNavLinks));
-      } catch (e) {
-        console.error("Error parsing nav links config:", e);
+    getSetting("m_amin_nav_links").then(saved => {
+      if (saved && (saved as any[]).length > 0) {
+        setNavLinks(saved as any[]);
+      } else {
+        setSetting("m_amin_nav_links", defaultNavLinks as any);
+        setNavLinks(defaultNavLinks);
       }
-    } else {
-      setSetting("m_amin_nav_links", defaultNavLinks as any);
-      setNavLinks(defaultNavLinks);
-    }
+    });
 
     // Load badges
-    const savedBadges = localStorage.getItem("m_amin_footer_badges");
-    if (savedBadges) {
-      try {
-        const parsed = JSON.parse(savedBadges);
-        const migrated = parsed.map((badge: any) => {
+    getSetting("m_amin_footer_badges").then(saved => {
+      if (saved && (saved as any[]).length > 0) {
+        const migrated = (saved as any[]).map((badge: any) => {
           if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
             return { ...badge, image: "/ispab.jpeg" };
           }
           return badge;
         });
         setBadges(migrated);
-      } catch (e) {
-        console.error("Error parsing badges config:", e);
+      } else {
+        setSetting("m_amin_footer_badges", defaultBadges as any);
+        setBadges(defaultBadges);
       }
-    } else {
-      setSetting("m_amin_footer_badges", defaultBadges as any);
-      setBadges(defaultBadges);
-    }
+    });
 
     // Load licenses
-    const savedLicenses = localStorage.getItem("m_amin_footer_licenses");
-    if (savedLicenses) {
-      try {
-        const parsed = JSON.parse(savedLicenses);
-        const migrated = parsed.map((lic: any) => {
+    getSetting("m_amin_footer_licenses").then(saved => {
+      if (saved && (saved as any[]).length > 0) {
+        const migrated = (saved as any[]).map((lic: any) => {
           if (lic.textEn === "BTRC Licensed" && !lic.image) {
             return { ...lic, image: "/btrc.png" };
           }
           return lic;
         });
         setLicenses(migrated);
-      } catch (e) {
-        console.error("Error parsing licenses config:", e);
+      } else {
+        setSetting("m_amin_footer_licenses", defaultLicenses as any);
+        setLicenses(defaultLicenses);
       }
-    } else {
-      setSetting("m_amin_footer_licenses", defaultLicenses as any);
-      setLicenses(defaultLicenses);
-    }
+    });
 
     // Load phones
-    const savedPhones = localStorage.getItem("m_amin_footer_phones");
-    if (savedPhones) {
-      try {
-        setPhones(JSON.parse(savedPhones));
-      } catch (e) {
-        console.error("Error parsing phones config:", e);
+    getSetting("m_amin_footer_phones").then(saved => {
+      if (saved && (saved as any[]).length > 0) {
+        setPhones(saved as any[]);
+      } else {
+        setSetting("m_amin_footer_phones", defaultPhones as any);
+        setPhones(defaultPhones);
       }
-    } else {
-      setSetting("m_amin_footer_phones", defaultPhones as any);
-      setPhones(defaultPhones);
-    }
+    });
   }, [router]);
 
   const saveAllConfigurations = async (e: React.FormEvent) => {

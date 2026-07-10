@@ -825,48 +825,40 @@ export default function AdminDashboardPage() {
       }
     });
 
-    const savedSiteContent = localStorage.getItem("m_amin_site_content");
-    if (savedSiteContent) {
-      setSiteContent(JSON.parse(savedSiteContent));
-    }
+    getSetting("m_amin_site_content").then(saved => {
+      if (saved) setSiteContent(saved as any);
+    });
 
-    const savedHomeSections = localStorage.getItem("m_amin_home_sections");
-    if (savedHomeSections) {
-      setHomeSections(JSON.parse(savedHomeSections));
-    }
+    getSetting("m_amin_home_sections").then(saved => {
+      if (saved) setHomeSections(saved as any);
+    });
 
-    const savedHeroTypography = localStorage.getItem("m_amin_hero_typography");
-    if (savedHeroTypography) {
-      setHeroTypography(JSON.parse(savedHeroTypography));
-    }
+    getSetting("m_amin_hero_typography").then(saved => {
+      if (saved) setHeroTypography(saved as any);
+    });
 
-    const savedSeo = localStorage.getItem("m_amin_seo_settings");
-    if (savedSeo) {
-      setSeoSettings(JSON.parse(savedSeo));
-    }
+    getSetting("m_amin_seo_settings").then(saved => {
+      if (saved) setSeoSettings(saved as any);
+    });
 
-    const savedAbout = localStorage.getItem("m_amin_about_content");
-    if (savedAbout) {
-      setAboutContent(JSON.parse(savedAbout));
-    }
+    getSetting("m_amin_about_content").then(saved => {
+      if (saved) setAboutContent(saved as any);
+    });
 
-    const savedContact = localStorage.getItem("m_amin_contact_content");
-    if (savedContact) {
-      setContactPageContent(JSON.parse(savedContact));
-    }
+    getSetting("m_amin_contact_content").then(saved => {
+      if (saved) setContactPageContent(saved as any);
+    });
 
-    const savedComplaintContent = localStorage.getItem("m_amin_complaint_content_guidelines");
-    if (savedComplaintContent) {
-      setComplaintPageContent(JSON.parse(savedComplaintContent));
-    }
+    getSetting("m_amin_complaint_content_guidelines").then(saved => {
+      if (saved) setComplaintPageContent(saved as any);
+    });
 
-    const savedFooter = localStorage.getItem("m_amin_footer_content");
-    if (savedFooter) {
-      setFooterContent(JSON.parse(savedFooter));
-    }
+    getSetting("m_amin_footer_content").then(saved => {
+      if (saved) setFooterContent(saved as any);
+    });
 
     getSetting("m_amin_service_highlights").then(savedHighlights => {
-      if (savedHighlights) {
+      if (savedHighlights && (savedHighlights as any[]).length > 0) {
         setServiceHighlights(savedHighlights as ServiceHighlight[]);
       } else {
         setSetting("m_amin_service_highlights", defaultServiceHighlights);
@@ -875,7 +867,7 @@ export default function AdminDashboardPage() {
     });
 
     getSetting("m_amin_service_reviews").then(savedReviews => {
-      if (savedReviews) {
+      if (savedReviews && (savedReviews as any[]).length > 0) {
         setServiceReviews(savedReviews as ServiceReview[]);
       } else {
         setSetting("m_amin_service_reviews", defaultServiceReviews);
@@ -883,10 +875,9 @@ export default function AdminDashboardPage() {
       }
     });
 
-    const savedSys = localStorage.getItem("m_amin_system_config");
-    if (savedSys) {
-      setSystemConfig(JSON.parse(savedSys));
-    }
+    getSetting("m_amin_system_config").then(saved => {
+      if (saved) setSystemConfig(saved as any);
+    });
 
     getSetting("m_amin_admin_users").then(savedUsers => {
       if (savedUsers) {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { setSetting } from "@/actions/content";
+import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -86,17 +86,14 @@ export default function FAQsPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_faqs");
-    if (saved) {
-      try {
-        setFaqs(JSON.parse(saved));
-      } catch {
+    getSetting("m_amin_faqs").then(saved => {
+      if (saved && (saved as FAQ[]).length > 0) {
+        setFaqs(saved as FAQ[]);
+      } else {
+        setSetting("m_amin_faqs", defaultFAQs as FAQ[]);
         setFaqs(defaultFAQs);
       }
-    } else {
-      setSetting("m_amin_faqs", defaultFAQs as FAQ[]);
-      setFaqs(defaultFAQs);
-    }
+    });
   }, [router]);
 
   const saveFaq = (e: React.FormEvent) => {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { setSetting } from "@/actions/content";
+import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -88,17 +88,14 @@ export default function TestimonialsPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_testimonials");
-    if (saved) {
-      try {
-        setTestimonials(JSON.parse(saved));
-      } catch {
+    getSetting("m_amin_testimonials").then(saved => {
+      if (saved && (saved as Testimonial[]).length > 0) {
+        setTestimonials(saved as Testimonial[]);
+      } else {
+        setSetting("m_amin_testimonials", defaultTestimonials as Testimonial[]);
         setTestimonials(defaultTestimonials);
       }
-    } else {
-      setSetting("m_amin_testimonials", defaultTestimonials as Testimonial[]);
-      setTestimonials(defaultTestimonials);
-    }
+    });
   }, [router]);
 
   const saveTestimonial = (e: React.FormEvent) => {
