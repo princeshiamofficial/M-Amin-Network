@@ -139,7 +139,7 @@ export default function AdminDashboard() {
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
             <Image
-              src="/Xlogo.png"
+              src="/xlogo.png"
               alt="Logo"
               width={56}
               height={56}

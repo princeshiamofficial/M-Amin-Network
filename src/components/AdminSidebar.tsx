@@ -227,7 +227,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
       }`}>
         {isCollapsed ? (
           <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md shrink-0">
-            <Image src="/Xlogo.png" alt="M Amin Network" width={28} height={28} className="object-contain" style={{ width: "auto", height: "auto" }} />
+            <Image src="/xlogo.png" alt="M Amin Network" width={28} height={28} className="object-contain" style={{ width: "auto", height: "auto" }} />
           </div>
         ) : (
           <Image
