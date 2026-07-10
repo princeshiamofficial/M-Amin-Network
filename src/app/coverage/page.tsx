@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultCoveragePageContent } from "@/app/admin/(dashboard)/coverage-page/page";
 
 interface CoverageZone {
   name: string;
@@ -69,6 +70,14 @@ const defaultZones: CoverageZone[] = [
 ];
 
 export default function Coverage() {
+  const [pageContent, setPageContent] = React.useState(defaultCoveragePageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_coverage_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
@@ -163,16 +172,13 @@ export default function Coverage() {
           </svg>
         </div>
         <h1 className="text-4xl font-extrabold text-white tracking-tight">
-          {t("Fiber Network", "ফাইবার নেটওয়ার্ক")}{" "}
+          {t(pageContent.str1En, pageContent.str1Bn)}{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-            {t("Coverage Area", "কাভারেজ এলাকা")}
+            {t(pageContent.str2En, pageContent.str2Bn)}
           </span>
         </h1>
         <p className="text-slate-400 mt-4 text-sm sm:text-base">
-          {t(
-            "M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.",
-            "এম আমিন নেটওয়ার্ক দক্ষিণ কেরানীগঞ্জ জুড়ে একটি বিস্তৃত ফাইবার অপটিক নেটওয়ার্ক পরিচালনা করে। আমাদের সক্রিয় কাভারেজ এলাকা দেখুন অথবা নতুন সংযোগের সম্ভাব্যতা অনুরোধ জানান।"
-          )}
+          {t(pageContent.str3En, pageContent.str3Bn)}
         </p>
       </div>
 
@@ -185,12 +191,12 @@ export default function Coverage() {
             
             <div className="flex justify-between items-center mb-6 z-10">
               <div>
-                <h3 className="text-white font-bold text-base">{t("South Keraniganj Grid", "দক্ষিণ কেরানীগঞ্জ গ্রিড")}</h3>
-                <p className="text-xs text-slate-400">{t("Digital Fiber Backbone Topology (AS150164)", "ডিজিটাল ফাইবার ব্যাকবোন টপোলজি (AS150164)")}</p>
+                <h3 className="text-white font-bold text-base">{t(pageContent.str4En, pageContent.str4Bn)}</h3>
+                <p className="text-xs text-slate-400">{t(pageContent.str5En, pageContent.str5Bn)}</p>
               </div>
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                {t("Network Online", "নেটওয়ার্ক অনলাইন")}
+                {t(pageContent.str6En, pageContent.str6Bn)}
               </span>
             </div>
             {/* Connection Beams (Lightswind Pro) */}
@@ -295,15 +301,15 @@ export default function Coverage() {
             <div className="flex flex-wrap gap-4 text-xs border-t border-brand-border/40 pt-4 z-10">
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan shadow-[0_0_8px_rgba(0,240,255,0.6)]" />
-                {t("Active Fiber Coverage", "সক্রিয় ফাইবার কাভারেজ")}
+                {t(pageContent.str7En, pageContent.str7Bn)}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-blue shadow-[0_0_8px_rgba(0,114,255,0.6)]" />
-                {t("Expanding Fiber Lines", "সম্প্রসারণাধীন ফাইবার লাইন")}
+                {t(pageContent.str8En, pageContent.str8Bn)}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-500" />
-                {t("Planned Coverage", "পরিকল্পিত কাভারেজ")}
+                {t(pageContent.str9En, pageContent.str9Bn)}
               </span>
             </div>
           </div>
@@ -315,18 +321,15 @@ export default function Coverage() {
             {!submitted ? (
               <form onSubmit={handleRequestSubmit} className="space-y-5">
                 <div>
-                  <h3 className="text-white font-bold text-lg">{t("Request Coverage", "কাভারেজের অনুরোধ")}</h3>
+                  <h3 className="text-white font-bold text-lg">{t(pageContent.str10En, pageContent.str10Bn)}</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    {t(
-                      "Don't see your area on the list? Submit a request so our engineers can perform a fiber routing survey.",
-                      "তালিকায় আপনার এলাকাটি দেখছেন না? একটি অনুরোধ জমা দিন যাতে আমাদের প্রকৌশলীরা ফাইবার রাউটিং সমীক্ষা করতে পারেন।"
-                    )}
+                    {t(pageContent.str11En, pageContent.str11Bn)}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Your Name", "আপনার নাম")}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str12En, pageContent.str12Bn)}</label>
                     <input
                       type="text"
                       name="name"
@@ -339,7 +342,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str13En, pageContent.str13Bn)}</label>
                     <input
                       type="tel"
                       name="phone"
@@ -352,7 +355,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Target Area", "কাঙ্ক্ষিত এলাকা")}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str14En, pageContent.str14Bn)}</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -371,14 +374,14 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Descriptive Address", "বিস্তারিত ঠিকানা")}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str15En, pageContent.str15Bn)}</label>
                     <textarea
                       name="address"
                       required
                       rows={3}
                       value={requestData.address}
                       onChange={handleRequestChange}
-                      placeholder={t("Specify landmarks, mosque, or school names near your premises", "আপনার বাড়ির নিকটবর্তী ল্যান্ডমার্ক, মসজিদ বা স্কুলের নাম উল্লেখ করুন")}
+                      placeholder={t(pageContent.str16En, pageContent.str16Bn)}
                       className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
@@ -392,10 +395,10 @@ export default function Coverage() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t("Saving Request...", "অনুরোধ সংরক্ষণ করা হচ্ছে...")}
+                      {t(pageContent.str17En, pageContent.str17Bn)}
                     </>
                   ) : (
-                    t("Submit Feasibility Request", "সম্ভাব্যতা যাচাইয়ের আবেদন জমা দিন")
+                    t(pageContent.str18En, pageContent.str18Bn)
                   )}
                 </button>
               </form>
@@ -408,24 +411,21 @@ export default function Coverage() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-bold text-xl">{t("Survey Registered!", "সমীক্ষা নিবন্ধিত হয়েছে!")}</h3>
+                  <h3 className="text-white font-bold text-xl">{t(pageContent.str19En, pageContent.str19Bn)}</h3>
                   <p className="text-sm text-slate-400">
-                    {t("We have saved your request for", "আমরা আপনার অনুরোধটি সংরক্ষণ করেছি: ")} <span className="text-slate-200 font-bold">{requestData.area}</span>.
+                    {t(pageContent.str20En, pageContent.str20Bn)} <span className="text-slate-200 font-bold">{requestData.area}</span>.
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  {t(
-                    "Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.",
-                    "আমাদের নেটওয়ার্ক পরিকল্পনা ইউনিট নতুন সংযোগ প্রদানের জন্য নিয়মিত অনুরোধগুলো মূল্যায়ন করে। আপনার এলাকায় ফাইবার লাইন সম্প্রসারিত হলে আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবেন।"
-                  )}
+                  {t(pageContent.str21En, pageContent.str21Bn)}
                 </p>
 
                 <button
                   onClick={resetRequestForm}
                   className="px-6 py-2 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t("Submit Another Area", "অন্য কোনো এলাকার অনুরোধ দিন")}
+                  {t(pageContent.str22En, pageContent.str22Bn)}
                 </button>
               </div>
             )}
@@ -442,7 +442,7 @@ export default function Coverage() {
             <div className="relative w-full sm:max-w-xs">
               <input
                 type="text"
-                placeholder={t("Filter by area...", "এলাকা দিয়ে ফিল্টার করুন...")}
+                placeholder={t(pageContent.str23En, pageContent.str23Bn)}
                 value={search}
                 onChange={handleSearchChange}
                 className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
@@ -460,10 +460,10 @@ export default function Coverage() {
             {/* Status Filters */}
             <div className="flex gap-2 flex-wrap">
               {[
-                { id: "all", label: t("Show All", "সবগুলো দেখুন") },
-                { id: "active", label: t("Active Only", "শুধুমাত্র সক্রিয়") },
-                { id: "expanding", label: t("Expanding", "সম্প্রসারণাধীন") },
-                { id: "planned", label: t("Planned", "পরিকল্পিত") },
+                { id: "all", label: t(pageContent.str24En, pageContent.str24Bn) },
+                { id: "active", label: t(pageContent.str25En, pageContent.str25Bn) },
+                { id: "expanding", label: t(pageContent.str26En, pageContent.str26Bn) },
+                { id: "planned", label: t(pageContent.str27En, pageContent.str27Bn) },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -506,16 +506,16 @@ export default function Coverage() {
                       }`}
                     >
                       {zone.status === "active"
-                        ? t("Active Fiber", "সক্রিয় ফাইবার")
+                        ? t(pageContent.str28En, pageContent.str28Bn)
                         : zone.status === "expanding"
-                        ? t("Expanding", "সম্প্রসারণাধীন")
-                        : t("Planned", "পরিকল্পিত")}
+                        ? t(pageContent.str26En, pageContent.str26Bn)
+                        : t(pageContent.str27En, pageContent.str27Bn)}
                     </span>
                   </div>
 
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
-                      {t("Active Sub-areas / Road Peering:", "সক্রিয় উপ-এলাকা / সড়কসমূহ:")}
+                      {t(pageContent.str29En, pageContent.str29Bn)}
                     </p>
                     <ul className="space-y-1.5">
                       {zone.subAreas.map((sub, subIdx) => (
@@ -533,7 +533,7 @@ export default function Coverage() {
               ))
             ) : (
               <div className="col-span-4 text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
-                <p className="text-slate-500">{t("No coverage zones match your search query.", "আপনার অনুসন্ধানের সাথে মেলে এমন কোনো এলাকা পাওয়া যায়নি।")}</p>
+                <p className="text-slate-500">{t(pageContent.str30En, pageContent.str30Bn)}</p>
               </div>
             )}
           </div>

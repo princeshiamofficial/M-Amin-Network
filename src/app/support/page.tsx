@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultSupportPageContent } from "@/app/admin/(dashboard)/support-page/page";
 
 interface FAQItem {
   q: string;
@@ -9,15 +10,23 @@ interface FAQItem {
 }
 
 export default function Support() {
+  const [pageContent, setPageContent] = React.useState(defaultSupportPageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_support_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translateCategory = (cat: string) => {
-    if (cat === "Speed Issue") return t("Speed Drop / Sluggish Internet", "ধীরগতির ইন্টারনেট / স্পিড কম");
-    if (cat === "Frequent Disconnect") return t("Frequent Disconnections", "বারবার ডিসকানেক্ট হওয়া");
-    if (cat === "Billing Issue") return t("Billing / Invoice Query", "বিল বা চালান সংক্রান্ত জিজ্ঞাসা");
-    if (cat === "Physical Cable Broken") return t("Physical Cable / Fiber line broken", "ফাইবার অপটিক তার কেটে যাওয়া");
-    if (cat === "Other") return t("Other / Configuration support", "অন্যান্য / রাউটার কনফিগারেশন সাপোর্ট");
+    if (cat === "Speed Issue") return t(pageContent.str1En, pageContent.str1Bn);
+    if (cat === "Frequent Disconnect") return t(pageContent.str2En, pageContent.str2Bn);
+    if (cat === "Billing Issue") return t(pageContent.str3En, pageContent.str3Bn);
+    if (cat === "Physical Cable Broken") return t(pageContent.str4En, pageContent.str4Bn);
+    if (cat === "Other") return t(pageContent.str5En, pageContent.str5Bn);
     return cat;
   };
 
@@ -41,59 +50,49 @@ export default function Support() {
   // FAQ Accordion open index
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const faqs: FAQItem[] = [
+  const defaultFaqs: FAQItem[] = [
     {
-      q: t(
-        "How can I pay my M Amin Network monthly broadband bill?",
-        "আমি কীভাবে আমার এম আমিন নেটওয়ার্কের মাসিক ব্রডব্যান্ড বিল পরিশোধ করতে পারি?"
-      ),
-      a: t(
-        "You can pay your bill securely online via our Quick Pay portal using bKash, Nagad, Rocket, or Visa/Mastercard. You can also pay by visiting our office in Kadomtoli, or request a cash collection representative (for specific packages).",
-        "আপনি বিকাশ, নগদ, রকেট বা ভিসা/মাস্টারকার্ড ব্যবহার করে আমাদের কুইক পে পোর্টালের মাধ্যমে নিরাপদে অনলাইনে বিল পরিশোধ করতে পারেন। কদমতলীতে আমাদের অফিসে এসেও বিল দিতে পারেন অথবা ক্যাশ কালেকশন প্রতিনিধির অনুরোধ করতে পারেন।"
-      ),
+      q: t(pageContent.str6En, pageContent.str6Bn),
+      a: t(pageContent.str7En, pageContent.str7Bn),
     },
     {
-      q: t(
-        "What should I do if my internet connection is slow?",
-        "আমার ইন্টারনেট সংযোগ ধীরগতির হলে আমার কী করা উচিত?"
-      ),
-      a: t(
-        "First, reboot your optical ONU (small black box) and Wi-Fi router by turning them off for 30 seconds. Check if there are background downloads running on other devices. You can also run our diagnostics test above to inspect the status of your fiber line signal.",
-        "প্রথমে আপনার অপটিক্যাল ওএনইউ (ছোট কালো বক্স) এবং ওয়াই-ফাই রাউটারটি ৩০ সেকেন্ডের জন্য বন্ধ করে পুনরায় চালু করুন। অন্যান্য ডিভাইসে ব্যাকগ্রাউন্ড ডাউনলোড চলছে কিনা তা পরীক্ষা করুন। লাইন সিগন্যাল পরীক্ষা করতে উপরে আমাদের ডায়াগনস্টিকস টেস্ট চালাতে পারেন।"
-      ),
+      q: t(pageContent.str8En, pageContent.str8Bn),
+      a: t(pageContent.str9En, pageContent.str9Bn),
     },
     {
-      q: t(
-        "Can I request a Static Public IP for server hosting or gaming?",
-        "আমি কি সার্ভার হোস্টিং বা গেমিংয়ের জন্য স্ট্যাটিক পাবলিক আইপির জন্য অনুরোধ করতে পারি?"
-      ),
-      a: t(
-        "Yes! Static Public IP addresses are available. They are included free of charge with all Gamer Professional, Gamer Champion, and Corporate Dedicated packages. For home packages, you can purchase a static IP for a nominal charge of ৳150/month. Contact support to activate.",
-        "হ্যাঁ! স্ট্যাটিক পাবলিক আইপি উপলব্ধ রয়েছে। এটি আমাদের গেমার ও কর্পোরেট প্যাকেজগুলোর সাথে বিনামূল্যে দেওয়া হয়। হোম প্যাকেজের জন্য প্রতি মাসে মাত্র ৳১৫০ ফি দিয়ে আপনি এটি সচল করতে পারেন।"
-      ),
+      q: t(pageContent.str10En, pageContent.str10Bn),
+      a: t(pageContent.str11En, pageContent.str11Bn),
     },
     {
-      q: t(
-        "What does the AS150164 BGP network mean for my connection?",
-        "AS150164 বিজিপি নেটওয়ার্ক আমার সংযোগের জন্য কী সুবিধা নিয়ে আসে?"
-      ),
-      a: t(
-        "Having our own Autonomous System (AS150164) and Border Gateway Protocol routing means we have direct routing lines to international gateways. In case of an upstream fiber cut, our network automatically switches to backup routing paths, guaranteeing uninterrupted uptime.",
-        "আমাদের নিজস্ব স্বায়ত্তশাসিত সিস্টেম (AS150164) and বিজিপি রাউটিং থাকার মানে হলো আন্তর্জাতিক গেটওয়ের সাথে আমাদের সরাসরি রুট রয়েছে। মূল লাইনে ত্রুটি দেখা দিলে আমাদের নেটওয়ার্ক ব্যাকআপ পাথে স্যুইচ করে গ্রাহকের নিরবচ্ছিন্ন সংযোগ নিশ্চিত করে।"
-      ),
+      q: t(pageContent.str12En, pageContent.str12Bn),
+      a: t(pageContent.str13En, pageContent.str13Bn),
     },
     {
-      q: t(
-        "How long does it take to repair a broken physical fiber cable?",
-        "একটি কাটা ফাইবার ক্যাবল মেরামত করতে কত সময় লাগে?"
-      ),
-      a: t(
-        "Our South Keraniganj field maintenance team operates 24/7. Physical line breaks caused by construction or weather are typically patched and re-spliced within 2 to 4 hours from the ticket report time.",
-        "আমাদের দক্ষিণ কেরানীগঞ্জের ফিল্ড টিম ২৪/৭ নিয়োজিত রয়েছে। ঝড়-বৃষ্টি বা উন্নয়ন কাজের কারণে ক্যাবল কেটে গেলে অভিযোগ পাওয়ার ২ থেকে ৪ ঘণ্টার মধ্যে তা মেরামত সম্পন্ন করা হয়।"
-      ),
+      q: t(pageContent.str14En, pageContent.str14Bn),
+      a: t(pageContent.str15En, pageContent.str15Bn),
     },
   ];
 
+  const [faqs, setFaqs] = useState<FAQItem[]>(defaultFaqs);
+
+  React.useEffect(() => {
+    const savedFaqs = localStorage.getItem("m_amin_faqs");
+    if (savedFaqs) {
+      try {
+        const parsed = JSON.parse(savedFaqs);
+        // Ensure we only show published FAQs
+        const published = parsed.filter((f: any) => f.isPublished);
+        if (published.length > 0) {
+          setFaqs(published.map((f: any) => ({
+            q: f.question,
+            a: f.answer,
+          })));
+        }
+      } catch {
+        console.error("Failed to parse FAQs");
+      }
+    }
+  }, []);
   // Run simulated diagnostics
   const handleDiagnostics = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,10 +103,10 @@ export default function Support() {
     setDiagResult(null);
 
     const steps = [
-      t("Querying BGP AS150164 routing tables...", "BGP AS150164 রাউটিং টেবিল অনুসন্ধান করা হচ্ছে..."),
-      t("Peering with localized gateway nodes...", "স্থানীয় গেটওয়ে নোড সংযোগ করা হচ্ছে..."),
-      t("Analyzing optical signal strength (SFP Power)...", "অপটিক্যাল সিগন্যাল পাওয়ার বিশ্লেষণ করা হচ্ছে..."),
-      t("Pinging customer optical network terminal (ONT)...", "গ্রাহকের ওএনইউ (ONT) পিং করা হচ্ছে..."),
+      t(pageContent.str16En, pageContent.str16Bn),
+      t(pageContent.str17En, pageContent.str17Bn),
+      t(pageContent.str18En, pageContent.str18Bn),
+      t(pageContent.str19En, pageContent.str19Bn),
     ];
 
     let currentStep = 0;
@@ -122,18 +121,12 @@ export default function Support() {
         if (clientId.toLowerCase() === "man-9988") {
           setDiagResult({
             status: "error",
-            msg: t(
-              "ONT Offline: Fiber signal strength is perfect (-18.5 dBm), but customer router is disconnected. Please check if your router is powered on and the blue/green fiber patch cord is plugged in securely.",
-              "ওএনইউ অফলাইন: ফাইবার সিগন্যাল মান ঠিক আছে (-১৮.৫ dBm), কিন্তু আপনার রাউটারটি সংযুক্ত নেই। অনুগ্রহ করে রাউটারের পাওয়ার এবং নীল/সবুজ প্যাচ কর্ডটি ঠিকঠাক লাগানো আছে কিনা চেক করুন।"
-            ),
+            msg: t(pageContent.str20En, pageContent.str20Bn),
           });
         } else {
           setDiagResult({
             status: "success",
-            msg: t(
-              "ONT Online: Connection Excellent! RX Optical Power: -19.2 dBm (Signal healthy). Network Ping: 2.1ms to gateway. Current Package speed allocated: 30 Mbps Gamer Pack. No traffic restrictions.",
-              "ওএনইউ অনলাইন: সংযোগ চমৎকার! অপটিক্যাল পাওয়ার: -১৯.২ dBm (স্বাস্থ্যকর)। গেটওয়ে পিং: ২.১ মিলি-сеকেন্ড। বরাদ্দকৃত প্যাকেজ স্পিড: ৩০ এমবিপিএস গেমার প্যাক। কোনো ট্রাফিক সীমাবদ্ধতা নেই।"
-            ),
+            msg: t(pageContent.str21En, pageContent.str21Bn),
           });
         }
       }
@@ -193,16 +186,13 @@ export default function Support() {
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
-          {t("Smart Diagnostics & ", "স্মার্ট ডায়াগনস্টিকস ও ")}
+          {t(pageContent.str22En, pageContent.str22Bn)}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-            {t("Support Center", "সহায়তা কেন্দ্র")}
+            {t(pageContent.str23En, pageContent.str23Bn)}
           </span>
         </h1>
         <p className="text-slate-400 mt-4 text-sm sm:text-base text-center">
-          {t(
-            "Troubleshoot your fiber line instantly using our automated link ping analyzer or submit a support ticket directly to our localized Keraniganj support engineers.",
-            "আমাদের স্বয়ংক্রিয় বিশ্লেষকের মাধ্যমে আপনার ফাইবার লাইন তাৎক্ষণিকভাবে পরীক্ষা করুন অথবা সরাসরি আমাদের কদমতলী অফিসের সাপোর্ট ইঞ্জিনিয়ারদের কাছে টিকিট দাখিল করুন।"
-          )}
+          {t(pageContent.str24En, pageContent.str24Bn)}
         </p>
       </div>
 
@@ -212,13 +202,13 @@ export default function Support() {
           <div className="glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl flex flex-col text-left">
             <div>
               <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-                {t("Self Diagnostics", "স্বয়ংক্রিয় রোগনির্ণয়")}
+                {t(pageContent.str25En, pageContent.str25Bn)}
               </span>
-              <h3 className="text-white font-extrabold text-xl mt-3">{t("Fiber Link Diagnostics", "ফাইবার লাইন ডায়াগনস্টিকস")}</h3>
+              <h3 className="text-white font-extrabold text-xl mt-3">{t(pageContent.str26En, pageContent.str26Bn)}</h3>
               <p className="text-xs text-slate-400 mt-1">
-                {t("Enter your Client ID to run automated routing and power tests. (Tip: Try entering ", "স্বয়ংক্রিয় পরীক্ষার জন্য আপনার ক্লায়েন্ট আইডি লিখুন। (পরীক্ষার জন্য ")}
+                {t(pageContent.str27En, pageContent.str27Bn)}
                 <code className="text-brand-cyan font-mono bg-brand-dark px-1.5 py-0.5 rounded">MAN-9988</code>
-                {t(" to test offline scenario)", " লিখতে পারেন)")}
+                {t(pageContent.str28En, pageContent.str28Bn)}
               </p>
             </div>
 
@@ -236,7 +226,7 @@ export default function Support() {
                 disabled={diagStep >= 0 && diagStep < 4}
                 className="bg-brand-blue text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-brand-blue/90 transition-colors disabled:opacity-50 cursor-pointer"
               >
-                {t("Test Link", "পরীক্ষা করুন")}
+                {t(pageContent.str29En, pageContent.str29Bn)}
               </button>
             </form>
 
@@ -244,7 +234,7 @@ export default function Support() {
             {diagStep >= 0 && (
               <div className="bg-black/80 rounded-2xl p-5 font-mono text-xs border border-brand-border text-left space-y-2 max-w-full overflow-hidden shadow-inner">
                 <div className="flex items-center justify-between border-b border-brand-border/40 pb-2 mb-3">
-                  <span className="text-[10px] text-slate-400 font-bold">{t("DIAGNOSTIC TERMINAL", "ডায়াগনস্টিক টার্মিনাল")}</span>
+                  <span className="text-[10px] text-slate-400 font-bold">{t(pageContent.str30En, pageContent.str30Bn)}</span>
                   <div className="flex gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
                     <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
@@ -264,7 +254,7 @@ export default function Support() {
                   {diagStep < 4 && (
                     <div className="flex items-center gap-2 text-slate-500">
                       <div className="w-3.5 h-3.5 border border-slate-500 border-t-transparent rounded-full animate-spin shrink-0" />
-                      <span className="animate-pulse">{t("Measuring metrics...", "মেট্রিক্স পরিমাপ করা হচ্ছে...")}</span>
+                      <span className="animate-pulse">{t(pageContent.str31En, pageContent.str31Bn)}</span>
                     </div>
                   )}
 
@@ -281,7 +271,7 @@ export default function Support() {
                         <span className={`w-2 h-2 rounded-full ${
                           diagResult.status === "success" ? "bg-emerald-400" : "bg-rose-400"
                         }`} />
-                        {diagResult.status === "success" ? t("LINK EXCELLENT", "সংযোগ চমৎকার") : t("CONNECTION ISSUE DETECTED", "সংযোগের সমস্যা সনাক্ত হয়েছে")}
+                        {diagResult.status === "success" ? t(pageContent.str32En, pageContent.str32Bn) : t(pageContent.str33En, pageContent.str33Bn)}
                       </div>
                       <p className="text-slate-300 mt-1.5 leading-relaxed">{diagResult.msg}</p>
                     </div>
@@ -299,21 +289,18 @@ export default function Support() {
               <form onSubmit={handleTicketSubmit} className="space-y-5 text-left">
                 <div>
                   <span className="bg-brand-blue/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-blue/20 uppercase">
-                    {t("Support Ticket", "সহায়তা টিকিট")}
+                    {t(pageContent.str34En, pageContent.str34Bn)}
                   </span>
-                  <h3 className="text-slate-900 font-extrabold text-xl mt-3">{t("Submit Connectivity Issue", "সংযোগের সমস্যা জানান")}</h3>
+                  <h3 className="text-slate-900 font-extrabold text-xl mt-3">{t(pageContent.str35En, pageContent.str35Bn)}</h3>
                   <p className="text-xs text-slate-600 mt-1">
-                    {t(
-                      "Describe your issue and register a physical support ticket. Our team resolves all network line issues within 2-4 hours.",
-                      "আপনার সমস্যা বর্ণনা করে টিকিট বুক করুন। আমাদের টিম ২-৪ ঘণ্টার মধ্যে সমস্ত ফাইবার লাইন মেরামত সম্পন্ন করে থাকে।"
-                    )}
+                    {t(pageContent.str36En, pageContent.str36Bn)}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 text-left">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Client ID (Required)", "ক্লায়েন্ট আইডি (আবশ্যক)")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str37En, pageContent.str37Bn)}</label>
                       <input
                         type="text"
                         name="clientId"
@@ -325,7 +312,7 @@ export default function Support() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str38En, pageContent.str38Bn)}</label>
                       <input
                         type="text"
                         name="name"
@@ -340,7 +327,7 @@ export default function Support() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str39En, pageContent.str39Bn)}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -352,31 +339,31 @@ export default function Support() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Issue Category", "সমস্যার ধরন")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str40En, pageContent.str40Bn)}</label>
                       <select
                         name="category"
                         value={ticketForm.category}
                         onChange={handleTicketChange}
                         className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer"
                       >
-                        <option value="Speed Issue">{t("Speed Drop / Sluggish Internet", "ধীরগতির ইন্টারনেট / স্পিড কম")}</option>
-                        <option value="Frequent Disconnect">{t("Frequent Disconnections", "বারবার ডিসকানেক্ট হওয়া")}</option>
-                        <option value="Billing Issue">{t("Billing / Invoice Query", "বিল বা চালান সংক্রান্ত জিজ্ঞাসা")}</option>
-                        <option value="Physical Cable Broken">{t("Physical Cable / Fiber line broken", "ফাইবার অপটিক তার কেটে যাওয়া")}</option>
-                        <option value="Other">{t("Other / Configuration support", "অন্যান্য / রাউটার কনফিগারেশন সাপোর্ট")}</option>
+                        <option value="Speed Issue">{t(pageContent.str1En, pageContent.str1Bn)}</option>
+                        <option value="Frequent Disconnect">{t(pageContent.str2En, pageContent.str2Bn)}</option>
+                        <option value="Billing Issue">{t(pageContent.str3En, pageContent.str3Bn)}</option>
+                        <option value="Physical Cable Broken">{t(pageContent.str4En, pageContent.str4Bn)}</option>
+                        <option value="Other">{t(pageContent.str5En, pageContent.str5Bn)}</option>
                       </select>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Describe the problem", "সমস্যার বিবরণ লিখুন")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str41En, pageContent.str41Bn)}</label>
                     <textarea
                       name="desc"
                       required
                       rows={3}
                       value={ticketForm.desc}
                       onChange={handleTicketChange}
-                      placeholder={t("Explain what lights are blinking on your router or when the problem started...", "আপনার রাউটারে কী লাইট জ্বলছে বা সমস্যাটি কখন শুরু হয়েছে তা লিখুন...")}
+                      placeholder={t(pageContent.str42En, pageContent.str42Bn)}
                       className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
@@ -390,10 +377,10 @@ export default function Support() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t("Registering Ticket...", "টিকিট নিবন্ধিত করা হচ্ছে...")}
+                      {t(pageContent.str43En, pageContent.str43Bn)}
                     </>
                   ) : (
-                    t("Submit Ticket", "টিকিট জমা দিন")
+                    t(pageContent.str44En, pageContent.str44Bn)
                   )}
                 </button>
               </form>
@@ -406,43 +393,40 @@ export default function Support() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-slate-900 font-bold text-xl">{t("Ticket Created!", "টিকিট তৈরি হয়েছে!")}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str45En, pageContent.str45Bn)}</h3>
                   <p className="text-sm text-slate-600">
-                    {t("We have successfully registered your support request.", "আমরা সফলভাবে আপনার সহায়তার অনুরোধটি নথিভুক্ত করেছি।")}
+                    {t(pageContent.str46En, pageContent.str46Bn)}
                   </p>
                 </div>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left text-slate-700">
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Ticket Reference", "টিকিট রেফারেন্স নম্বর")}</span>
+                    <span>{t(pageContent.str47En, pageContent.str47Bn)}</span>
                     <span className="text-brand-blue font-bold">{ticketCreated}</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Client ID", "ক্লায়েন্ট আইডি")}</span>
+                    <span>{t(pageContent.str48En, pageContent.str48Bn)}</span>
                     <span className="text-slate-800 font-bold">{ticketForm.clientId}</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Issue Type", "সমস্যার ধরন")}</span>
+                    <span>{t(pageContent.str49En, pageContent.str49Bn)}</span>
                     <span className="text-slate-800 font-semibold">{translateCategory(ticketForm.category)}</span>
                   </div>
                   <div className="flex justify-between text-xs text-slate-500">
-                    <span>{t("Assigned Queue", "নির্ধারিত কর্মীদল")}</span>
-                    <span className="text-emerald-600 font-bold">{t("Keraniganj Field Team", "কেরানীগঞ্জ ফিল্ড টিম")}</span>
+                    <span>{t(pageContent.str50En, pageContent.str50Bn)}</span>
+                    <span className="text-emerald-600 font-bold">{t(pageContent.str51En, pageContent.str51Bn)}</span>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
-                  {t(
-                    "A support coordinator is reviewing your details. In case a line splicing survey is required, a field worker will carry out inspection within 2 hours.",
-                    "একজন কর্মকর্তা আপনার টিকিটটি পর্যালোচনা করছেন। যদি লাইন মেরামতের প্রয়োজন হয়, তবে ২ ঘণ্টার মধ্যে একজন কর্মী আপনার ঠিকানায় উপস্থিত হবেন।"
-                  )}
+                  {t(pageContent.str52En, pageContent.str52Bn)}
                 </p>
 
                 <button
                   onClick={resetTicketForm}
                   className="px-6 py-2 rounded-xl bg-slate-200 hover:bg-slate-350/80 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t("Create Another Ticket", "আরেকটি টিকিট খুলুন")}
+                  {t(pageContent.str53En, pageContent.str53Bn)}
                 </button>
               </div>
             )}
@@ -453,8 +437,8 @@ export default function Support() {
       {/* Frequently Asked Questions */}
       <section className="max-w-4xl mx-auto space-y-6">
         <div className="text-center mb-10">
-          <h3 className="text-2xl font-extrabold text-white">{t("Frequently Asked Questions", "সাধারণ জিজ্ঞাসা (FAQ)")}</h3>
-          <p className="text-xs text-slate-400 mt-1">{t("Get immediate answers to standard broadband setup queries", "ব্রডব্যান্ড সংযোগ ও সাধারণ জিজ্ঞাসাগুলোর তাৎক্ষণিক উত্তর")}</p>
+          <h3 className="text-2xl font-extrabold text-white">{t(pageContent.str54En, pageContent.str54Bn)}</h3>
+          <p className="text-xs text-slate-400 mt-1">{t(pageContent.str55En, pageContent.str55Bn)}</p>
         </div>
 
         <div className="space-y-4 text-left">

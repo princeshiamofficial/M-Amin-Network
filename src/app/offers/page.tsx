@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultOffersPageContent } from "@/app/admin/(dashboard)/offers-page/page";
 
 interface PromoOffer {
   title: string;
@@ -14,37 +15,45 @@ interface PromoOffer {
 }
 
 export default function Offers() {
+  const [pageContent, setPageContent] = React.useState(defaultOffersPageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_offers_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translateOfferBadge = (b: string) => {
-    if (b === "New Connection") return t("New Connection", "নতুন সংযোগ");
-    if (b === "Best Value") return t("Best Value", "সেরা ডিল");
-    if (b === "Gamer Special") return t("Gamer Special", "গেমার স্পেশাল");
-    if (b === "Community Deal") return t("Community Deal", "কমিউনিটি অফার");
+    if (b === "New Connection") return t(pageContent.str1En, pageContent.str1Bn);
+    if (b === "Best Value") return t(pageContent.str2En, pageContent.str2Bn);
+    if (b === "Gamer Special") return t(pageContent.str3En, pageContent.str3Bn);
+    if (b === "Community Deal") return t(pageContent.str4En, pageContent.str4Bn);
     return b;
   };
 
   const translateOfferTitle = (title: string) => {
-    if (title === "Zero Installation Fee") return t("Zero Installation Fee", "শূন্য ইনস্টলেশন ফি");
-    if (title === "Pay 10 Months, Get 12") return t("Pay 10 Months, Get 12", "১০ মাসের বিলে ১২ মাস");
-    if (title === "Free Public IP for Gamers") return t("Free Public IP for Gamers", "গেমারদের জন্য ফ্রি পাবলিক আইপি");
-    if (title === "Refer a Friend") return t("Refer a Friend", "বন্ধুকে রেফার করুন");
+    if (title === "Zero Installation Fee") return t(pageContent.str5En, pageContent.str5Bn);
+    if (title === "Pay 10 Months, Get 12") return t(pageContent.str6En, pageContent.str6Bn);
+    if (title === "Free Public IP for Gamers") return t(pageContent.str7En, pageContent.str7Bn);
+    if (title === "Refer a Friend") return t(pageContent.str8En, pageContent.str8Bn);
     return title;
   };
 
   const translateOfferDetails = (det: string) => {
-    if (det.startsWith("Subscribe to any 20 Mbps")) return t("Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).", "যেকোনো ২০ এমবিপিএস বা তার বেশি গতির প্যাকেজে ন্যূনতম ৬ মাসের চুক্তিতে সাবস্ক্রাইব করুন এবং স্ট্যান্ডার্ড ইনস্টলেশন ও ফাইবার লাইন সংযোগ পান সম্পূর্ণ ফ্রি (৳১,০০০ সাশ্রয়)।");
-    if (det.startsWith("Pay for 10 months")) return t("Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).", "যেকোনো হোম বা গেমার প্যাকে একবারে ১০ মাসের বিল পরিশোধ করুন এবং অতিরিক্ত ২ মাসের বিল পান সম্পূর্ণ ফ্রি (৳৩,০০০ পর্যন্ত সাশ্রয়)।");
-    if (det.startsWith("Subscribe to the 30 Mbps")) return t("Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).", "৩০ এমবিপিএস গেমার প্যাক বা তার উপরে সাবস্ক্রাইব করে কোনো অতিরিক্ত ফি ছাড়াই ডেডিকেটেড স্ট্যাটিক পাবলিক আইপি অ্যাড্রেস সংগ্রহ করুন (প্রতি মাসে ৳১৫০ সাশ্রয়)।");
-    if (det.startsWith("Refer a neighbor")) return t("Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.", "দক্ষিণ কেরানীগঞ্জে আপনার কোনো প্রতিবেশী বা বন্ধুকে রেফার করুন। তাদের কানেকশন অ্যাক্টিভ হলে পরবর্তী মাসের বিলে আপনারা উভয়েই ৫০% ডিসকাউন্ট পাবেন।");
+    if (det.startsWith("Subscribe to any 20 Mbps")) return t(pageContent.str9En, pageContent.str9Bn);
+    if (det.startsWith("Pay for 10 months")) return t(pageContent.str10En, pageContent.str10Bn);
+    if (det.startsWith("Subscribe to the 30 Mbps")) return t(pageContent.str11En, pageContent.str11Bn);
+    if (det.startsWith("Refer a neighbor")) return t(pageContent.str12En, pageContent.str12Bn);
     return det;
   };
 
   const translateValidUntil = (v: string) => {
-    if (v === "31 Dec 2026") return t("31 Dec 2026", "৩১ ডিসেম্বর ২০২৬");
-    if (v === "Ongoing Promotion") return t("Ongoing Promotion", "চলমান অফার");
-    if (v === "31 Oct 2026") return t("31 Oct 2026", "৩১ অক্টোবর ২০২৬");
+    if (v === "31 Dec 2026") return t(pageContent.str13En, pageContent.str13Bn);
+    if (v === "Ongoing Promotion") return t(pageContent.str14En, pageContent.str14Bn);
+    if (v === "31 Oct 2026") return t(pageContent.str15En, pageContent.str15Bn);
     return v;
   };
 
@@ -136,18 +145,12 @@ export default function Offers() {
         if (codeUpper === "FREEINSTALL2026") {
           setPromoStatus({
             status: "success",
-            msg: t(
-              "Promo Applied: Free optical fiber ONT setup and router installation on standard packages!",
-              "প্রোমো কোড সফল: স্ট্যান্ডার্ড প্যাকেজে ফ্রি অপটিক্যাল ফাইবার ও রাউটার ইনস্টলেশন!"
-            ),
+            msg: t(pageContent.str16En, pageContent.str16Bn),
           });
         } else if (codeUpper === "ANNUAL10") {
           setPromoStatus({
             status: "success",
-            msg: t(
-              "Promo Applied: 12 months subscription for the price of 10 months upfront!",
-              "প্রোমো কোড সফল: ১০ মাসের অগ্রিম বিলে ১২ মাসের সাবস্ক্রিপশন!"
-            ),
+            msg: t(pageContent.str17En, pageContent.str17Bn),
           });
         } else {
           setPromoStatus({
@@ -161,10 +164,7 @@ export default function Offers() {
       } else {
         setPromoStatus({
           status: "error",
-          msg: t(
-            "Invalid Promo Code. Please enter an active coupon code listed below.",
-            "ভুল প্রোমো কোড। অনুগ্রহ করে নিচে তালিকাভুক্ত সচল কোড ব্যবহার করুন।"
-          ),
+          msg: t(pageContent.str18En, pageContent.str18Bn),
         });
       }
     }, 1000);
@@ -214,19 +214,16 @@ export default function Offers() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto">
           <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t("Promotions & Deals", "প্রোমোশন ও ডিল")}
+            {t(pageContent.str19En, pageContent.str19Bn)}
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-            {t("Special ", "বিশেষ ")}
+            {t(pageContent.str20En, pageContent.str20Bn)}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t("Internet Offers", "ইন্টারনেট অফার")}
+              {t(pageContent.str21En, pageContent.str21Bn)}
             </span>
           </h1>
           <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            {t(
-              "Upgrade your broadband line today. Browse our seasonal connection offers, package deals, and coupon codes valid across Keraniganj.",
-              "আজই আপনার ব্রডব্যান্ড লাইন আপগ্রেড করুন। আমাদের সংযোগ অফার, প্যাকেজ ডিল এবং কুপন কোডগুলো দেখুন।"
-            )}
+            {t(pageContent.str22En, pageContent.str22Bn)}
           </p>
         </div>
       </div> {/* Close Top Section Wrapper */}
@@ -248,7 +245,7 @@ export default function Offers() {
                         <span className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border ${getBadgeStyles(offer.badge)}`}>
                           {translateOfferBadge(offer.badge)}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">{t("Valid", "মেয়াদ")}: {translateValidUntil(offer.validUntil)}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{t(pageContent.str23En, pageContent.str23Bn)}: {translateValidUntil(offer.validUntil)}</span>
                       </div>
                       <h3 className="text-slate-900 font-extrabold text-lg leading-tight mb-3 text-left">{translateOfferTitle(offer.title)}</h3>
                       <p className="text-xs text-slate-500 leading-relaxed mb-6 text-left">{translateOfferDetails(offer.details)}</p>
@@ -256,14 +253,14 @@ export default function Offers() {
 
                     <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto text-left">
                       <div className="font-mono text-xs text-left">
-                        <span className="text-slate-400 block text-left">{t("PROMO CODE", "প্রোমো কোড")}</span>
+                        <span className="text-slate-400 block text-left">{t(pageContent.str24En, pageContent.str24Bn)}</span>
                         <span className="text-brand-blue font-bold uppercase tracking-wider text-left">{offer.code}</span>
                       </div>
                       <button
                         onClick={() => setSelectedPromo(offer)}
                         className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-205 transition-all cursor-pointer"
                       >
-                        {t("Claim Offer", "অফার দাবি করুন")}
+                        {t(pageContent.str25En, pageContent.str25Bn)}
                       </button>
                     </div>
                   </div>
@@ -275,12 +272,9 @@ export default function Offers() {
             <div className="lg:col-span-4 text-left">
               <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 sticky top-28 shadow-sm text-left">
                 <div>
-                  <h3 className="text-slate-900 font-extrabold text-lg">{t("Apply Promo Code", "প্রোমো কোড ব্যবহার")}</h3>
+                  <h3 className="text-slate-900 font-extrabold text-lg">{t(pageContent.str26En, pageContent.str26Bn)}</h3>
                   <p className="text-xs text-slate-450 mt-1">
-                    {t(
-                      "Enter your coupon code to test feasibility and reserve the discount details on your subscription profile.",
-                      "ডিসকাউন্ট সংরক্ষিত করতে এবং কোডের কার্যকারিতা পরীক্ষা করতে কুপন কোডটি প্রবেশ করান।"
-                    )}
+                    {t(pageContent.str27En, pageContent.str27Bn)}
                   </p>
                 </div>
 
@@ -298,7 +292,7 @@ export default function Offers() {
                     disabled={checkingPromo}
                     className="bg-brand-blue text-white px-5 py-3 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors disabled:opacity-50 cursor-pointer"
                   >
-                    {t("Apply", "প্রয়োগ")}
+                    {t(pageContent.str28En, pageContent.str28Bn)}
                   </button>
                 </form>
 
@@ -306,7 +300,7 @@ export default function Offers() {
                 {checkingPromo && (
                   <div className="flex items-center justify-center gap-2 text-xs text-slate-500 font-mono">
                     <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
-                    <span>{t("Checking promo database...", "ডাটাবেস চেক করা হচ্ছে...")}</span>
+                    <span>{t(pageContent.str29En, pageContent.str29Bn)}</span>
                   </div>
                 )}
 
@@ -322,7 +316,7 @@ export default function Offers() {
                       <span className={`w-2 h-2 rounded-full ${
                         promoStatus.status === "success" ? "bg-emerald-500" : "bg-rose-500"
                       }`} />
-                      {promoStatus.status === "success" ? t("PROMO APPLIED", "কোড সফলভাবে প্রয়োগ করা হয়েছে") : t("VALIDATION ERROR", "কোড ভ্যালিডেশন ত্রুটি")}
+                      {promoStatus.status === "success" ? t(pageContent.str30En, pageContent.str30Bn) : t(pageContent.str31En, pageContent.str31Bn)}
                     </div>
                     <p className="text-slate-650 mt-1.5 leading-relaxed">{promoStatus.msg}</p>
                     {promoStatus.status === "success" && (
@@ -330,7 +324,7 @@ export default function Offers() {
                         href={`/packages?promo=${promoInput.toUpperCase().trim()}`}
                         className="mt-3 inline-block text-[10px] text-brand-blue hover:underline font-bold"
                       >
-                        {t("Proceed with package selection >", "প্যাকেজ নির্বাচনের দিকে এগিয়ে যান >")}
+                        {t(pageContent.str32En, pageContent.str32Bn)}
                       </Link>
                     )}
                   </div>
@@ -357,9 +351,9 @@ export default function Offers() {
             {!claimSuccess ? (
               <form onSubmit={handleClaimSubmit} className="space-y-5 text-left">
                 <div>
-                  <h3 className="text-slate-900 font-bold text-xl">{t("Claim Promotion Deal", "অফারটি সংরক্ষণ করুন")}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str33En, pageContent.str33Bn)}</h3>
                   <p className="text-xs text-slate-500 mt-1">
-                    {t("Book connection with promo code:", "প্রোমো কোড সহ সংযোগ সংরক্ষণ করুন:")}{" "}
+                    {t(pageContent.str34En, pageContent.str34Bn)}{" "}
                     <span className="text-brand-blue font-bold font-mono uppercase">{selectedPromo.code}</span>
                   </p>
                 </div>
@@ -371,7 +365,7 @@ export default function Offers() {
 
                 <div className="space-y-4 text-left">
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str35En, pageContent.str35Bn)}</label>
                     <input
                       type="text"
                       required
@@ -383,7 +377,7 @@ export default function Offers() {
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str36En, pageContent.str36Bn)}</label>
                     <input
                       type="tel"
                       required
@@ -395,7 +389,7 @@ export default function Offers() {
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Premises Address", "সংযোগের ঠিকানা")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str37En, pageContent.str37Bn)}</label>
                     <textarea
                       required
                       rows={2}
@@ -415,10 +409,10 @@ export default function Offers() {
                   {submittingClaim ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t("Booking Offer...", "অফারটি সংরক্ষণ করা হচ্ছে...")}
+                      {t(pageContent.str38En, pageContent.str38Bn)}
                     </>
                   ) : (
-                    t("Reserve Connection Deal", "অফারটি সংরক্ষণ করুন")
+                    t(pageContent.str39En, pageContent.str39Bn)
                   )}
                 </button>
               </form>
@@ -431,24 +425,21 @@ export default function Offers() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-slate-900 font-bold text-xl">{t("Offer Booked!", "অফারটি সংরক্ষিত হয়েছে!")}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str40En, pageContent.str40Bn)}</h3>
                   <p className="text-sm text-slate-600">
-                    {t("Your reservation for the", "আপনার")} <span className="text-brand-blue font-bold">{translateOfferTitle(selectedPromo.title)}</span> {t("promo has been saved.", "অফার বুকিং সংরক্ষণ করা হয়েছে।")}
+                    {t(pageContent.str41En, pageContent.str41Bn)} <span className="text-brand-blue font-bold">{translateOfferTitle(selectedPromo.title)}</span> {t(pageContent.str42En, pageContent.str42Bn)}
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  {t(
-                    "Our installation supervisor will prioritize your ticket and verify the promo code during routing setup. Keep your mobile phone active!",
-                    "আমাদের সংযোগ সুপারভাইজার আপনার টিকিটটিকে অগ্রাধিকার দেবেন এবং রাউটিং সেটআপের সময় প্রোমো কোডটি যাচাই করবেন। অনুগ্রহ করে মোবাইলটি সচল রাখুন!"
-                  )}
+                  {t(pageContent.str43En, pageContent.str43Bn)}
                 </p>
 
                 <button
                   onClick={resetClaimForm}
                   className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t("Close Window", "উইন্ডো বন্ধ করুন")}
+                  {t(pageContent.str44En, pageContent.str44Bn)}
                 </button>
               </div>
             )}

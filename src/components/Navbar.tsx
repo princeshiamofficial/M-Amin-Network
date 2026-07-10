@@ -5,6 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+interface NavLink {
+  nameEn: string;
+  nameBn: string;
+  href: string;
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -15,6 +21,21 @@ export default function Navbar() {
     }
     return "EN";
   });
+
+  const defaultNavLinks: NavLink[] = [
+    { nameEn: "Home", nameBn: "হোম", href: "/" },
+    { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
+    { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
+    { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
+    { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
+    { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
+    { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
+    { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
+    { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
+    { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+  ];
+
+  const [linksList, setLinksList] = useState<NavLink[]>(defaultNavLinks);
 
   const handleLangChange = (newLang: string) => {
     setLang(newLang);
@@ -40,20 +61,20 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("m_amin_nav_links");
+      if (saved) {
+        try {
+          setLinksList(JSON.parse(saved));
+        } catch (e) {
+          console.error("Error parsing nav links config:", e);
+        }
+      }
+    }
+  }, []);
 
-  const navLinks = [
-    { name: t("Home", "হোম"), href: "/" },
-    { name: t("Packages", "প্যাকেজ"), href: "/packages" },
-    { name: t("Offers", "অফার"), href: "/offers" },
-    { name: t("Coverage", "কাভারেজ"), href: "/coverage" },
-    { name: t("Multimedia", "মাল্টিমিডিয়া"), href: "/multimedia" },
-    { name: t("Complain", "অভিযোগ"), href: "/complain" },
-    { name: t("Pay Bill", "বিল পরিশোধ"), href: "/bill-payment" },
-    { name: t("Careers", "ক্যারিয়ার"), href: "/careers" },
-    { name: t("Contact", "যোগাযোগ"), href: "/contact" },
-    { name: t("About", "আমাদের সম্পর্কে"), href: "/about" },
-  ];
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -118,11 +139,12 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => {
+            {linksList.map((link) => {
               const isActive = pathname === link.href;
+              const linkName = t(link.nameEn, link.nameBn);
               return (
                 <Link
-                  key={link.name}
+                  key={link.href + linkName}
                   href={link.href}
                   className={`text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-full ${
                     isActive
@@ -130,7 +152,7 @@ export default function Navbar() {
                       : "text-slate-600 hover:text-brand-blue hover:bg-slate-100/50"
                   }`}
                 >
-                  {link.name}
+                  {linkName}
                 </Link>
               );
             })}
@@ -238,11 +260,12 @@ export default function Navbar() {
         id="mobile-menu"
       >
         <div className="px-4 pt-2 pb-3 space-y-1 bg-white border-b border-slate-200/80 backdrop-blur-lg">
-          {navLinks.map((link) => {
+          {linksList.map((link) => {
             const isActive = pathname === link.href;
+            const linkName = t(link.nameEn, link.nameBn);
             return (
               <Link
-                key={link.name}
+                key={link.href + linkName}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
@@ -251,7 +274,7 @@ export default function Navbar() {
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                {link.name}
+                {linkName}
               </Link>
             );
           })}

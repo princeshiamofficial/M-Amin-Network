@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ContactContentFull, defaultContactContent } from "@/app/admin/(dashboard)/contact-page/page";
 
 export default function Contact() {
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
+  const [content, setContent] = useState<ContactContentFull>(defaultContactContent);
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -16,6 +18,17 @@ export default function Contact() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("m_amin_contact_content_full");
+    if (saved) {
+      try {
+        setContent(JSON.parse(saved));
+      } catch {
+        setContent(defaultContactContent);
+      }
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,19 +59,16 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
         <div className="text-center max-w-3xl mx-auto">
           <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t("Get In Touch", "যোগাযোগ করুন")}
+            {t(content.tagEn, content.tagBn)}
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-            {t("Contact ", "আমাদের সাথে ")}
+            {t(content.titleEn, content.titleBn)}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t("Our Team", "যোগাযোগ")}
+              {t(content.highlightEn, content.highlightBn)}
             </span>
           </h1>
           <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            {t(
-              "Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.",
-              "সংযোগের সম্ভাব্যতা যাচাই, বিশেষ ছাড় বা কর্পোরেট ডেডিকেটেড ইন্টারনেট সম্পর্কে কোনো জিজ্ঞাসা আছে? সরাসরি যোগাযোগ করুন অথবা নিচের ফর্মটি পূরণ করুন।"
-            )}
+            {t(content.descEn, content.descBn)}
           </p>
         </div>
       </div>
@@ -71,7 +81,7 @@ export default function Contact() {
             <div className="lg:col-span-5 space-y-8">
               {/* Details */}
               <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <h3 className="text-slate-900 font-extrabold text-lg">{t("Contact Information", "যোগাযোগের তথ্য")}</h3>
+                <h3 className="text-slate-900 font-extrabold text-lg">{t(content.infoTitleEn, content.infoTitleBn)}</h3>
                 <ul className="space-y-6 text-sm text-left">
                   <li className="flex gap-4 items-start text-left">
                     <div className="w-10 h-10 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center border border-brand-blue/20 shrink-0 mt-0.5">
@@ -81,11 +91,11 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t("Corporate Office", "প্রধান কার্যালয়")}</h4>
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.officeTitleEn, content.officeTitleBn)}</h4>
                       <p className="text-slate-600 leading-relaxed text-xs">
-                        {t("House No. 68, Kadomtoli, Aganagar,", "বাসা নং ৬৮, কদমতলী, আগানগর,")}
+                        {t(content.officeL1En, content.officeL1Bn)}
                         <br />
-                        {t("South Keraniganj, Dhaka-1310, Bangladesh.", "দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।")}
+                        {t(content.officeL2En, content.officeL2Bn)}
                       </p>
                     </div>
                   </li>
@@ -97,11 +107,14 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t("Telephone Hotlines", "হটলাইন নম্বরসমূহ")}</h4>
-                      <p className="text-slate-600 text-xs">
-                        {t("Residential Support:", "গ্রাহক সেবা:")} <a href="tel:+8801707009267" className="hover:text-brand-blue text-slate-900 font-mono font-bold">+880 1707-009267</a>
-                        <br />
-                        {t("Corporate Desk:", "কর্পোরেট ডেস্ক:")} +880 1707-009267
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.phoneTitleEn, content.phoneTitleBn)}</h4>
+                      <p className="text-slate-600 text-xs space-y-1">
+                        {content.phones?.map((phone, idx) => (
+                          <React.Fragment key={idx}>
+                            {t(phone.labelEn, phone.labelBn)} <a href={`tel:${phone.number}`} className="hover:text-brand-blue text-slate-900 font-mono font-bold">{phone.number}</a>
+                            {idx !== content.phones.length - 1 && <br />}
+                          </React.Fragment>
+                        ))}
                       </p>
                     </div>
                   </li>
@@ -113,11 +126,11 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t("Email Correspondence", "ইমেইল যোগাযোগ")}</h4>
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.emailTitleEn, content.emailTitleBn)}</h4>
                       <p className="text-slate-600 text-xs">
-                        {t("General Queries:", "সাধারণ জিজ্ঞাসা:")} <a href="mailto:info@m-aminnetwork.com" className="hover:text-brand-blue text-brand-blue font-mono font-semibold">info@m-aminnetwork.com</a>
+                        {t(content.emailGenLabelEn, content.emailGenLabelBn)} <a href={`mailto:${content.emailGenAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailGenAddr}</a>
                         <br />
-                        {t("Network Ops:", "নেটওয়ার্ক অপস:")} <a href="mailto:mibappy00@gmail.com" className="hover:text-brand-blue text-brand-blue font-mono font-semibold">mibappy00@gmail.com</a>
+                        {t(content.emailOpsLabelEn, content.emailOpsLabelBn)} <a href={`mailto:${content.emailOpsAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailOpsAddr}</a>
                       </p>
                     </div>
                   </li>
@@ -126,14 +139,13 @@ export default function Contact() {
 
               {/* Map placeholder */}
               <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-4 shadow-sm overflow-hidden relative min-h-[220px] flex flex-col justify-end text-left">
-                <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-6 border-b border-slate-200/60 pointer-events-none">
-                  <svg className="w-8 h-8 text-brand-blue animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  <span className="text-slate-900 text-xs font-bold mt-2">{t("Kadomtoli Chowrasta, Aganagar", "কদমতলী চৌরাস্তা, আগানগর")}</span>
-                  <span className="text-slate-500 text-[10px] mt-1 text-center">{t("House No. 68, Kadomtoli Office Location", "বাসা নং ৬৮, কদমতলী অফিস অবস্থান")}</span>
-                </div>
-                <div className="w-full h-full bg-slate-100 absolute inset-0 opacity-15" />
+                <iframe 
+                  src={content.mapEmbedUrl}
+                  className="w-full h-full absolute inset-0 border-0 opacity-80 hover:opacity-100 transition-opacity duration-500 z-0" 
+                  allowFullScreen 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade" 
+                />
               </div>
             </div>
 
@@ -143,9 +155,9 @@ export default function Contact() {
                 {!success ? (
                   <form onSubmit={handleSubmit} className="space-y-5 text-left">
                     <div>
-                      <h3 className="text-slate-900 font-extrabold text-xl">{t("Send an Inquiry", "অনুসন্ধান জানান")}</h3>
+                      <h3 className="text-slate-900 font-extrabold text-xl">{t(content.formTitleEn, content.formTitleBn)}</h3>
                       <p className="text-xs text-slate-600 mt-1">
-                        {t("Fill out the form below and our operations support manager will follow up with you.", "নিচের ফর্মটি পূরণ করুন এবং আমাদের অপারেশন ম্যানেজার আপনার সাথে যোগাযোগ করবেন।")}
+                        {t(content.formDescEn, content.formDescBn)}
                       </p>
                     </div>
 

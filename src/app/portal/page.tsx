@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultPortalPageContent } from "@/app/admin/(dashboard)/portal-page/page";
 
 interface UserProfile {
   name: string;
@@ -17,35 +18,43 @@ interface UserProfile {
 }
 
 export default function Portal() {
+  const [pageContent, setPageContent] = React.useState(defaultPortalPageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_portal_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translatePlanName = (name: string) => {
-    if (name === "Home Standard") return t("Home Standard", "হোম স্ট্যান্ডার্ড");
-    if (name === "Gamer Professional") return t("Gamer Professional", "গেমার প্রফেশনাল");
-    if (name === "Home Elite") return t("Home Elite", "হোম এলিট");
+    if (name === "Home Standard") return t(pageContent.str1En, pageContent.str1Bn);
+    if (name === "Gamer Professional") return t(pageContent.str2En, pageContent.str2Bn);
+    if (name === "Home Elite") return t(pageContent.str3En, pageContent.str3Bn);
     if (name.startsWith("Upgraded Pack")) {
-      return name.replace("Upgraded Pack", t("Upgraded Pack", "আপগ্রেডকৃত প্যাক"));
+      return name.replace("Upgraded Pack", t(pageContent.str4En, pageContent.str4Bn));
     }
     return name;
   };
 
   const translateStatus = (st: string) => {
-    if (st === "Active") return t("Active", "সচল");
-    if (st === "Expired") return t("Expired", "মেয়াদোত্তীর্ণ");
-    if (st === "Suspended") return t("Suspended", "স্থগিত");
+    if (st === "Active") return t(pageContent.str5En, pageContent.str5Bn);
+    if (st === "Expired") return t(pageContent.str6En, pageContent.str6Bn);
+    if (st === "Suspended") return t(pageContent.str7En, pageContent.str7Bn);
     return st;
   };
 
   const translateUptime = (up: string) => {
     return up
-      .replace("Days", t("Days", "দিন"))
-      .replace("Hours", t("Hours", "ঘণ্টা"));
+      .replace("Days", t(pageContent.str8En, pageContent.str8Bn))
+      .replace("Hours", t(pageContent.str9En, pageContent.str9Bn));
   };
 
   const translateDueDate = (date: string) => {
     if (date.includes("July")) {
-      return date.replace("July", t("July", "জুলাই"));
+      return date.replace("July", t(pageContent.str10En, pageContent.str10Bn));
     }
     return date;
   };
@@ -124,7 +133,7 @@ export default function Portal() {
         // Create a default subscriber profile if client ID doesn't exist
         if (idKey.startsWith("man-")) {
           const generatedProfile: UserProfile = {
-            name: t("M. Amin Network Subscriber", "এম. আমিন নেটওয়ার্ক গ্রাহক"),
+            name: t(pageContent.str11En, pageContent.str11Bn),
             clientId: clientId.toUpperCase(),
             planName: "Home Elite",
             speed: "30 Mbps",
@@ -137,7 +146,7 @@ export default function Portal() {
           setProfile(generatedProfile);
           setIsLoggedIn(true);
         } else {
-          setErrorMsg(t("Invalid Client ID. (Try 'MAN-5432' or 'MAN-9988')", "ভুল ক্লায়েন্ট আইডি। ('MAN-5432' বা 'MAN-9988' লিখুন)"));
+          setErrorMsg(t(pageContent.str12En, pageContent.str12Bn));
         }
       }
     }, 1200);
@@ -173,15 +182,15 @@ export default function Portal() {
               <div className="w-12 h-12 rounded-xl bg-linear-to-tr from-brand-blue to-brand-cyan flex items-center justify-center text-brand-dark font-black text-xl shadow-[0_0_15px_rgba(0,240,255,0.4)] mx-auto mb-4">
                 M
               </div>
-              <h2 className="text-2xl font-extrabold text-white">{t("Client Self-Care", "গ্রাহক সেলফ-কেয়ার")}</h2>
+              <h2 className="text-2xl font-extrabold text-white">{t(pageContent.str13En, pageContent.str13Bn)}</h2>
               <p className="text-xs text-slate-400 mt-1">
-                {t("Enter your subscription credentials to manage your line", "আপনার সংযোগ পরিচালনা করতে আইডি ও পাসওয়ার্ড লিখুন")}
+                {t(pageContent.str14En, pageContent.str14Bn)}
               </p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4 text-left">
               <div className="flex flex-col gap-1.5 text-left">
-                <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Client ID", "ক্লায়েন্ট আইডি")}</label>
+                <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str15En, pageContent.str15Bn)}</label>
                 <input
                   type="text"
                   required
@@ -193,7 +202,7 @@ export default function Portal() {
               </div>
 
               <div className="flex flex-col gap-1.5 text-left">
-                <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Portal Password", "পোর্টাল পাসওয়ার্ড")}</label>
+                <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str16En, pageContent.str16Bn)}</label>
                 <input
                   type="password"
                   required
@@ -214,17 +223,17 @@ export default function Portal() {
                 {loggingIn ? (
                   <>
                     <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                    {t("Authenticating Subscriber...", "যাচাই করা হচ্ছে...")}
+                    {t(pageContent.str17En, pageContent.str17Bn)}
                   </>
                 ) : (
-                  t("Access Client Dashboard", "ড্যাশবোর্ডে প্রবেশ করুন")
+                  t(pageContent.str18En, pageContent.str18Bn)
                 )}
               </button>
             </form>
 
             <div className="border-t border-brand-border/40 pt-4 text-center">
               <p className="text-xs text-slate-500">
-                {t("Forget your password or looking for Client ID? Contact our support desk at +8801707009267", "পাসওয়ার্ড ভুলে গেছেন বা ক্লায়েন্ট আইডি খুঁজছেন? আমাদের সাপোর্ট ডেস্কে যোগাযোগ করুন: +৮৮০১৭০৭০০৯২৬৭")}
+                {t(pageContent.str19En, pageContent.str19Bn)}
               </p>
             </div>
           </div>
@@ -241,7 +250,7 @@ export default function Portal() {
               <div className="text-left">
                 <h2 className="text-white font-extrabold text-xl">{profile?.name}</h2>
                 <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-slate-400 font-mono text-left">
-                  <span>{t("Client ID", "ক্লায়েন্ট আইডি")}: {profile?.clientId}</span>
+                  <span>{t(pageContent.str15En, pageContent.str15Bn)}: {profile?.clientId}</span>
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 text-emerald-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -256,7 +265,7 @@ export default function Portal() {
                 onClick={() => setIsLoggedIn(false)}
                 className="bg-brand-border hover:bg-brand-border/80 border border-brand-border text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer"
               >
-                {t("Log Out", "লগ আউট")}
+                {t(pageContent.str20En, pageContent.str20Bn)}
               </button>
             </div>
           </div>
@@ -264,10 +273,10 @@ export default function Portal() {
           {/* Quick Metrics Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
             {[
-              { title: t("Allocated Bandwidth", "বরাদ্দকৃত ব্যান্ডউইথ"), val: profile?.speed, desc: profile ? translatePlanName(profile.planName) : "", metric: t("Speed Target", "স্পিড টার্গেট") },
-              { title: t("ONT Optical Power", "ওএনটি অপটিক্যাল পাওয়ার"), val: profile?.rxPower, desc: t("Healthy range: -15 to -25 dBm", "স্বাভাবিক সীমা: -১৫ থেকে -২৫ dBm"), metric: t("Signal Status", "সিগন্যাল অবস্থা") },
-              { title: t("Line Connection Uptime", "সংযোগের আপটাইম"), val: profile ? translateUptime(profile.uptime) : "", desc: t("BGP Auto-Re-routing enabled", "বিজিপি অটো-রি-রাউটিং সক্রিয়"), metric: t("Uptime", "আপটাইম") },
-              { title: t("Billing Invoice Dues", "বকেয়া বিল ও ইনভয়েস"), val: profile?.dueAmount ? `৳${profile.dueAmount} BDT` : t("Paid in Full", "সম্পূর্ণ পরিশোধিত"), desc: `${t("Next cycle due:", "পরবর্তী বিলের তারিখ:")} ${profile ? translateDueDate(profile.dueDate) : ""}`, metric: t("Invoice status", "ইনভয়েস অবস্থা") },
+              { title: t(pageContent.str21En, pageContent.str21Bn), val: profile?.speed, desc: profile ? translatePlanName(profile.planName) : "", metric: t(pageContent.str22En, pageContent.str22Bn) },
+              { title: t(pageContent.str23En, pageContent.str23Bn), val: profile?.rxPower, desc: t(pageContent.str24En, pageContent.str24Bn), metric: t(pageContent.str25En, pageContent.str25Bn) },
+              { title: t(pageContent.str26En, pageContent.str26Bn), val: profile ? translateUptime(profile.uptime) : "", desc: t(pageContent.str27En, pageContent.str27Bn), metric: t(pageContent.str28En, pageContent.str28Bn) },
+              { title: t(pageContent.str29En, pageContent.str29Bn), val: profile?.dueAmount ? `৳${profile.dueAmount} BDT` : t(pageContent.str30En, pageContent.str30Bn), desc: `${t(pageContent.str31En, pageContent.str31Bn)} ${profile ? translateDueDate(profile.dueDate) : ""}`, metric: t(pageContent.str32En, pageContent.str32Bn) },
             ].map((metric, i) => (
               <div key={i} className="glass-panel border-brand-border/40 p-6 rounded-2xl text-left">
                 <span className="text-[10px] text-brand-cyan uppercase tracking-wider font-bold block mb-1">
@@ -288,17 +297,17 @@ export default function Portal() {
             <div className="lg:col-span-8 glass-panel border-brand-border/60 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-xl min-h-[350px] text-left">
               <div className="flex justify-between items-center mb-6 text-left">
                 <div className="text-left">
-                  <h3 className="text-white font-extrabold text-lg">{t("Real-Time Bandwidth Usage", "রিয়েল-টাইম ব্যান্ডউইথ ব্যবহার")}</h3>
-                  <p className="text-xs text-slate-400">{t("Live throughput graphs updating every 2 seconds", "প্রতি ২ সেকেন্ড পর পর গ্রাফ আপডেট হচ্ছে")}</p>
+                  <h3 className="text-white font-extrabold text-lg">{t(pageContent.str33En, pageContent.str33Bn)}</h3>
+                  <p className="text-xs text-slate-400">{t(pageContent.str34En, pageContent.str34Bn)}</p>
                 </div>
                 <div className="flex gap-4 text-xs font-mono">
                   <span className="flex items-center gap-1.5 text-brand-cyan">
                     <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan" />
-                    {t("Download:", "ডাউনলোড:")} {liveDownload} Mbps
+                    {t(pageContent.str35En, pageContent.str35Bn)} {liveDownload} Mbps
                   </span>
                   <span className="flex items-center gap-1.5 text-brand-blue">
                     <span className="w-2.5 h-2.5 rounded-full bg-brand-blue" />
-                    {t("Upload:", "আপলোড:")} {liveUpload} Mbps
+                    {t(pageContent.str36En, pageContent.str36Bn)} {liveUpload} Mbps
                   </span>
                 </div>
               </div>
@@ -340,15 +349,15 @@ export default function Portal() {
 
                 {/* Simulated live grid line indicators */}
                 <div className="absolute inset-0 border-b border-brand-border/40 pointer-events-none flex flex-col justify-between">
-                  <div className="border-b border-brand-border/20 w-full h-0 text-[8px] text-slate-600 font-mono text-left pl-2">{t("Peak Cap", "সর্বোচ্চ ক্যাপ")}</div>
-                  <div className="border-b border-brand-border/20 w-full h-0 text-[8px] text-slate-600 font-mono text-left pl-2">{t("Median", "গড়")}</div>
-                  <div className="w-full text-[8px] text-slate-600 font-mono text-left pl-2">{t("Idle", "নিষ্ক্রিয়")}</div>
+                  <div className="border-b border-brand-border/20 w-full h-0 text-[8px] text-slate-600 font-mono text-left pl-2">{t(pageContent.str37En, pageContent.str37Bn)}</div>
+                  <div className="border-b border-brand-border/20 w-full h-0 text-[8px] text-slate-600 font-mono text-left pl-2">{t(pageContent.str38En, pageContent.str38Bn)}</div>
+                  <div className="w-full text-[8px] text-slate-600 font-mono text-left pl-2">{t(pageContent.str39En, pageContent.str39Bn)}</div>
                 </div>
               </div>
 
               <div className="border-t border-brand-border/40 pt-4 flex justify-between items-center text-xs text-slate-400 text-left">
-                <span>{t("Direct Peering: Google GGC, Facebook FNA, BDIX, Torrents Caches", "সরাসরি পিয়ারিং: গুগল জিজিসি, ফেসবুক এফএনএ, বিডিআইএক্স, টরেন্ট ক্যাশ")}</span>
-                <span>{t("AS150164 BGP Uplink", "AS150164 বিজিপি আপলিংক")}</span>
+                <span>{t(pageContent.str40En, pageContent.str40Bn)}</span>
+                <span>{t(pageContent.str41En, pageContent.str41Bn)}</span>
               </div>
             </div>
 
@@ -358,16 +367,16 @@ export default function Portal() {
               {profile && profile.dueAmount > 0 && (
                 <div className="p-6 rounded-3xl bg-amber-500/5 border border-amber-500/25 flex flex-col gap-4 text-left">
                   <div>
-                    <h3 className="text-white font-bold text-base">{t("Payment Overdue", "বকেয়া পেমেন্ট")}</h3>
+                    <h3 className="text-white font-bold text-base">{t(pageContent.str42En, pageContent.str42Bn)}</h3>
                     <p className="text-xs text-slate-400 mt-1">
-                      {t("An invoice of", "এই সাইকেলে আপনার")} <span className="text-amber-400 font-bold font-mono">৳{profile.dueAmount} BDT</span> {t("remains unpaid for this cycle.", "বকেয়া রয়েছে যা এখনো পরিশোধ করা হয়নি।")}
+                      {t(pageContent.str43En, pageContent.str43Bn)} <span className="text-amber-400 font-bold font-mono">৳{profile.dueAmount} BDT</span> {t(pageContent.str44En, pageContent.str44Bn)}
                     </p>
                   </div>
                   <Link
                     href={`/bill-payment?id=${profile.clientId}`}
                     className="w-full text-center bg-linear-to-r from-amber-500 to-amber-600 text-brand-dark py-2.5 rounded-xl font-bold text-xs shadow-md transition-opacity hover:opacity-90 cursor-pointer"
                   >
-                    {t("Quick Pay Bill", "দ্রুত বিল পরিশোধ")}
+                    {t(pageContent.str45En, pageContent.str45Bn)}
                   </Link>
                 </div>
               )}
@@ -377,23 +386,23 @@ export default function Portal() {
                 {!upgradeSuccess ? (
                   <form onSubmit={handleUpgradeSubmit} className="space-y-4 text-left">
                     <div>
-                      <h3 className="text-white font-bold text-base">{t("Speed Upgrade Center", "স্পিড আপগ্রেড কেন্দ্র")}</h3>
+                      <h3 className="text-white font-bold text-base">{t(pageContent.str46En, pageContent.str46Bn)}</h3>
                       <p className="text-xs text-slate-400 mt-1">
-                        {t("Select a target package speed to dynamically request line profile updates.", "সংযোগের গতি তাৎক্ষণিকভাবে বৃদ্ধি করতে কাঙ্ক্ষিত স্পিড নির্বাচন করুন।")}
+                        {t(pageContent.str47En, pageContent.str47Bn)}
                       </p>
                     </div>
 
                     <div className="flex flex-col gap-1.5 text-left">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider text-left">{t("Choose Speed", "স্পিড নির্বাচন করুন")}</label>
+                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider text-left">{t(pageContent.str48En, pageContent.str48Bn)}</label>
                       <select
                         value={selectedUpgrade}
                         onChange={(e) => setSelectedUpgrade(e.target.value)}
                         className="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-slate-300 focus:outline-none focus:border-brand-cyan cursor-pointer"
                       >
-                        <option value="30 Mbps" className="bg-brand-card">{t("30 Mbps Gamer (৳1000/mo)", "৩০ এমবিপিএস গেমার (৳১০০০/মাস)")}</option>
-                        <option value="50 Mbps" className="bg-brand-card">{t("50 Mbps Ultra (৳1500/mo)", "৫০ এমবিপিএস আল্ট্রা (৳১৫০০/মাস)")}</option>
-                        <option value="60 Mbps" className="bg-brand-card">{t("60 Mbps Gamer Pro (৳1800/mo)", "৬০ এমবিপিএস গেমার প্রো (৳১৮০০/মাস)")}</option>
-                        <option value="100 Mbps" className="bg-brand-card">{t("100 Mbps SOHO (৳2500/mo)", "১০০ এমবিপিএস SOHO (৳২৫০০/মাস)")}</option>
+                        <option value="30 Mbps" className="bg-brand-card">{t(pageContent.str49En, pageContent.str49Bn)}</option>
+                        <option value="50 Mbps" className="bg-brand-card">{t(pageContent.str50En, pageContent.str50Bn)}</option>
+                        <option value="60 Mbps" className="bg-brand-card">{t(pageContent.str51En, pageContent.str51Bn)}</option>
+                        <option value="100 Mbps" className="bg-brand-card">{t(pageContent.str52En, pageContent.str52Bn)}</option>
                       </select>
                     </div>
 
@@ -405,10 +414,10 @@ export default function Portal() {
                       {upgrading ? (
                         <>
                           <div className="w-4 h-4 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                          {t("Upgrading Port Speed...", "পোর্ট স্পিড আপগ্রেড করা হচ্ছে...")}
+                          {t(pageContent.str53En, pageContent.str53Bn)}
                         </>
                       ) : (
-                        t("Request Speed Upgrade", "আপগ্রেডের অনুরোধ দিন")
+                        t(pageContent.str54En, pageContent.str54Bn)
                       )}
                     </button>
                   </form>
@@ -420,9 +429,9 @@ export default function Portal() {
                       </svg>
                     </div>
                     <div className="space-y-1">
-                      <h4 className="text-white font-bold text-sm">{t("Port Speed Updated!", "পোর্ট স্পিড সফলভাবে বৃদ্ধি হয়েছে!")}</h4>
+                      <h4 className="text-white font-bold text-sm">{t(pageContent.str55En, pageContent.str55Bn)}</h4>
                       <p className="text-xs text-slate-400">
-                        {t("Line speed successfully provisioned to", "সংযোগের গতি সফলভাবে বৃদ্ধি পেয়ে দাঁড়িয়েছে:")}{" "}
+                        {t(pageContent.str56En, pageContent.str56Bn)}{" "}
                         <span className="text-brand-cyan font-bold font-mono">{profile?.speed}</span>.
                       </p>
                     </div>
@@ -430,7 +439,7 @@ export default function Portal() {
                       onClick={() => setUpgradeSuccess(false)}
                       className="px-4 py-2 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
                     >
-                      {t("OK", "ঠিক আছে")}
+                      {t(pageContent.str57En, pageContent.str57Bn)}
                     </button>
                   </div>
                 )}

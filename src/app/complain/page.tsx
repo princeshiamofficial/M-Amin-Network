@@ -2,17 +2,26 @@
 
 import React, { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultComplainPageContent } from "@/app/admin/(dashboard)/complain-page/page";
 
 export default function Complain() {
+  const [pageContent, setPageContent] = React.useState(defaultComplainPageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_complain_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translateCategory = (cat: string) => {
-    if (cat === "Support Response Delay") return t("Support Response Delay", "সহায়তা প্রতিক্রিয়ায় বিলম্ব");
-    if (cat === "Frequent Disconnections") return t("Frequent Disconnections", "বারবার সংযোগ বিচ্ছিন্নতা");
-    if (cat === "Billing Discrepancy") return t("Billing Discrepancy", "বিলিং সংক্রান্ত অমিল");
-    if (cat === "Staff Misbehavior") return t("Staff Misbehavior", "কর্মকর্তা বা টেকনিশিয়ানের অশোভন আচরণ");
-    if (cat === "Speed Not Matching Pack") return t("Speed Not Matching Pack", "প্যাকেজ অনুযায়ী স্পিড না পাওয়া");
+    if (cat === "Support Response Delay") return t(pageContent.str1En, pageContent.str1Bn);
+    if (cat === "Frequent Disconnections") return t(pageContent.str2En, pageContent.str2Bn);
+    if (cat === "Billing Discrepancy") return t(pageContent.str3En, pageContent.str3Bn);
+    if (cat === "Staff Misbehavior") return t(pageContent.str4En, pageContent.str4Bn);
+    if (cat === "Speed Not Matching Pack") return t(pageContent.str5En, pageContent.str5Bn);
     return cat;
   };
 
@@ -76,19 +85,16 @@ export default function Complain() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
         <div className="text-center max-w-3xl mx-auto">
           <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t("Grievance Redressal", "অভিযোগ প্রতিকার")}
+            {t(pageContent.str6En, pageContent.str6Bn)}
           </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-            {t("Complain Box & ", "অভিযোগ বক্স ও ")}
+            {t(pageContent.str7En, pageContent.str7Bn)}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t("Grievances", "আপত্তি")}
+              {t(pageContent.str8En, pageContent.str8Bn)}
             </span>
           </h1>
           <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            {t(
-              "Are you experiencing recurring speed drops, long support delays, or billing discrepancies? Submit a formal complaint directly to our senior administration queue.",
-              "আপনি কি ক্রমাগত স্পিড কমে যাওয়া, সহায়তায় দীর্ঘ বিলম্ব বা বিল সংক্রান্ত কোনো সমস্যার সম্মুখীন হচ্ছেন? আমাদের সিনিয়র অ্যাডমিনিস্ট্রেশনের কাছে সরাসরি একটি আনুষ্ঠানিক অভিযোগ জমা দিন।"
-            )}
+            {t(pageContent.str9En, pageContent.str9Bn)}
           </p>
         </div>
       </div>
@@ -101,21 +107,18 @@ export default function Complain() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <span className="bg-brand-cyan/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-                    {t("Formal Complaint", "আনুষ্ঠানিক অভিযোগ")}
+                    {t(pageContent.str10En, pageContent.str10Bn)}
                   </span>
-                  <h3 className="text-slate-900 font-extrabold text-lg mt-3">{t("File a Complaint Ticket", "অভিযোগ টিকিট দাখিল করুন")}</h3>
+                  <h3 className="text-slate-900 font-extrabold text-lg mt-3">{t(pageContent.str11En, pageContent.str11Bn)}</h3>
                   <p className="text-xs text-slate-500 mt-1">
-                    {t(
-                      "Complaints filed here bypass standard queues and are reviewed directly by the M Amin Network operations manager within 12 hours.",
-                      "এখানে দাখিলকৃত অভিযোগগুলো সাধারণ কিউ এড়িয়ে সরাসরি এম আমিন নেটওয়ার্কের অপারেশন ম্যানেজারের কাছে পৌঁছাবে এবং ১২ ঘণ্টার মধ্যে পর্যালোচনা করা হবে।"
-                    )}
+                    {t(pageContent.str12En, pageContent.str12Bn)}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Client ID (Required)", "ক্লায়েন্ট আইডি (আবশ্যক)")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str13En, pageContent.str13Bn)}</label>
                       <input
                         type="text"
                         required
@@ -126,7 +129,7 @@ export default function Complain() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Your Full Name", "আপনার নাম")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str14En, pageContent.str14Bn)}</label>
                       <input
                         type="text"
                         required
@@ -140,7 +143,7 @@ export default function Complain() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str15En, pageContent.str15Bn)}</label>
                       <input
                         type="tel"
                         required
@@ -151,29 +154,29 @@ export default function Complain() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Complaint Category", "অভিযোগের ধরন")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str16En, pageContent.str16Bn)}</label>
                       <select
                         value={form.category}
                         onChange={(e) => setForm({ ...form, category: e.target.value })}
                         className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer"
                       >
-                        <option value="Support Response Delay">{t("Support Response Delay (> 4 hours)", "সহায়তা প্রতিক্রিয়ায় বিলম্ব (> ৪ ঘণ্টা)")}</option>
-                        <option value="Frequent Disconnections">{t("Frequent Disconnections (Physical Signal drop)", "বারবার সংযোগ বিচ্ছিন্নতা (সিগন্যাল ড্রপ)")}</option>
-                        <option value="Billing Discrepancy">{t("Billing / Payment Update failure", "বিল বা পেমেন্ট আপডেট না হওয়া")}</option>
-                        <option value="Staff Misbehavior">{t("Staff / Field Technician Misconduct", "অফিস বা টেকনিশিয়ানের অশোভন আচরণ")}</option>
-                        <option value="Speed Not Matching Pack">{t("Speed not matching package configuration", "প্যাকেজ অনুযায়ী সঠিক স্পিড না পাওয়া")}</option>
+                        <option value="Support Response Delay">{t(pageContent.str17En, pageContent.str17Bn)}</option>
+                        <option value="Frequent Disconnections">{t(pageContent.str18En, pageContent.str18Bn)}</option>
+                        <option value="Billing Discrepancy">{t(pageContent.str19En, pageContent.str19Bn)}</option>
+                        <option value="Staff Misbehavior">{t(pageContent.str20En, pageContent.str20Bn)}</option>
+                        <option value="Speed Not Matching Pack">{t(pageContent.str21En, pageContent.str21Bn)}</option>
                       </select>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Describe the Incident", "ঘটনার বিস্তারিত বিবরণ")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str22En, pageContent.str22Bn)}</label>
                     <textarea
                       required
                       rows={4}
                       value={form.desc}
                       onChange={(e) => setForm({ ...form, desc: e.target.value })}
-                      placeholder={t("Provide details about previous support ticket numbers, dates, times, or field technician names related to your complaint...", "আপনার অভিযোগের সাথে সম্পর্কিত পূর্ববর্তী টিকিট নম্বর, তারিখ, সময় অথবা টেকনিশিয়ানের নাম উল্লেখ করুন...")}
+                      placeholder={t(pageContent.str23En, pageContent.str23Bn)}
                       className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
@@ -185,10 +188,7 @@ export default function Complain() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <span>
-                    {t(
-                      "According to BTRC regulatory standards, M Amin Network logs all grievances. We aim to redress complaints within 24 hours. Formal complain tracking references are shared with telecom audit queues.",
-                      "বিটিআরসি নিয়ন্ত্রক মান অনুযায়ী, এম আমিন নেটওয়ার্ক সমস্ত অভিযোগের লগ সংরক্ষণ করে। আমরা ২৪ ঘণ্টার মধ্যে অভিযোগের সমাধান করতে প্রতিজ্ঞাবদ্ধ। আনুষ্ঠানিক অভিযোগের নম্বরগুলো নিরীক্ষা কিউতে শেয়ার করা হয়।"
-                    )}
+                    {t(pageContent.str24En, pageContent.str24Bn)}
                   </span>
                 </div>
 
@@ -200,10 +200,10 @@ export default function Complain() {
                   {submitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t("Registering Complaint...", "অভিযোগ দাখিল করা হচ্ছে...")}
+                      {t(pageContent.str25En, pageContent.str25Bn)}
                     </>
                   ) : (
-                    t("File Formal Complaint", "আনুষ্ঠানিক অভিযোগ জমা দিন")
+                    t(pageContent.str26En, pageContent.str26Bn)
                   )}
                 </button>
               </form>
@@ -216,43 +216,43 @@ export default function Complain() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-slate-900 font-bold text-xl">{t("Complaint Logged!", "অভিযোগ দাখিল হয়েছে!")}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str27En, pageContent.str27Bn)}</h3>
                   <p className="text-sm text-slate-600">
-                    {t("Your formal complaint has been registered under BTRC audit standards.", "আপনার আনুষ্ঠানিক অভিযোগটি বিটিআরসি স্ট্যান্ডার্ডের অধীনে নিবন্ধিত হয়েছে।")}
+                    {t(pageContent.str28En, pageContent.str28Bn)}
                   </p>
                 </div>
 
                 {/* Receipt info */}
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left text-slate-700">
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Complaint ID", "অভিযোগ আইডি")}</span>
+                    <span>{t(pageContent.str29En, pageContent.str29Bn)}</span>
                     <span className="text-brand-blue font-bold">{complaintRef}</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Client Account", "ক্লায়েন্ট আইডি")}</span>
+                    <span>{t(pageContent.str30En, pageContent.str30Bn)}</span>
                     <span className="text-slate-800 font-bold">{form.clientId.toUpperCase()}</span>
                   </div>
                   <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                    <span>{t("Grievance Category", "অভিযোগের ধরন")}</span>
+                    <span>{t(pageContent.str31En, pageContent.str31Bn)}</span>
                     <span className="text-slate-800 font-semibold">{translateCategory(form.category)}</span>
                   </div>
                   <div className="flex justify-between text-xs text-slate-500">
-                    <span>{t("Resolution SLA", "সমাধানের সময় (SLA)")}</span>
-                    <span className="text-emerald-600 font-bold">&lt; {t("24 Hours", "২৪ ঘণ্টা")}</span>
+                    <span>{t(pageContent.str32En, pageContent.str32Bn)}</span>
+                    <span className="text-emerald-600 font-bold">&lt; {t(pageContent.str33En, pageContent.str33Bn)}</span>
                   </div>
                 </div>
 
                 <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
-                  {t("An operations administrator will contact you at", "খুব শীঘ্রই একজন অপারেশন কর্মকর্তা আপনার নম্বর")}{" "}
+                  {t(pageContent.str34En, pageContent.str34Bn)}{" "}
                   <span className="text-slate-900 font-bold">{form.phone}</span>{" "}
-                  {t("to investigate this ticket details and discuss resolution steps.", "এ যোগাযোগ করবেন এবং অভিযোগটি সমাধানের উদ্যোগ নেবেন।")}
+                  {t(pageContent.str35En, pageContent.str35Bn)}
                 </p>
 
                 <button
                   onClick={handleReset}
                   className="px-6 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300/80 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t("Close Window", "উইন্ডো বন্ধ করুন")}
+                  {t(pageContent.str36En, pageContent.str36Bn)}
                 </button>
               </div>
             )}

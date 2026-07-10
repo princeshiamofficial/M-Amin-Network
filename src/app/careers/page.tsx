@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { defaultCareersPageContent } from "@/app/admin/(dashboard)/careers-page/page";
 
 interface JobOpening {
   title: string;
@@ -18,54 +19,62 @@ interface JobOpening {
 }
 
 export default function Careers() {
+  const [pageContent, setPageContent] = React.useState(defaultCareersPageContent);
+  React.useEffect(() => {
+    const s = localStorage.getItem("m_amin_careers_page_content");
+    if (s) {
+      try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
+    }
+  }, []);
+
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translateDept = (dept: string) => {
-    if (dept === "Network Engineering & Maintenance") return t("Network Engineering & Maintenance", "নেটওয়ার্ক ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ");
-    if (dept === "Helpdesk Operations") return t("Helpdesk Operations", "হেল্পডেস্ক অপারেশনস");
-    if (dept === "Infrastructure Operations") return t("Infrastructure Operations", "ইনফ্রাস্ট্রাকচার অপারেশনস");
+    if (dept === "Network Engineering & Maintenance") return t(pageContent.str1En, pageContent.str1Bn);
+    if (dept === "Helpdesk Operations") return t(pageContent.str2En, pageContent.str2Bn);
+    if (dept === "Infrastructure Operations") return t(pageContent.str3En, pageContent.str3Bn);
     return dept;
   };
 
   const translateJobTitle = (title: string) => {
-    if (title === "Support Technician (Field Operations)") return t("Support Technician (Field Operations)", "সহায়তা টেকনিশিয়ান (ফিল্ড অপারেশন)");
-    if (title === "Customer Support Executive") return t("Customer Support Executive", "কাস্টমার সাপোর্ট এক্সিকিউটিভ");
-    if (title === "Junior Network Engineer") return t("Junior Network Engineer", "জুনিয়র নেটওয়ার্ক ইঞ্জিনিয়ার");
+    if (title === "Support Technician (Field Operations)") return t(pageContent.str4En, pageContent.str4Bn);
+    if (title === "Customer Support Executive") return t(pageContent.str5En, pageContent.str5Bn);
+    if (title === "Junior Network Engineer") return t(pageContent.str6En, pageContent.str6Bn);
     return title;
   };
 
   const translateLocation = (loc: string) => {
-    if (loc === "South Keraniganj") return t("South Keraniganj", "দক্ষিণ কেরানীগঞ্জ");
-    if (loc === "Kadomtoli Office, Dhaka") return t("Kadomtoli Office, Dhaka", "কদমতলী অফিস, ঢাকা");
+    if (loc === "South Keraniganj") return t(pageContent.str7En, pageContent.str7Bn);
+    if (loc === "Kadomtoli Office, Dhaka") return t(pageContent.str8En, pageContent.str8Bn);
     return loc;
   };
 
   const translateJobType = (type: string) => {
-    if (type === "Full-Time") return t("Full Time", "ফুল টাইম");
+    if (type === "Full-Time") return t(pageContent.str9En, pageContent.str9Bn);
     return type;
   };
 
   const translateJobDesc = (desc: string) => {
-    if (desc.startsWith("We are looking for dedicated")) return t("We are looking for dedicated field technicians to lay fiber cables, splice optical lines, install ONTs, and troubleshoot client premises issues.", "আমরা ফাইবার ক্যাবল স্থাপন, অপটিক্যাল লাইন স্প্লাইসিং, ওএনটি ইনস্টল এবং গ্রাহকের সংযোগ সমস্যার সমাধান করার জন্য ডেডিকেটেড ফিল্ড টেকনিশিয়ান খুঁজছি।");
-    if (desc.startsWith("Manage customer queries")) return t("Manage customer queries, guide clients through router reboots, catalog support tickets, and direct field teams to fiber line breaks.", "গ্রাহকের জিজ্ঞাসা পরিচালনা, রাউটার রিবুট গাইডলাইন প্রদান, সাপোর্ট টিকিট ক্যাটালগ এবং ফিল্ড টিমকে লাইন মেরামতের নির্দেশ প্রদান করা।");
-    if (desc.startsWith("Assist in monitoring the BGP")) return t("Assist in monitoring the BGP network (AS150164), configure OLT splitters, manage DNS and local caching servers (FTP, BDIX).", "বিজিপি নেটওয়ার্ক (AS150164) পর্যবেক্ষণ, ওএলটি স্প্লিটার কনফিগারেশন, ডিএনএস এবং লোকাল ক্যাশিং সার্ভার (এফটিপি, বিডিআইএক্স) পরিচালনায় সহায়তা করা।");
+    if (desc.startsWith("We are looking for dedicated")) return t(pageContent.str10En, pageContent.str10Bn);
+    if (desc.startsWith("Manage customer queries")) return t(pageContent.str11En, pageContent.str11Bn);
+    if (desc.startsWith("Assist in monitoring the BGP")) return t(pageContent.str12En, pageContent.str12Bn);
     return desc;
   };
 
   const translateRequirement = (req: string) => {
-    if (req === "Prior experience in fiber splicing (laser splicing machines)") return t("Prior experience in fiber splicing (laser splicing machines)", "ফাইবার স্প্লাইসিংয়ে (লেজার স্প্লাইসিং মেশিন) পূর্ব অভিজ্ঞতা");
-    if (req === "Familiarity with OLT port configs & client router configurations") return t("Familiarity with OLT port configs & client router configurations", "ওএলটি পোর্ট এবং ক্লায়েন্ট রাউটার কনফিগারেশন সম্পর্কে ধারণা");
-    if (req === "Willingness to travel around South Keraniganj neighborhoods") return t("Willingness to travel around South Keraniganj neighborhoods", "দক্ষিণ কেরানীগঞ্জের বিভিন্ন এলাকায় যাতায়াতের মানসিকতা");
-    if (req === "Excellent communication and problem-solving skills") return t("Excellent communication and problem-solving skills", "চমৎকার যোগাযোগ ও সমস্যা সমাধানের দক্ষতা");
-    if (req === "Higher Secondary Certificate (HSC) or Bachelor degree") return t("Higher Secondary Certificate (HSC) or Bachelor degree", "উচ্চ মাধ্যমিক সার্টিফিকেট (এইচএসসি) বা স্নাতক ডিগ্রি");
-    if (req === "Polite tone and high patience for user support") return t("Polite tone and high patience for user support", "গ্রাহক সেবার জন্য নম্র কণ্ঠস্বর এবং উচ্চ ধৈর্যশীলতা");
-    if (req === "Basic computer knowledge (Google Sheets, ticket dashboards)") return t("Basic computer knowledge (Google Sheets, ticket dashboards)", "বেসিক কম্পিউটার জ্ঞান (গুগল শিট, টিকিট ড্যাশবোর্ড)");
-    if (req === "Ability to speak fluent Bangla (English is a plus)") return t("Ability to speak fluent Bangla (English is a plus)", "সাবলীল বাংলায় কথা বলার ক্ষমতা (ইংরেজি জানা অতিরিক্ত যোগ্যতা হিসেবে বিবেচিত)");
-    if (req === "Diploma in Computer/Telecommunication Engineering or CCNA certified") return t("Diploma in Computer/Telecommunication Engineering or CCNA certified", "কম্পিউটার/টেলিকমিউনিকেশন ইঞ্জিনিয়ারিংয়ে ডিপ্লোমা অথবা সিসিএনএ সার্টিফাইড");
-    if (req === "Familiarity with Mikrotik RouterOS and basic Linux scripting") return t("Familiarity with Mikrotik RouterOS and basic Linux scripting", "মাইক্রোটিক রাউটার ওএস এবং বেসিক লিনাক্স স্ক্রিপ্টিংয়ে ধারণা");
-    if (req === "Understanding of IPv4 subnetting and dynamic BGP routing") return t("Understanding of IPv4 subnetting and dynamic BGP routing", "IPv4 সাবনেটিং এবং ডায়নামিক বিজিপি রাউটিং সম্পর্কে ধারণা");
-    if (req === "Willingness to work in rotating shifts") return t("Willingness to work in rotating shifts", "রোটেটিং শিফটে কাজ করার মানসিকতা");
+    if (req === "Prior experience in fiber splicing (laser splicing machines)") return t(pageContent.str13En, pageContent.str13Bn);
+    if (req === "Familiarity with OLT port configs & client router configurations") return t(pageContent.str14En, pageContent.str14Bn);
+    if (req === "Willingness to travel around South Keraniganj neighborhoods") return t(pageContent.str15En, pageContent.str15Bn);
+    if (req === "Excellent communication and problem-solving skills") return t(pageContent.str16En, pageContent.str16Bn);
+    if (req === "Higher Secondary Certificate (HSC) or Bachelor degree") return t(pageContent.str17En, pageContent.str17Bn);
+    if (req === "Polite tone and high patience for user support") return t(pageContent.str18En, pageContent.str18Bn);
+    if (req === "Basic computer knowledge (Google Sheets, ticket dashboards)") return t(pageContent.str19En, pageContent.str19Bn);
+    if (req === "Ability to speak fluent Bangla (English is a plus)") return t(pageContent.str20En, pageContent.str20Bn);
+    if (req === "Diploma in Computer/Telecommunication Engineering or CCNA certified") return t(pageContent.str21En, pageContent.str21Bn);
+    if (req === "Familiarity with Mikrotik RouterOS and basic Linux scripting") return t(pageContent.str22En, pageContent.str22Bn);
+    if (req === "Understanding of IPv4 subnetting and dynamic BGP routing") return t(pageContent.str23En, pageContent.str23Bn);
+    if (req === "Willingness to work in rotating shifts") return t(pageContent.str24En, pageContent.str24Bn);
     return req;
   };
 
@@ -263,13 +272,13 @@ export default function Careers() {
   const validateAndNext = () => {
     if (currentStep === 1) {
       if (!applyForm.nameEn || !applyForm.nameBn || !applyForm.email || !applyForm.phone || !applyForm.nidBrc) {
-        alert(t("Please fill in all required fields (marked with *).", "অনুগ্রহ করে সকল তারকা চিহ্নিত (*) প্রয়োজনীয় ক্ষেত্রগুলো পূরণ করুন।"));
+        alert(t(pageContent.str25En, pageContent.str25Bn));
         return;
       }
     }
     if (currentStep === 2) {
       if (!applyForm.presentAddress || (!applyForm.sameAsPresent && !applyForm.permanentAddress)) {
-        alert(t("Please enter present and permanent address details.", "অনুগ্রহ করে বর্তমান এবং স্থায়ী ঠিকানা বিবরণ প্রদান করুন।"));
+        alert(t(pageContent.str26En, pageContent.str26Bn));
         return;
       }
     }
@@ -279,7 +288,7 @@ export default function Careers() {
   const handleApplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!applyForm.agreed || !applyForm.signature) {
-      alert(t("Please agree to the certification terms and provide your signature.", "আবেদনপত্র জমা দিতে আপনার সম্মতি দিন এবং স্বাক্ষর প্রদান করুন।"));
+      alert(t(pageContent.str27En, pageContent.str27Bn));
       return;
     }
 
@@ -381,19 +390,16 @@ export default function Careers() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-              {t("Join M Amin Network", "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন")}
+              {t(pageContent.str28En, pageContent.str28Bn)}
             </span>
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-              {t("Careers & ", "ক্যারিয়ার ও ")}
+              {t(pageContent.str29En, pageContent.str29Bn)}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t("Opportunities", "সুযোগসমূহ")}
+                {t(pageContent.str30En, pageContent.str30Bn)}
               </span>
             </h1>
             <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-              {t(
-                "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.",
-                "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।"
-              )}
+              {t(pageContent.str31En, pageContent.str31Bn)}
             </p>
           </div>
         </div>
@@ -406,9 +412,9 @@ export default function Careers() {
           {/* Open Positions Section Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">{t("Open Positions", "উন্মুক্ত পদসমূহ")}</h2>
+              <h2 className="text-xl font-extrabold text-slate-900">{t(pageContent.str32En, pageContent.str32Bn)}</h2>
               <p className="text-xs text-slate-500 mt-1 font-semibold">
-                {filteredJobs.length} {filteredJobs.length === 1 ? t("position found", "টি পদ পাওয়া গেছে") : t("positions found", "টি পদ পাওয়া গেছে")}
+                {filteredJobs.length} {filteredJobs.length === 1 ? t(pageContent.str33En, pageContent.str33Bn) : t(pageContent.str34En, pageContent.str34Bn)}
               </p>
             </div>
             <button
@@ -432,7 +438,7 @@ export default function Careers() {
               }}
               className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
             >
-              <span>{t("General Application", "সাধারণ আবেদন")}</span>
+              <span>{t(pageContent.str35En, pageContent.str35Bn)}</span>
               <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -451,7 +457,7 @@ export default function Careers() {
                 </span>
                 <input
                   type="text"
-                  placeholder={t("Search title, department, keyword...", "পদবি, বিভাগ বা কিওয়ার্ড অনুসন্ধান করুন...")}
+                  placeholder={t(pageContent.str36En, pageContent.str36Bn)}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-brand-blue transition-all"
@@ -465,10 +471,10 @@ export default function Careers() {
                   onChange={(e) => setSelectedDept(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
-                  <option value="All">{t("All departments", "সকল বিভাগ")}</option>
-                  <option value="Network Engineering & Maintenance">{t("Engineering & Maintenance", "ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ")}</option>
-                  <option value="Helpdesk Operations">{t("Helpdesk Operations", "হেল্পডেস্ক অপারেশনস")}</option>
-                  <option value="Infrastructure Operations">{t("Infrastructure Operations", "ইনফ্রাস্ট্রাকচার অপারেশনস")}</option>
+                  <option value="All">{t(pageContent.str37En, pageContent.str37Bn)}</option>
+                  <option value="Network Engineering & Maintenance">{t(pageContent.str38En, pageContent.str38Bn)}</option>
+                  <option value="Helpdesk Operations">{t(pageContent.str2En, pageContent.str2Bn)}</option>
+                  <option value="Infrastructure Operations">{t(pageContent.str3En, pageContent.str3Bn)}</option>
                 </select>
               </div>
 
@@ -479,8 +485,8 @@ export default function Careers() {
                   onChange={(e) => setSelectedType(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
-                  <option value="All">{t("All types", "সকল টাইপ")}</option>
-                  <option value="Full-Time">{t("Full-Time", "পূর্ণকালীন")}</option>
+                  <option value="All">{t(pageContent.str39En, pageContent.str39Bn)}</option>
+                  <option value="Full-Time">{t(pageContent.str40En, pageContent.str40Bn)}</option>
                 </select>
               </div>
 
@@ -491,9 +497,9 @@ export default function Careers() {
                   onChange={(e) => setSelectedLoc(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
-                  <option value="All">{t("All locations", "সকল লোকেশন")}</option>
-                  <option value="South Keraniganj">{t("South Keraniganj", "দক্ষিণ কেরানীগঞ্জ")}</option>
-                  <option value="Kadomtoli Office, Dhaka">{t("Kadomtoli Office, Dhaka", "কদমতলী অফিস, ঢাকা")}</option>
+                  <option value="All">{t(pageContent.str41En, pageContent.str41Bn)}</option>
+                  <option value="South Keraniganj">{t(pageContent.str7En, pageContent.str7Bn)}</option>
+                  <option value="Kadomtoli Office, Dhaka">{t(pageContent.str8En, pageContent.str8Bn)}</option>
                 </select>
               </div>
             </div>
@@ -547,7 +553,7 @@ export default function Careers() {
                         <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        {job.vacancy} {t("vacancy", "vacancy")}
+                        {job.vacancy} {t(pageContent.str42En, pageContent.str42Bn)}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -559,7 +565,7 @@ export default function Careers() {
                         <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                        {t("Deadline:", "Deadline:")} {job.deadline}
+                        {t(pageContent.str43En, pageContent.str43Bn)} {job.deadline}
                       </span>
                     </div>
 
@@ -569,7 +575,7 @@ export default function Careers() {
                         onClick={() => setDetailsJob(job)}
                         className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
                       >
-                        {t("Details", "বিস্তারিত")}
+                        {t(pageContent.str44En, pageContent.str44Bn)}
                       </button>
                       <button
                         onClick={() => {
@@ -578,7 +584,7 @@ export default function Careers() {
                         }}
                         className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-lg shadow-brand-blue/20"
                       >
-                        {t("Apply Now", "আবেদন করুন")}
+                        {t(pageContent.str45En, pageContent.str45Bn)}
                       </button>
                     </div>
                   </div>
@@ -589,8 +595,8 @@ export default function Careers() {
                 <svg className="w-12 h-12 text-slate-350 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="text-slate-700 font-bold text-sm">{t("No open positions match your search criteria", "কোনো পদের সন্ধান মেলেনি")}</h3>
-                <p className="text-xs text-slate-400 mt-1">{t("Try adjusting your keywords or clearing selected filters.", "অনুগ্রহ করে আপনার ফিল্টার বা কিওয়ার্ড পরিবর্তন করে পুনরায় চেষ্টা করুন।")}</p>
+                <h3 className="text-slate-700 font-bold text-sm">{t(pageContent.str46En, pageContent.str46Bn)}</h3>
+                <p className="text-xs text-slate-400 mt-1">{t(pageContent.str47En, pageContent.str47Bn)}</p>
               </div>
             )}
           </div>
@@ -626,26 +632,26 @@ export default function Careers() {
                 {/* Info List */}
                 <div className="grid grid-cols-2 gap-4 border-y border-slate-100 py-4 text-xs font-semibold text-slate-600">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-normal">{t("Location:", "অবস্থান:")}</span>
+                    <span className="text-slate-400 font-normal">{t(pageContent.str48En, pageContent.str48Bn)}</span>
                     <span>{translateLocation(detailsJob.location)}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-normal">{t("Vacancy:", "শূন্যপদ:")}</span>
-                    <span>{detailsJob.vacancy} {t("position", "টি")}</span>
+                    <span className="text-slate-400 font-normal">{t(pageContent.str49En, pageContent.str49Bn)}</span>
+                    <span>{detailsJob.vacancy} {t(pageContent.str50En, pageContent.str50Bn)}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-normal">{t("Salary:", "বেতন:")}</span>
+                    <span className="text-slate-400 font-normal">{t(pageContent.str51En, pageContent.str51Bn)}</span>
                     <span>{detailsJob.salary} BDT</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-normal">{t("Deadline:", "শেষ সময়:")}</span>
+                    <span className="text-slate-400 font-normal">{t(pageContent.str52En, pageContent.str52Bn)}</span>
                     <span>{detailsJob.deadline}</span>
                   </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">{t("About the Role:", "ভূমিকা সম্পর্কে:")}</h4>
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">{t(pageContent.str53En, pageContent.str53Bn)}</h4>
                   <p className="text-sm text-slate-600 leading-relaxed">
                     {translateJobDesc(detailsJob.desc)}
                   </p>
@@ -653,7 +659,7 @@ export default function Careers() {
 
                 {/* Candidate Requirements */}
                 <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
-                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Candidate Requirements:", "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:")}</h4>
+                  <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t(pageContent.str54En, pageContent.str54Bn)}</h4>
                   <ul className="space-y-2">
                     {detailsJob.requirements.map((req, reqIdx) => (
                       <li key={reqIdx} className="text-xs text-slate-600 flex items-start gap-1.5 leading-relaxed">
@@ -670,7 +676,7 @@ export default function Careers() {
                     onClick={() => setDetailsJob(null)}
                     className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center"
                   >
-                    {t("Close", "বন্ধ করুন")}
+                    {t(pageContent.str55En, pageContent.str55Bn)}
                   </button>
                   <button
                     onClick={() => {
@@ -680,7 +686,7 @@ export default function Careers() {
                     }}
                     className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-lg shadow-brand-blue/15"
                   >
-                    {t("Apply Now", "আবেদন করুন")}
+                    {t(pageContent.str45En, pageContent.str45Bn)}
                   </button>
                 </div>
               </div>
@@ -707,9 +713,9 @@ export default function Careers() {
                 <form onSubmit={handleApplySubmit} className="space-y-6 text-left">
                   {/* Step Header */}
                   <div>
-                    <h3 className="text-slate-900 font-extrabold text-xl">{t("Employment Application", "কর্মসংস্থান আবেদনপত্র")}</h3>
+                    <h3 className="text-slate-900 font-extrabold text-xl">{t(pageContent.str56En, pageContent.str56Bn)}</h3>
                     <p className="text-xs text-slate-500 mt-1 font-semibold">
-                      {t("Position Applied For:", "আবেদনকৃত পদ:")} <span className="text-brand-blue font-black">{translateJobTitle(selectedJob.title)}</span>
+                      {t(pageContent.str57En, pageContent.str57Bn)} <span className="text-brand-blue font-black">{translateJobTitle(selectedJob.title)}</span>
                     </p>
                   </div>
 
@@ -729,11 +735,11 @@ export default function Careers() {
                         <span className={`text-[10px] hidden md:inline font-bold ${
                           currentStep === stepNum ? "text-slate-900" : "text-slate-400"
                         }`}>
-                          {stepNum === 1 && t("Personal", "ব্যক্তিগত")}
-                          {stepNum === 2 && t("Education", "শিক্ষা")}
-                          {stepNum === 3 && t("Experience", "অভিজ্ঞতা")}
-                          {stepNum === 4 && t("Questions", "প্রশ্নাবলী")}
-                          {stepNum === 5 && t("Review & Submit", "রিভিউ ও সাবমিট")}
+                          {stepNum === 1 && t(pageContent.str58En, pageContent.str58Bn)}
+                          {stepNum === 2 && t(pageContent.str59En, pageContent.str59Bn)}
+                          {stepNum === 3 && t(pageContent.str60En, pageContent.str60Bn)}
+                          {stepNum === 4 && t(pageContent.str61En, pageContent.str61Bn)}
+                          {stepNum === 5 && t(pageContent.str62En, pageContent.str62Bn)}
                         </span>
                       </div>
                     ))}
@@ -752,7 +758,7 @@ export default function Careers() {
                             onChange={handleApplyChange}
                             className="text-brand-blue focus:ring-brand-blue"
                           />
-                          {t("Experienced", "অভিজ্ঞ")}
+                          {t(pageContent.str63En, pageContent.str63Bn)}
                         </label>
                         <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
                           <input
@@ -763,13 +769,13 @@ export default function Careers() {
                             onChange={handleApplyChange}
                             className="text-brand-blue focus:ring-brand-blue"
                           />
-                          {t("Fresh", "নতুন (অভিজ্ঞতাহীন)")}
+                          {t(pageContent.str64En, pageContent.str64Bn)}
                         </label>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name (English as per Certificate) *", "পূর্ণ নাম (সার্টিফিকেট অনুযায়ী ইংরেজি) *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str65En, pageContent.str65Bn)}</label>
                           <input
                             id="apply-name-input"
                             type="text"
@@ -782,7 +788,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name (Bangla) *", "পূর্ণ নাম (বাংলা) *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str66En, pageContent.str66Bn)}</label>
                           <input
                             type="text"
                             name="nameBn"
@@ -798,7 +804,7 @@ export default function Careers() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Fathers Name", "পিতার নাম")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str67En, pageContent.str67Bn)}</label>
                             <input
                               type="text"
                               name="fatherName"
@@ -808,7 +814,7 @@ export default function Careers() {
                             />
                           </div>
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Father's Occupation", "পিতার পেশা")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str68En, pageContent.str68Bn)}</label>
                             <input
                               type="text"
                               name="fatherOccupation"
@@ -821,7 +827,7 @@ export default function Careers() {
 
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Mothers Name", "মাতার নাম")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str69En, pageContent.str69Bn)}</label>
                             <input
                               type="text"
                               name="motherName"
@@ -831,7 +837,7 @@ export default function Careers() {
                             />
                           </div>
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Mother's Occupation", "মাতার পেশা")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str70En, pageContent.str70Bn)}</label>
                             <input
                               type="text"
                               name="motherOccupation"
@@ -845,7 +851,7 @@ export default function Careers() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Date of Birth *", "জন্ম তারিখ *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str71En, pageContent.str71Bn)}</label>
                           <input
                             type="date"
                             name="dob"
@@ -856,7 +862,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Place of Birth", "জন্মস্থান")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str72En, pageContent.str72Bn)}</label>
                           <input
                             type="text"
                             name="placeOfBirth"
@@ -868,20 +874,20 @@ export default function Careers() {
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Gender", "লিঙ্গ")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str73En, pageContent.str73Bn)}</label>
                             <select
                               name="gender"
                               value={applyForm.gender}
                               onChange={handleApplyChange}
                               className="bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:outline-none cursor-pointer"
                             >
-                              <option value="Male">{t("Male", "পুরুষ")}</option>
-                              <option value="Female">{t("Female", "নারী")}</option>
-                              <option value="Other">{t("Other", "অন্যান্য")}</option>
+                              <option value="Male">{t(pageContent.str74En, pageContent.str74Bn)}</option>
+                              <option value="Female">{t(pageContent.str75En, pageContent.str75Bn)}</option>
+                              <option value="Other">{t(pageContent.str76En, pageContent.str76Bn)}</option>
                             </select>
                           </div>
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Blood Group", "রক্তের গ্রুপ")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str77En, pageContent.str77Bn)}</label>
                             <input
                               type="text"
                               name="bloodGroup"
@@ -896,21 +902,21 @@ export default function Careers() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Marital Status", "বৈবাহিক অবস্থা")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str78En, pageContent.str78Bn)}</label>
                           <select
                             name="maritalStatus"
                             value={applyForm.maritalStatus}
                             onChange={handleApplyChange}
                             className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none cursor-pointer"
                           >
-                            <option value="Single">{t("Single", "অবিবাহিত")}</option>
-                            <option value="Married">{t("Married", "বিবাহিত")}</option>
-                            <option value="Divorced">{t("Divorced", "তালাকপ্রাপ্ত")}</option>
-                            <option value="Widowed">{t("Widowed", "বিধবা/বিপত্নীক")}</option>
+                            <option value="Single">{t(pageContent.str79En, pageContent.str79Bn)}</option>
+                            <option value="Married">{t(pageContent.str80En, pageContent.str80Bn)}</option>
+                            <option value="Divorced">{t(pageContent.str81En, pageContent.str81Bn)}</option>
+                            <option value="Widowed">{t(pageContent.str82En, pageContent.str82Bn)}</option>
                           </select>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Spouse's Name", "স্বামী/স্ত্রীর নাম")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str83En, pageContent.str83Bn)}</label>
                           <input
                             type="text"
                             name="spouseName"
@@ -921,7 +927,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("No. of Children", "সন্তানের সংখ্যা")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str84En, pageContent.str84Bn)}</label>
                           <input
                             type="number"
                             name="childrenCount"
@@ -935,7 +941,7 @@ export default function Careers() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Religion", "ধর্ম")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str85En, pageContent.str85Bn)}</label>
                           <input
                             type="text"
                             name="religion"
@@ -946,7 +952,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Nationality", "জাতীয়তা")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str86En, pageContent.str86Bn)}</label>
                           <input
                             type="text"
                             name="nationality"
@@ -956,7 +962,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("NID or BRC Card No *", "এনআইডি অথবা জন্ম নিবন্ধন নং *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str87En, pageContent.str87Bn)}</label>
                           <input
                             type="text"
                             name="nidBrc"
@@ -970,7 +976,7 @@ export default function Careers() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Contact Mobile Number *", "মোবাইল নম্বর *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str88En, pageContent.str88Bn)}</label>
                           <input
                             type="tel"
                             name="phone"
@@ -982,7 +988,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address *", "ইমেইল ঠিকানা *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str89En, pageContent.str89Bn)}</label>
                           <input
                             type="email"
                             name="email"
@@ -994,7 +1000,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Emergency Contact Phone", "জরুরি যোগাযোগ নম্বর")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str90En, pageContent.str90Bn)}</label>
                           <input
                             type="tel"
                             name="emergencyContact"
@@ -1013,7 +1019,7 @@ export default function Careers() {
                       {/* Addresses */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Present Address *", "বর্তমান ঠিকানা *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str91En, pageContent.str91Bn)}</label>
                           <textarea
                             name="presentAddress"
                             required
@@ -1026,7 +1032,7 @@ export default function Careers() {
                         </div>
                         <div className="flex flex-col gap-1.5">
                           <div className="flex justify-between items-center">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Permanent Address *", "স্থায়ী ঠিকানা *")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str92En, pageContent.str92Bn)}</label>
                             <label className="flex items-center gap-1.5 text-[10px] font-bold text-brand-blue cursor-pointer">
                               <input
                                 type="checkbox"
@@ -1035,7 +1041,7 @@ export default function Careers() {
                                 onChange={handleApplyChange}
                                 className="rounded text-brand-blue focus:ring-brand-blue w-3 h-3"
                               />
-                              {t("Same as Present", "বর্তমান ঠিকানার অনুরূপ")}
+                              {t(pageContent.str93En, pageContent.str93Bn)}
                             </label>
                           </div>
                           <textarea
@@ -1053,11 +1059,11 @@ export default function Careers() {
 
                       {/* Education Grid */}
                       <div>
-                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t("Educational Qualifications", "শিক্ষাগত যোগ্যতা")}</h4>
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t(pageContent.str94En, pageContent.str94Bn)}</h4>
                         <div className="space-y-4">
                           {/* MBA */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t("Master's (MBA/MSc/MA)", "মাস্টার্স (এমবিএ/এমএসসি)")}</span>
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str95En, pageContent.str95Bn)}</span>
                             <input
                               type="text"
                               name="eduMBA_Uni"
@@ -1088,7 +1094,7 @@ export default function Careers() {
 
                           {/* BBA */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t("Bachelor's (BBA/BSc/BA)", "স্নাতক (বিবিএ/বিএসসি)")}</span>
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str96En, pageContent.str96Bn)}</span>
                             <input
                               type="text"
                               name="eduBBA_Uni"
@@ -1119,7 +1125,7 @@ export default function Careers() {
 
                           {/* HSC */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t("HSC / Diploma", "এইচএসসি / ডিপ্লোমা")}</span>
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str97En, pageContent.str97Bn)}</span>
                             <input
                               type="text"
                               name="eduHSC_Uni"
@@ -1150,7 +1156,7 @@ export default function Careers() {
 
                           {/* SSC */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t("SSC / O' Level", "এসএসসি / ও লেভেল")}</span>
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str98En, pageContent.str98Bn)}</span>
                             <input
                               type="text"
                               name="eduSSC_Uni"
@@ -1181,7 +1187,7 @@ export default function Careers() {
 
                           {/* JSC */}
                           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t("JSC / Equivalent", "জেএসসি / সমমান")}</span>
+                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str99En, pageContent.str99Bn)}</span>
                             <input
                               type="text"
                               name="eduJSC_Uni"
@@ -1218,7 +1224,7 @@ export default function Careers() {
                   {currentStep === 3 && (
                     <div className="space-y-6">
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Other Qualifications (Licenses, Skills, Trainings, Awards, Achievements)", "অন্যান্য যোগ্যতা (লাইসেন্স, দক্ষতা, প্রশিক্ষণ, পুরষ্কার, অর্জন)")}</label>
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str100En, pageContent.str100Bn)}</label>
                         <textarea
                           name="otherQualifications"
                           rows={3}
@@ -1232,13 +1238,13 @@ export default function Careers() {
                       {/* Work Experience dynamic list */}
                       <div>
                         <div className="flex justify-between items-center mb-3">
-                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Work Experience", "কাজের অভিজ্ঞতা (পূর্ববর্তী চাকরি)")}</h4>
+                          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t(pageContent.str101En, pageContent.str101Bn)}</h4>
                           <button
                             type="button"
                             onClick={addExperience}
                             className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold px-3 py-1 rounded-lg transition-colors cursor-pointer"
                           >
-                            + {t("Add Experience Row", "চাকরি যোগ করুন")}
+                            + {t(pageContent.str102En, pageContent.str102Bn)}
                           </button>
                         </div>
 
@@ -1251,13 +1257,13 @@ export default function Careers() {
                                   onClick={() => removeExperience(idx)}
                                   className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold cursor-pointer"
                                 >
-                                  {t("Remove", "বাতিল")}
+                                  {t(pageContent.str103En, pageContent.str103Bn)}
                                 </button>
                               )}
                               
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div className="flex flex-col gap-1">
-                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Company Name", "প্রতিষ্ঠানের নাম")}</label>
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t(pageContent.str104En, pageContent.str104Bn)}</label>
                                   <input
                                     type="text"
                                     value={exp.company}
@@ -1267,7 +1273,7 @@ export default function Careers() {
                                   />
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Designation", "পদবি")}</label>
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t(pageContent.str105En, pageContent.str105Bn)}</label>
                                   <input
                                     type="text"
                                     value={exp.designation}
@@ -1280,7 +1286,7 @@ export default function Careers() {
 
                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div className="flex flex-col gap-1">
-                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Duration (From & To)", "সময়সীমা (শুরু ও শেষ)")}</label>
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t(pageContent.str106En, pageContent.str106Bn)}</label>
                                   <input
                                     type="text"
                                     value={exp.duration}
@@ -1290,7 +1296,7 @@ export default function Careers() {
                                   />
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Monthly Salary (TK)", "মাসিক বেতন (টাকা)")}</label>
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t(pageContent.str107En, pageContent.str107Bn)}</label>
                                   <input
                                     type="text"
                                     value={exp.salary}
@@ -1300,7 +1306,7 @@ export default function Careers() {
                                   />
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t("Reason for Leaving", "চাকরি ছাড়ার কারণ")}</label>
+                                  <label className="text-[10px] text-slate-500 font-bold uppercase">{t(pageContent.str108En, pageContent.str108Bn)}</label>
                                   <input
                                     type="text"
                                     value={exp.reason}
@@ -1315,7 +1321,7 @@ export default function Careers() {
                       </div>
 
                       <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Extra-Curricular Activities", "সহ-শিক্ষা কার্যক্রম")}</label>
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str109En, pageContent.str109Bn)}</label>
                         <input
                           type="text"
                           name="extracurricular"
@@ -1333,7 +1339,7 @@ export default function Careers() {
                     <div className="space-y-6">
                       <div className="space-y-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Do you consider yourself a highly motivated person? Why?", "আপনি কি নিজেকে উচ্চ অনুপ্রাণিত ব্যক্তি মনে করেন? কেন?")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str110En, pageContent.str110Bn)}</label>
                           <textarea
                             name="motivationReason"
                             rows={2}
@@ -1344,7 +1350,7 @@ export default function Careers() {
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("What environments are you comfortable working in?", "কোন পরিবেশে কাজ করতে আপনি সবচেয়ে স্বাচ্ছন্দ্য বোধ করেন?")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str111En, pageContent.str111Bn)}</label>
                           <div className="flex flex-wrap gap-4 p-3 bg-slate-50 border border-slate-100 rounded-xl">
                             <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                               <input
@@ -1355,7 +1361,7 @@ export default function Careers() {
                                 onChange={handleApplyChange}
                                 className="text-brand-blue"
                               />
-                              {t("As a part of a team", "টিমের অংশ হিসেবে")}
+                              {t(pageContent.str112En, pageContent.str112Bn)}
                             </label>
                             <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                               <input
@@ -1366,7 +1372,7 @@ export default function Careers() {
                                 onChange={handleApplyChange}
                                 className="text-brand-blue"
                               />
-                              {t("Leading a team", "টিম লিড হিসেবে")}
+                              {t(pageContent.str113En, pageContent.str113Bn)}
                             </label>
                             <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
                               <input
@@ -1377,13 +1383,13 @@ export default function Careers() {
                                 onChange={handleApplyChange}
                                 className="text-brand-blue"
                               />
-                              {t("Work Individually", "এককভাবে")}
+                              {t(pageContent.str114En, pageContent.str114Bn)}
                             </label>
                           </div>
                         </div>
 
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("What are your expectations from M Amin Network?", "আমাদের সংস্থার নিকট আপনার প্রত্যাশা কি?")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str115En, pageContent.str115Bn)}</label>
                           <textarea
                             name="expectations"
                             rows={2}
@@ -1395,7 +1401,7 @@ export default function Careers() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-2">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Criminal offence history?", "ফৌজদারি মামলার রেকর্ড রয়েছে?")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str116En, pageContent.str116Bn)}</label>
                             <div className="flex gap-4">
                               <label className="flex items-center gap-1.5 text-xs cursor-pointer">
                                 <input
@@ -1406,7 +1412,7 @@ export default function Careers() {
                                   onChange={handleApplyChange}
                                   className="text-brand-blue"
                                 />
-                                {t("Yes", "হ্যাঁ")}
+                                {t(pageContent.str117En, pageContent.str117Bn)}
                               </label>
                               <label className="flex items-center gap-1.5 text-xs cursor-pointer">
                                 <input
@@ -1417,7 +1423,7 @@ export default function Careers() {
                                   onChange={handleApplyChange}
                                   className="text-brand-blue"
                                 />
-                                {t("No", "না")}
+                                {t(pageContent.str118En, pageContent.str118Bn)}
                               </label>
                             </div>
                             {applyForm.criminalOffence === "Yes" && (
@@ -1433,7 +1439,7 @@ export default function Careers() {
                           </div>
 
                           <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-2">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Any relative working in M Amin Network?", "কোন আত্মীয় আমাদের সংস্থায় কর্মরত আছেন?")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str119En, pageContent.str119Bn)}</label>
                             <div className="flex gap-4">
                               <label className="flex items-center gap-1.5 text-xs cursor-pointer">
                                 <input
@@ -1444,7 +1450,7 @@ export default function Careers() {
                                   onChange={handleApplyChange}
                                   className="text-brand-blue"
                                 />
-                                {t("Yes", "হ্যাঁ")}
+                                {t(pageContent.str117En, pageContent.str117Bn)}
                               </label>
                               <label className="flex items-center gap-1.5 text-xs cursor-pointer">
                                 <input
@@ -1455,7 +1461,7 @@ export default function Careers() {
                                   onChange={handleApplyChange}
                                   className="text-brand-blue"
                                 />
-                                {t("No", "না")}
+                                {t(pageContent.str118En, pageContent.str118Bn)}
                               </label>
                             </div>
                             {applyForm.relativeWorking === "Yes" && (
@@ -1484,11 +1490,11 @@ export default function Careers() {
 
                       {/* References */}
                       <div>
-                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t("References (Provide Two)", "তথ্য সূত্র/রেফারেন্স (দুটি প্রদান করুন)")}</h4>
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t(pageContent.str120En, pageContent.str120Bn)}</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {/* Reference 1 */}
                           <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl space-y-2">
-                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t("Reference 1", "রেফারেন্স ১")}</h5>
+                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t(pageContent.str121En, pageContent.str121Bn)}</h5>
                             <input
                               type="text"
                               name="ref1_name"
@@ -1517,7 +1523,7 @@ export default function Careers() {
 
                           {/* Reference 2 */}
                           <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl space-y-2">
-                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t("Reference 2", "রেফারেন্স ২")}</h5>
+                            <h5 className="text-[10px] font-bold text-slate-500 uppercase">{t(pageContent.str122En, pageContent.str122Bn)}</h5>
                             <input
                               type="text"
                               name="ref2_name"
@@ -1553,20 +1559,20 @@ export default function Careers() {
                     <div className="space-y-6">
                       {/* Read-only Review Summary */}
                       <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 text-xs space-y-3">
-                        <h4 className="font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2">{t("Confirm Application Summary", "আবেদনপত্রের সারসংক্ষেপ নিশ্চিত করুন")}</h4>
+                        <h4 className="font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2">{t(pageContent.str123En, pageContent.str123Bn)}</h4>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                          <div><span className="text-slate-400">{t("Candidate Type:", "আবেদনকারীর ধরন:")}</span> <strong className="text-slate-700">{applyForm.experienceType}</strong></div>
-                          <div><span className="text-slate-400">{t("Applicant Name (EN):", "নাম (ইংরেজি):")}</span> <strong className="text-slate-700">{applyForm.nameEn}</strong></div>
-                          <div><span className="text-slate-400">{t("Mobile Phone:", "মোবাইল নম্বর:")}</span> <strong className="text-slate-700">{applyForm.phone}</strong></div>
-                          <div><span className="text-slate-400">{t("Email ID:", "ইমেইল:")}</span> <strong className="text-slate-700">{applyForm.email}</strong></div>
-                          <div><span className="text-slate-400">{t("NID/BRC NO:", "এনআইডি/জন্ম নিবন্ধন:")}</span> <strong className="text-slate-700">{applyForm.nidBrc}</strong></div>
-                          <div><span className="text-slate-400">{t("Date of Birth:", "জন্ম তারিখ:")}</span> <strong className="text-slate-700">{applyForm.dob}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str124En, pageContent.str124Bn)}</span> <strong className="text-slate-700">{applyForm.experienceType}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str125En, pageContent.str125Bn)}</span> <strong className="text-slate-700">{applyForm.nameEn}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str126En, pageContent.str126Bn)}</span> <strong className="text-slate-700">{applyForm.phone}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str127En, pageContent.str127Bn)}</span> <strong className="text-slate-700">{applyForm.email}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str128En, pageContent.str128Bn)}</span> <strong className="text-slate-700">{applyForm.nidBrc}</strong></div>
+                          <div><span className="text-slate-400">{t(pageContent.str129En, pageContent.str129Bn)}</span> <strong className="text-slate-700">{applyForm.dob}</strong></div>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Expected Salary Range (Monthly TK) *", "প্রত্যাশিত মাসিক বেতন (টাকা) *")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str130En, pageContent.str130Bn)}</label>
                           <input
                             type="text"
                             name="expectedSalary"
@@ -1578,7 +1584,7 @@ export default function Careers() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Application Date", "আবেদনের তারিখ")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str131En, pageContent.str131Bn)}</label>
                           <input
                             type="date"
                             name="dateOfApply"
@@ -1591,17 +1597,14 @@ export default function Careers() {
 
                       {/* Declaration */}
                       <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl space-y-4">
-                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t("Applicant Certification", "আবেদনকারীর ঘোষণা")}</h4>
+                        <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">{t(pageContent.str132En, pageContent.str132Bn)}</h4>
                         <p className="text-[10px] sm:text-xs text-slate-500 leading-relaxed text-justify">
-                          {t(
-                            "I certify that the information contained in this employment application is true and complete to the best of my knowledge. I understand that false or misleading information or omissions may result in immediate rejection of my application or termination of employment if hired.",
-                            "আমি ঘোষণা করছি যে, এই আবেদনপত্রে আমার প্রদত্ত সকল তথ্য সত্য, সঠিক এবং সম্পূর্ণ। আমি বুঝতে পারছি যে, কোনো অসত্য, মিথ্যা বা বিভ্রান্তিকর তথ্য প্রদান করা হলে বা কোনো গুরুত্বপূর্ণ তথ্য গোপন রাখা হলে আমার আবেদনপত্র সরাসরি বাতিল করা হতে পারে বা চাকরিতে যোগদানের পরও যেকোনো সময় চাকরি থেকে অব্যাহতি দেওয়া হতে পারে।"
-                          )}
+                          {t(pageContent.str133En, pageContent.str133Bn)}
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                           <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Applicant Signature (Type Name) *", "আবেদনকারীর স্বাক্ষর (আপনার নাম) *")}</label>
+                            <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str134En, pageContent.str134Bn)}</label>
                             <input
                               type="text"
                               name="signature"
@@ -1623,7 +1626,7 @@ export default function Careers() {
                                 onChange={handleApplyChange}
                                 className="rounded text-brand-blue focus:ring-brand-blue mt-0.5"
                               />
-                              <span>{t("I certify and agree to the above terms *", "আমি স্বাক্ষর করছি এবং উপরোক্ত শর্তাবলীতে সম্মত আছি *")}</span>
+                              <span>{t(pageContent.str135En, pageContent.str135Bn)}</span>
                             </label>
                           </div>
                         </div>
@@ -1639,7 +1642,7 @@ export default function Careers() {
                       onClick={() => setCurrentStep((prev) => prev - 1)}
                       className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {t("Back", "পূর্ববর্তী")}
+                      {t(pageContent.str136En, pageContent.str136Bn)}
                     </button>
                     
                     {currentStep < 5 ? (
@@ -1648,7 +1651,7 @@ export default function Careers() {
                         onClick={validateAndNext}
                         className="px-6 py-2.5 rounded-xl bg-brand-blue text-white text-xs font-extrabold transition-colors cursor-pointer hover:bg-brand-blue/90"
                       >
-                        {t("Continue", "পরবর্তী")}
+                        {t(pageContent.str137En, pageContent.str137Bn)}
                       </button>
                     ) : (
                       <button
@@ -1659,10 +1662,10 @@ export default function Careers() {
                         {submitting ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            {t("Submitting...", "জমাদান হচ্ছে...")}
+                            {t(pageContent.str138En, pageContent.str138Bn)}
                           </>
                         ) : (
-                          t("Submit Application", "আবেদন জমা দিন")
+                          t(pageContent.str139En, pageContent.str139Bn)
                         )}
                       </button>
                     )}
@@ -1677,25 +1680,22 @@ export default function Careers() {
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="text-slate-900 font-bold text-xl">{t("Application Received Successfully!", "আবেদনপত্র সফলভাবে গৃহীত হয়েছে!")}</h3>
+                    <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str140En, pageContent.str140Bn)}</h3>
                     <p className="text-sm text-slate-600">
-                      {t("Thank you", "ধন্যবাদ")}, <span className="text-slate-800 font-bold">{applyForm.nameEn}</span>. {t("We have saved your application request for", "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:")}{" "}
+                      {t(pageContent.str141En, pageContent.str141Bn)}, <span className="text-slate-800 font-bold">{applyForm.nameEn}</span>. {t(pageContent.str142En, pageContent.str142Bn)}{" "}
                       <span className="text-brand-blue font-bold">{translateJobTitle(selectedJob.title)}</span>।
                     </p>
                   </div>
 
                   <p className="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
-                    {t(
-                      "Our HR team will review your qualifications, references, and credentials as per your submitted employment form. If your background aligns with our operational needs, our office coordinator will contact you to schedule an interview at our Kadomtoli branch.",
-                      "আমাদের এইচআর বিভাগ আপনার প্রদত্ত তথ্য সূত্র, শিক্ষাগত যোগ্যতা এবং অভিজ্ঞতার রেকর্ড পর্যালোচনা করবে। আপনার আবেদনটি যদি আমাদের চাহিদার সাথে সামঞ্জস্যপূর্ণ হয়, তবে পরবর্তী সরাসরি সাক্ষাৎকারের জন্য আমাদের অফিস কো-অর্ডিনেটর কদমতলী শাখা থেকে আপনার সাথে যোগাযোগ করবেন।"
-                    )}
+                    {t(pageContent.str143En, pageContent.str143Bn)}
                   </p>
 
                   <button
                     onClick={resetForm}
                     className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                   >
-                    {t("Close Window", "উইন্ডো বন্ধ করুন")}
+                    {t(pageContent.str144En, pageContent.str144Bn)}
                   </button>
                 </div>
               )}

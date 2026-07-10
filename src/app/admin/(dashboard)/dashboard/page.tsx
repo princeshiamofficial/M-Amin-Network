@@ -70,6 +70,8 @@ interface Payment {
   amount: number;
   gateway: string;
   date: string;
+  dueDate?: string;
+  paidDate?: string;
 }
 
 interface ContactMessage {
@@ -164,6 +166,20 @@ interface FooterContent {
   facebook: string;
   youtube: string;
   copyrightText: string;
+  copyrightTextBn: string;
+  aboutTextEn: string;
+  aboutTextBn: string;
+  asnText: string;
+  btrcTextEn: string;
+  btrcTextBn: string;
+  addressEn: string;
+  addressBn: string;
+  phone: string;
+  email: string;
+  aff1En: string;
+  aff1Bn: string;
+  aff2En: string;
+  aff2Bn: string;
 }
 
 interface ServiceHighlight {
@@ -225,7 +241,6 @@ const tabUrls: Record<string, string> = {
   "Package Requests": "/admin/package-requests",
   "Contact Messages": "/admin/contact-messages",
   "Complaints": "/admin/complaints",
-  "Realtime Demo": "/admin/realtime-demo",
   "Jobs": "/admin/jobs",
   "Job Applications": "/admin/job-applications",
   "Testimonials": "/admin/testimonials",
@@ -244,7 +259,6 @@ const tabUrls: Record<string, string> = {
   "Users & Roles": "/admin/users-roles",
   "Security": "/admin/security",
   "SEO Audit": "/admin/seo-audit",
-  "My Shortcuts": "/admin/my-shortcuts",
 };
 
 export default function AdminDashboardPage() {
@@ -355,7 +369,21 @@ export default function AdminDashboardPage() {
   const [footerContent, setFooterContent] = useState<FooterContent>({
     facebook: "https://facebook.com/maminnetwork",
     youtube: "https://youtube.com/maminnetwork",
-    copyrightText: "Ã‚Â© 2026 M Amin Network. All Rights Reserved.",
+    copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
+    copyrightTextBn: "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।",
+    aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+    aboutTextBn: "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।",
+    asnText: "AS150164",
+    btrcTextEn: "BTRC Licensed",
+    btrcTextBn: "বিটিআরসি অনুমোদিত",
+    addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
+    addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
+    phone: "+880 1707-009267",
+    email: "info@m-aminnetwork.com",
+    aff1En: "ISPAB MEMBER",
+    aff1Bn: "আইএসপিএবি সদস্য",
+    aff2En: "AS150164 BGP NETWORK",
+    aff2Bn: "AS150164 বিজিপি নেটওয়ার্ক",
   });
   const [serviceHighlights, setServiceHighlights] = useState<ServiceHighlight[]>([]);
   const [serviceReviews, setServiceReviews] = useState<ServiceReview[]>([]);
@@ -907,8 +935,55 @@ export default function AdminDashboardPage() {
       const defaultAbout = { storyTitle: "Our Story & Mission", storyBody: "Founded with a vision to connect every household in Southern Keraniganj with premium fiber internet, M Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7." };
       const defaultContact = { headline: "Get in Touch With Us", officeHours: "Saturday - Thursday: 09:00 AM - 10:00 PM", mapEmbedUrl: "https://maps.google.com" };
       const defaultComp = { guidelineTitle: "Submitting Formal Grievances (BTRC SLA Compliance)", guidelineBody: "Under BTRC guidelines, clients may lodge formal complaints here. All submissions generate trace IDs. Tickets are resolved within standard BTRC SLA frames (24-48 hrs)." };
-      const defaultFoot = { facebook: "https://facebook.com/maminnetwork", youtube: "https://youtube.com/maminnetwork", copyrightText: "Ã‚Â© 2026 M Amin Network. All Rights Reserved." };
+      const defaultFoot = {
+        facebook: "https://facebook.com/maminnetwork",
+        youtube: "https://youtube.com/maminnetwork",
+        instagram: "https://instagram.com/maminnetwork",
+        twitter: "https://x.com/maminnetwork",
+        linkedin: "https://linkedin.com/company/maminnetwork",
+        copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
+        copyrightTextBn: "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।",
+        aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+        aboutTextBn: "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।",
+        asnText: "AS150164",
+        btrcTextEn: "BTRC Licensed",
+        btrcTextBn: "বিটিআরসি অনুমোদিত",
+        addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
+        addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
+        phone: "+880 1707-009267",
+        email: "info@m-aminnetwork.com",
+        aff1En: "ISPAB MEMBER",
+        aff1Bn: "আইএসপিএবি সদস্য",
+        aff2En: "AS150164 BGP NETWORK",
+        aff2Bn: "AS150164 বিজিপি নেটওয়ার্ক",
+        quickLinksTitleEn: "Quick Links",
+        quickLinksTitleBn: "কুইক লিংক",
+        contactTitleEn: "Contact Info",
+        contactTitleBn: "যোগাযোগ",
+        affiliationTitleEn: "Our Affiliations",
+        affiliationTitleBn: "আমাদের অধিভুক্তি",
+        affiliationDescEn: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
+        affiliationDescBn: "আমরা ইন্টারনেট সার্ভিস প্রোভাইডার অ্যাসোসিয়েশন অব বাংলাদেশ (ISPAB)-এর একজন গর্বিত ও সক্রিয় সদস্য।",
+        privacyTextEn: "Privacy Policy",
+        privacyTextBn: "গোপনীয়তা নীতি",
+        termsTextEn: "Terms of Service",
+        termsTextBn: "ব্যবহারের শর্তাবলী",
+        brandTextEn: "Keraniganj ISP",
+        brandTextBn: "কেরানীগঞ্জ আইএসপি"
+      };
       const defaultSys = { peeringBandwidthLimit: "10 Gbps", maintenanceMode: false };
+      const defaultNavLinks = [
+        { nameEn: "Home", nameBn: "হোম", href: "/" },
+        { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
+        { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
+        { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
+        { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
+        { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
+        { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
+        { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
+        { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
+        { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+      ];
 
       localStorage.setItem("m_amin_site_content", JSON.stringify(defaultSite));
       localStorage.setItem("m_amin_home_sections", JSON.stringify(defaultHome));
@@ -919,6 +994,71 @@ export default function AdminDashboardPage() {
       localStorage.setItem("m_amin_complaint_content_guidelines", JSON.stringify(defaultComp));
       localStorage.setItem("m_amin_footer_content", JSON.stringify(defaultFoot));
       localStorage.setItem("m_amin_system_config", JSON.stringify(defaultSys));
+      localStorage.setItem("m_amin_nav_links", JSON.stringify(defaultNavLinks));
+      const defaultFeatures = [
+        {
+          titleEn: "100% Fiber Optic (FTTH)",
+          titleBn: "১০০% ফাইবার অপটিক (FTTH)",
+          descEn: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.",
+          descBn: "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।",
+          iconName: "Zap"
+        },
+        {
+          titleEn: "Dedicated BGP Routing",
+          titleBn: "ডেডিকেটেড বিজিপি রাউটিং",
+          descEn: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.",
+          descBn: "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।",
+          iconName: "Wifi"
+        },
+        {
+          titleEn: "Low-Ping Gamer Optimizations",
+          titleBn: "লো-পিং গেমার অপ্টিমাইজেশান",
+          descEn: "Specialized low-latency paths to Southeast Asia and European servers (PUBG, Free Fire, CS2, Valorant). Zero packet loss, steady pings, and jitter control.",
+          descBn: "দক্ষিণ-পূর্ব এশিয়া ও ইউরোপীয় সার্ভারে বিশেষায়িত লো-লেটেন্সি পাথ (PUBG, Free Fire, CS2, Valorant)। শূন্য প্যাকেট লস, স্থির পিং এবং জিটার কন্ট্রোল।",
+          iconName: "Gamepad2"
+        },
+        {
+          titleEn: "24/7 Priority SLA Support",
+          titleBn: "২৪/৭ অগ্রাধিকার SLA সাপোর্ট",
+          descEn: "No waiting for hours. Our localized support hub in South Keraniganj ensures our field technicians are dispatched to your home or office in record time.",
+          descBn: "ঘণ্টার পর ঘণ্টা অপেক্ষা করতে হবে না। দক্ষিণ কেরানীগঞ্জে আমাদের লোকাল সাপোর্ট হাব নিশ্চিত করে যে আমাদের টেকনিশিয়ানরা রেকর্ড সময়ে আপনার বাসা বা অফিসে পৌঁছে যাবে।",
+          iconName: "LifeBuoy"
+        },
+        {
+          titleEn: "BDIX & Local FTP Access",
+          titleBn: "BDIX ও লোকাল এফটিপি অ্যাক্সেস",
+          descEn: "Get unlimited speeds of up to 100 Mbps to localized Bangladesh Internet Exchange (BDIX) resources, local FTP server movies, live TV, and games caches.",
+          descBn: "বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) রিসোর্স, লোকাল এফটিপি মুভি, লাইভ টিভি এবং গেম ক্যাশে ১০০ এমবিপিএস পর্যন্ত আনলিমিটেড স্পিড পান।",
+          iconName: "Cloud"
+        },
+        {
+          titleEn: "Corporate Dedicated Backup",
+          titleBn: "কর্পোরেট ডেডিকেটেড ব্যাকআপ",
+          descEn: "Dual backbones with auto-failover, ensuring continuous SLA-backed business operations. Static IPs, multi-router protocols, and direct client portal support.",
+          descBn: "অটো-ফেইলওভার সহ ডুয়াল ব্যাকবোন, যা অব্যাহত SLA-সমর্থিত ব্যবসায়িক কার্যক্রম নিশ্চিত করে। স্ট্যাটিক আইপি এবং ডিরেক্ট ক্লায়েন্ট সাপোর্ট।",
+          iconName: "Building2"
+        }
+      ];
+      localStorage.setItem("m_amin_network_features", JSON.stringify(defaultFeatures));
+      const defaultBadges = [
+        { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
+        { textEn: "AS150164 BGP NETWORK", textBn: "AS150164 বিজিপি নেটওয়ার্ক", isCyan: true }
+      ];
+      localStorage.setItem("m_amin_footer_badges", JSON.stringify(defaultBadges));
+      const defaultLicenses = [
+        { textEn: "ASN: AS150164", textBn: "ASN: AS150164", isMono: true, colorStyle: "cyan" },
+        { textEn: "BTRC Licensed", textBn: "বিটিআরসি অনুমোদিত", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
+      ];
+      localStorage.setItem("m_amin_footer_licenses", JSON.stringify(defaultLicenses));
+      localStorage.setItem("m_amin_footer_phones", JSON.stringify(["+880 1707-009267"]));
+      
+      const defaultHeroMetrics = [
+        { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ" },
+        { value: "2,000+", titleEn: "Active Clients", titleBn: "সক্রিয় গ্রাহক", descEn: "Trusted by homes & businesses", descBn: "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার" },
+        { value: "10+", titleEn: "Cities Served", titleBn: "পরিষেবা এলাকা", descEn: "Across South Keraniganj", descBn: "দক্ষিণ কেরানীগঞ্জ জুড়ে" },
+        { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট" },
+      ];
+      localStorage.setItem("m_amin_hero_metrics", JSON.stringify(defaultHeroMetrics));
 
       setClaims(defaultClaims);
       setComplaints(defaultComplaints);

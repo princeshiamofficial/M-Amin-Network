@@ -20,11 +20,14 @@ import { MoreVertical, Trash2 } from "lucide-react";
 interface Payment {
   id: string; clientId: string; name: string; phone: string;
   planName: string; speed: string; amount: number; gateway: string; date: string;
+  status?: string;
+  dueDate?: string;
+  paidDate?: string;
 }
 
 const defaultPayments: Payment[] = [
-  { id: "TXN-88291", clientId: "SUB-88293", name: "Mehan Ahmed", phone: "01707009267", planName: "Home Premium", speed: "50 Mbps", amount: 1200, gateway: "bKash", date: "7/1/2026, 10:15 AM" },
-  { id: "TXN-19401", clientId: "SUB-19402", name: "Sheikh Nabil", phone: "01928492049", planName: "Gamer Pack", speed: "30 Mbps", amount: 900, gateway: "Nagad", date: "7/1/2026, 2:30 PM" },
+  { id: "TXN-88291", clientId: "SUB-88293", name: "Mehan Ahmed", phone: "01707009267", planName: "Home Premium", speed: "50 Mbps", amount: 1200, gateway: "bKash", date: "7/1/2026, 10:15 AM", dueDate: "05 July 2026", paidDate: "7/1/2026, 10:15 AM" },
+  { id: "TXN-19401", clientId: "SUB-19402", name: "Sheikh Nabil", phone: "01928492049", planName: "Gamer Pack", speed: "30 Mbps", amount: 900, gateway: "Nagad", date: "7/1/2026, 2:30 PM", dueDate: "05 July 2026", paidDate: "7/1/2026, 2:30 PM" },
 ];
 
 export default function BillsPage() {
@@ -53,30 +56,51 @@ export default function BillsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Transaction ID</TableHead>
-              <TableHead>Subscriber</TableHead>
-              <TableHead>Gateway Method</TableHead>
-              <TableHead>Amount Paid</TableHead>
-              <TableHead>Timestamp</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Client ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Method</TableHead>
+              <TableHead>Due Date</TableHead>
+              <TableHead>Paid Date</TableHead>
+              <TableHead>TXN ID</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-slate-400">No payment transaction records found.</TableCell>
+                <TableCell colSpan={10} className="py-8 text-center text-slate-400">No payment transaction records found.</TableCell>
               </TableRow>
             ) : (
               payments.map((p) => (
                 <TableRow key={p.id}>
+                  <TableCell className="font-semibold text-slate-700 font-mono">{p.clientId || "N/A"}</TableCell>
+                  <TableCell className="font-extrabold text-slate-800">{p.name}</TableCell>
+                  <TableCell className="font-mono text-slate-600 text-xs">{p.phone}</TableCell>
+                  <TableCell className="font-black text-emerald-600">৳{p.amount} BDT</TableCell>
+                  <TableCell className="font-extrabold text-slate-700 uppercase">{p.gateway}</TableCell>
+                  <TableCell className="text-slate-600 font-mono text-xs whitespace-nowrap">
+                    {p.dueDate || (() => {
+                      try {
+                        const parts = p.date.split("/");
+                        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                        const mIndex = parseInt(parts[0], 10) - 1;
+                        const year = parts[2].split(",")[0].trim();
+                        return `05 ${monthNames[mIndex]} ${year}`;
+                      } catch {
+                        return "05 July 2026";
+                      }
+                    })()}
+                  </TableCell>
+                  <TableCell className="text-slate-500 font-mono text-[11px] whitespace-nowrap">{p.paidDate || p.date}</TableCell>
                   <TableCell className="font-bold font-mono text-brand-blue">{p.id}</TableCell>
                   <TableCell>
-                    <span className="font-extrabold text-slate-800 block">{p.name}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">{p.phone}</span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase">
+                      {p.status || "Success"}
+                    </span>
                   </TableCell>
-                  <TableCell className="font-extrabold text-slate-700 uppercase">{p.gateway}</TableCell>
-                  <TableCell className="font-black text-emerald-600">৳{p.amount} BDT</TableCell>
-                  <TableCell className="text-slate-500">{p.date}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

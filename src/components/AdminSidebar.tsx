@@ -14,7 +14,6 @@ import {
   LifeBuoy,
   Mail,
   AlertTriangle,
-  Zap,
   Briefcase,
   UserCog,
   MessageSquare,
@@ -28,9 +27,9 @@ import {
   Settings,
   Lock,
   BarChart3,
-  Bookmark,
   LogOut,
-  PanelTop
+  PanelTop,
+  Zap
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -100,10 +99,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           name: "Complaints",
           icon: <AlertTriangle className="w-4 h-4" />,
         },
-        {
-          name: "Realtime Demo",
-          icon: <Zap className="w-4 h-4" />,
-        },
       ],
     },
     {
@@ -143,6 +138,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           icon: <Type className="w-4 h-4" />,
         },
         {
+          name: "Network Features",
+          icon: <Zap className="w-4 h-4" />,
+        },
+        {
           name: "SEO & Sharing",
           icon: <Globe className="w-4 h-4" />,
         },
@@ -157,6 +156,30 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
         {
           name: "Complaint Page",
           icon: <AlertTriangle className="w-4 h-4" />,
+        },
+        {
+          name: "Support Page",
+          icon: <HelpCircle className="w-4 h-4" />,
+        },
+        {
+          name: "Careers Page",
+          icon: <Briefcase className="w-4 h-4" />,
+        },
+        {
+          name: "Coverage Areas Page",
+          icon: <MapPin className="w-4 h-4" />,
+        },
+        {
+          name: "Offers Page",
+          icon: <Tag className="w-4 h-4" />,
+        },
+        {
+          name: "Bill Payment Page",
+          icon: <Receipt className="w-4 h-4" />,
+        },
+        {
+          name: "Self-Care Portal Page",
+          icon: <Globe className="w-4 h-4" />,
         },
         {
           name: "Top Bar & Footer",
@@ -190,10 +213,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
         {
           name: "SEO Audit",
           icon: <BarChart3 className="w-4 h-4" />,
-        },
-        {
-          name: "My Shortcuts",
-          icon: <Bookmark className="w-4 h-4" />,
         },
       ],
     },

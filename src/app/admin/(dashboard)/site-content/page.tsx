@@ -48,7 +48,7 @@ export default function SiteContentPage() {
         <h2 className="text-lg font-extrabold text-slate-900">Site Contact &amp; Global Details</h2>
         <p className="text-xs text-slate-500 mt-1">Edit standard global contact information displayed across footer and portal headers.</p>
       </div>
-      <form onSubmit={saveSiteContent} className="space-y-4 max-w-md">
+      <form onSubmit={saveSiteContent} className="space-y-4">
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700 block">Support Hotline Number</label>
           <input

@@ -37,7 +37,6 @@ const tabUrls: Record<string, string> = {
   "Package Requests": "/admin/package-requests",
   "Contact Messages": "/admin/contact-messages",
   "Complaints": "/admin/complaints",
-  "Realtime Demo": "/admin/realtime-demo",
   "Jobs": "/admin/jobs",
   "Job Applications": "/admin/job-applications",
   "Testimonials": "/admin/testimonials",
@@ -45,10 +44,18 @@ const tabUrls: Record<string, string> = {
   "Site Content": "/admin/site-content",
   "Home Sections": "/admin/home-sections",
   "Hero Typography": "/admin/hero-typography",
+  "Network Features": "/admin/network-features",
   "SEO & Sharing": "/admin/seo-sharing",
   "About Page": "/admin/about-page",
   "Contact Page": "/admin/contact-page",
   "Complaint Page": "/admin/complaint-page",
+  "Support Page": "/admin/support-page",
+  "Careers Page": "/admin/careers-page",
+  "Coverage Areas Page": "/admin/coverage-page",
+  "Offers Page": "/admin/offers-page",
+  "Bill Payment Page": "/admin/bill-payment-page",
+  "Self-Care Portal Page": "/admin/portal-page",
+
   "Top Bar & Footer": "/admin/topbar-footer",
   "Services Hub": "/admin/services-hub",
   "Service Reviews": "/admin/service-reviews",
@@ -56,7 +63,6 @@ const tabUrls: Record<string, string> = {
   "Users & Roles": "/admin/users-roles",
   "Security": "/admin/security",
   "SEO Audit": "/admin/seo-audit",
-  "My Shortcuts": "/admin/my-shortcuts",
 };
 
 const shortcutsList = [
@@ -270,12 +276,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </button>
                 );
               })}
-              <button
-                onClick={() => router.push("/admin/my-shortcuts")}
-                className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200/70 border border-slate-200/80 rounded-full text-[11px] font-bold text-slate-600 transition-all cursor-pointer"
-              >
-                <span>+ Manage</span>
-              </button>
             </div>
           </div>
 

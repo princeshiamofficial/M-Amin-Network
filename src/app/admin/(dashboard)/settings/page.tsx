@@ -46,7 +46,7 @@ export default function SettingsPage() {
         <h2 className="text-lg font-extrabold text-slate-900">General Core Settings</h2>
         <p className="text-xs text-slate-500 mt-1">Configure general gateway parameters, simulated traffic ceilings, and maintenance triggers.</p>
       </div>
-      <form onSubmit={saveSystemConfig} className="space-y-4 max-w-md">
+      <form onSubmit={saveSystemConfig} className="space-y-4">
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700 block">Virtual Peering SLA Limit</label>
           <input

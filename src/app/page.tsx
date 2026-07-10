@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { useTranslation } from "@/hooks/useTranslation";
+import * as Lucide from "lucide-react";
 
 interface Plan {
   speed: number;
@@ -74,7 +75,66 @@ export default function Home() {
   const [coverageSearch, setCoverageSearch] = useState("");
   const [coverageResult, setCoverageResult] = useState<string | null>(null);
 
+  const defaultTestimonialData = [
+    {
+      name: "Mehan Ahmed",
+      role: "Local Freelance Web Developer",
+      comment: "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!",
+      rating: 5,
+      isPublished: true,
+    },
+    {
+      name: "Kamrul Hasan",
+      role: "Proprietor, Hasan Trading, Aganagar",
+      comment: "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.",
+      rating: 5,
+      isPublished: true,
+    }
+  ];
+
+  const [testimonials, setTestimonials] = useState(defaultTestimonialData);
   const [showPopup, setShowPopup] = useState(false);
+  
+  const defaultServiceCards = [
+    {
+      titleEn: "Home Internet (FTTH)",
+      titleBn: "হোম ইন্টারনেট (FTTH)",
+      descEn: "Uncapped, buffer-free fiber direct to your home. Enjoy seamless 4K streaming, home automation, and smooth remote learning.",
+      descBn: "আনক্যাপড ও বাফার-মুক্ত ফাইবার সরাসরি আপনার বাসায়। উপভোগ করুন সিমলেস ৪কে স্ট্রিমিং ও রিমোট লার্নিং।",
+      badgeEn: "Popular",
+      badgeBn: "জনপ্রিয়",
+      iconName: "Home"
+    },
+    {
+      titleEn: "Corporate Leased Line",
+      titleBn: "কর্পোরেট লিজড লাইন",
+      descEn: "1:1 symmetric dedicated bandwidth with 99.9% uptime SLA guarantee, static IP allocation, and 24/7 priority enterprise support.",
+      descBn: "৯৯.৯% আপটাইম এসএলএ গ্যারান্টি, স্ট্যাটিক আইপি এবং ২৪/৭ কর্পোরেট সাপোর্ট সহ সিমেট্রিক ব্যান্ডউইথ।",
+      badgeEn: "SLA Guaranteed",
+      badgeBn: "এসএলএ সমর্থিত",
+      iconName: "Building2"
+    },
+    {
+      titleEn: "SME & SOHO Connect",
+      titleBn: "এসএমই ও সোহো কানেক্ট",
+      descEn: "Symmetric internet connections tailored for businesses, shops, and startups. Secure connectivity with backup links.",
+      descBn: "ব্যবসা, দোকান ও স্টার্টআপের জন্য সিমেট্রিক ইন্টারনেট সংযোগ। ব্যাকআপ লিংক সহ নিরাপদ কানেক্টিভিটি।",
+      badgeEn: "Optimized",
+      badgeBn: "অপ্টিমাইজড",
+      iconName: "Briefcase"
+    },
+    {
+      titleEn: "Safe DNS & Smart Cache",
+      titleBn: "সেফ ডিএনএস ও স্মার্ট ক্যাশ",
+      descEn: "Family-safe DNS configurations, automated gaming cache, BDIX optimization, and localized FTP movie and TV caches.",
+      descBn: "ফ্যামিলি-সেফ ডিএনএস কনফিগারেশন, গেমিং ক্যাশ, BDIX অপ্টিমাইজেশান এবং লোকাল এফটিপি।",
+      badgeEn: "Included",
+      badgeBn: "অন্তর্ভুক্ত",
+      iconName: "Shield"
+    }
+  ];
+
+  const [serviceCards, setServiceCards] = useState(defaultServiceCards);
 
   useEffect(() => {
     const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
@@ -83,6 +143,34 @@ export default function Home() {
         setShowPopup(true);
       }, 1000);
       return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("m_amin_service_cards");
+    if (saved) {
+      try {
+        setServiceCards(JSON.parse(saved));
+      } catch {
+        console.error("Failed to parse saved service cards");
+      }
+    }
+
+    const savedTestimonials = localStorage.getItem("m_amin_testimonials");
+    if (savedTestimonials) {
+      try {
+        const parsed = JSON.parse(savedTestimonials);
+        // Map the admin keys to the frontend expectations, or use them directly if matching
+        setTestimonials(parsed.map((t: Record<string, unknown>) => ({
+          name: t.author,
+          role: t.role,
+          comment: t.text,
+          rating: t.rating,
+          isPublished: t.isPublished
+        })));
+      } catch {
+        console.error("Failed to parse saved testimonials");
+      }
     }
   }, []);
 
@@ -594,66 +682,30 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              title: "Home Internet (FTTH)",
-              desc: "Uncapped, buffer-free fiber direct to your home. Enjoy seamless 4K streaming, home automation, and smooth remote learning.",
-              icon: (
-                <svg className="w-5 h-5 text-brand-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-              ),
-              badge: "Popular"
-            },
-            {
-              title: "Corporate Leased Line",
-              desc: "1:1 symmetric dedicated bandwidth with 99.9% uptime SLA guarantee, static IP allocation, and 24/7 priority enterprise support.",
-              icon: (
-                <svg className="w-5 h-5 text-brand-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              ),
-              badge: "SLA Guaranteed"
-            },
-            {
-              title: "SME & SOHO Connect",
-              desc: "Symmetric internet connections tailored for businesses, shops, and startups. Secure connectivity with backup links.",
-              icon: (
-                <svg className="w-5 h-5 text-brand-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              ),
-              badge: "Optimized"
-            },
-            {
-              title: "Safe DNS & Smart Cache",
-              desc: "Family-safe DNS configurations, automated gaming cache, BDIX optimization, and localized FTP movie and TV caches.",
-              icon: (
-                <svg className="w-5 h-5 text-brand-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              ),
-              badge: "Included"
-            }
-          ].map((srv, i) => (
-            <div
-              key={i}
-              className="p-6 rounded-2xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left relative overflow-hidden group glass-panel"
-            >
-              <div className="absolute top-0 right-0 p-2 text-[10px] font-black uppercase tracking-widest text-brand-cyan/70 bg-brand-cyan/5 rounded-bl-lg border-l border-b border-brand-cyan/10">
-                {t(srv.badge, srv.badge === "Popular" ? "জনপ্রিয়" : srv.badge === "SLA Guaranteed" ? "এসএলএ সমর্থিত" : srv.badge === "Optimized" ? "অপ্টিমাইজড" : "অন্তর্ভুক্ত")}
+          {serviceCards.map((srv, i) => {
+            const SvcIcon = (Lucide as unknown as Record<string, React.ElementType>)[srv.iconName] || Lucide.HelpCircle;
+            return (
+              <div
+                key={i}
+                className="p-6 rounded-2xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left relative overflow-hidden group glass-panel"
+              >
+                {srv.badgeEn && (
+                  <div className="absolute top-0 right-0 p-2 text-[10px] font-black uppercase tracking-widest text-brand-cyan/70 bg-brand-cyan/5 rounded-bl-lg border-l border-b border-brand-cyan/10">
+                    {t(srv.badgeEn, srv.badgeBn || srv.badgeEn)}
+                  </div>
+                )}
+                <div className="w-10 h-10 rounded-lg bg-brand-cyan/10 flex items-center justify-center border border-brand-cyan/15 group-hover:bg-brand-cyan/20 group-hover:scale-105 transition-all duration-300">
+                  <SvcIcon className="w-5 h-5 text-brand-cyan" />
+                </div>
+                <h4 className="text-base font-bold text-white tracking-wide group-hover:text-brand-cyan transition-colors duration-300">
+                  {t(srv.titleEn, srv.titleBn || srv.titleEn)}
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                  {t(srv.descEn, srv.descBn || srv.descEn)}
+                </p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-brand-cyan/10 flex items-center justify-center border border-brand-cyan/15 group-hover:bg-brand-cyan/20 group-hover:scale-105 transition-all duration-300">
-                {srv.icon}
-              </div>
-              <h4 className="text-base font-bold text-white tracking-wide group-hover:text-brand-cyan transition-colors duration-300">
-                {t(srv.title, srv.title === "Home Internet (FTTH)" ? "হোম ইন্টারনেট (FTTH)" : srv.title === "Corporate Leased Line" ? "কর্পোরেট লিজড লাইন" : srv.title === "SME & SOHO Connect" ? "এসএমই ও সোহো কানেক্ট" : "সেফ ডিএনএস ও স্মার্ট ক্যাশ")}
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                {t(srv.desc, srv.desc.startsWith("Uncapped") ? "আনক্যাপড ও বাফার-মুক্ত ফাইবার সরাসরি আপনার বাসায়। উপভোগ করুন সিমলেস ৪কে স্ট্রিমিং ও রিমোট লার্নিং।" : srv.desc.startsWith("1:1") ? "৯৯.৯% আপটাইম এসএলএ গ্যারান্টি, স্ট্যাটিক আইপি এবং ২৪/৭ কর্পোরেট সাপোর্ট সহ সিমেট্রিক ব্যান্ডউইথ।" : srv.desc.startsWith("Symmetric") ? "ব্যবসা, দোকান ও স্টার্টআপের জন্য সিমেট্রিক ইন্টারনেট সংযোগ। ব্যাকআপ লিংক সহ নিরাপদ কানেক্টিভিটি।" : "ফ্যামিলি-সেফ ডিএনএস কনফিগারেশন, গেমিং ক্যাশ, BDIX অপ্টিমাইজেশান এবং লোকাল এফটিপি।")}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -664,31 +716,16 @@ export default function Home() {
           <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers in Keraniganj Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            {[
-              {
-                name: "Mehan Ahmed",
-                role: "Local Freelance Web Developer",
-                comment:
-                  "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!",
-                rating: 5,
-              },
-              {
-                name: "Kamrul Hasan",
-                role: "Proprietor, Hasan Trading, Aganagar",
-                comment:
-                  "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.",
-                rating: 5,
-              },
-            ].map((test, i) => (
+            {testimonials.filter(t => t.isPublished).map((test, i) => (
               <div key={i} className="p-8 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex flex-col justify-between">
                 <p className="text-slate-600 italic leading-relaxed text-sm">
-                  &ldquo;{t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।")}&rdquo;
+                  &ldquo;{t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment)}&rdquo;
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-200/60 pt-4">
                   <div>
                     <h4 className="text-slate-900 font-bold text-sm">{test.name}</h4>
                     <p className="text-xs text-brand-blue">
-                      {t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : "মালিক, হাসান ট্রেডিং, আগানগর")}
+                      {t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role)}
                     </p>
                   </div>
                   <div className="flex gap-0.5">

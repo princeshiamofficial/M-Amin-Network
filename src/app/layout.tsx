@@ -29,6 +29,49 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full w-full overflow-x-hidden antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebSite",
+                  "@id": "https://m-aminnetwork.com/#website",
+                  "url": "https://m-aminnetwork.com/",
+                  "name": "M Amin Network",
+                  "description": "Best Broadband ISP in South Keraniganj, Dhaka",
+                  "potentialAction": [
+                    {
+                      "@type": "SearchAction",
+                      "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://m-aminnetwork.com/search?q={search_term_string}"
+                      },
+                      "query-input": "required name=search_term_string"
+                    }
+                  ]
+                },
+                {
+                  "@type": "Organization",
+                  "@id": "https://m-aminnetwork.com/#organization",
+                  "name": "M Amin Network",
+                  "url": "https://m-aminnetwork.com/",
+                  "logo": "https://m-aminnetwork.com/logo.png",
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "telephone": "+8801707009267",
+                    "contactType": "customer service",
+                    "areaServed": "BD",
+                    "availableLanguage": ["en", "bn"]
+                  }
+                }
+              ]
+            })
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden">
         <Navbar />
         <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>

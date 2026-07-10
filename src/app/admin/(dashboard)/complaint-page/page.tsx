@@ -46,7 +46,7 @@ export default function ComplaintPage() {
         <h2 className="text-lg font-extrabold text-slate-900">Official Grievances Queue Guidelines Setup</h2>
         <p className="text-xs text-slate-500 mt-1">Configure guideline info blocks shown on the public BTRC complaint panel.</p>
       </div>
-      <form onSubmit={saveComplaintContent} className="space-y-4 max-w-lg">
+      <form onSubmit={saveComplaintContent} className="space-y-4">
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700 block">Guideline Headline Title</label>
           <input

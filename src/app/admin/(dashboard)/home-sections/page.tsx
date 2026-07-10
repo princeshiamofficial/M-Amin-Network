@@ -54,16 +54,16 @@ export default function HomeSectionsPage() {
         <h2 className="text-lg font-extrabold text-slate-900">Enable/Disable Homepage Rows</h2>
         <p className="text-xs text-slate-500 mt-1">Switch sections on/off instantly across the consumer landing page.</p>
       </div>
-      <div className="space-y-4 max-w-sm">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(Object.keys(homeSections) as Array<keyof HomeSections>).map((key) => (
-          <div key={key} className="flex justify-between items-center py-2 border-b border-slate-100">
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">{key} Section</span>
+          <div key={key} className="flex justify-between items-center p-4 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-slate-50 transition-colors">
+            <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">{key}</span>
             <button
               onClick={() => toggleSection(key)}
               className={`px-3.5 py-1.5 rounded-lg text-[10px] font-bold border transition-colors cursor-pointer ${
                 homeSections[key]
-                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-                  : "bg-slate-100 text-slate-500 border-slate-200"
+                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 shadow-sm"
+                  : "bg-white text-slate-500 border-slate-200 hover:bg-slate-100 shadow-sm"
               }`}
             >
               {homeSections[key] ? "Enabled" : "Disabled"}
