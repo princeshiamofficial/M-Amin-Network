@@ -11,4 +11,21 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
+// Auto-create site_settings table if it doesn't exist
+(async () => {
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS site_settings (
+        id VARCHAR(255) PRIMARY KEY,
+        data JSON NOT NULL
+      )
+    `);
+    connection.release();
+    console.log("Database tables verified/created successfully.");
+  } catch (error) {
+    console.error("Failed to verify/create database tables:", error);
+  }
+})();
+
 export default pool;
