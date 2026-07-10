@@ -58,14 +58,14 @@ export default function HeroTypographyPage() {
     // Load hero info
     getSetting("hero_typography").then(saved => {
       if (saved) {
-        const parsed = saved as any;
+        const parsed = saved as Record<string, unknown>;
         setHeroTypography({
-          mainTitle: parsed.mainTitle || defaultHeroTypography.mainTitle,
-          subtitle: parsed.subtitle || defaultHeroTypography.subtitle,
-          slides: parsed.slides && parsed.slides.length > 0 ? parsed.slides : defaultHeroTypography.slides
+          mainTitle: (parsed.mainTitle as string) || defaultHeroTypography.mainTitle,
+          subtitle: (parsed.subtitle as string) || defaultHeroTypography.subtitle,
+          slides: parsed.slides && Array.isArray(parsed.slides) && parsed.slides.length > 0 ? (parsed.slides as string[]) : defaultHeroTypography.slides
         });
       } else {
-        setSetting("hero_typography", defaultHeroTypography as any);
+        setSetting("hero_typography", defaultHeroTypography);
         setHeroTypography(defaultHeroTypography);
       }
     });
@@ -73,9 +73,9 @@ export default function HeroTypographyPage() {
     // Load hero metrics
     getSetting("hero_metrics").then(saved => {
       if (saved) {
-        setHeroMetrics(saved as any);
+        setHeroMetrics(saved as Record<string, unknown>[] as unknown as Parameters<typeof setHeroMetrics>[0]);
       } else {
-        setSetting("hero_metrics", defaultHeroMetrics as any);
+        setSetting("hero_metrics", defaultHeroMetrics);
         setHeroMetrics(defaultHeroMetrics);
       }
     });
@@ -93,8 +93,8 @@ export default function HeroTypographyPage() {
 
   const saveHeroTypography = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("hero_typography", heroTypography as any);
-    setSetting("hero_metrics", heroMetrics as any);
+    setSetting("hero_typography", heroTypography);
+    setSetting("hero_metrics", heroMetrics);
     toast("Hero configurations and stats metrics saved successfully!");
   };
 
@@ -103,7 +103,7 @@ export default function HeroTypographyPage() {
     const updatedSlides = [...(heroTypography.slides || []), newSlideUrl.trim()];
     const updated = { ...heroTypography, slides: updatedSlides };
     setHeroTypography(updated);
-    setSetting("hero_typography", updated as any);
+    setSetting("hero_typography", updated);
     setNewSlideUrl("");
   };
 
@@ -111,7 +111,7 @@ export default function HeroTypographyPage() {
     const updatedSlides = (heroTypography.slides || []).filter((_, i) => i !== index);
     const updated = { ...heroTypography, slides: updatedSlides };
     setHeroTypography(updated);
-    setSetting("hero_typography", updated as any);
+    setSetting("hero_typography", updated);
     // Reset active preview index if out of bounds
     if (activePreviewSlide >= updatedSlides.length) {
       setActivePreviewSlide(0);

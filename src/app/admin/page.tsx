@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     const cleanUser = username.trim().toLowerCase();
     
     try {
-      let savedAuth = (await getSetting("admin_auth")) as Record<string, string> | null;
+      const savedAuth = (await getSetting("admin_auth")) as Record<string, string> | null;
       if (!savedAuth) {
         setLoginError("System credentials not found. Please verify user table configuration.");
         setIsLoggingIn(false);

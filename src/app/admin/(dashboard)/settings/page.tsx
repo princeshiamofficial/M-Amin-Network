@@ -30,16 +30,16 @@ export default function SettingsPage() {
     setAuth(true);
     getSetting("system_config").then(saved => {
       if (saved) {
-        setSystemConfig(saved as any);
+        setSystemConfig(saved as Record<string, unknown> as unknown as SystemConfig);
       } else {
-        setSetting("system_config", defaultSystemConfig as any);
+        setSetting("system_config", defaultSystemConfig);
         setSystemConfig(defaultSystemConfig);
       }
     });
 
     getSetting("admin_auth").then(savedAuth => {
       if (savedAuth) {
-        setAdminAuth(savedAuth as any);
+        setAdminAuth(savedAuth as Record<string, string> as unknown as Parameters<typeof setAdminAuth>[0]);
       }
     });
   }, [router]);
@@ -53,7 +53,7 @@ async function hashPassword(msg: string) {
 
   const saveSystemConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("system_config", systemConfig as any);
+    setSetting("system_config", systemConfig);
     toast("Configuration saved successfully!");
   };
 
@@ -64,7 +64,7 @@ async function hashPassword(msg: string) {
       const hashed = await hashPassword(newPassword);
       updatedAuth.password = hashed;
     }
-    setSetting("admin_auth", updatedAuth as any);
+    setSetting("admin_auth", updatedAuth);
     setAdminAuth(updatedAuth);
     setNewPassword("");
     toast("Admin credentials updated successfully!");

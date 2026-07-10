@@ -162,62 +162,62 @@ export default function TopbarFooterPage() {
       if (saved) {
         setFooterContent(prev => ({
           ...prev,
-          ...(saved as any)
+          ...(saved as Record<string, unknown> as unknown as typeof defaultFooterContent)
         }));
       } else {
-        setSetting("footer_content", defaultFooterContent as any);
+        setSetting("footer_content", defaultFooterContent);
         setFooterContent(defaultFooterContent);
       }
     });
 
     // Load nav links
     getSetting("nav_links").then(saved => {
-      if (saved && (saved as any[]).length > 0) {
-        setNavLinks(saved as any[]);
+      if (saved && (saved as unknown[]).length > 0) {
+        setNavLinks(saved as typeof defaultNavLinks);
       } else {
-        setSetting("nav_links", defaultNavLinks as any);
+        setSetting("nav_links", defaultNavLinks);
         setNavLinks(defaultNavLinks);
       }
     });
 
     // Load badges
     getSetting("footer_badges").then(saved => {
-      if (saved && (saved as any[]).length > 0) {
-        const migrated = (saved as any[]).map((badge: any) => {
+      if (saved && (saved as unknown[]).length > 0) {
+        const migrated = (saved as Record<string, unknown>[]).map((badge) => {
           if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
-            return { ...badge, image: "/ispab.jpeg" };
+            return { ...badge, image: "/ispab.jpeg" } as unknown as AffiliationBadge;
           }
-          return badge;
+          return badge as unknown as AffiliationBadge;
         });
         setBadges(migrated);
       } else {
-        setSetting("footer_badges", defaultBadges as any);
+        setSetting("footer_badges", defaultBadges);
         setBadges(defaultBadges);
       }
     });
 
     // Load licenses
     getSetting("footer_licenses").then(saved => {
-      if (saved && (saved as any[]).length > 0) {
-        const migrated = (saved as any[]).map((lic: any) => {
+      if (saved && (saved as unknown[]).length > 0) {
+        const migrated = (saved as Record<string, unknown>[]).map((lic) => {
           if (lic.textEn === "BTRC Licensed" && !lic.image) {
-            return { ...lic, image: "/btrc.png" };
+            return { ...lic, image: "/btrc.png" } as unknown as LicenseBadge;
           }
-          return lic;
+          return lic as unknown as LicenseBadge;
         });
         setLicenses(migrated);
       } else {
-        setSetting("footer_licenses", defaultLicenses as any);
+        setSetting("footer_licenses", defaultLicenses);
         setLicenses(defaultLicenses);
       }
     });
 
     // Load phones
     getSetting("footer_phones").then(saved => {
-      if (saved && (saved as any[]).length > 0) {
-        setPhones(saved as any[]);
+      if (saved && (saved as unknown[]).length > 0) {
+        setPhones(saved as typeof defaultPhones);
       } else {
-        setSetting("footer_phones", defaultPhones as any);
+        setSetting("footer_phones", defaultPhones);
         setPhones(defaultPhones);
       }
     });
@@ -225,11 +225,11 @@ export default function TopbarFooterPage() {
 
   const saveAllConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("footer_content", footerContent as any);
-    setSetting("nav_links", navLinks as any);
-    setSetting("footer_badges", badges as any);
-    setSetting("footer_licenses", licenses as any);
-    setSetting("footer_phones", phones as any);
+    setSetting("footer_content", footerContent);
+    setSetting("nav_links", navLinks);
+    setSetting("footer_badges", badges);
+    setSetting("footer_licenses", licenses);
+    setSetting("footer_phones", phones);
     toast("Topbar, Footer, and Header Menu configurations saved successfully!");
   };
 

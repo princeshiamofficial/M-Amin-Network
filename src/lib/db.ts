@@ -55,7 +55,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   complaint_content_guidelines: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `body` TEXT, `_sort_order` DOUBLE"
 };
 
-const SEED_DATA: Record<string, any[]> = {
+const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   user: [
     { id: "USR-1", username: "admin", email: "admin@mamin.net", role: "Super Administrator", password_hash: "240be518fabd87c0e14e7a0bdf8d3e206b0dcc585f6778937b2d5f8101a0709b", _sort_order: 0 }
   ],
@@ -175,8 +175,8 @@ const SEED_DATA: Record<string, any[]> = {
   ]
 };
 
-async function seedTableIfEmpty(connection: mysql.Connection, table: string, items: any[]) {
-  const [rows]: any = await connection.query(`SELECT 1 FROM \`${table}\` LIMIT 1`);
+async function seedTableIfEmpty(connection: mysql.Connection, table: string, items: Record<string, unknown>[]) {
+  const [rows] = await connection.query<import('mysql2').RowDataPacket[]>(`SELECT 1 FROM \`${table}\` LIMIT 1`);
   if (rows && rows.length === 0 && items.length > 0) {
     for (const item of items) {
       const keys = Object.keys(item);
@@ -208,7 +208,7 @@ async function seedTableIfEmpty(connection: mysql.Connection, table: string, ite
 
     // Seed empty tables
     for (const [table, items] of Object.entries(SEED_DATA)) {
-      await seedTableIfEmpty(connection as any, table, items);
+      await seedTableIfEmpty(connection, table, items);
     }
 
     connection.release();

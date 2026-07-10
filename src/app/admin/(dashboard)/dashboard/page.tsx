@@ -826,39 +826,39 @@ export default function AdminDashboardPage() {
     });
 
     getSetting("site_content").then(saved => {
-      if (saved) setSiteContent(saved as any);
+      if (saved) setSiteContent(saved as Record<string, unknown> as unknown as Parameters<typeof setSiteContent>[0]);
     });
 
     getSetting("home_sections").then(saved => {
-      if (saved) setHomeSections(saved as any);
+      if (saved) setHomeSections(saved as Record<string, unknown>[] as unknown as Parameters<typeof setHomeSections>[0]);
     });
 
     getSetting("hero_typography").then(saved => {
-      if (saved) setHeroTypography(saved as any);
+      if (saved) setHeroTypography(saved as Record<string, unknown> as unknown as Parameters<typeof setHeroTypography>[0]);
     });
 
     getSetting("seo_settings").then(saved => {
-      if (saved) setSeoSettings(saved as any);
+      if (saved) setSeoSettings(saved as Record<string, unknown> as unknown as Parameters<typeof setSeoSettings>[0]);
     });
 
     getSetting("about_content").then(saved => {
-      if (saved) setAboutContent(saved as any);
+      if (saved) setAboutContent(saved as Record<string, unknown> as unknown as Parameters<typeof setAboutContent>[0]);
     });
 
     getSetting("contact_content").then(saved => {
-      if (saved) setContactPageContent(saved as any);
+      if (saved) setContactPageContent(saved as Record<string, unknown> as unknown as Parameters<typeof setContactPageContent>[0]);
     });
 
     getSetting("complaint_content_guidelines").then(saved => {
-      if (saved) setComplaintPageContent(saved as any);
+      if (saved) setComplaintPageContent(saved as Record<string, unknown> as unknown as Parameters<typeof setComplaintPageContent>[0]);
     });
 
     getSetting("footer_content").then(saved => {
-      if (saved) setFooterContent(saved as any);
+      if (saved) setFooterContent(saved as Record<string, unknown> as unknown as Parameters<typeof setFooterContent>[0]);
     });
 
     getSetting("service_highlights").then(savedHighlights => {
-      if (savedHighlights && (savedHighlights as any[]).length > 0) {
+      if (savedHighlights && (savedHighlights as unknown[]).length > 0) {
         setServiceHighlights(savedHighlights as ServiceHighlight[]);
       } else {
         setSetting("service_highlights", defaultServiceHighlights);
@@ -867,7 +867,7 @@ export default function AdminDashboardPage() {
     });
 
     getSetting("service_reviews").then(savedReviews => {
-      if (savedReviews && (savedReviews as any[]).length > 0) {
+      if (savedReviews && (savedReviews as unknown[]).length > 0) {
         setServiceReviews(savedReviews as ServiceReview[]);
       } else {
         setSetting("service_reviews", defaultServiceReviews);
@@ -876,7 +876,7 @@ export default function AdminDashboardPage() {
     });
 
     getSetting("system_config").then(saved => {
-      if (saved) setSystemConfig(saved as any);
+      if (saved) setSystemConfig(saved as Record<string, unknown> as unknown as Parameters<typeof setSystemConfig>[0]);
     });
 
     getSetting("admin_users").then(savedUsers => {

@@ -107,12 +107,13 @@ export async function getSetting(key: string): Promise<unknown> {
       });
 
       return isArray ? parsedRows : (parsedRows[0] || null);
-    } catch (e: any) {
+    } catch (error: unknown) {
+      const e = error as { code?: string };
       if (e.code === 'ER_NO_SUCH_TABLE') {
         return isArray ? [] : null;
       }
-      logDbError("getSetting SELECT", key, e);
-      throw e;
+      logDbError("getSetting SELECT", key, error);
+      throw error;
     }
   } catch (error) {
     console.error("Database error fetching setting:", key, error);
@@ -151,10 +152,10 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     const isArray = Array.isArray(data);
     
     // Process input data for user/users structure mappings
-    let processedData = data;
-    const mapUserFields = (item: any) => {
-      if (!item || typeof item !== 'object') return item;
-      const newItem = { ...item };
+    let processedData: unknown = data;
+    const mapUserFields = (item: unknown): Record<string, unknown> => {
+      if (!item || typeof item !== 'object') return {} as Record<string, unknown>;
+      const newItem = { ...(item as Record<string, unknown>) };
       
       // If saving to user login table, enforce password_hash & role columns
       if (tableName === "user") {
@@ -170,7 +171,7 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     };
 
     if (isArray) {
-      processedData = (data as any[]).map(mapUserFields);
+      processedData = (data as Record<string, unknown>[]).map(mapUserFields);
     } else {
       processedData = mapUserFields(data);
     }
