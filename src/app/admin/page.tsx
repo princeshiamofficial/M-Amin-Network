@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     const cleanUser = username.trim().toLowerCase();
     
     try {
-      let savedAuth: any = await getSetting("m_amin_admin_auth");
+      let savedAuth = (await getSetting("m_amin_admin_auth")) as Record<string, string> | null;
       if (!savedAuth) {
         // Fallback to defaults if no credentials saved yet
         savedAuth = { email: "admin@mamin.net", password: "admin123", username: "admin" };

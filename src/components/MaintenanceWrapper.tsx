@@ -30,7 +30,7 @@ export default function MaintenanceWrapper({ children, isMaintenance }: { childr
             This site is under<br />maintenance
           </h1>
           <p className="text-[#63a1cb] text-lg sm:text-xl md:text-2xl mt-5 font-normal tracking-wide">
-            We're preparing to serve you better.
+            We&apos;re preparing to serve you better.
           </p>
 
           {/* SVG Plugs Illustration */}
