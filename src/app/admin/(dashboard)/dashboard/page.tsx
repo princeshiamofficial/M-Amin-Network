@@ -876,7 +876,13 @@ export default function AdminDashboardPage() {
     });
 
     getSetting("system_config").then(saved => {
-      if (saved) setSystemConfig(saved as Record<string, unknown> as unknown as Parameters<typeof setSystemConfig>[0]);
+      if (saved) {
+        const config = saved as Record<string, unknown>;
+        setSystemConfig({
+          peeringBandwidthLimit: (config.peeringBandwidthLimit as string) || "10 Gbps",
+          maintenanceMode: !!config.maintenanceMode
+        });
+      }
     });
 
     getSetting("admin_users").then(savedUsers => {

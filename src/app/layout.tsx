@@ -7,6 +7,9 @@ import { Toaster } from 'sonner';
 import MaintenanceWrapper from "@/components/MaintenanceWrapper";
 import { getSetting } from "@/actions/content";
 
+export const dynamic = 'force-dynamic';
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,8 +33,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean } | null;
-  const isMaintenance = sysConfig?.maintenanceMode === true;
+  const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean | number } | null;
+  const isMaintenance = !!sysConfig?.maintenanceMode;
 
   return (
     <html
