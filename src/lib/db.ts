@@ -42,7 +42,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   package_requests: "`id` VARCHAR(255) PRIMARY KEY, `packageName` VARCHAR(255), `customerName` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `status` VARCHAR(255), `date` VARCHAR(255), `_sort_order` DOUBLE",
   service_cards: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `icon` VARCHAR(255), `_sort_order` DOUBLE",
   system_config: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `peeringBandwidthLimit` VARCHAR(255), `maintenanceMode` BOOLEAN, `_sort_order` DOUBLE",
-  site_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `hotline` VARCHAR(255), `supportEmail` VARCHAR(255), `address` TEXT, `_sort_order` DOUBLE",
+  site_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `siteTitle` VARCHAR(255), `hotline` VARCHAR(255), `supportEmail` VARCHAR(255), `address` TEXT, `_sort_order` DOUBLE",
   hero_typography: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `_sort_order` DOUBLE",
   hero_metrics: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `activeUsers` VARCHAR(255), `uptimePercentage` VARCHAR(255), `coverageAreas` VARCHAR(255), `_sort_order` DOUBLE",
   offers_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
@@ -158,7 +158,7 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { peeringBandwidthLimit: "10 Gbps", maintenanceMode: false, _sort_order: 0 }
   ],
   site_content: [
-    { hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
+    { siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
   ],
   hero_typography: [
     { mainTitle: "Next Generation Fiber Broadband in South Keraniganj", subtitle: "Ultra-stable connection, high-speed GGC peering, and 24/7 dedicated local support.", _sort_order: 0 }

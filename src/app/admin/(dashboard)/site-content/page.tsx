@@ -5,12 +5,14 @@ import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface SiteContent {
+  siteTitle: string;
   hotline: string;
   supportEmail: string;
   address: string;
 }
 
 const defaultSiteContent: SiteContent = {
+  siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka",
   hotline: "+880 1707-009267",
   supportEmail: "support@maminnetwork.com",
   address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh",
@@ -29,9 +31,9 @@ export default function SiteContentPage() {
     setAuth(true);
     getSetting("site_content").then(saved => {
       if (saved) {
-        setSiteContent(saved as any);
+        setSiteContent(saved as unknown as SiteContent);
       } else {
-        setSetting("site_content", defaultSiteContent as any);
+        setSetting("site_content", defaultSiteContent as unknown as Record<string, unknown>);
         setSiteContent(defaultSiteContent);
       }
     });
@@ -39,7 +41,7 @@ export default function SiteContentPage() {
 
   const saveSiteContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("site_content", siteContent as any);
+    setSetting("site_content", siteContent as unknown as Record<string, unknown>);
     toast("Global details saved successfully!");
   };
 
@@ -52,6 +54,15 @@ export default function SiteContentPage() {
         <p className="text-xs text-slate-500 mt-1">Edit standard global contact information displayed across footer and portal headers.</p>
       </div>
       <form onSubmit={saveSiteContent} className="space-y-4">
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 block">Website Meta Title</label>
+          <input
+            type="text"
+            value={siteContent.siteTitle || ""}
+            onChange={(e) => setSiteContent({ ...siteContent, siteTitle: e.target.value })}
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+          />
+        </div>
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700 block">Support Hotline Number</label>
           <input

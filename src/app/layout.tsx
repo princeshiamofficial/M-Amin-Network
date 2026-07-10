@@ -17,10 +17,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka",
-  description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, South Keraniganj with M Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteContent = (await getSetting("site_content")) as { siteTitle?: string } | null;
+  return {
+    title: siteContent?.siteTitle || "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka",
+    description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, South Keraniganj with M Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
+  };
+}
 
 export default async function RootLayout({
   children,

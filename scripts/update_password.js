@@ -58,5 +58,27 @@ const mysql = require('mysql2/promise');
   }
   console.log("Quick actions successfully populated in database.");
 
+  // Site content title migration
+  try {
+    await connection.query('ALTER TABLE `site_content` ADD COLUMN `siteTitle` VARCHAR(255)');
+    console.log("Column 'siteTitle' successfully added to 'site_content' table.");
+  } catch (err) {
+    if (err.code === 'ER_DUP_COLUMN_NAME') {
+      console.log("Column 'siteTitle' already exists in 'site_content' table.");
+    } else {
+      throw err;
+    }
+  }
+
+  // Populate default siteTitle if currently empty or null
+  const [siteRows] = await connection.query('SELECT `siteTitle` FROM `site_content` LIMIT 1');
+  if (siteRows && siteRows.length > 0 && !siteRows[0].siteTitle) {
+    await connection.query(
+      'UPDATE `site_content` SET `siteTitle` = ? WHERE `_auto_id` = 1',
+      ['M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka']
+    );
+    console.log("Default siteTitle populated in site_content.");
+  }
+
   await connection.end();
 })();
