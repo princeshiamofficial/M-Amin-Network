@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
 
@@ -96,16 +97,14 @@ export default function ComplainPageAdmin() {
       return;
     }
     setAuth(true);
-    const s = localStorage.getItem("m_amin_complain_page_content");
-    if (s) {
-      try { setContent(JSON.parse(s)); } catch { /* ignore */ }
-    } else {
-      localStorage.setItem("m_amin_complain_page_content", JSON.stringify(defaultComplainPageContent));
-    }
+    getSetting("m_amin_complain_page_content").then(s => {
+      if (s) setContent(s as any);
+      else setSetting("m_amin_complain_page_content", defaultComplainPageContent as any);
+    });
   }, [router]);
 
-  const save = () => {
-    localStorage.setItem("m_amin_complain_page_content", JSON.stringify(content));
+  const save = async () => {
+    setSetting("m_amin_complain_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

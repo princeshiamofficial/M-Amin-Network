@@ -1,9 +1,11 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { getSetting } from "@/actions/content";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,18 +32,35 @@ export default function AdminDashboard() {
     return () => clearTimeout(timer);
   }, [router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoggingIn(true);
     const cleanUser = username.trim().toLowerCase();
-    if ((cleanUser === "admin" || cleanUser === "admin@mamin.net") && password === "admin123") {
-      setIsAuthenticated(true);
-      setLoginError("");
-      sessionStorage.setItem("m_amin_admin_authenticated", "true");
-      localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
-      router.push("/admin/dashboard");
-    } else {
-      setLoginError("Invalid username or password. Please try again.");
+    
+    try {
+      let savedAuth: any = await getSetting("m_amin_admin_auth");
+      if (!savedAuth) {
+        // Fallback to defaults if no credentials saved yet
+        savedAuth = { email: "admin@mamin.net", password: "admin123", username: "admin" };
+      }
+
+      const validEmail = savedAuth.email.toLowerCase();
+      const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
+
+      if ((cleanUser === validUsername || cleanUser === validEmail) && password === savedAuth.password) {
+        setIsAuthenticated(true);
+        setLoginError("");
+        sessionStorage.setItem("m_amin_admin_authenticated", "true");
+        localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
+        router.push("/admin/dashboard");
+      } else {
+        setLoginError("Invalid username or password. Please try again.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setLoginError("An error occurred while verifying credentials.");
     }
+    setIsLoggingIn(false);
   };
 
   const handleLogout = () => {
@@ -190,7 +210,7 @@ export default function AdminDashboard() {
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  alert("Demo: Password reset is not configured for admin profiles.");
+                  toast("Demo: Password reset is not configured for admin profiles.");
                 }}
                 className="text-[11px] text-[#4b5563] font-bold hover:text-[#111113] transition-colors hover:underline"
               >
@@ -201,9 +221,10 @@ export default function AdminDashboard() {
             {/* Get Started Button */}
             <button
               type="submit"
-              className="w-full bg-[#1f2025] hover:bg-[#111113] active:scale-[0.985] text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(31,32,37,0.15)] flex justify-center items-center cursor-pointer"
+              disabled={isLoggingIn}
+              className="w-full bg-[#1f2025] hover:bg-[#111113] active:scale-[0.985] text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(31,32,37,0.15)] flex justify-center items-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Get Started
+              {isLoggingIn ? "Logging in..." : "Get Started"}
             </button>
           </form>
 

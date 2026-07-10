@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -194,17 +195,19 @@ export default function AboutPageAdmin() {
       return;
     }
     setAuth(true);
-    const s = localStorage.getItem("m_amin_about_content_full");
-    if (s) {
-      try { setContent(JSON.parse(s)); } catch { /* ignore */ }
-    } else {
-      localStorage.setItem("m_amin_about_content_full", JSON.stringify(defaultAboutContentFull));
-    }
+    
+    getSetting("m_amin_about_content_full").then(saved => {
+      if (saved) {
+        setContent(saved as unknown as AboutContentFull);
+      } else {
+        setSetting("m_amin_about_content_full", defaultAboutContentFull as unknown as Record<string, unknown>);
+      }
+    });
   }, [router]);
 
-  const save = (e?: React.FormEvent) => {
+  const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    localStorage.setItem("m_amin_about_content_full", JSON.stringify(content));
+    await setSetting("m_amin_about_content_full", content as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

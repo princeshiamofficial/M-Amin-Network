@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface SEOAuditReport {
@@ -26,13 +27,14 @@ export default function SEOAuditPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_seo_audit_reports");
-    if (saved) {
-      setSeoAuditReports(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_seo_audit_reports", JSON.stringify(defaultSEOAuditReports));
-      setSeoAuditReports(defaultSEOAuditReports);
-    }
+    getSetting("m_amin_seo_audit_reports").then(saved => {
+      if (saved) {
+        setSeoAuditReports(saved as any);
+      } else {
+        setSetting("m_amin_seo_audit_reports", defaultSEOAuditReports as any);
+        setSeoAuditReports(defaultSEOAuditReports);
+      }
+    });
   }, [router]);
 
   if (!auth) return null;

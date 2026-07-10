@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -152,14 +154,15 @@ export default function ServicesHubPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const s = localStorage.getItem("m_amin_service_cards");
-    if (s) { try { setServices(JSON.parse(s)); } catch { /* ignore */ } }
-    else { localStorage.setItem("m_amin_service_cards", JSON.stringify(defaultServices)); }
+    getSetting("m_amin_service_cards").then(s => {
+      if (s) setServices(s as ServiceCard[]);
+      else setSetting("m_amin_service_cards", defaultServices as ServiceCard[]);
+    });
   }, [router]);
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_service_cards", JSON.stringify(services));
+    setSetting("m_amin_service_cards", services as ServiceCard[]);
     setSaved(true); setTimeout(() => setSaved(false), 3000);
   };
 
@@ -180,7 +183,7 @@ export default function ServicesHubPage() {
   };
   const add = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSvc.titleEn.trim() || !newSvc.descEn.trim()) { alert("Fill in at least English title and description."); return; }
+    if (!newSvc.titleEn.trim() || !newSvc.descEn.trim()) { toast("Fill in at least English title and description."); return; }
     setServices([...services, newSvc]);
     setNewSvc(blank);
   };

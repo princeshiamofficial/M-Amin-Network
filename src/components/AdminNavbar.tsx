@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -224,7 +225,7 @@ export default function AdminNavbar({
                       onClick={() => {
                         localStorage.setItem("m_amin_avatar_url", avatarUrl);
                         setAvatarView("menu");
-                        alert("Profile avatar updated successfully!");
+                        toast("Profile avatar updated successfully!");
                       }}
                       className="px-2.5 py-1.5 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-xl text-[10px] font-bold transition-all cursor-pointer shadow-sm"
                     >

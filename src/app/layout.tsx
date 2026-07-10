@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from 'sonner';
+import MaintenanceWrapper from "@/components/MaintenanceWrapper";
+import { getSetting } from "@/actions/content";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,11 +22,14 @@ export const metadata: Metadata = {
   description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, South Keraniganj with M Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const sysConfig: any = await getSetting("m_amin_system_config");
+  const isMaintenance = sysConfig?.maintenanceMode === true;
+
   return (
     <html
       lang="en"
@@ -73,9 +79,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden">
-        <Navbar />
-        <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>
-        <Footer />
+        <MaintenanceWrapper isMaintenance={isMaintenance}>
+          <Navbar />
+          <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>
+          <Footer />
+        </MaintenanceWrapper>
+        <Toaster position="bottom-right" theme="light" />
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface SecurityLog {
@@ -26,20 +27,21 @@ export default function SecurityPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_security_logs");
-    if (saved) {
-      setSecurityLogs(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_security_logs", JSON.stringify(defaultSecurityLogs));
-      setSecurityLogs(defaultSecurityLogs);
-    }
+    getSetting("m_amin_security_logs").then(saved => {
+      if (saved) {
+        setSecurityLogs(saved as any);
+      } else {
+        setSetting("m_amin_security_logs", defaultSecurityLogs as any);
+        setSecurityLogs(defaultSecurityLogs);
+      }
+    });
   }, [router]);
 
-  const deleteSecurityLog = (id: string) => {
+  const deleteSecurityLog = async (id: string) => {
     if (!confirm("Are you sure you want to purge this security log?")) return;
     const updated = securityLogs.filter((l) => l.id !== id);
     setSecurityLogs(updated);
-    localStorage.setItem("m_amin_security_logs", JSON.stringify(updated));
+    setSetting("m_amin_security_logs", updated as any);
   };
 
   if (!auth) return null;

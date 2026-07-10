@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultComplainPageContent } from "@/app/admin/(dashboard)/complain-page/page";
 
@@ -39,10 +40,10 @@ export default function Complain() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const generatedRef = `CMP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
       try {
-        const complaints = JSON.parse(localStorage.getItem("m_amin_complaints") || "[]");
+        const complaints = await getSetting("m_amin_complaints"); const complaintsArr = Array.isArray(complaints) ? complaints : [];
         const newComplaint = {
           id: generatedRef,
           clientId: form.clientId,
@@ -53,8 +54,8 @@ export default function Complain() {
           date: new Date().toLocaleString(),
           status: "Pending"
         };
-        complaints.push(newComplaint);
-        localStorage.setItem("m_amin_complaints", JSON.stringify(complaints));
+        complaintsArr.push(newComplaint);
+        setSetting("m_amin_complaints", complaintsArr as Record<string, unknown>[]);
       } catch (err) {
         console.error("Error saving complaint:", err);
       }
@@ -84,9 +85,6 @@ export default function Complain() {
       {/* Header - Dark Theme */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
         <div className="text-center max-w-3xl mx-auto">
-          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t(pageContent.str6En, pageContent.str6Bn)}
-          </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
             {t(pageContent.str7En, pageContent.str7Bn)}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
@@ -106,9 +104,6 @@ export default function Complain() {
             {!success ? (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <span className="bg-brand-cyan/10 text-brand-blue text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-                    {t(pageContent.str10En, pageContent.str10Bn)}
-                  </span>
                   <h3 className="text-slate-900 font-extrabold text-lg mt-3">{t(pageContent.str11En, pageContent.str11Bn)}</h3>
                   <p className="text-xs text-slate-500 mt-1">
                     {t(pageContent.str12En, pageContent.str12Bn)}

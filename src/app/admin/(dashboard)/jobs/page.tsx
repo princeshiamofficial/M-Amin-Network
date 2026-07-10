@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface Job {
@@ -17,23 +18,44 @@ export default function JobsPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newJob, setNewJob] = useState({ title: "", department: "", type: "Full-time" });
 
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_jobs");
-    if (saved) setJobs(JSON.parse(saved));
-    else { localStorage.setItem("m_amin_jobs", JSON.stringify(defaultJobs)); setJobs(defaultJobs); }
+    getSetting("m_amin_jobs").then(saved => {
+      if (saved) { setJobs(saved as Job[]); }
+      else { setSetting("m_amin_jobs", defaultJobs as Job[]); setJobs(defaultJobs); }
+    });
   }, [router]);
 
   const toggleStatus = (id: string) => {
     const updated = jobs.map(j => j.id === id ? { ...j, status: j.status === "Open" ? "Closed" as const : "Open" as const } : j);
-    setJobs(updated); localStorage.setItem("m_amin_jobs", JSON.stringify(updated));
+    setJobs(updated); setSetting("m_amin_jobs", updated as Job[]);
   };
-  const deleteJob = (id: string) => {
+  const deleteJob = async (id: string) => {
     if (!confirm("Delete this job?")) return;
     const updated = jobs.filter(j => j.id !== id);
-    setJobs(updated); localStorage.setItem("m_amin_jobs", JSON.stringify(updated));
+    setJobs(updated); setSetting("m_amin_jobs", updated as Job[]);
+  };
+
+  const handleAddJob = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newJob.title || !newJob.department) return;
+    const added: Job = {
+      id: `JOB-${Math.floor(1000 + Math.random() * 9000)}`,
+      title: newJob.title,
+      department: newJob.department,
+      type: newJob.type,
+      status: "Open",
+      date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+    };
+    const updated = [added, ...jobs];
+    setJobs(updated);
+    setSetting("m_amin_jobs", updated as Job[]);
+    setNewJob({ title: "", department: "", type: "Full-time" });
+    setShowAddForm(false);
   };
 
   if (!auth) return null;
@@ -43,9 +65,42 @@ export default function JobsPage() {
       <div className="flex justify-between items-center border-b border-slate-100 pb-4">
         <div>
           <h2 className="text-lg font-extrabold text-slate-900">Careers &amp; Active Openings</h2>
-          <p className="text-xs text-slate-500 mt-1">Review, delete, or toggle status for current positions.</p>
+          <p className="text-xs text-slate-500 mt-1">Review, delete, toggle status, or add current positions.</p>
         </div>
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="bg-brand-blue text-white px-4 py-2 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer"
+        >
+          {showAddForm ? "Cancel" : "Post New Job"}
+        </button>
       </div>
+
+      {showAddForm && (
+        <form onSubmit={handleAddJob} className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4">
+          <h3 className="font-bold text-slate-800 text-sm">Post a New Job</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Position Title</label>
+              <input required type="text" value={newJob.title} onChange={e => setNewJob({ ...newJob, title: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue" placeholder="e.g., Network Engineer" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Department</label>
+              <input required type="text" value={newJob.department} onChange={e => setNewJob({ ...newJob, department: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue" placeholder="e.g., Field Operations" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Job Type</label>
+              <select value={newJob.type} onChange={e => setNewJob({ ...newJob, type: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue">
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" className="bg-brand-blue text-white px-5 py-2 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer">
+            Publish Job
+          </button>
+        </form>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>

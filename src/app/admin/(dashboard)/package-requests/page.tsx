@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -57,31 +58,57 @@ export default function PackageRequestsPage() {
   const [auth, setAuth] = useState(false);
   const [requests, setRequests] = useState<PackageRequest[]>([]);
   const [statusFilter, setStatusFilter] = useState<"All" | "Pending" | "Completed" | "Cancelled">("All");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newReq, setNewReq] = useState({ name: "", phone: "", zone: "", address: "", planName: "", speed: "", price: 0 });
 
   const filteredRequests = requests.filter(r => statusFilter === "All" || r.status === statusFilter);
 
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_package_requests");
-    if (saved) setRequests(JSON.parse(saved));
-    else {
-      localStorage.setItem("m_amin_package_requests", JSON.stringify(defaultRequests));
-      setRequests(defaultRequests);
-    }
+    getSetting("m_amin_package_requests").then(saved => {
+      if (saved) { setRequests(saved as PackageRequest[]); }
+      else {
+        setSetting("m_amin_package_requests", defaultRequests as PackageRequest[]);
+        setRequests(defaultRequests);
+      }
+    });
   }, [router]);
 
   const updateStatus = (id: string, status: PackageRequest["status"]) => {
     const updated = requests.map(r => r.id === id ? { ...r, status } : r);
     setRequests(updated);
-    localStorage.setItem("m_amin_package_requests", JSON.stringify(updated));
+    setSetting("m_amin_package_requests", updated as PackageRequest[]);
   };
 
-  const deleteRequest = (id: string) => {
+  const deleteRequest = async (id: string) => {
     if (!confirm("Delete this request?")) return;
     const updated = requests.filter(r => r.id !== id);
     setRequests(updated);
-    localStorage.setItem("m_amin_package_requests", JSON.stringify(updated));
+    setSetting("m_amin_package_requests", updated as PackageRequest[]);
+  };
+
+  const handleAddRequest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReq.name || !newReq.phone) return;
+    const added: PackageRequest = {
+      id: `REQ-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      name: newReq.name,
+      phone: newReq.phone,
+      email: "N/A (Manual Entry)",
+      zone: newReq.zone || "N/A",
+      address: newReq.address || "N/A",
+      planName: newReq.planName || "Manual Plan",
+      speed: newReq.speed || "N/A",
+      price: newReq.price || 0,
+      status: "Pending",
+      date: new Date().toLocaleString()
+    };
+    const updated = [added, ...requests];
+    setRequests(updated);
+    setSetting("m_amin_package_requests", updated as PackageRequest[]);
+    setNewReq({ name: "", phone: "", zone: "", address: "", planName: "", speed: "", price: 0 });
+    setShowAddForm(false);
   };
 
   if (!auth) return null;
@@ -101,7 +128,7 @@ export default function PackageRequestsPage() {
             <button
               key={tab.id}
               type="button"
-              onClick={() => setStatusFilter(tab.id)}
+              onClick={() => setStatusFilter(tab.id as typeof statusFilter)}
               className={`flex items-center gap-2 pb-3 text-xs font-bold transition-all relative border-b-2 cursor-pointer ${
                 isActive
                   ? "text-brand-blue border-brand-blue"
@@ -118,6 +145,37 @@ export default function PackageRequestsPage() {
           );
         })}
       </div>
+        <div className="flex justify-end pt-2">
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="bg-brand-blue text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer"
+          >
+            {showAddForm ? "Cancel" : "Add Manual Request"}
+          </button>
+        </div>
+
+      {showAddForm && (
+        <form onSubmit={handleAddRequest} className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4 mb-4">
+          <h3 className="font-bold text-slate-800 text-sm">Add Customer Request</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Customer Name</label>
+              <input required type="text" value={newReq.name} onChange={e => setNewReq({ ...newReq, name: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg" placeholder="Name" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+              <input required type="text" value={newReq.phone} onChange={e => setNewReq({ ...newReq, phone: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg" placeholder="Phone" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Plan Name</label>
+              <input required type="text" value={newReq.planName} onChange={e => setNewReq({ ...newReq, planName: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg" placeholder="e.g. Home Basic" />
+            </div>
+          </div>
+          <button type="submit" className="bg-brand-blue text-white px-5 py-2 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer">
+            Save Request
+          </button>
+        </form>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">

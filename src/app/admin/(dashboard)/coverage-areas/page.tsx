@@ -1,6 +1,8 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -109,13 +111,14 @@ export default function CoverageAreasPage() {
 
   const loadZones = React.useCallback(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("m_amin_coverage_zones");
-    if (saved) {
-      setZones(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_coverage_zones", JSON.stringify(defaultZones));
-      setZones(defaultZones);
-    }
+    getSetting("m_amin_coverage_zones").then(saved => {
+      if (saved) {
+        setZones(saved as any);
+      } else {
+        setSetting("m_amin_coverage_zones", defaultZones as any);
+        setZones(defaultZones);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -137,9 +140,9 @@ export default function CoverageAreasPage() {
 
   // Listen to database reset event
   useEffect(() => {
-    const handleReset = () => {
+    const handleReset = async () => {
       if (typeof window !== "undefined") {
-        localStorage.setItem("m_amin_coverage_zones", JSON.stringify(defaultZones));
+        setSetting("m_amin_coverage_zones", defaultZones as any);
         setZones(defaultZones);
       }
     };
@@ -173,7 +176,7 @@ export default function CoverageAreasPage() {
 
     const trimmedName = formData.name.trim();
     if (!trimmedName) {
-      alert("Zone name is required.");
+      toast("Zone name is required.");
       return;
     }
 
@@ -194,23 +197,23 @@ export default function CoverageAreasPage() {
       updated[editingIndex] = zoneData;
     } else {
       if (zones.some(z => z.name.toLowerCase() === trimmedName.toLowerCase())) {
-        alert("A coverage zone with this name already exists!");
+        toast("A coverage zone with this name already exists!");
         return;
       }
       updated = [...zones, zoneData];
     }
 
     setZones(updated);
-    localStorage.setItem("m_amin_coverage_zones", JSON.stringify(updated));
+    setSetting("m_amin_coverage_zones", updated as any);
     setIsModalOpen(false);
-    alert(editingIndex !== null ? "Coverage zone updated successfully!" : "New coverage zone added successfully!");
+    toast(editingIndex !== null ? "Coverage zone updated successfully!" : "New coverage zone added successfully!");
   };
 
-  const handleDeleteZone = (index: number) => {
+  const handleDeleteZone = async (index: number) => {
     if (!confirm("Are you sure you want to delete this coverage zone?")) return;
     const updated = zones.filter((_, i) => i !== index);
     setZones(updated);
-    localStorage.setItem("m_amin_coverage_zones", JSON.stringify(updated));
+    setSetting("m_amin_coverage_zones", updated as any);
   };
 
   if (!mounted || !isAuthenticated) return null;

@@ -71,9 +71,6 @@ export default function Multimedia() {
       {/* Header Area - Dark Theme */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
         <div className="text-center max-w-3xl mx-auto">
-          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            FTP &amp; Caching Caches
-          </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
             Multimedia{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">

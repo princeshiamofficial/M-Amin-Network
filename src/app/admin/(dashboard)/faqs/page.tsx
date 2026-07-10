@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -93,7 +94,7 @@ export default function FAQsPage() {
         setFaqs(defaultFAQs);
       }
     } else {
-      localStorage.setItem("m_amin_faqs", JSON.stringify(defaultFAQs));
+      setSetting("m_amin_faqs", defaultFAQs as FAQ[]);
       setFaqs(defaultFAQs);
     }
   }, [router]);
@@ -119,7 +120,7 @@ export default function FAQsPage() {
     }
     
     setFaqs(updated);
-    localStorage.setItem("m_amin_faqs", JSON.stringify(updated));
+    setSetting("m_amin_faqs", updated as FAQ[]);
     setCurrentFaq({});
     setIsEditing(false);
   };
@@ -139,14 +140,14 @@ export default function FAQsPage() {
       f.id === id ? { ...f, isPublished: !f.isPublished } : f
     );
     setFaqs(updated);
-    localStorage.setItem("m_amin_faqs", JSON.stringify(updated));
+    setSetting("m_amin_faqs", updated as FAQ[]);
   };
 
-  const deleteFAQ = (id: string) => {
+  const deleteFAQ = async (id: string) => {
     if (!confirm("Are you sure you want to delete this FAQ?")) return;
     const updated = faqs.filter((f) => f.id !== id);
     setFaqs(updated);
-    localStorage.setItem("m_amin_faqs", JSON.stringify(updated));
+    setSetting("m_amin_faqs", updated as FAQ[]);
   };
 
   if (!auth) return null;

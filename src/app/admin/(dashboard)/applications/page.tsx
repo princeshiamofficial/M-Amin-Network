@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -77,8 +78,10 @@ export default function ApplicationsPage() {
           router.replace("/admin");
         } else {
           setIsAuthenticated(true);
-          const saved = localStorage.getItem("m_amin_claims");
-          setClaims(saved ? JSON.parse(saved) : defaultClaims);
+          getSetting("m_amin_claims").then(saved => {
+      if (saved) setClaims(saved as any);
+      else setClaims(defaultClaims);
+    });
         }
       }
     }, 0);
@@ -88,14 +91,14 @@ export default function ApplicationsPage() {
   const updateStatus = (id: string, status: "Approved" | "Cancelled") => {
     const updated = claims.map(c => c.id === id ? { ...c, status } : c);
     setClaims(updated);
-    localStorage.setItem("m_amin_claims", JSON.stringify(updated));
+    setSetting("m_amin_claims", updated as any);
   };
 
-  const deleteClaim = (id: string) => {
+  const deleteClaim = async (id: string) => {
     if (!confirm("Delete this application reservation?")) return;
     const updated = claims.filter(c => c.id !== id);
     setClaims(updated);
-    localStorage.setItem("m_amin_claims", JSON.stringify(updated));
+    setSetting("m_amin_claims", updated as any);
   };
 
   if (!mounted || !isAuthenticated) return null;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultCoveragePageContent } from "@/app/admin/(dashboard)/coverage-page/page";
@@ -107,12 +108,13 @@ export default function Coverage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("m_amin_coverage_zones");
+      getSetting("m_amin_coverage_zones").then(saved => {
       if (saved) {
-        setZones(JSON.parse(saved));
+        setZones(saved as CoverageZone[]);
       } else {
-        localStorage.setItem("m_amin_coverage_zones", JSON.stringify(defaultZones));
+        setSetting("m_amin_coverage_zones", defaultZones as CoverageZone[]);
       }
+    });
     }
   }, []);
 
@@ -159,7 +161,7 @@ export default function Coverage() {
   return (
     <div className="w-full grow relative">
       {/* Top Section Wrapper (Confined to max-w-1440) */}
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="hidden max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Background Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
@@ -433,6 +435,27 @@ export default function Coverage() {
         </div>
       </div>
     </div> {/* Close top max-w-1440 section wrapper */}
+
+    {/* New Simple Header with Background Image */}
+    <div 
+      className="w-full relative py-6 sm:py-10 bg-cover bg-center bg-no-repeat border-b border-brand-border/40"
+      style={{ backgroundImage: "url('/coverage.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-brand-dark/30 mix-blend-multiply pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/90 pointer-events-none" />
+      
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 drop-shadow-md">
+          {t(pageContent.str1En, pageContent.str1Bn)}{" "}
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+            {t(pageContent.str2En, pageContent.str2Bn)}
+          </span>
+        </h1>
+        <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed font-medium drop-shadow-sm">
+          {t(pageContent.str3En, pageContent.str3Bn)}
+        </p>
+      </div>
+    </div>
 
     {/* Controls & Area Listing (Truly Full Width White Background) */}
     <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10">

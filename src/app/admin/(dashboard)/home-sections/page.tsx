@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface HomeSections {
@@ -31,19 +32,20 @@ export default function HomeSectionsPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_home_sections");
-    if (saved) {
-      setHomeSections(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_home_sections", JSON.stringify(defaultHomeSections));
-      setHomeSections(defaultHomeSections);
-    }
+    getSetting("m_amin_home_sections").then(saved => {
+      if (saved) {
+        setHomeSections(saved as any);
+      } else {
+        setSetting("m_amin_home_sections", defaultHomeSections as any);
+        setHomeSections(defaultHomeSections);
+      }
+    });
   }, [router]);
 
   const toggleSection = (key: keyof HomeSections) => {
     const updated = { ...homeSections, [key]: !homeSections[key] };
     setHomeSections(updated);
-    localStorage.setItem("m_amin_home_sections", JSON.stringify(updated));
+    setSetting("m_amin_home_sections", updated as any);
   };
 
   if (!auth) return null;

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSetting } from "@/actions/content";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import * as Lucide from "lucide-react";
@@ -118,14 +119,13 @@ export default function About() {
   const [content, setContent] = useState<AboutContentFull>(defaultContent);
 
   useEffect(() => {
-    const saved = localStorage.getItem("m_amin_about_content_full");
-    if (saved) {
-      try {
-        setContent(JSON.parse(saved));
-      } catch {
+    getSetting("m_amin_about_content_full").then(saved => {
+      if (saved) {
+        setContent(saved as unknown as AboutContentFull);
+      } else {
         setContent(defaultContent);
       }
-    }
+    });
   }, []);
 
   return (
@@ -136,9 +136,6 @@ export default function About() {
         <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
 
         <div className="text-center max-w-3xl mx-auto">
-          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t("Corporate Profile", "কর্পোরেট প্রোফাইল")}
-          </span>
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
             {t(content.headerTitleEn, content.headerTitleBn)}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">

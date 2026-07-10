@@ -1,7 +1,9 @@
 "use client";
+import { toast } from "sonner";
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useState } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultCareersPageContent } from "@/app/admin/(dashboard)/careers-page/page";
 
@@ -272,13 +274,13 @@ export default function Careers() {
   const validateAndNext = () => {
     if (currentStep === 1) {
       if (!applyForm.nameEn || !applyForm.nameBn || !applyForm.email || !applyForm.phone || !applyForm.nidBrc) {
-        alert(t(pageContent.str25En, pageContent.str25Bn));
+        toast(t(pageContent.str25En, pageContent.str25Bn));
         return;
       }
     }
     if (currentStep === 2) {
       if (!applyForm.presentAddress || (!applyForm.sameAsPresent && !applyForm.permanentAddress)) {
-        alert(t(pageContent.str26En, pageContent.str26Bn));
+        toast(t(pageContent.str26En, pageContent.str26Bn));
         return;
       }
     }
@@ -288,14 +290,14 @@ export default function Careers() {
   const handleApplySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!applyForm.agreed || !applyForm.signature) {
-      alert(t(pageContent.str27En, pageContent.str27Bn));
+      toast(t(pageContent.str27En, pageContent.str27Bn));
       return;
     }
 
     setSubmitting(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        const applications = JSON.parse(localStorage.getItem("m_amin_job_applications") || "[]");
+        const applications = await getSetting("m_amin_job_applications"); const applicationsArr = Array.isArray(applications) ? applications : [];
         const newApplication = {
           id: `APP-${Date.now().toString().slice(-6)}`,
           position: selectedJob?.title,
@@ -303,8 +305,8 @@ export default function Careers() {
           workExperiences,
           dateApplied: new Date().toLocaleString()
         };
-        applications.push(newApplication);
-        localStorage.setItem("m_amin_job_applications", JSON.stringify(applications));
+        applicationsArr.push(newApplication);
+        setSetting("m_amin_job_applications", applicationsArr as Record<string, unknown>[]);
       } catch (err) {
         console.error("Error saving job application:", err);
       }
@@ -389,9 +391,6 @@ export default function Careers() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
-            <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-              {t(pageContent.str28En, pageContent.str28Bn)}
-            </span>
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
               {t(pageContent.str29En, pageContent.str29Bn)}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">

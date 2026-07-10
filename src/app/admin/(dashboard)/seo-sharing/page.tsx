@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface SEOSettings {
@@ -25,19 +27,20 @@ export default function SEOSharingPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_seo_settings");
-    if (saved) {
-      setSeoSettings(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_seo_settings", JSON.stringify(defaultSEOSettings));
-      setSeoSettings(defaultSEOSettings);
-    }
+    getSetting("m_amin_seo_settings").then(saved => {
+      if (saved) {
+        setSeoSettings(saved as any);
+      } else {
+        setSetting("m_amin_seo_settings", defaultSEOSettings as any);
+        setSeoSettings(defaultSEOSettings);
+      }
+    });
   }, [router]);
 
-  const saveSEOSettings = (e: React.FormEvent) => {
+  const saveSEOSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_seo_settings", JSON.stringify(seoSettings));
-    alert("SEO details saved successfully!");
+    setSetting("m_amin_seo_settings", seoSettings as any);
+    toast("SEO details saved successfully!");
   };
 
   if (!auth) return null;

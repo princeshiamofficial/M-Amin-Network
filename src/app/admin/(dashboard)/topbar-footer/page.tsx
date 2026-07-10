@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Info,
@@ -168,7 +170,7 @@ export default function TopbarFooterPage() {
         console.error("Error parsing footer config:", e);
       }
     } else {
-      localStorage.setItem("m_amin_footer_content", JSON.stringify(defaultFooterContent));
+      setSetting("m_amin_footer_content", defaultFooterContent as any);
       setFooterContent(defaultFooterContent);
     }
 
@@ -181,7 +183,7 @@ export default function TopbarFooterPage() {
         console.error("Error parsing nav links config:", e);
       }
     } else {
-      localStorage.setItem("m_amin_nav_links", JSON.stringify(defaultNavLinks));
+      setSetting("m_amin_nav_links", defaultNavLinks as any);
       setNavLinks(defaultNavLinks);
     }
 
@@ -201,7 +203,7 @@ export default function TopbarFooterPage() {
         console.error("Error parsing badges config:", e);
       }
     } else {
-      localStorage.setItem("m_amin_footer_badges", JSON.stringify(defaultBadges));
+      setSetting("m_amin_footer_badges", defaultBadges as any);
       setBadges(defaultBadges);
     }
 
@@ -221,7 +223,7 @@ export default function TopbarFooterPage() {
         console.error("Error parsing licenses config:", e);
       }
     } else {
-      localStorage.setItem("m_amin_footer_licenses", JSON.stringify(defaultLicenses));
+      setSetting("m_amin_footer_licenses", defaultLicenses as any);
       setLicenses(defaultLicenses);
     }
 
@@ -234,19 +236,19 @@ export default function TopbarFooterPage() {
         console.error("Error parsing phones config:", e);
       }
     } else {
-      localStorage.setItem("m_amin_footer_phones", JSON.stringify(defaultPhones));
+      setSetting("m_amin_footer_phones", defaultPhones as any);
       setPhones(defaultPhones);
     }
   }, [router]);
 
-  const saveAllConfigurations = (e: React.FormEvent) => {
+  const saveAllConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_footer_content", JSON.stringify(footerContent));
-    localStorage.setItem("m_amin_nav_links", JSON.stringify(navLinks));
-    localStorage.setItem("m_amin_footer_badges", JSON.stringify(badges));
-    localStorage.setItem("m_amin_footer_licenses", JSON.stringify(licenses));
-    localStorage.setItem("m_amin_footer_phones", JSON.stringify(phones));
-    alert("Topbar, Footer, and Header Menu configurations saved successfully!");
+    setSetting("m_amin_footer_content", footerContent as any);
+    setSetting("m_amin_nav_links", navLinks as any);
+    setSetting("m_amin_footer_badges", badges as any);
+    setSetting("m_amin_footer_licenses", licenses as any);
+    setSetting("m_amin_footer_phones", phones as any);
+    toast("Topbar, Footer, and Header Menu configurations saved successfully!");
   };
 
   // Nav link order handlers
@@ -289,7 +291,7 @@ export default function TopbarFooterPage() {
   const addNewNavLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLink.nameEn.trim() || !newLink.nameBn.trim() || !newLink.href.trim()) {
-      alert("Please fill in all menu item fields.");
+      toast("Please fill in all menu item fields.");
       return;
     }
     setNavLinks([...navLinks, newLink]);
@@ -333,7 +335,7 @@ export default function TopbarFooterPage() {
   const addNewBadge = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBadge.textEn.trim() || !newBadge.textBn.trim()) {
-      alert("Please fill in both English and Bangla text fields.");
+      toast("Please fill in both English and Bangla text fields.");
       return;
     }
     const badgeToAppend: AffiliationBadge = {
@@ -383,7 +385,7 @@ export default function TopbarFooterPage() {
   const addNewLicense = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLicense.textEn.trim() || !newLicense.textBn.trim()) {
-      alert("Please fill in both English and Bangla text fields.");
+      toast("Please fill in both English and Bangla text fields.");
       return;
     }
     setLicenses([...licenses, newLicense]);
@@ -712,7 +714,7 @@ export default function TopbarFooterPage() {
                                         const file = e.target.files?.[0];
                                         if (file) {
                                           if (file.size > 500 * 1024) {
-                                            alert("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                                            toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
                                             return;
                                           }
                                           const reader = new FileReader();
@@ -832,7 +834,7 @@ export default function TopbarFooterPage() {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 500 * 1024) {
-                                    alert("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                                    toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
                                     return;
                                   }
                                   const reader = new FileReader();
@@ -971,7 +973,7 @@ export default function TopbarFooterPage() {
                           type="button"
                           onClick={() => {
                             if (phones.length <= 1) {
-                              alert("At least one phone number is required.");
+                              toast("At least one phone number is required.");
                               return;
                             }
                             setPhones(phones.filter((_, i) => i !== idx));
@@ -1178,7 +1180,7 @@ export default function TopbarFooterPage() {
                                         const file = e.target.files?.[0];
                                         if (file) {
                                           if (file.size > 500 * 1024) {
-                                            alert("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                                            toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
                                             return;
                                           }
                                           const reader = new FileReader();
@@ -1286,7 +1288,7 @@ export default function TopbarFooterPage() {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 500 * 1024) {
-                                    alert("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                                    toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
                                     return;
                                   }
                                   const reader = new FileReader();

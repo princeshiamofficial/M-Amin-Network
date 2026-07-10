@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
 
@@ -95,13 +96,13 @@ export default function ContactPageAdmin() {
         setContent(parsed); 
       } catch { /* ignore */ }
     } else {
-      localStorage.setItem("m_amin_contact_content_full", JSON.stringify(defaultContactContent));
+      setSetting("m_amin_contact_content_full", defaultContactContent as unknown);
     }
   }, [router]);
 
-  const save = (e?: React.FormEvent) => {
+  const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    localStorage.setItem("m_amin_contact_content_full", JSON.stringify(content));
+    setSetting("m_amin_contact_content_full", content as unknown);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

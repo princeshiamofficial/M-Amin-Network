@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface ComplaintPageContent {
@@ -23,19 +25,20 @@ export default function ComplaintPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_complaint_page_content");
-    if (saved) {
-      setComplaintPageContent(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_complaint_page_content", JSON.stringify(defaultComplaintPageContent));
-      setComplaintPageContent(defaultComplaintPageContent);
-    }
+    getSetting("m_amin_complaint_page_content").then(saved => {
+      if (saved) {
+        setComplaintPageContent(saved as any);
+      } else {
+        setSetting("m_amin_complaint_page_content", defaultComplaintPageContent as any);
+        setComplaintPageContent(defaultComplaintPageContent);
+      }
+    });
   }, [router]);
 
-  const saveComplaintContent = (e: React.FormEvent) => {
+  const saveComplaintContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_complaint_page_content", JSON.stringify(complaintPageContent));
-    alert("Guidelines saved successfully!");
+    setSetting("m_amin_complaint_page_content", complaintPageContent as any);
+    toast("Guidelines saved successfully!");
   };
 
   if (!auth) return null;

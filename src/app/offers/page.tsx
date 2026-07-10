@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultOffersPageContent } from "@/app/admin/(dashboard)/offers-page/page";
@@ -118,13 +119,14 @@ export default function Offers() {
     ];
 
     if (typeof window !== "undefined") {
-      const savedOffers = localStorage.getItem("m_amin_promo_offers");
+      getSetting("m_amin_promo_offers").then(savedOffers => {
       if (savedOffers) {
-        setActiveOffers(JSON.parse(savedOffers));
+        setActiveOffers(savedOffers as any);
       } else {
-        localStorage.setItem("m_amin_promo_offers", JSON.stringify(defaultOffers));
+        setSetting("m_amin_promo_offers", defaultOffers as any);
         setActiveOffers(defaultOffers);
       }
+    });
     }
   }, []);
 
@@ -135,7 +137,7 @@ export default function Offers() {
     setCheckingPromo(true);
     setPromoStatus(null);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setCheckingPromo(false);
       const codeUpper = promoInput.toUpperCase().trim();
 
@@ -170,13 +172,13 @@ export default function Offers() {
     }, 1000);
   };
 
-  const handleClaimSubmit = (e: React.FormEvent) => {
+  const handleClaimSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedPromo) return;
     setSubmittingClaim(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        const claims = JSON.parse(localStorage.getItem("m_amin_claims") || "[]");
+        const claims = await getSetting("m_amin_claims"); const claimsArr = Array.isArray(claims) ? claims : [];
         const newClaim = {
           id: `CLM-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
           name: claimForm.name,
@@ -187,8 +189,8 @@ export default function Offers() {
           date: new Date().toLocaleString(),
           status: "Pending"
         };
-        claims.push(newClaim);
-        localStorage.setItem("m_amin_claims", JSON.stringify(claims));
+        claimsArr.push(newClaim);
+        setSetting("m_amin_claims", claimsArr as any);
       } catch (err) {
         console.error("Error saving claim:", err);
       }
@@ -205,24 +207,22 @@ export default function Offers() {
 
   return (
     <div className="w-full grow relative text-left">
-      {/* Top Section Wrapper (Confined to max-w-7xl) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
-        {/* Background glow */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-brand-cyan/5 blur-[120px] pointer-events-none" />
-
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto">
-          <span className="bg-brand-blue/15 text-brand-cyan text-[10px] font-bold tracking-widest px-2.5 py-1 rounded border border-brand-cyan/20 uppercase">
-            {t(pageContent.str19En, pageContent.str19Bn)}
-          </span>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-            {t(pageContent.str20En, pageContent.str20Bn)}
+      {/* Top Section Header with Background Image */}
+      <div 
+        className="w-full relative py-6 sm:py-10 bg-cover bg-center bg-no-repeat border-b border-brand-border/40"
+        style={{ backgroundImage: "url('/offer.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-brand-dark/30 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/90 pointer-events-none" />
+        
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-0 text-center w-full block drop-shadow-md">
+            {t(pageContent.str20En, pageContent.str20Bn)}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
               {t(pageContent.str21En, pageContent.str21Bn)}
             </span>
           </h1>
-          <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
+          <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
             {t(pageContent.str22En, pageContent.str22Bn)}
           </p>
         </div>

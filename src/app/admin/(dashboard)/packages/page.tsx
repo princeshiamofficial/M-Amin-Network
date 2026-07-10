@@ -1,6 +1,8 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -192,13 +194,14 @@ export default function AdminPackagesPage() {
 
   const loadPackages = React.useCallback(() => {
     if (typeof window === "undefined") return;
-    const saved = localStorage.getItem("m_amin_packages_list");
-    if (saved) {
-      setPackages(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_packages_list", JSON.stringify(defaultPackages));
-      setPackages(defaultPackages);
-    }
+    getSetting("m_amin_packages_list").then(saved => {
+      if (saved) {
+        setPackages(saved as any);
+      } else {
+        setSetting("m_amin_packages_list", defaultPackages as any);
+        setPackages(defaultPackages);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -220,9 +223,9 @@ export default function AdminPackagesPage() {
 
   // Listen to database reset event triggered from the parent layout
   useEffect(() => {
-    const handleReset = () => {
+    const handleReset = async () => {
       if (typeof window !== "undefined") {
-        localStorage.setItem("m_amin_packages_list", JSON.stringify(defaultPackages));
+        setSetting("m_amin_packages_list", defaultPackages as any);
         setPackages(defaultPackages);
       }
     };
@@ -277,23 +280,23 @@ export default function AdminPackagesPage() {
       updated = packages.map((p) => (p.name === editingPlanName ? parsedPlan : p));
     } else {
       if (packages.some((p) => p.name.toLowerCase() === parsedPlan.name.toLowerCase())) {
-        alert("A package with this name already exists!");
+        toast("A package with this name already exists!");
         return;
       }
       updated = [...packages, parsedPlan];
     }
 
     setPackages(updated);
-    localStorage.setItem("m_amin_packages_list", JSON.stringify(updated));
+    setSetting("m_amin_packages_list", updated as any);
     setIsModalOpen(false);
-    alert(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
+    toast(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
   };
 
   const handleDelete = (name: string) => {
     if (confirm(`Are you sure you want to delete package "${name}"?`)) {
       const updated = packages.filter((p) => p.name !== name);
       setPackages(updated);
-      localStorage.setItem("m_amin_packages_list", JSON.stringify(updated));
+      setSetting("m_amin_packages_list", updated as any);
     }
   };
 

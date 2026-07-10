@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -27,21 +28,22 @@ export default function ContactMessagesPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_contact_messages");
-    if (saved) setMessages(JSON.parse(saved));
-    else { localStorage.setItem("m_amin_contact_messages", JSON.stringify(defaultMessages)); setMessages(defaultMessages); }
+    getSetting("m_amin_contact_messages").then(saved => {
+      if (saved) { setMessages(saved as any); }
+      else { setSetting("m_amin_contact_messages", defaultMessages as any); setMessages(defaultMessages); }
+    });
   }, [router]);
 
   const updateStatus = (id: string, status: "Read" | "Replied") => {
     const updated = messages.map(m => m.id === id ? { ...m, status } : m);
     setMessages(updated);
-    localStorage.setItem("m_amin_contact_messages", JSON.stringify(updated));
+    setSetting("m_amin_contact_messages", updated as any);
   };
 
-  const deleteMessage = (id: string) => {
+  const deleteMessage = async (id: string) => {
     const updated = messages.filter(m => m.id !== id);
     setMessages(updated);
-    localStorage.setItem("m_amin_contact_messages", JSON.stringify(updated));
+    setSetting("m_amin_contact_messages", updated as any);
   };
 
   if (!auth) return null;

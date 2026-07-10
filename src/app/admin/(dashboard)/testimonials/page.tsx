@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -95,7 +96,7 @@ export default function TestimonialsPage() {
         setTestimonials(defaultTestimonials);
       }
     } else {
-      localStorage.setItem("m_amin_testimonials", JSON.stringify(defaultTestimonials));
+      setSetting("m_amin_testimonials", defaultTestimonials as Testimonial[]);
       setTestimonials(defaultTestimonials);
     }
   }, [router]);
@@ -122,7 +123,7 @@ export default function TestimonialsPage() {
     }
     
     setTestimonials(updated);
-    localStorage.setItem("m_amin_testimonials", JSON.stringify(updated));
+    setSetting("m_amin_testimonials", updated as Testimonial[]);
     setCurrentTestimonial({ rating: 5 });
     setIsEditing(false);
   };
@@ -142,14 +143,14 @@ export default function TestimonialsPage() {
       t.id === id ? { ...t, isPublished: !t.isPublished } : t
     );
     setTestimonials(updated);
-    localStorage.setItem("m_amin_testimonials", JSON.stringify(updated));
+    setSetting("m_amin_testimonials", updated as Testimonial[]);
   };
 
-  const deleteTestimonial = (id: string) => {
+  const deleteTestimonial = async (id: string) => {
     if (!confirm("Are you sure you want to delete this testimonial?")) return;
     const updated = testimonials.filter((t) => t.id !== id);
     setTestimonials(updated);
-    localStorage.setItem("m_amin_testimonials", JSON.stringify(updated));
+    setSetting("m_amin_testimonials", updated as Testimonial[]);
   };
 
   if (!auth) return null;

@@ -1,6 +1,8 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -96,13 +98,14 @@ export default function OffersPage() {
     setTimeout(() => setIsAuthenticated(true), 50);
 
     // Load promo campaigns
-    const savedOffers = localStorage.getItem("m_amin_promo_offers");
-    if (savedOffers) {
-      setPromoOffers(JSON.parse(savedOffers));
-    } else {
-      localStorage.setItem("m_amin_promo_offers", JSON.stringify(defaultPromoOffers));
-      setPromoOffers(defaultPromoOffers);
-    }
+    getSetting("m_amin_promo_offers").then(savedOffers => {
+      if (savedOffers) {
+        setPromoOffers(savedOffers as any);
+      } else {
+        setSetting("m_amin_promo_offers", defaultPromoOffers as any);
+        setPromoOffers(defaultPromoOffers);
+      }
+    });
   }, [router]);
 
   // --- Campaigns Handlers ---
@@ -111,7 +114,7 @@ export default function OffersPage() {
     if (typeof window === "undefined") return;
 
     const codeUpper = promoFormData.code.toUpperCase().trim();
-    if (!codeUpper) { alert("Promo code is required."); return; }
+    if (!codeUpper) { toast("Promo code is required."); return; }
 
     let badgeColor = promoFormData.badgeColor;
     if (!badgeColor) {
@@ -137,23 +140,23 @@ export default function OffersPage() {
       updated[promoFormIndex] = offerData;
     } else {
       if (promoOffers.some(o => o.code === codeUpper)) {
-        alert("A campaign with this promo code already exists!");
+        toast("A campaign with this promo code already exists!");
         return;
       }
       updated = [offerData, ...promoOffers];
     }
 
     setPromoOffers(updated);
-    localStorage.setItem("m_amin_promo_offers", JSON.stringify(updated));
+    setSetting("m_amin_promo_offers", updated as any);
     setIsPromoModalOpen(false);
-    alert(promoFormIndex !== null ? "Campaign updated successfully!" : "New campaign created successfully!");
+    toast(promoFormIndex !== null ? "Campaign updated successfully!" : "New campaign created successfully!");
   };
 
-  const handleDeletePromoOffer = (index: number) => {
+  const handleDeletePromoOffer = async (index: number) => {
     if (!confirm("Are you sure you want to delete this promotional campaign?")) return;
     const updated = promoOffers.filter((_, i) => i !== index);
     setPromoOffers(updated);
-    localStorage.setItem("m_amin_promo_offers", JSON.stringify(updated));
+    setSetting("m_amin_promo_offers", updated as any);
   };
 
   if (!isAuthenticated) return null;

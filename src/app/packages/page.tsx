@@ -4,6 +4,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getSetting, setSetting } from "@/actions/content";
 
 interface Plan {
   speed: string;
@@ -283,13 +284,14 @@ function PackagesContent() {
   const [allPlans, setAllPlans] = useState<Plan[]>([]);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("m_amin_packages_list");
+      getSetting("m_amin_packages_list").then(saved => {
       if (saved) {
-        setAllPlans(JSON.parse(saved));
+        setAllPlans(saved as Plan[]);
       } else {
-        localStorage.setItem("m_amin_packages_list", JSON.stringify(defaultPlans));
+        setSetting("m_amin_packages_list", defaultPlans as Plan[]);
         setAllPlans(defaultPlans);
       }
+    });
     }
   }, []);
 

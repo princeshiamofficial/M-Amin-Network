@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface SiteContent {
@@ -25,19 +27,20 @@ export default function SiteContentPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_site_content");
-    if (saved) {
-      setSiteContent(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_site_content", JSON.stringify(defaultSiteContent));
-      setSiteContent(defaultSiteContent);
-    }
+    getSetting("m_amin_site_content").then(saved => {
+      if (saved) {
+        setSiteContent(saved as any);
+      } else {
+        setSetting("m_amin_site_content", defaultSiteContent as any);
+        setSiteContent(defaultSiteContent);
+      }
+    });
   }, [router]);
 
-  const saveSiteContent = (e: React.FormEvent) => {
+  const saveSiteContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_site_content", JSON.stringify(siteContent));
-    alert("Global details saved successfully!");
+    setSetting("m_amin_site_content", siteContent as any);
+    toast("Global details saved successfully!");
   };
 
   if (!auth) return null;

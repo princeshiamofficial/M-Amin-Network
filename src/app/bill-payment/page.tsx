@@ -1,6 +1,8 @@
 "use client";
+import { toast } from "sonner";
 
 import React, { useState } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultBillPaymentPageContent } from "@/app/admin/(dashboard)/bill-payment-page/page";
 
@@ -68,7 +70,7 @@ export default function BillPayment() {
     setBillDetails(null);
     setHasSearched(false);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setSearching(false);
       setHasSearched(true);
 
@@ -116,10 +118,10 @@ export default function BillPayment() {
     if (!selectedGateway || !billDetails) return;
 
     setPaying(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const generatedTxn = `TXN-${selectedGateway.toUpperCase()}-${Date.now().toString().slice(-6)}-${Math.floor(10000 + Math.random() * 90000)}`;
       try {
-        const payments = JSON.parse(localStorage.getItem("m_amin_payments") || "[]");
+        const payments = await getSetting("m_amin_payments"); const paymentsArr = Array.isArray(payments) ? payments : [];
         const newPayment = {
           id: generatedTxn,
           clientId: billDetails.clientId,
@@ -133,8 +135,8 @@ export default function BillPayment() {
           dueDate: billDetails.dueDate,
           paidDate: new Date().toLocaleString()
         };
-        payments.push(newPayment);
-        localStorage.setItem("m_amin_payments", JSON.stringify(payments));
+        paymentsArr.push(newPayment);
+        setSetting("m_amin_payments", paymentsArr);
       } catch (err) {
         console.error("Error saving payment:", err);
       }
@@ -422,7 +424,7 @@ export default function BillPayment() {
                         {t(pageContent.str43En, pageContent.str43Bn)}
                       </button>
                       <button
-                        onClick={() => alert(lang === "BN" ? "রসিদ ডাউনলোড: Receipt-MAN-2026.pdf তৈরি করা হয়েছে।" : "Receipt download simulated: Receipt-MAN-2026.pdf has been generated.")}
+                        onClick={() => toast(lang === "BN" ? "রসিদ ডাউনলোড: Receipt-MAN-2026.pdf তৈরি করা হয়েছে।" : "Receipt download simulated: Receipt-MAN-2026.pdf has been generated.")}
                         className="px-6 py-2.5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black transition-opacity cursor-pointer"
                       >
                         {t(pageContent.str44En, pageContent.str44Bn)}

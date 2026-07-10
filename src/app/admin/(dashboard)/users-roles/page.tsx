@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface AdminUser {
@@ -26,24 +28,25 @@ export default function UsersRolesPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_admin_users");
-    if (saved) {
-      setAdminUsers(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_admin_users", JSON.stringify(defaultAdminUsers));
-      setAdminUsers(defaultAdminUsers);
-    }
+    getSetting("m_amin_admin_users").then(saved => {
+      if (saved) {
+        setAdminUsers(saved as any);
+      } else {
+        setSetting("m_amin_admin_users", defaultAdminUsers as any);
+        setAdminUsers(defaultAdminUsers);
+      }
+    });
   }, [router]);
 
   const deleteAdminUser = (id: string) => {
     if (id === "USR-1") {
-      alert("Cannot revoke primary Super Administrator!");
+      toast("Cannot revoke primary Super Administrator!");
       return;
     }
     if (!confirm("Are you sure you want to revoke this admin user?")) return;
     const updated = adminUsers.filter((u) => u.id !== id);
     setAdminUsers(updated);
-    localStorage.setItem("m_amin_admin_users", JSON.stringify(updated));
+    setSetting("m_amin_admin_users", updated as any);
   };
 
   if (!auth) return null;

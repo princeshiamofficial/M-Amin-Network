@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -38,14 +39,16 @@ export default function BillsPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_payments");
-    setPayments(saved ? JSON.parse(saved) : defaultPayments);
+    getSetting("m_amin_payments").then(saved => {
+      if (saved) setPayments(saved as any);
+      else setPayments(defaultPayments);
+    });
   }, [router]);
 
-  const deletePayment = (id: string) => {
+  const deletePayment = async (id: string) => {
     const updated = payments.filter(p => p.id !== id);
     setPayments(updated);
-    localStorage.setItem("m_amin_payments", JSON.stringify(updated));
+    setSetting("m_amin_payments", updated as any);
   };
 
   if (!auth) return null;

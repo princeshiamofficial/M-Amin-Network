@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
@@ -212,17 +214,15 @@ export default function NetworkFeaturesPage() {
       return;
     }
     setAuth(true);
-    const s = localStorage.getItem("m_amin_network_features");
-    if (s) {
-      try { setFeatures(JSON.parse(s)); } catch { /* ignore */ }
-    } else {
-      localStorage.setItem("m_amin_network_features", JSON.stringify(defaultFeatures));
-    }
+    getSetting("m_amin_network_features").then(s => {
+      if (s) setFeatures(s as any);
+      else setSetting("m_amin_network_features", defaultFeatures as any);
+    });
   }, [router]);
 
-  const saveConfigurations = (e: React.FormEvent) => {
+  const saveConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_network_features", JSON.stringify(features));
+    setSetting("m_amin_network_features", features as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -255,7 +255,7 @@ export default function NetworkFeaturesPage() {
   const addNewItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newFeature.titleEn.trim() || !newFeature.titleBn.trim() || !newFeature.descEn.trim() || !newFeature.descBn.trim()) {
-      alert("Please fill in all fields.");
+      toast("Please fill in all fields.");
       return;
     }
     setFeatures([...features, newFeature]);

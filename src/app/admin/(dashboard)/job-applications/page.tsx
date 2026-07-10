@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface JobApplication {
@@ -21,19 +22,20 @@ export default function JobApplicationsPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_job_applications");
-    if (saved) setApplications(JSON.parse(saved));
-    else { localStorage.setItem("m_amin_job_applications", JSON.stringify(defaultApplications)); setApplications(defaultApplications); }
+    getSetting("m_amin_job_applications").then(saved => {
+      if (saved) { setApplications(saved as any); }
+      else { setSetting("m_amin_job_applications", defaultApplications as any); setApplications(defaultApplications); }
+    });
   }, [router]);
 
   const updateStatus = (id: string, status: JobApplication["status"]) => {
     const updated = applications.map(a => a.id === id ? { ...a, status } : a);
-    setApplications(updated); localStorage.setItem("m_amin_job_applications", JSON.stringify(updated));
+    setApplications(updated); setSetting("m_amin_job_applications", updated as any);
   };
-  const deleteApp = (id: string) => {
+  const deleteApp = async (id: string) => {
     if (!confirm("Delete this application?")) return;
     const updated = applications.filter(a => a.id !== id);
-    setApplications(updated); localStorage.setItem("m_amin_job_applications", JSON.stringify(updated));
+    setApplications(updated); setSetting("m_amin_job_applications", updated as any);
   };
 
   if (!auth) return null;

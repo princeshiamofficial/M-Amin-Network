@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultSupportPageContent } from "@/app/admin/(dashboard)/support-page/page";
 
@@ -143,10 +144,10 @@ export default function Support() {
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const generatedRef = `TKT-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
       try {
-        const tickets = JSON.parse(localStorage.getItem("m_amin_tickets") || "[]");
+        const tickets = await getSetting("m_amin_tickets"); const ticketsArr = Array.isArray(tickets) ? tickets : [];
         const newTicket = {
           id: generatedRef,
           clientId: ticketForm.clientId,
@@ -157,8 +158,8 @@ export default function Support() {
           date: new Date().toLocaleString(),
           status: "Open"
         };
-        tickets.push(newTicket);
-        localStorage.setItem("m_amin_tickets", JSON.stringify(tickets));
+        ticketsArr.push(newTicket);
+        setSetting("m_amin_tickets", ticketsArr as any);
       } catch (err) {
         console.error("Error saving ticket:", err);
       }

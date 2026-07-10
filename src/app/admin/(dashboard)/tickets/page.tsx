@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -31,19 +32,20 @@ export default function TicketsPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_tickets");
-    if (saved) setTickets(JSON.parse(saved));
-    else { localStorage.setItem("m_amin_tickets", JSON.stringify(defaultTickets)); setTickets(defaultTickets); }
+    getSetting("m_amin_tickets").then(saved => {
+      if (saved) { setTickets(saved as any); }
+      else { setSetting("m_amin_tickets", defaultTickets as any); setTickets(defaultTickets); }
+    });
   }, [router]);
 
   const updateStatus = (id: string, status: "Assigned" | "Resolved") => {
     const updated = tickets.map(t => t.id === id ? { ...t, status } : t);
-    setTickets(updated); localStorage.setItem("m_amin_tickets", JSON.stringify(updated));
+    setTickets(updated); setSetting("m_amin_tickets", updated as any);
   };
-  const deleteTicket = (id: string) => {
+  const deleteTicket = async (id: string) => {
     if (!confirm("Delete this ticket?")) return;
     const updated = tickets.filter(t => t.id !== id);
-    setTickets(updated); localStorage.setItem("m_amin_tickets", JSON.stringify(updated));
+    setTickets(updated); setSetting("m_amin_tickets", updated as any);
   };
 
   if (!auth) return null;

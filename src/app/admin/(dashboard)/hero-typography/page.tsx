@@ -1,5 +1,7 @@
 "use client";
+import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
@@ -67,7 +69,7 @@ export default function HeroTypographyPage() {
         setHeroTypography(defaultHeroTypography);
       }
     } else {
-      localStorage.setItem("m_amin_hero_typography", JSON.stringify(defaultHeroTypography));
+      setSetting("m_amin_hero_typography", defaultHeroTypography as any);
       setHeroTypography(defaultHeroTypography);
     }
 
@@ -80,7 +82,7 @@ export default function HeroTypographyPage() {
         setHeroMetrics(defaultHeroMetrics);
       }
     } else {
-      localStorage.setItem("m_amin_hero_metrics", JSON.stringify(defaultHeroMetrics));
+      setSetting("m_amin_hero_metrics", defaultHeroMetrics as any);
       setHeroMetrics(defaultHeroMetrics);
     }
   }, [router]);
@@ -95,11 +97,11 @@ export default function HeroTypographyPage() {
     }
   }, [heroTypography.slides]);
 
-  const saveHeroTypography = (e: React.FormEvent) => {
+  const saveHeroTypography = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("m_amin_hero_typography", JSON.stringify(heroTypography));
-    localStorage.setItem("m_amin_hero_metrics", JSON.stringify(heroMetrics));
-    alert("Hero configurations and stats metrics saved successfully!");
+    setSetting("m_amin_hero_typography", heroTypography as any);
+    setSetting("m_amin_hero_metrics", heroMetrics as any);
+    toast("Hero configurations and stats metrics saved successfully!");
   };
 
   const addSlide = () => {
@@ -107,7 +109,7 @@ export default function HeroTypographyPage() {
     const updatedSlides = [...(heroTypography.slides || []), newSlideUrl.trim()];
     const updated = { ...heroTypography, slides: updatedSlides };
     setHeroTypography(updated);
-    localStorage.setItem("m_amin_hero_typography", JSON.stringify(updated));
+    setSetting("m_amin_hero_typography", updated as any);
     setNewSlideUrl("");
   };
 
@@ -115,7 +117,7 @@ export default function HeroTypographyPage() {
     const updatedSlides = (heroTypography.slides || []).filter((_, i) => i !== index);
     const updated = { ...heroTypography, slides: updatedSlides };
     setHeroTypography(updated);
-    localStorage.setItem("m_amin_hero_typography", JSON.stringify(updated));
+    setSetting("m_amin_hero_typography", updated as any);
     // Reset active preview index if out of bounds
     if (activePreviewSlide >= updatedSlides.length) {
       setActivePreviewSlide(0);

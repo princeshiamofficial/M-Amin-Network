@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -28,20 +29,21 @@ export default function ComplaintsPage() {
   useEffect(() => {
     if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_complaints");
-    if (saved) setComplaints(JSON.parse(saved));
-    else { localStorage.setItem("m_amin_complaints", JSON.stringify(defaultComplaints)); setComplaints(defaultComplaints); }
+    getSetting("m_amin_complaints").then(saved => {
+      if (saved) { setComplaints(saved as Complaint[]); }
+      else { setSetting("m_amin_complaints", defaultComplaints as Complaint[]); setComplaints(defaultComplaints); }
+    });
   }, [router]);
 
   const updateStatus = (id: string, status: "Investigating" | "Resolved") => {
     const updated = complaints.map(c => c.id === id ? { ...c, status } : c);
-    setComplaints(updated); localStorage.setItem("m_amin_complaints", JSON.stringify(updated));
+    setComplaints(updated); setSetting("m_amin_complaints", updated as Complaint[]);
   };
 
-  const deleteComplaint = (id: string) => {
+  const deleteComplaint = async (id: string) => {
     if (!confirm("Delete this complaint?")) return;
     const updated = complaints.filter(c => c.id !== id);
-    setComplaints(updated); localStorage.setItem("m_amin_complaints", JSON.stringify(updated));
+    setComplaints(updated); setSetting("m_amin_complaints", updated as Complaint[]);
   };
 
   if (!auth) return null;

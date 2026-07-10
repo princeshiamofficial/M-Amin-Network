@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -73,15 +74,17 @@ export default function CustomersPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_subscribers");
-    setSubscribers(saved ? JSON.parse(saved) : defaultSubscribers);
+    getSetting("m_amin_subscribers").then(saved => {
+      if (saved) setSubscribers(saved as any);
+      else setSubscribers(defaultSubscribers);
+    });
   }, [router]);
 
-  const handleDeleteSubscriber = (id: string) => {
+  const handleDeleteSubscriber = async (id: string) => {
     if (!confirm("Are you sure you want to disconnect/delete this subscriber?")) return;
     const updated = subscribers.filter(s => s.id !== id);
     setSubscribers(updated);
-    localStorage.setItem("m_amin_subscribers", JSON.stringify(updated));
+    setSetting("m_amin_subscribers", updated as any);
   };
 
   const handleOpenAddModal = () => {
@@ -128,7 +131,7 @@ export default function CustomersPage() {
     }
 
     setSubscribers(updated);
-    localStorage.setItem("m_amin_subscribers", JSON.stringify(updated));
+    setSetting("m_amin_subscribers", updated as any);
     setIsModalOpen(false);
   };
 
@@ -141,7 +144,7 @@ export default function CustomersPage() {
       return s;
     });
     setSubscribers(updated);
-    localStorage.setItem("m_amin_subscribers", JSON.stringify(updated));
+    setSetting("m_amin_subscribers", updated as any);
   };
 
   if (!auth) return null;

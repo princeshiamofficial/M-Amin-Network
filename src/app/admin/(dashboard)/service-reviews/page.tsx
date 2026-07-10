@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 
 interface ServiceReview {
@@ -24,20 +25,21 @@ export default function ServiceReviewsPage() {
       return;
     }
     setAuth(true);
-    const saved = localStorage.getItem("m_amin_service_reviews");
-    if (saved) {
-      setServiceReviews(JSON.parse(saved));
-    } else {
-      localStorage.setItem("m_amin_service_reviews", JSON.stringify(defaultReviews));
-      setServiceReviews(defaultReviews);
-    }
+    getSetting("m_amin_service_reviews").then(saved => {
+      if (saved) {
+        setServiceReviews(saved as any);
+      } else {
+        setSetting("m_amin_service_reviews", defaultReviews as any);
+        setServiceReviews(defaultReviews);
+      }
+    });
   }, [router]);
 
-  const deleteReview = (id: string) => {
+  const deleteReview = async (id: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return;
     const updated = serviceReviews.filter((r) => r.id !== id);
     setServiceReviews(updated);
-    localStorage.setItem("m_amin_service_reviews", JSON.stringify(updated));
+    setSetting("m_amin_service_reviews", updated as any);
   };
 
   if (!auth) return null;
