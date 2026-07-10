@@ -17,7 +17,7 @@ const mysql = require('mysql2/promise');
 
   // Update password hash
   const correctHash = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
-  const [result] = await connection.query(
+  await connection.query(
     'UPDATE `user` SET `password_hash` = ? WHERE `username` = ? OR `email` = ?',
     [correctHash, 'admin', 'admin@mamin.net']
   );

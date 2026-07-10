@@ -6,26 +6,7 @@ import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
 import { getSetting } from "@/actions/content";
 import { IconMap, defaultQuickActions, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
-import {
-  Package,
-  Tag,
-  MapPin,
-  FileText,
-  Users,
-  Receipt,
-  Mail,
-  AlertTriangle,
-  Briefcase,
-  UserCog,
-  Zap,
-  Layers,
-  Type,
-  Info,
-  Star,
-  Image as ImageIcon,
-  Settings,
-  ShieldCheck
-} from "lucide-react";
+
 
 const tabUrls: Record<string, string> = {
   "Overview": "/admin/dashboard",
