@@ -179,13 +179,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <button
                     key={item.id}
                     onClick={() => router.push(item.route)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 bg-white border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
                       isActive
                         ? "border-brand-blue bg-blue-50/20 text-brand-blue"
-                        : "border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-50/50"
+                        : `border-slate-200/60 ${item.bg} ${item.text} hover:opacity-85 hover:border-slate-350`
                     }`}
                   >
-                    <ActionIcon className={`w-3.5 h-3.5 ${item.text.replace('text-', 'text-').replace('-600', '-500')}`} />
+                    <ActionIcon className="w-3.5 h-3.5" />
                     <span>{item.label}</span>
                   </button>
                 );
