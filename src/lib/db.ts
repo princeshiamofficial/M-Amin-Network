@@ -20,7 +20,7 @@ const pool = mysql.createPool({
     await connection.query(`
       CREATE TABLE IF NOT EXISTS site_settings (
         id VARCHAR(255) PRIMARY KEY,
-        data JSON NOT NULL
+        data LONGTEXT NOT NULL
       )
     `);
     connection.release();
