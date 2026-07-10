@@ -57,7 +57,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
 
 const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   user: [
-    { id: "USR-1", username: "admin", email: "admin@mamin.net", role: "Super Administrator", password_hash: "240be518fabd87c0e14e7a0bdf8d3e206b0dcc585f6778937b2d5f8101a0709b", _sort_order: 0 }
+    { id: "USR-1", username: "admin", email: "admin@mamin.net", role: "Super Administrator", password_hash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", _sort_order: 0 }
   ],
   users: [
     { id: "USR-1", username: "admin", role: "Super Administrator", email: "admin@maminnetwork.test", lastLogin: "7/3/2026, 10:30 AM", _sort_order: 0 },

@@ -58,6 +58,15 @@ export default function AdminDashboard() {
       const hashedInput = await hashPassword(password);
       const isPasswordValid = hashedInput === savedAuth.password;
 
+      console.log("LOGIN DEBUG:", {
+        cleanUser,
+        validUsername,
+        validEmail,
+        hashedInput,
+        savedAuthPassword: savedAuth.password,
+        isPasswordValid
+      });
+
       if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
         setIsAuthenticated(true);
         setLoginError("");
