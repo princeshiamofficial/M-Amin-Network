@@ -47,12 +47,24 @@ export async function getSetting(key: string): Promise<unknown> {
     
     if (isDynamicTable) {
       try {
-        const [rows] = await pool.query<import('mysql2').RowDataPacket[]>(`SELECT * FROM \`${tableName}\``);
+        let rows: import('mysql2').RowDataPacket[];
+        try {
+          const [orderedRows] = await pool.query<import('mysql2').RowDataPacket[]>(
+            `SELECT * FROM \`${tableName}\` ORDER BY \`_sort_order\` ASC`
+          );
+          rows = orderedRows;
+        } catch {
+          const [unorderedRows] = await pool.query<import('mysql2').RowDataPacket[]>(
+            `SELECT * FROM \`${tableName}\``
+          );
+          rows = unorderedRows;
+        }
+
         const parsedRows = rows.map(row => {
           const newRow: Record<string, unknown> = {};
           for (const [k, v] of Object.entries(row)) {
             // Exclude our internal auto-generated key if it wasn't requested
-            if (k === '_auto_id') continue;
+            if (k === '_auto_id' || k === '_sort_order') continue;
             
             if (typeof v === 'string' && (v.startsWith('{') || v.startsWith('['))) {
               try { newRow[k] = JSON.parse(v); } catch { newRow[k] = v; }
@@ -104,7 +116,15 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
 
     const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
 
-    const items = isArray ? (data as Record<string, unknown>[]) : [data as Record<string, unknown>];
+    const rawItems = isArray ? (data as Record<string, unknown>[]) : [data as Record<string, unknown>];
+    
+    // Inject sort order to preserve insertion sequence in DB queries
+    const items = rawItems.map((item, index) => {
+      if (item && typeof item === 'object') {
+        return { ...item, _sort_order: index };
+      }
+      return item;
+    });
 
     if (items.length > 0 && items[0] && typeof items[0] === 'object') {
       const sample = items[0];
