@@ -147,7 +147,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("m_amin_service_cards");
+    const saved = localStorage.getItem("service_cards");
     if (saved) {
       try {
         setServiceCards(JSON.parse(saved));
@@ -156,7 +156,7 @@ export default function Home() {
       }
     }
 
-    const savedTestimonials = localStorage.getItem("m_amin_testimonials");
+    const savedTestimonials = localStorage.getItem("testimonials");
     if (savedTestimonials) {
       try {
         const parsed = JSON.parse(savedTestimonials);
@@ -814,3 +814,4 @@ export default function Home() {
     </div>
   );
 }
+

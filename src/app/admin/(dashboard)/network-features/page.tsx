@@ -209,20 +209,20 @@ export default function NetworkFeaturesPage() {
   });
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_network_features").then(s => {
+    getSetting("network_features").then(s => {
       if (s) setFeatures(s as any);
-      else setSetting("m_amin_network_features", defaultFeatures as any);
+      else setSetting("network_features", defaultFeatures as any);
     });
   }, [router]);
 
   const saveConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_network_features", features as any);
+    setSetting("network_features", features as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -466,3 +466,4 @@ export default function NetworkFeaturesPage() {
     </div>
   );
 }
+

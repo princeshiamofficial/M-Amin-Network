@@ -18,7 +18,7 @@ interface PromoOffer {
 export default function Offers() {
   const [pageContent, setPageContent] = React.useState(defaultOffersPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_offers_page_content");
+    const s = localStorage.getItem("offers_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -119,11 +119,11 @@ export default function Offers() {
     ];
 
     if (typeof window !== "undefined") {
-      getSetting("m_amin_promo_offers").then(savedOffers => {
+      getSetting("promo_offers").then(savedOffers => {
       if (savedOffers) {
         setActiveOffers(savedOffers as any);
       } else {
-        setSetting("m_amin_promo_offers", defaultOffers as any);
+        setSetting("promo_offers", defaultOffers as any);
         setActiveOffers(defaultOffers);
       }
     });
@@ -178,7 +178,7 @@ export default function Offers() {
     setSubmittingClaim(true);
     setTimeout(async () => {
       try {
-        const claims = await getSetting("m_amin_claims"); const claimsArr = Array.isArray(claims) ? claims : [];
+        const claims = await getSetting("claims"); const claimsArr = Array.isArray(claims) ? claims : [];
         const newClaim = {
           id: `CLM-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
           name: claimForm.name,
@@ -190,7 +190,7 @@ export default function Offers() {
           status: "Pending"
         };
         claimsArr.push(newClaim);
-        setSetting("m_amin_claims", claimsArr as any);
+        setSetting("claims", claimsArr as any);
       } catch (err) {
         console.error("Error saving claim:", err);
       }
@@ -449,3 +449,4 @@ export default function Offers() {
     </div>
   );
 }
+

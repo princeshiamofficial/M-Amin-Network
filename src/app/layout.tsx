@@ -27,7 +27,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sysConfig = (await getSetting("m_amin_system_config")) as { maintenanceMode?: boolean } | null;
+  const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean } | null;
   const isMaintenance = sysConfig?.maintenanceMode === true;
 
   return (
@@ -89,4 +89,5 @@ export default async function RootLayout({
     </html>
   );
 }
+
 

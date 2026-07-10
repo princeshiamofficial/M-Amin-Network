@@ -20,22 +20,22 @@ export default function JobApplicationsPage() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_job_applications").then(saved => {
+    getSetting("job_applications").then(saved => {
       if (saved) { setApplications(saved as any); }
-      else { setSetting("m_amin_job_applications", defaultApplications as any); setApplications(defaultApplications); }
+      else { setSetting("job_applications", defaultApplications as any); setApplications(defaultApplications); }
     });
   }, [router]);
 
   const updateStatus = (id: string, status: JobApplication["status"]) => {
     const updated = applications.map(a => a.id === id ? { ...a, status } : a);
-    setApplications(updated); setSetting("m_amin_job_applications", updated as any);
+    setApplications(updated); setSetting("job_applications", updated as any);
   };
   const deleteApp = async (id: string) => {
     if (!confirm("Delete this application?")) return;
     const updated = applications.filter(a => a.id !== id);
-    setApplications(updated); setSetting("m_amin_job_applications", updated as any);
+    setApplications(updated); setSetting("job_applications", updated as any);
   };
 
   if (!auth) return null;
@@ -85,3 +85,4 @@ export default function JobApplicationsPage() {
     </div>
   );
 }
+

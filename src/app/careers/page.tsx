@@ -23,7 +23,7 @@ interface JobOpening {
 export default function Careers() {
   const [pageContent, setPageContent] = React.useState(defaultCareersPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_careers_page_content");
+    const s = localStorage.getItem("careers_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -297,7 +297,7 @@ export default function Careers() {
     setSubmitting(true);
     setTimeout(async () => {
       try {
-        const applications = await getSetting("m_amin_job_applications"); const applicationsArr = Array.isArray(applications) ? applications : [];
+        const applications = await getSetting("job_applications"); const applicationsArr = Array.isArray(applications) ? applications : [];
         const newApplication = {
           id: `APP-${Date.now().toString().slice(-6)}`,
           position: selectedJob?.title,
@@ -306,7 +306,7 @@ export default function Careers() {
           dateApplied: new Date().toLocaleString()
         };
         applicationsArr.push(newApplication);
-        setSetting("m_amin_job_applications", applicationsArr as Record<string, unknown>[]);
+        setSetting("job_applications", applicationsArr as Record<string, unknown>[]);
       } catch (err) {
         console.error("Error saving job application:", err);
       }
@@ -1706,3 +1706,4 @@ export default function Careers() {
     </div>
   );
 }
+

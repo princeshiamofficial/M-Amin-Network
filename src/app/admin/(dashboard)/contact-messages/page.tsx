@@ -26,24 +26,24 @@ export default function ContactMessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_contact_messages").then(saved => {
+    getSetting("contact_messages").then(saved => {
       if (saved) { setMessages(saved as any); }
-      else { setSetting("m_amin_contact_messages", defaultMessages as any); setMessages(defaultMessages); }
+      else { setSetting("contact_messages", defaultMessages as any); setMessages(defaultMessages); }
     });
   }, [router]);
 
   const updateStatus = (id: string, status: "Read" | "Replied") => {
     const updated = messages.map(m => m.id === id ? { ...m, status } : m);
     setMessages(updated);
-    setSetting("m_amin_contact_messages", updated as any);
+    setSetting("contact_messages", updated as any);
   };
 
   const deleteMessage = async (id: string) => {
     const updated = messages.filter(m => m.id !== id);
     setMessages(updated);
-    setSetting("m_amin_contact_messages", updated as any);
+    setSetting("contact_messages", updated as any);
   };
 
   if (!auth) return null;
@@ -130,3 +130,4 @@ export default function ContactMessagesPage() {
     </div>
   );
 }
+

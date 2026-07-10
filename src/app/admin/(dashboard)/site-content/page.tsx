@@ -22,16 +22,16 @@ export default function SiteContentPage() {
   const [siteContent, setSiteContent] = useState<SiteContent>(defaultSiteContent);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_site_content").then(saved => {
+    getSetting("site_content").then(saved => {
       if (saved) {
         setSiteContent(saved as any);
       } else {
-        setSetting("m_amin_site_content", defaultSiteContent as any);
+        setSetting("site_content", defaultSiteContent as any);
         setSiteContent(defaultSiteContent);
       }
     });
@@ -39,7 +39,7 @@ export default function SiteContentPage() {
 
   const saveSiteContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_site_content", siteContent as any);
+    setSetting("site_content", siteContent as any);
     toast("Global details saved successfully!");
   };
 
@@ -89,3 +89,4 @@ export default function SiteContentPage() {
     </div>
   );
 }
+

@@ -134,19 +134,19 @@ export default function PortalPageAdmin() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_portal_page_content").then(s => {
+    getSetting("portal_page_content").then(s => {
       if (s) setContent(s as any);
-      else setSetting("m_amin_portal_page_content", defaultPortalPageContent as any);
+      else setSetting("portal_page_content", defaultPortalPageContent as any);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("m_amin_portal_page_content", content as any);
+    setSetting("portal_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -980,3 +980,4 @@ export default function PortalPageAdmin() {
     </div>
   );
 }
+

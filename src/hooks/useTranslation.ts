@@ -24,3 +24,4 @@ export function useTranslation() {
 
   return lang;
 }
+

@@ -5,19 +5,19 @@ import fs from "fs";
 import path from "path";
 
 const OBJECT_KEYS = [
-  "m_amin_system_config",
-  "m_amin_admin_auth",
-  "m_amin_site_content",
-  "m_amin_hero_typography",
-  "m_amin_hero_metrics",
-  "m_amin_offers_page_content",
-  "m_amin_footer_content",
-  "m_amin_bill_payment_page_content",
-  "m_amin_support_page_content",
-  "m_amin_portal_page_content",
-  "m_amin_about_content",
-  "m_amin_contact_content",
-  "m_amin_complaint_content_guidelines",
+  "system_config",
+  "admin_auth",
+  "site_content",
+  "hero_typography",
+  "hero_metrics",
+  "offers_page_content",
+  "footer_content",
+  "bill_payment_page_content",
+  "support_page_content",
+  "portal_page_content",
+  "about_content",
+  "contact_content",
+  "complaint_content_guidelines",
   "system_config",
   "admin_auth",
   "site_content",
@@ -52,7 +52,7 @@ function logDbError(action: string, key: string, error: unknown) {
  */
 export async function getSetting(key: string): Promise<unknown> {
   try {
-    let tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    let tableName = key.startsWith("") ? key.replace("", "") : key;
     
     // Map specific custom tables
     if (tableName === "admin_users" || tableName === "admin_user") {
@@ -126,7 +126,7 @@ export async function getSetting(key: string): Promise<unknown> {
  */
 export async function setSetting(key: string, data: unknown): Promise<boolean> {
   try {
-    let tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    let tableName = key.startsWith("") ? key.replace("", "") : key;
     
     // Map specific custom tables
     if (tableName === "admin_users" || tableName === "admin_user") {
@@ -265,3 +265,4 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     return false;
   }
 }
+

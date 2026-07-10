@@ -22,16 +22,16 @@ export default function SEOAuditPage() {
   const [seoAuditReports, setSeoAuditReports] = useState<SEOAuditReport[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_seo_audit_reports").then(saved => {
+    getSetting("seo_audit_reports").then(saved => {
       if (saved) {
         setSeoAuditReports(saved as any);
       } else {
-        setSetting("m_amin_seo_audit_reports", defaultSEOAuditReports as any);
+        setSetting("seo_audit_reports", defaultSEOAuditReports as any);
         setSeoAuditReports(defaultSEOAuditReports);
       }
     });
@@ -76,3 +76,4 @@ export default function SEOAuditPage() {
     </div>
   );
 }
+

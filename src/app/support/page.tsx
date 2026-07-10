@@ -13,7 +13,7 @@ interface FAQItem {
 export default function Support() {
   const [pageContent, setPageContent] = React.useState(defaultSupportPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_support_page_content");
+    const s = localStorage.getItem("support_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -77,7 +77,7 @@ export default function Support() {
   const [faqs, setFaqs] = useState<FAQItem[]>(defaultFaqs);
 
   React.useEffect(() => {
-    const savedFaqs = localStorage.getItem("m_amin_faqs");
+    const savedFaqs = localStorage.getItem("faqs");
     if (savedFaqs) {
       try {
         const parsed = JSON.parse(savedFaqs);
@@ -147,7 +147,7 @@ export default function Support() {
     setTimeout(async () => {
       const generatedRef = `TKT-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
       try {
-        const tickets = await getSetting("m_amin_tickets"); const ticketsArr = Array.isArray(tickets) ? tickets : [];
+        const tickets = await getSetting("tickets"); const ticketsArr = Array.isArray(tickets) ? tickets : [];
         const newTicket = {
           id: generatedRef,
           clientId: ticketForm.clientId,
@@ -159,7 +159,7 @@ export default function Support() {
           status: "Open"
         };
         ticketsArr.push(newTicket);
-        setSetting("m_amin_tickets", ticketsArr as any);
+        setSetting("tickets", ticketsArr as any);
       } catch (err) {
         console.error("Error saving ticket:", err);
       }
@@ -480,3 +480,4 @@ export default function Support() {
     </div>
   );
 }
+

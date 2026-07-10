@@ -69,12 +69,12 @@ export default function CustomersPage() {
   });
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_subscribers").then(saved => {
+    getSetting("subscribers").then(saved => {
       if (saved) setSubscribers(saved as any);
       else setSubscribers(defaultSubscribers);
     });
@@ -84,7 +84,7 @@ export default function CustomersPage() {
     if (!confirm("Are you sure you want to disconnect/delete this subscriber?")) return;
     const updated = subscribers.filter(s => s.id !== id);
     setSubscribers(updated);
-    setSetting("m_amin_subscribers", updated as any);
+    setSetting("subscribers", updated as any);
   };
 
   const handleOpenAddModal = () => {
@@ -131,7 +131,7 @@ export default function CustomersPage() {
     }
 
     setSubscribers(updated);
-    setSetting("m_amin_subscribers", updated as any);
+    setSetting("subscribers", updated as any);
     setIsModalOpen(false);
   };
 
@@ -144,7 +144,7 @@ export default function CustomersPage() {
       return s;
     });
     setSubscribers(updated);
-    setSetting("m_amin_subscribers", updated as any);
+    setSetting("subscribers", updated as any);
   };
 
   if (!auth) return null;
@@ -358,3 +358,4 @@ export default function CustomersPage() {
     </div>
   );
 }
+

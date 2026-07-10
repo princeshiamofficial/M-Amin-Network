@@ -90,7 +90,7 @@ export default function OffersPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const token = localStorage.getItem("m_amin_admin_token");
+    const token = localStorage.getItem("admin_token");
     if (!token) {
       router.replace("/admin");
       return;
@@ -98,11 +98,11 @@ export default function OffersPage() {
     setTimeout(() => setIsAuthenticated(true), 50);
 
     // Load promo campaigns
-    getSetting("m_amin_promo_offers").then(savedOffers => {
+    getSetting("promo_offers").then(savedOffers => {
       if (savedOffers) {
         setPromoOffers(savedOffers as any);
       } else {
-        setSetting("m_amin_promo_offers", defaultPromoOffers as any);
+        setSetting("promo_offers", defaultPromoOffers as any);
         setPromoOffers(defaultPromoOffers);
       }
     });
@@ -147,7 +147,7 @@ export default function OffersPage() {
     }
 
     setPromoOffers(updated);
-    setSetting("m_amin_promo_offers", updated as any);
+    setSetting("promo_offers", updated as any);
     setIsPromoModalOpen(false);
     toast(promoFormIndex !== null ? "Campaign updated successfully!" : "New campaign created successfully!");
   };
@@ -156,7 +156,7 @@ export default function OffersPage() {
     if (!confirm("Are you sure you want to delete this promotional campaign?")) return;
     const updated = promoOffers.filter((_, i) => i !== index);
     setPromoOffers(updated);
-    setSetting("m_amin_promo_offers", updated as any);
+    setSetting("promo_offers", updated as any);
   };
 
   if (!isAuthenticated) return null;
@@ -333,3 +333,4 @@ export default function OffersPage() {
     </div>
   );
 }
+

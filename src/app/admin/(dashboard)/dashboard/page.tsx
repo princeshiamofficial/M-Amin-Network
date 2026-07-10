@@ -384,7 +384,7 @@ export default function AdminDashboardPage() {
       updated = [...quickActionsList, { ...quickActionFormData, id: `qa-${Date.now()}` }];
     }
     setQuickActionsList(updated);
-    setSetting("m_amin_quick_actions", updated);
+    setSetting("quick_actions", updated);
     window.dispatchEvent(new Event("quick_actions_updated"));
     setIsQuickActionModalOpen(false);
     toast(editingQuickAction ? "Quick action updated successfully!" : "Quick action added successfully!");
@@ -528,7 +528,7 @@ export default function AdminDashboardPage() {
 
     const updated = [newClaim, ...claims];
     setClaims(updated);
-    setSetting("m_amin_claims", updated);
+    setSetting("claims", updated);
     setIsClaimModalOpen(false);
     toast("Connection claim reservation added successfully!");
   };
@@ -744,206 +744,206 @@ export default function AdminDashboardPage() {
   function loadDatabase() {
     if (typeof window === "undefined") return;
 
-    getSetting("m_amin_claims").then(savedClaims => {
+    getSetting("claims").then(savedClaims => {
       if (savedClaims) {
         setClaims(savedClaims as Claim[]);
       } else {
-        setSetting("m_amin_claims", defaultClaims);
+        setSetting("claims", defaultClaims);
         setClaims(defaultClaims);
       }
     });
 
-    getSetting("m_amin_complaints").then(savedComplaints => {
+    getSetting("complaints").then(savedComplaints => {
       if (savedComplaints) {
         setComplaints(savedComplaints as Complaint[]);
       } else {
-        setSetting("m_amin_complaints", defaultComplaints);
+        setSetting("complaints", defaultComplaints);
         setComplaints(defaultComplaints);
       }
     });
 
-    getSetting("m_amin_tickets").then(savedTickets => {
+    getSetting("tickets").then(savedTickets => {
       if (savedTickets) {
         setTickets(savedTickets as Ticket[]);
       } else {
-        setSetting("m_amin_tickets", defaultTickets);
+        setSetting("tickets", defaultTickets);
         setTickets(defaultTickets);
       }
     });
 
-    getSetting("m_amin_payments").then(savedPayments => {
+    getSetting("payments").then(savedPayments => {
       if (savedPayments) {
         setPayments(savedPayments as Payment[]);
       } else {
-        setSetting("m_amin_payments", defaultPayments);
+        setSetting("payments", defaultPayments);
         setPayments(defaultPayments);
       }
     });
 
-    getSetting("m_amin_contact_submissions").then(savedMessages => {
+    getSetting("contact_submissions").then(savedMessages => {
       if (savedMessages) {
         setMessages(savedMessages as ContactMessage[]);
       } else {
-        setSetting("m_amin_contact_submissions", defaultMessages);
+        setSetting("contact_submissions", defaultMessages);
         setMessages(defaultMessages);
       }
     });
 
-    getSetting("m_amin_jobs").then(savedJobs => {
+    getSetting("jobs").then(savedJobs => {
       if (savedJobs) {
         setJobs(savedJobs as Job[]);
       } else {
-        setSetting("m_amin_jobs", defaultJobs);
+        setSetting("jobs", defaultJobs);
         setJobs(defaultJobs);
       }
     });
 
-    getSetting("m_amin_job_applications").then(savedApps => {
+    getSetting("job_applications").then(savedApps => {
       if (savedApps) {
         setJobApplications(savedApps as JobApplication[]);
       } else {
-        setSetting("m_amin_job_applications", defaultJobApplications);
+        setSetting("job_applications", defaultJobApplications);
         setJobApplications(defaultJobApplications);
       }
     });
 
-    getSetting("m_amin_testimonials").then(savedTestimonials => {
+    getSetting("testimonials").then(savedTestimonials => {
       if (savedTestimonials) {
         setTestimonials(savedTestimonials as Testimonial[]);
       } else {
-        setSetting("m_amin_testimonials", defaultTestimonials);
+        setSetting("testimonials", defaultTestimonials);
         setTestimonials(defaultTestimonials);
       }
     });
 
-    getSetting("m_amin_faqs").then(savedFAQs => {
+    getSetting("faqs").then(savedFAQs => {
       if (savedFAQs) {
         setFaqs(savedFAQs as FAQ[]);
       } else {
-        setSetting("m_amin_faqs", defaultFAQs);
+        setSetting("faqs", defaultFAQs);
         setFaqs(defaultFAQs);
       }
     });
 
-    getSetting("m_amin_site_content").then(saved => {
+    getSetting("site_content").then(saved => {
       if (saved) setSiteContent(saved as any);
     });
 
-    getSetting("m_amin_home_sections").then(saved => {
+    getSetting("home_sections").then(saved => {
       if (saved) setHomeSections(saved as any);
     });
 
-    getSetting("m_amin_hero_typography").then(saved => {
+    getSetting("hero_typography").then(saved => {
       if (saved) setHeroTypography(saved as any);
     });
 
-    getSetting("m_amin_seo_settings").then(saved => {
+    getSetting("seo_settings").then(saved => {
       if (saved) setSeoSettings(saved as any);
     });
 
-    getSetting("m_amin_about_content").then(saved => {
+    getSetting("about_content").then(saved => {
       if (saved) setAboutContent(saved as any);
     });
 
-    getSetting("m_amin_contact_content").then(saved => {
+    getSetting("contact_content").then(saved => {
       if (saved) setContactPageContent(saved as any);
     });
 
-    getSetting("m_amin_complaint_content_guidelines").then(saved => {
+    getSetting("complaint_content_guidelines").then(saved => {
       if (saved) setComplaintPageContent(saved as any);
     });
 
-    getSetting("m_amin_footer_content").then(saved => {
+    getSetting("footer_content").then(saved => {
       if (saved) setFooterContent(saved as any);
     });
 
-    getSetting("m_amin_service_highlights").then(savedHighlights => {
+    getSetting("service_highlights").then(savedHighlights => {
       if (savedHighlights && (savedHighlights as any[]).length > 0) {
         setServiceHighlights(savedHighlights as ServiceHighlight[]);
       } else {
-        setSetting("m_amin_service_highlights", defaultServiceHighlights);
+        setSetting("service_highlights", defaultServiceHighlights);
         setServiceHighlights(defaultServiceHighlights);
       }
     });
 
-    getSetting("m_amin_service_reviews").then(savedReviews => {
+    getSetting("service_reviews").then(savedReviews => {
       if (savedReviews && (savedReviews as any[]).length > 0) {
         setServiceReviews(savedReviews as ServiceReview[]);
       } else {
-        setSetting("m_amin_service_reviews", defaultServiceReviews);
+        setSetting("service_reviews", defaultServiceReviews);
         setServiceReviews(defaultServiceReviews);
       }
     });
 
-    getSetting("m_amin_system_config").then(saved => {
+    getSetting("system_config").then(saved => {
       if (saved) setSystemConfig(saved as any);
     });
 
-    getSetting("m_amin_admin_users").then(savedUsers => {
+    getSetting("admin_users").then(savedUsers => {
       if (savedUsers) {
         setAdminUsers(savedUsers as AdminUser[]);
       } else {
-        setSetting("m_amin_admin_users", defaultAdminUsers);
+        setSetting("admin_users", defaultAdminUsers);
         setAdminUsers(defaultAdminUsers);
       }
     });
 
-    getSetting("m_amin_security_logs").then(savedLogs => {
+    getSetting("security_logs").then(savedLogs => {
       if (savedLogs) {
         setSecurityLogs(savedLogs as SecurityLog[]);
       } else {
-        setSetting("m_amin_security_logs", defaultSecurityLogs);
+        setSetting("security_logs", defaultSecurityLogs);
         setSecurityLogs(defaultSecurityLogs);
       }
     });
 
-    getSetting("m_amin_seo_audits").then(savedSeoAudits => {
+    getSetting("seo_audits").then(savedSeoAudits => {
       if (savedSeoAudits) {
         setSeoAuditReports(savedSeoAudits as SEOAuditReport[]);
       } else {
-        setSetting("m_amin_seo_audits", defaultSEOAuditReports);
+        setSetting("seo_audits", defaultSEOAuditReports);
         setSeoAuditReports(defaultSEOAuditReports);
       }
     });
 
-    getSetting("m_amin_dashboard_shortcuts").then(savedShortcuts => {
+    getSetting("dashboard_shortcuts").then(savedShortcuts => {
       if (savedShortcuts) {
         setShortcuts(savedShortcuts as Shortcut[]);
       } else {
-        setSetting("m_amin_dashboard_shortcuts", defaultShortcuts);
+        setSetting("dashboard_shortcuts", defaultShortcuts);
         setShortcuts(defaultShortcuts);
       }
     });
 
-    getSetting("m_amin_quick_actions").then(savedActions => {
+    getSetting("quick_actions").then(savedActions => {
       if (savedActions) {
         setQuickActionsList(savedActions as QuickAction[]);
       } else {
-        setSetting("m_amin_quick_actions", defaultQuickActions);
+        setSetting("quick_actions", defaultQuickActions);
         setQuickActionsList(defaultQuickActions);
       }
     });
 
     // Load snapshot counts
     try {
-      const savedCustomers = localStorage.getItem("m_amin_customers");
+      const savedCustomers = localStorage.getItem("customers");
       if (savedCustomers) {
         setCountCustomers(JSON.parse(savedCustomers).length);
       } else {
         setCountCustomers(3);
       }
 
-      const savedApps = localStorage.getItem("m_amin_job_applications");
+      const savedApps = localStorage.getItem("job_applications");
       if (savedApps) {
         setCountApplications(JSON.parse(savedApps).length);
       }
 
-      const savedTickets = localStorage.getItem("m_amin_tickets");
+      const savedTickets = localStorage.getItem("tickets");
       if (savedTickets) {
         setCountTickets(JSON.parse(savedTickets).length);
       }
 
-      const savedComplaints = localStorage.getItem("m_amin_complaints");
+      const savedComplaints = localStorage.getItem("complaints");
       if (savedComplaints) {
         const list = JSON.parse(savedComplaints);
         setCountAllComplaints(list.length);
@@ -952,22 +952,22 @@ export default function AdminDashboardPage() {
         setCountComplaintsToday(filedToday.length);
       }
 
-      const savedMessages = localStorage.getItem("m_amin_contact_submissions");
+      const savedMessages = localStorage.getItem("contact_submissions");
       if (savedMessages) {
         setCountContactInbox(JSON.parse(savedMessages).length);
       }
 
-      const savedPackages = localStorage.getItem("m_amin_packages");
+      const savedPackages = localStorage.getItem("packages");
       if (savedPackages) {
         setCountPackages(JSON.parse(savedPackages).length);
       }
 
-      const savedClaims = localStorage.getItem("m_amin_claims");
+      const savedClaims = localStorage.getItem("claims");
       if (savedClaims) {
         setCountOffers(JSON.parse(savedClaims).length);
       }
 
-      const savedAreas = localStorage.getItem("m_amin_coverage_zones");
+      const savedAreas = localStorage.getItem("coverage_zones");
       if (savedAreas) {
         setCountCoverageAreas(JSON.parse(savedAreas).length);
       }
@@ -990,7 +990,7 @@ export default function AdminDashboardPage() {
         setGreeting("Good Night");
       }
       if (typeof window !== "undefined") {
-        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        const auth = sessionStorage.getItem("admin_authenticated");
         if (auth !== "true") {
           router.push("/admin");
         } else {
@@ -1026,22 +1026,22 @@ export default function AdminDashboardPage() {
   const resetToDefaults = async () => {
     if (typeof window === "undefined") return;
     if (confirm("Are you sure you want to reset mock database to default seeded values?")) {
-      setSetting("m_amin_claims", defaultClaims);
-      setSetting("m_amin_complaints", defaultComplaints);
-      setSetting("m_amin_tickets", defaultTickets);
-      setSetting("m_amin_payments", defaultPayments);
-      setSetting("m_amin_contact_submissions", defaultMessages);
-      setSetting("m_amin_jobs", defaultJobs);
-      setSetting("m_amin_job_applications", defaultJobApplications);
-      setSetting("m_amin_testimonials", defaultTestimonials);
-      setSetting("m_amin_faqs", defaultFAQs);
-      setSetting("m_amin_service_highlights", defaultServiceHighlights);
-      setSetting("m_amin_service_reviews", defaultServiceReviews);
-      setSetting("m_amin_admin_users", defaultAdminUsers);
-      setSetting("m_amin_security_logs", defaultSecurityLogs);
-      setSetting("m_amin_seo_audits", defaultSEOAuditReports);
-      setSetting("m_amin_dashboard_shortcuts", defaultShortcuts);
-      setSetting("m_amin_quick_actions", defaultQuickActions);
+      setSetting("claims", defaultClaims);
+      setSetting("complaints", defaultComplaints);
+      setSetting("tickets", defaultTickets);
+      setSetting("payments", defaultPayments);
+      setSetting("contact_submissions", defaultMessages);
+      setSetting("jobs", defaultJobs);
+      setSetting("job_applications", defaultJobApplications);
+      setSetting("testimonials", defaultTestimonials);
+      setSetting("faqs", defaultFAQs);
+      setSetting("service_highlights", defaultServiceHighlights);
+      setSetting("service_reviews", defaultServiceReviews);
+      setSetting("admin_users", defaultAdminUsers);
+      setSetting("security_logs", defaultSecurityLogs);
+      setSetting("seo_audits", defaultSEOAuditReports);
+      setSetting("dashboard_shortcuts", defaultShortcuts);
+      setSetting("quick_actions", defaultQuickActions);
       
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
@@ -1100,16 +1100,16 @@ export default function AdminDashboardPage() {
         { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
       ];
 
-      setSetting("m_amin_site_content", defaultSite);
-      setSetting("m_amin_home_sections", defaultHome);
-      setSetting("m_amin_hero_typography", defaultHero);
-      setSetting("m_amin_seo_settings", defaultSeo);
-      setSetting("m_amin_about_content", defaultAbout);
-      setSetting("m_amin_contact_content", defaultContact);
-      setSetting("m_amin_complaint_content_guidelines", defaultComp);
-      setSetting("m_amin_footer_content", defaultFoot);
-      setSetting("m_amin_system_config", defaultSys);
-      setSetting("m_amin_nav_links", defaultNavLinks);
+      setSetting("site_content", defaultSite);
+      setSetting("home_sections", defaultHome);
+      setSetting("hero_typography", defaultHero);
+      setSetting("seo_settings", defaultSeo);
+      setSetting("about_content", defaultAbout);
+      setSetting("contact_content", defaultContact);
+      setSetting("complaint_content_guidelines", defaultComp);
+      setSetting("footer_content", defaultFoot);
+      setSetting("system_config", defaultSys);
+      setSetting("nav_links", defaultNavLinks);
       const defaultFeatures = [
         {
           titleEn: "100% Fiber Optic (FTTH)",
@@ -1154,18 +1154,18 @@ export default function AdminDashboardPage() {
           iconName: "Building2"
         }
       ];
-      setSetting("m_amin_network_features", defaultFeatures);
+      setSetting("network_features", defaultFeatures);
       const defaultBadges = [
         { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
         { textEn: "AS150164 BGP NETWORK", textBn: "AS150164 বিজিপি নেটওয়ার্ক", isCyan: true }
       ];
-      setSetting("m_amin_footer_badges", defaultBadges);
+      setSetting("footer_badges", defaultBadges);
       const defaultLicenses = [
         { textEn: "ASN: AS150164", textBn: "ASN: AS150164", isMono: true, colorStyle: "cyan" },
         { textEn: "BTRC Licensed", textBn: "বিটিআরসি অনুমোদিত", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
       ];
-      setSetting("m_amin_footer_licenses", defaultLicenses);
-      setSetting("m_amin_footer_phones", ["+880 1707-009267"]);
+      setSetting("footer_licenses", defaultLicenses);
+      setSetting("footer_phones", ["+880 1707-009267"]);
       
       const defaultHeroMetrics = [
         { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ" },
@@ -1173,7 +1173,7 @@ export default function AdminDashboardPage() {
         { value: "10+", titleEn: "Cities Served", titleBn: "পরিষেবা এলাকা", descEn: "Across South Keraniganj", descBn: "দক্ষিণ কেরানীগঞ্জ জুড়ে" },
         { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট" },
       ];
-      setSetting("m_amin_hero_metrics", defaultHeroMetrics);
+      setSetting("hero_metrics", defaultHeroMetrics);
 
       setClaims(defaultClaims);
       setComplaints(defaultComplaints);
@@ -1208,22 +1208,22 @@ export default function AdminDashboardPage() {
   const clearAllData = async () => {
     if (typeof window === "undefined") return;
     if (confirm("WARNING: Are you sure you want to delete all entries in the mock database? This cannot be undone.")) {
-      setSetting("m_amin_claims", []);
-      setSetting("m_amin_complaints", []);
-      setSetting("m_amin_tickets", []);
-      setSetting("m_amin_payments", []);
-      setSetting("m_amin_contact_submissions", []);
-      setSetting("m_amin_jobs", []);
-      setSetting("m_amin_job_applications", []);
-      setSetting("m_amin_testimonials", []);
-      setSetting("m_amin_faqs", []);
-      setSetting("m_amin_service_highlights", []);
-      setSetting("m_amin_service_reviews", []);
-      setSetting("m_amin_admin_users", []);
-      setSetting("m_amin_security_logs", []);
-      setSetting("m_amin_seo_audits", []);
-      setSetting("m_amin_dashboard_shortcuts", []);
-      setSetting("m_amin_quick_actions", []);
+      setSetting("claims", []);
+      setSetting("complaints", []);
+      setSetting("tickets", []);
+      setSetting("payments", []);
+      setSetting("contact_submissions", []);
+      setSetting("jobs", []);
+      setSetting("job_applications", []);
+      setSetting("testimonials", []);
+      setSetting("faqs", []);
+      setSetting("service_highlights", []);
+      setSetting("service_reviews", []);
+      setSetting("admin_users", []);
+      setSetting("security_logs", []);
+      setSetting("seo_audits", []);
+      setSetting("dashboard_shortcuts", []);
+      setSetting("quick_actions", []);
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -1247,50 +1247,50 @@ export default function AdminDashboardPage() {
   const updateClaimStatus = (id: string, newStatus: "Approved" | "Cancelled") => {
     const updated = claims.map((c) => (c.id === id ? { ...c, status: newStatus } : c));
     setClaims(updated);
-    setSetting("m_amin_claims", updated);
+    setSetting("claims", updated);
   };
 
   const deleteClaim = async (id: string) => {
     const updated = claims.filter((c) => c.id !== id);
     setClaims(updated);
-    setSetting("m_amin_claims", updated);
+    setSetting("claims", updated);
   };
 
   const updateComplaintStatus = (id: string, newStatus: "Investigating" | "Resolved") => {
     const updated = complaints.map((c) => (c.id === id ? { ...c, status: newStatus } : c));
     setComplaints(updated);
-    setSetting("m_amin_complaints", updated);
+    setSetting("complaints", updated);
   };
 
   const deleteComplaint = async (id: string) => {
     const updated = complaints.filter((c) => c.id !== id);
     setComplaints(updated);
-    setSetting("m_amin_complaints", updated);
+    setSetting("complaints", updated);
   };
 
   const updateTicketStatus = (id: string, newStatus: "Assigned" | "Resolved") => {
     const updated = tickets.map((t) => (t.id === id ? { ...t, status: newStatus } : t));
     setTickets(updated);
-    setSetting("m_amin_tickets", updated);
+    setSetting("tickets", updated);
   };
 
   const deleteTicket = async (id: string) => {
     const updated = quickActionsList.filter((a) => a.id !== id);
     setQuickActionsList(updated);
-    setSetting("m_amin_quick_actions", updated);
+    setSetting("quick_actions", updated);
     window.dispatchEvent(new Event("quick_actions_updated"));
   };
 
   const deletePayment = async (id: string) => {
     const updated = payments.filter((p) => p.id !== id);
     setPayments(updated);
-    setSetting("m_amin_payments", updated);
+    setSetting("payments", updated);
   };
 
   const deleteMessage = async (id: string) => {
     const updated = messages.filter((m) => m.id !== id);
     setMessages(updated);
-    setSetting("m_amin_contact_submissions", updated);
+    setSetting("contact_submissions", updated);
   };
 
   const toggleJobStatus = (id: string) => {
@@ -1298,133 +1298,133 @@ export default function AdminDashboardPage() {
       j.id === id ? { ...j, status: (j.status === "Open" ? "Closed" : "Open") as "Open" | "Closed" } : j
     );
     setJobs(updated);
-    setSetting("m_amin_jobs", updated);
+    setSetting("jobs", updated);
   };
 
   const deleteJob = async (id: string) => {
     const updated = jobs.filter((j) => j.id !== id);
     setJobs(updated);
-    setSetting("m_amin_jobs", updated);
+    setSetting("jobs", updated);
   };
 
   const updateApplicationStatus = (id: string, status: JobApplication["status"]) => {
     const updated = jobApplications.map((app) => (app.id === id ? { ...app, status } : app));
     setJobApplications(updated);
-    setSetting("m_amin_job_applications", updated);
+    setSetting("job_applications", updated);
   };
 
   const deleteApplication = async (id: string) => {
     const updated = jobApplications.filter((app) => app.id !== id);
     setJobApplications(updated);
-    setSetting("m_amin_job_applications", updated);
+    setSetting("job_applications", updated);
   };
 
   const toggleTestimonialPublish = (id: string) => {
     const updated = testimonials.map((t) => (t.id === id ? { ...t, isPublished: !t.isPublished } : t));
     setTestimonials(updated);
-    setSetting("m_amin_testimonials", updated);
+    setSetting("testimonials", updated);
   };
 
   const deleteTestimonial = async (id: string) => {
     const updated = testimonials.filter((t) => t.id !== id);
     setTestimonials(updated);
-    setSetting("m_amin_testimonials", updated);
+    setSetting("testimonials", updated);
   };
 
   const toggleFAQPublish = (id: string) => {
     const updated = faqs.map((f) => (f.id === id ? { ...f, isPublished: !f.isPublished } : f));
     setFaqs(updated);
-    setSetting("m_amin_faqs", updated);
+    setSetting("faqs", updated);
   };
 
   const deleteFAQ = async (id: string) => {
     const updated = faqs.filter((f) => f.id !== id);
     setFaqs(updated);
-    setSetting("m_amin_faqs", updated);
+    setSetting("faqs", updated);
   };
 
   const saveSiteContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_site_content", siteContent);
+    setSetting("site_content", siteContent);
     toast("Site Contact settings saved successfully!");
   };
 
   const saveHomeSections = (key: keyof HomeSections) => {
     const updated = { ...homeSections, [key]: !homeSections[key] };
     setHomeSections(updated);
-    setSetting("m_amin_home_sections", updated);
+    setSetting("home_sections", updated);
   };
 
   const saveHeroTypography = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_hero_typography", heroTypography);
+    setSetting("hero_typography", heroTypography);
     toast("Hero text settings saved successfully!");
   };
 
   const saveSEOSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_seo_settings", seoSettings);
+    setSetting("seo_settings", seoSettings);
     toast("SEO details saved successfully!");
   };
 
   const saveAboutContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_about_content", aboutContent);
+    setSetting("about_content", aboutContent);
     toast("About Us block content saved successfully!");
   };
 
   const saveContactContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_contact_content", contactPageContent);
+    setSetting("contact_content", contactPageContent);
     toast("Contact page settings saved successfully!");
   };
 
   const saveComplaintContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_complaint_content_guidelines", complaintPageContent);
+    setSetting("complaint_content_guidelines", complaintPageContent);
     toast("Complaint guidelines saved successfully!");
   };
 
   const saveFooterContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_footer_content", footerContent);
+    setSetting("footer_content", footerContent);
     toast("Top Bar & Footer settings saved successfully!");
   };
 
   const deleteServiceHighlight = async (id: string) => {
     const updated = serviceHighlights.filter((s) => s.id !== id);
     setServiceHighlights(updated);
-    setSetting("m_amin_service_highlights", updated);
+    setSetting("service_highlights", updated);
   };
 
   const deleteServiceReview = async (id: string) => {
     const updated = serviceReviews.filter((r) => r.id !== id);
     setServiceReviews(updated);
-    setSetting("m_amin_service_reviews", updated);
+    setSetting("service_reviews", updated);
   };
 
   const saveSystemConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_system_config", systemConfig);
+    setSetting("system_config", systemConfig);
     toast("System Settings saved successfully!");
   };
 
   const deleteAdminUser = async (id: string) => {
     const updated = adminUsers.filter((u) => u.id !== id);
     setAdminUsers(updated);
-    setSetting("m_amin_admin_users", updated);
+    setSetting("admin_users", updated);
   };
 
   const deleteSecurityLog = async (id: string) => {
     const updated = securityLogs.filter((l) => l.id !== id);
     setSecurityLogs(updated);
-    setSetting("m_amin_security_logs", updated);
+    setSetting("security_logs", updated);
   };
 
   const deleteShortcut = async (id: string) => {
     const updated = shortcuts.filter((s) => s.id !== id);
     setShortcuts(updated);
-    setSetting("m_amin_dashboard_shortcuts", updated);
+    setSetting("dashboard_shortcuts", updated);
   };
 
 
@@ -1643,7 +1643,7 @@ export default function AdminDashboardPage() {
                       onDragEnter={() => handleDragEnter(action.id)}
                       onDragEnd={() => {
                         setDraggedId(null);
-                        setSetting("m_amin_quick_actions", quickActionsListRef.current);
+                        setSetting("quick_actions", quickActionsListRef.current);
                         window.dispatchEvent(new Event("quick_actions_updated"));
                       }}
                       onClick={() => {
@@ -1697,7 +1697,7 @@ export default function AdminDashboardPage() {
                             if (confirm(`Are you sure you want to remove the ${action.label} shortcut?`)) {
                               const updated = quickActionsList.filter((item) => item.id !== action.id);
                               setQuickActionsList(updated);
-                              setSetting("m_amin_quick_actions", updated);
+                              setSetting("quick_actions", updated);
                               window.dispatchEvent(new Event("quick_actions_updated"));
                             }
                           }}
@@ -1838,3 +1838,4 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+

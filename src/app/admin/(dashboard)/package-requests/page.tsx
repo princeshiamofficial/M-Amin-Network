@@ -64,12 +64,12 @@ export default function PackageRequestsPage() {
   const filteredRequests = requests.filter(r => statusFilter === "All" || r.status === statusFilter);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_package_requests").then(saved => {
+    getSetting("package_requests").then(saved => {
       if (saved) { setRequests(saved as PackageRequest[]); }
       else {
-        setSetting("m_amin_package_requests", defaultRequests as PackageRequest[]);
+        setSetting("package_requests", defaultRequests as PackageRequest[]);
         setRequests(defaultRequests);
       }
     });
@@ -78,14 +78,14 @@ export default function PackageRequestsPage() {
   const updateStatus = (id: string, status: PackageRequest["status"]) => {
     const updated = requests.map(r => r.id === id ? { ...r, status } : r);
     setRequests(updated);
-    setSetting("m_amin_package_requests", updated as PackageRequest[]);
+    setSetting("package_requests", updated as PackageRequest[]);
   };
 
   const deleteRequest = async (id: string) => {
     if (!confirm("Delete this request?")) return;
     const updated = requests.filter(r => r.id !== id);
     setRequests(updated);
-    setSetting("m_amin_package_requests", updated as PackageRequest[]);
+    setSetting("package_requests", updated as PackageRequest[]);
   };
 
   const handleAddRequest = (e: React.FormEvent) => {
@@ -106,7 +106,7 @@ export default function PackageRequestsPage() {
     };
     const updated = [added, ...requests];
     setRequests(updated);
-    setSetting("m_amin_package_requests", updated as PackageRequest[]);
+    setSetting("package_requests", updated as PackageRequest[]);
     setNewReq({ name: "", phone: "", zone: "", address: "", planName: "", speed: "", price: 0 });
     setShowAddForm(false);
   };
@@ -264,3 +264,4 @@ export default function PackageRequestsPage() {
     </div>
   );
 }
+

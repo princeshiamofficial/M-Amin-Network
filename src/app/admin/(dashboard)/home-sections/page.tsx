@@ -27,16 +27,16 @@ export default function HomeSectionsPage() {
   const [homeSections, setHomeSections] = useState<HomeSections>(defaultHomeSections);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_home_sections").then(saved => {
+    getSetting("home_sections").then(saved => {
       if (saved) {
         setHomeSections(saved as any);
       } else {
-        setSetting("m_amin_home_sections", defaultHomeSections as any);
+        setSetting("home_sections", defaultHomeSections as any);
         setHomeSections(defaultHomeSections);
       }
     });
@@ -45,7 +45,7 @@ export default function HomeSectionsPage() {
   const toggleSection = (key: keyof HomeSections) => {
     const updated = { ...homeSections, [key]: !homeSections[key] };
     setHomeSections(updated);
-    setSetting("m_amin_home_sections", updated as any);
+    setSetting("home_sections", updated as any);
   };
 
   if (!auth) return null;
@@ -76,3 +76,4 @@ export default function HomeSectionsPage() {
     </div>
   );
 }
+

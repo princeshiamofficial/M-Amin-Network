@@ -22,22 +22,22 @@ export default function JobsPage() {
   const [newJob, setNewJob] = useState({ title: "", department: "", type: "Full-time" });
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_jobs").then(saved => {
+    getSetting("jobs").then(saved => {
       if (saved) { setJobs(saved as Job[]); }
-      else { setSetting("m_amin_jobs", defaultJobs as Job[]); setJobs(defaultJobs); }
+      else { setSetting("jobs", defaultJobs as Job[]); setJobs(defaultJobs); }
     });
   }, [router]);
 
   const toggleStatus = (id: string) => {
     const updated = jobs.map(j => j.id === id ? { ...j, status: j.status === "Open" ? "Closed" as const : "Open" as const } : j);
-    setJobs(updated); setSetting("m_amin_jobs", updated as Job[]);
+    setJobs(updated); setSetting("jobs", updated as Job[]);
   };
   const deleteJob = async (id: string) => {
     if (!confirm("Delete this job?")) return;
     const updated = jobs.filter(j => j.id !== id);
-    setJobs(updated); setSetting("m_amin_jobs", updated as Job[]);
+    setJobs(updated); setSetting("jobs", updated as Job[]);
   };
 
   const handleAddJob = (e: React.FormEvent) => {
@@ -53,7 +53,7 @@ export default function JobsPage() {
     };
     const updated = [added, ...jobs];
     setJobs(updated);
-    setSetting("m_amin_jobs", updated as Job[]);
+    setSetting("jobs", updated as Job[]);
     setNewJob({ title: "", department: "", type: "Full-time" });
     setShowAddForm(false);
   };
@@ -139,3 +139,4 @@ export default function JobsPage() {
     </div>
   );
 }
+

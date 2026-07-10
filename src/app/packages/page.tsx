@@ -284,11 +284,11 @@ function PackagesContent() {
   const [allPlans, setAllPlans] = useState<Plan[]>([]);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      getSetting("m_amin_packages_list").then(saved => {
+      getSetting("packages_list").then(saved => {
       if (saved) {
         setAllPlans(saved as Plan[]);
       } else {
-        setSetting("m_amin_packages_list", defaultPlans as Plan[]);
+        setSetting("packages_list", defaultPlans as Plan[]);
         setAllPlans(defaultPlans);
       }
     });
@@ -687,3 +687,4 @@ export default function Packages() {
     </Suspense>
   );
 }
+

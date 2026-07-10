@@ -20,16 +20,16 @@ export default function ComplaintPage() {
   const [complaintPageContent, setComplaintPageContent] = useState<ComplaintPageContent>(defaultComplaintPageContent);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_complaint_page_content").then(saved => {
+    getSetting("complaint_page_content").then(saved => {
       if (saved) {
         setComplaintPageContent(saved as any);
       } else {
-        setSetting("m_amin_complaint_page_content", defaultComplaintPageContent as any);
+        setSetting("complaint_page_content", defaultComplaintPageContent as any);
         setComplaintPageContent(defaultComplaintPageContent);
       }
     });
@@ -37,7 +37,7 @@ export default function ComplaintPage() {
 
   const saveComplaintContent = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_complaint_page_content", complaintPageContent as any);
+    setSetting("complaint_page_content", complaintPageContent as any);
     toast("Guidelines saved successfully!");
   };
 
@@ -78,3 +78,4 @@ export default function ComplaintPage() {
     </div>
   );
 }
+

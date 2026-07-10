@@ -20,16 +20,16 @@ export default function ServiceReviewsPage() {
   const [serviceReviews, setServiceReviews] = useState<ServiceReview[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_service_reviews").then(saved => {
+    getSetting("service_reviews").then(saved => {
       if (saved) {
         setServiceReviews(saved as any);
       } else {
-        setSetting("m_amin_service_reviews", defaultReviews as any);
+        setSetting("service_reviews", defaultReviews as any);
         setServiceReviews(defaultReviews);
       }
     });
@@ -39,7 +39,7 @@ export default function ServiceReviewsPage() {
     if (!confirm("Are you sure you want to delete this review?")) return;
     const updated = serviceReviews.filter((r) => r.id !== id);
     setServiceReviews(updated);
-    setSetting("m_amin_service_reviews", updated as any);
+    setSetting("service_reviews", updated as any);
   };
 
   if (!auth) return null;
@@ -84,3 +84,4 @@ export default function ServiceReviewsPage() {
     </div>
   );
 }
+

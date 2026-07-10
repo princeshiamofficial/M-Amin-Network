@@ -23,16 +23,16 @@ export default function UsersRolesPage() {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_admin_users").then(saved => {
+    getSetting("admin_users").then(saved => {
       if (saved) {
         setAdminUsers(saved as any);
       } else {
-        setSetting("m_amin_admin_users", defaultAdminUsers as any);
+        setSetting("admin_users", defaultAdminUsers as any);
         setAdminUsers(defaultAdminUsers);
       }
     });
@@ -46,7 +46,7 @@ export default function UsersRolesPage() {
     if (!confirm("Are you sure you want to revoke this admin user?")) return;
     const updated = adminUsers.filter((u) => u.id !== id);
     setAdminUsers(updated);
-    setSetting("m_amin_admin_users", updated as any);
+    setSetting("admin_users", updated as any);
   };
 
   if (!auth) return null;
@@ -93,3 +93,4 @@ export default function UsersRolesPage() {
     </div>
   );
 }
+

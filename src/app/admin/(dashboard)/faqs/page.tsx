@@ -81,16 +81,16 @@ export default function FAQsPage() {
   const [currentFaq, setCurrentFaq] = useState<Partial<FAQ>>({});
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_faqs").then(saved => {
+    getSetting("faqs").then(saved => {
       if (saved && (saved as FAQ[]).length > 0) {
         setFaqs(saved as FAQ[]);
       } else {
-        setSetting("m_amin_faqs", defaultFAQs as FAQ[]);
+        setSetting("faqs", defaultFAQs as FAQ[]);
         setFaqs(defaultFAQs);
       }
     });
@@ -117,7 +117,7 @@ export default function FAQsPage() {
     }
     
     setFaqs(updated);
-    setSetting("m_amin_faqs", updated as FAQ[]);
+    setSetting("faqs", updated as FAQ[]);
     setCurrentFaq({});
     setIsEditing(false);
   };
@@ -137,14 +137,14 @@ export default function FAQsPage() {
       f.id === id ? { ...f, isPublished: !f.isPublished } : f
     );
     setFaqs(updated);
-    setSetting("m_amin_faqs", updated as FAQ[]);
+    setSetting("faqs", updated as FAQ[]);
   };
 
   const deleteFAQ = async (id: string) => {
     if (!confirm("Are you sure you want to delete this FAQ?")) return;
     const updated = faqs.filter((f) => f.id !== id);
     setFaqs(updated);
-    setSetting("m_amin_faqs", updated as FAQ[]);
+    setSetting("faqs", updated as FAQ[]);
   };
 
   if (!auth) return null;
@@ -247,3 +247,4 @@ export default function FAQsPage() {
     </div>
   );
 }
+

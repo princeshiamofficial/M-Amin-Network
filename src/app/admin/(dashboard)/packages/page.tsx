@@ -194,11 +194,11 @@ export default function AdminPackagesPage() {
 
   const loadPackages = React.useCallback(() => {
     if (typeof window === "undefined") return;
-    getSetting("m_amin_packages_list").then(saved => {
+    getSetting("packages_list").then(saved => {
       if (saved) {
         setPackages(saved as any);
       } else {
-        setSetting("m_amin_packages_list", defaultPackages as any);
+        setSetting("packages_list", defaultPackages as any);
         setPackages(defaultPackages);
       }
     });
@@ -208,7 +208,7 @@ export default function AdminPackagesPage() {
     const timeout = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        const auth = sessionStorage.getItem("admin_authenticated");
         if (auth !== "true") {
           router.push("/admin");
         } else {
@@ -225,12 +225,12 @@ export default function AdminPackagesPage() {
   useEffect(() => {
     const handleReset = async () => {
       if (typeof window !== "undefined") {
-        setSetting("m_amin_packages_list", defaultPackages as any);
+        setSetting("packages_list", defaultPackages as any);
         setPackages(defaultPackages);
       }
     };
-    window.addEventListener("m_amin_reset_db", handleReset);
-    return () => window.removeEventListener("m_amin_reset_db", handleReset);
+    window.addEventListener("reset_db", handleReset);
+    return () => window.removeEventListener("reset_db", handleReset);
   }, []);
 
   const handleOpenAddModal = () => {
@@ -287,7 +287,7 @@ export default function AdminPackagesPage() {
     }
 
     setPackages(updated);
-    setSetting("m_amin_packages_list", updated as any);
+    setSetting("packages_list", updated as any);
     setIsModalOpen(false);
     toast(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
   };
@@ -296,7 +296,7 @@ export default function AdminPackagesPage() {
     if (confirm(`Are you sure you want to delete package "${name}"?`)) {
       const updated = packages.filter((p) => p.name !== name);
       setPackages(updated);
-      setSetting("m_amin_packages_list", updated as any);
+      setSetting("packages_list", updated as any);
     }
   };
 
@@ -553,3 +553,4 @@ export default function AdminPackagesPage() {
     </div>
   );
 }
+

@@ -130,19 +130,19 @@ export default function SupportPageAdmin() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_support_page_content").then(s => {
+    getSetting("support_page_content").then(s => {
       if (s) setContent(s as any);
-      else setSetting("m_amin_support_page_content", defaultSupportPageContent as any);
+      else setSetting("support_page_content", defaultSupportPageContent as any);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("m_amin_support_page_content", content as any);
+    setSetting("support_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -948,3 +948,4 @@ export default function SupportPageAdmin() {
     </div>
   );
 }
+

@@ -151,37 +151,37 @@ export default function TopbarFooterPage() {
   const [newLicense, setNewLicense] = useState<LicenseBadge>({ textEn: "", textBn: "", isMono: false, colorStyle: "cyan", image: "" });
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
     
     // Load footer config
-    getSetting("m_amin_footer_content").then(saved => {
+    getSetting("footer_content").then(saved => {
       if (saved) {
         setFooterContent(prev => ({
           ...prev,
           ...(saved as any)
         }));
       } else {
-        setSetting("m_amin_footer_content", defaultFooterContent as any);
+        setSetting("footer_content", defaultFooterContent as any);
         setFooterContent(defaultFooterContent);
       }
     });
 
     // Load nav links
-    getSetting("m_amin_nav_links").then(saved => {
+    getSetting("nav_links").then(saved => {
       if (saved && (saved as any[]).length > 0) {
         setNavLinks(saved as any[]);
       } else {
-        setSetting("m_amin_nav_links", defaultNavLinks as any);
+        setSetting("nav_links", defaultNavLinks as any);
         setNavLinks(defaultNavLinks);
       }
     });
 
     // Load badges
-    getSetting("m_amin_footer_badges").then(saved => {
+    getSetting("footer_badges").then(saved => {
       if (saved && (saved as any[]).length > 0) {
         const migrated = (saved as any[]).map((badge: any) => {
           if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
@@ -191,13 +191,13 @@ export default function TopbarFooterPage() {
         });
         setBadges(migrated);
       } else {
-        setSetting("m_amin_footer_badges", defaultBadges as any);
+        setSetting("footer_badges", defaultBadges as any);
         setBadges(defaultBadges);
       }
     });
 
     // Load licenses
-    getSetting("m_amin_footer_licenses").then(saved => {
+    getSetting("footer_licenses").then(saved => {
       if (saved && (saved as any[]).length > 0) {
         const migrated = (saved as any[]).map((lic: any) => {
           if (lic.textEn === "BTRC Licensed" && !lic.image) {
@@ -207,17 +207,17 @@ export default function TopbarFooterPage() {
         });
         setLicenses(migrated);
       } else {
-        setSetting("m_amin_footer_licenses", defaultLicenses as any);
+        setSetting("footer_licenses", defaultLicenses as any);
         setLicenses(defaultLicenses);
       }
     });
 
     // Load phones
-    getSetting("m_amin_footer_phones").then(saved => {
+    getSetting("footer_phones").then(saved => {
       if (saved && (saved as any[]).length > 0) {
         setPhones(saved as any[]);
       } else {
-        setSetting("m_amin_footer_phones", defaultPhones as any);
+        setSetting("footer_phones", defaultPhones as any);
         setPhones(defaultPhones);
       }
     });
@@ -225,11 +225,11 @@ export default function TopbarFooterPage() {
 
   const saveAllConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_footer_content", footerContent as any);
-    setSetting("m_amin_nav_links", navLinks as any);
-    setSetting("m_amin_footer_badges", badges as any);
-    setSetting("m_amin_footer_licenses", licenses as any);
-    setSetting("m_amin_footer_phones", phones as any);
+    setSetting("footer_content", footerContent as any);
+    setSetting("nav_links", navLinks as any);
+    setSetting("footer_badges", badges as any);
+    setSetting("footer_licenses", licenses as any);
+    setSetting("footer_phones", phones as any);
     toast("Topbar, Footer, and Header Menu configurations saved successfully!");
   };
 
@@ -1485,3 +1485,4 @@ export default function TopbarFooterPage() {
     </div>
   );
 }
+

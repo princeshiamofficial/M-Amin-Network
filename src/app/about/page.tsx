@@ -119,7 +119,7 @@ export default function About() {
   const [content, setContent] = useState<AboutContentFull>(defaultContent);
 
   useEffect(() => {
-    getSetting("m_amin_about_content_full").then(saved => {
+    getSetting("about_content_full").then(saved => {
       if (saved) {
         setContent(saved as unknown as AboutContentFull);
       } else {
@@ -240,3 +240,4 @@ export default function About() {
     </div>
   );
 }
+

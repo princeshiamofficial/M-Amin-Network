@@ -108,19 +108,19 @@ export default function OffersPageAdmin() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_offers_page_content").then(s => {
+    getSetting("offers_page_content").then(s => {
       if (s) setContent(s as any);
-      else setSetting("m_amin_offers_page_content", defaultOffersPageContent as any);
+      else setSetting("offers_page_content", defaultOffersPageContent as any);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("m_amin_offers_page_content", content as any);
+    setSetting("offers_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -772,3 +772,4 @@ export default function OffersPageAdmin() {
     </div>
   );
 }
+

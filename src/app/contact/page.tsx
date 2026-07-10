@@ -20,7 +20,7 @@ export default function Contact() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("m_amin_contact_content_full");
+    const saved = localStorage.getItem("contact_content_full");
     if (saved) {
       try {
         setContent(JSON.parse(saved));
@@ -275,3 +275,4 @@ export default function Contact() {
     </div>
   );
 }
+

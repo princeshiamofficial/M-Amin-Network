@@ -111,11 +111,11 @@ export default function CoverageAreasPage() {
 
   const loadZones = React.useCallback(() => {
     if (typeof window === "undefined") return;
-    getSetting("m_amin_coverage_zones").then(saved => {
+    getSetting("coverage_zones").then(saved => {
       if (saved) {
         setZones(saved as any);
       } else {
-        setSetting("m_amin_coverage_zones", defaultZones as any);
+        setSetting("coverage_zones", defaultZones as any);
         setZones(defaultZones);
       }
     });
@@ -125,7 +125,7 @@ export default function CoverageAreasPage() {
     const timer = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const token = localStorage.getItem("m_amin_admin_token");
+        const token = localStorage.getItem("admin_token");
         if (!token) {
           router.replace("/admin");
         } else {
@@ -142,12 +142,12 @@ export default function CoverageAreasPage() {
   useEffect(() => {
     const handleReset = async () => {
       if (typeof window !== "undefined") {
-        setSetting("m_amin_coverage_zones", defaultZones as any);
+        setSetting("coverage_zones", defaultZones as any);
         setZones(defaultZones);
       }
     };
-    window.addEventListener("m_amin_reset_db", handleReset);
-    return () => window.removeEventListener("m_amin_reset_db", handleReset);
+    window.addEventListener("reset_db", handleReset);
+    return () => window.removeEventListener("reset_db", handleReset);
   }, []);
 
   const handleOpenAddModal = () => {
@@ -204,7 +204,7 @@ export default function CoverageAreasPage() {
     }
 
     setZones(updated);
-    setSetting("m_amin_coverage_zones", updated as any);
+    setSetting("coverage_zones", updated as any);
     setIsModalOpen(false);
     toast(editingIndex !== null ? "Coverage zone updated successfully!" : "New coverage zone added successfully!");
   };
@@ -213,7 +213,7 @@ export default function CoverageAreasPage() {
     if (!confirm("Are you sure you want to delete this coverage zone?")) return;
     const updated = zones.filter((_, i) => i !== index);
     setZones(updated);
-    setSetting("m_amin_coverage_zones", updated as any);
+    setSetting("coverage_zones", updated as any);
   };
 
   if (!mounted || !isAuthenticated) return null;
@@ -419,3 +419,4 @@ export default function CoverageAreasPage() {
     </div>
   );
 }
+

@@ -80,12 +80,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const timer = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        const auth = sessionStorage.getItem("admin_authenticated");
         if (auth !== "true") {
           router.push("/admin");
         } else {
           setIsAuthenticated(true);
-          getSetting("m_amin_quick_actions").then((res) => {
+          getSetting("quick_actions").then((res) => {
             if (res) {
               setQuickActions(res as QuickAction[]);
             } else {
@@ -100,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     const fetchQuickActions = () => {
-      getSetting("m_amin_quick_actions").then((res) => {
+      getSetting("quick_actions").then((res) => {
         if (res) {
           setQuickActions(res as QuickAction[]);
         } else {
@@ -129,8 +129,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [pathname]);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("m_amin_admin_authenticated");
-    localStorage.removeItem("m_amin_admin_token");
+    sessionStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_token");
     router.push("/admin");
   };
 
@@ -220,3 +220,4 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     </div>
   );
 }
+

@@ -22,16 +22,16 @@ export default function SEOSharingPage() {
   const [seoSettings, setSeoSettings] = useState<SEOSettings>(defaultSEOSettings);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_seo_settings").then(saved => {
+    getSetting("seo_settings").then(saved => {
       if (saved) {
         setSeoSettings(saved as any);
       } else {
-        setSetting("m_amin_seo_settings", defaultSEOSettings as any);
+        setSetting("seo_settings", defaultSEOSettings as any);
         setSeoSettings(defaultSEOSettings);
       }
     });
@@ -39,7 +39,7 @@ export default function SEOSharingPage() {
 
   const saveSEOSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_seo_settings", seoSettings as any);
+    setSetting("seo_settings", seoSettings as any);
     toast("SEO details saved successfully!");
   };
 
@@ -122,3 +122,4 @@ export default function SEOSharingPage() {
     </div>
   );
 }
+

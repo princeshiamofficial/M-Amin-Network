@@ -73,12 +73,12 @@ export default function ApplicationsPage() {
     const timer = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const token = localStorage.getItem("m_amin_admin_token");
+        const token = localStorage.getItem("admin_token");
         if (!token) {
           router.replace("/admin");
         } else {
           setIsAuthenticated(true);
-          getSetting("m_amin_claims").then(saved => {
+          getSetting("claims").then(saved => {
       if (saved) setClaims(saved as any);
       else setClaims(defaultClaims);
     });
@@ -91,14 +91,14 @@ export default function ApplicationsPage() {
   const updateStatus = (id: string, status: "Approved" | "Cancelled") => {
     const updated = claims.map(c => c.id === id ? { ...c, status } : c);
     setClaims(updated);
-    setSetting("m_amin_claims", updated as any);
+    setSetting("claims", updated as any);
   };
 
   const deleteClaim = async (id: string) => {
     if (!confirm("Delete this application reservation?")) return;
     const updated = claims.filter(c => c.id !== id);
     setClaims(updated);
-    setSetting("m_amin_claims", updated as any);
+    setSetting("claims", updated as any);
   };
 
   if (!mounted || !isAuthenticated) return null;
@@ -242,3 +242,4 @@ export default function ApplicationsPage() {
     </div>
   );
 }
+

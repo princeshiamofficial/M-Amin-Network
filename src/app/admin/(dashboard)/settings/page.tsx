@@ -23,21 +23,21 @@ export default function SettingsPage() {
   const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_system_config").then(saved => {
+    getSetting("system_config").then(saved => {
       if (saved) {
         setSystemConfig(saved as any);
       } else {
-        setSetting("m_amin_system_config", defaultSystemConfig as any);
+        setSetting("system_config", defaultSystemConfig as any);
         setSystemConfig(defaultSystemConfig);
       }
     });
 
-    getSetting("m_amin_admin_auth").then(savedAuth => {
+    getSetting("admin_auth").then(savedAuth => {
       if (savedAuth) {
         setAdminAuth(savedAuth as any);
       }
@@ -53,7 +53,7 @@ async function hashPassword(msg: string) {
 
   const saveSystemConfig = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_system_config", systemConfig as any);
+    setSetting("system_config", systemConfig as any);
     toast("Configuration saved successfully!");
   };
 
@@ -64,7 +64,7 @@ async function hashPassword(msg: string) {
       const hashed = await hashPassword(newPassword);
       updatedAuth.password = hashed;
     }
-    setSetting("m_amin_admin_auth", updatedAuth as any);
+    setSetting("admin_auth", updatedAuth as any);
     setAdminAuth(updatedAuth);
     setNewPassword("");
     toast("Admin credentials updated successfully!");
@@ -146,3 +146,4 @@ async function hashPassword(msg: string) {
     </div>
   );
 }
+

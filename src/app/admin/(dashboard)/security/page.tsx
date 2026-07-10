@@ -22,16 +22,16 @@ export default function SecurityPage() {
   const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_security_logs").then(saved => {
+    getSetting("security_logs").then(saved => {
       if (saved) {
         setSecurityLogs(saved as any);
       } else {
-        setSetting("m_amin_security_logs", defaultSecurityLogs as any);
+        setSetting("security_logs", defaultSecurityLogs as any);
         setSecurityLogs(defaultSecurityLogs);
       }
     });
@@ -41,7 +41,7 @@ export default function SecurityPage() {
     if (!confirm("Are you sure you want to purge this security log?")) return;
     const updated = securityLogs.filter((l) => l.id !== id);
     setSecurityLogs(updated);
-    setSetting("m_amin_security_logs", updated as any);
+    setSetting("security_logs", updated as any);
   };
 
   if (!auth) return null;
@@ -94,3 +94,4 @@ export default function SecurityPage() {
     </div>
   );
 }
+

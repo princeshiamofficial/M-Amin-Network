@@ -74,3 +74,4 @@ export default function MaintenanceWrapper({ children, isMaintenance }: { childr
 
   return <>{children}</>;
 }
+

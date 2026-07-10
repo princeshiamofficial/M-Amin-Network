@@ -19,7 +19,7 @@ export default function AdminNavbar({
   const [avatarView, setAvatarView] = useState<"menu" | "edit">("menu");
   const [avatarUrl, setAvatarUrl] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("m_amin_avatar_url") || "/xlogo.png";
+      return localStorage.getItem("avatar_url") || "/xlogo.png";
     }
     return "/xlogo.png";
   });
@@ -45,12 +45,12 @@ export default function AdminNavbar({
         {/* Clear Cache button */}
         <button
           onClick={() => {
-            const auth = sessionStorage.getItem("m_amin_admin_authenticated");
-            const avatar = localStorage.getItem("m_amin_avatar_url");
+            const auth = sessionStorage.getItem("admin_authenticated");
+            const avatar = localStorage.getItem("avatar_url");
             localStorage.clear();
             sessionStorage.clear();
-            if (auth) sessionStorage.setItem("m_amin_admin_authenticated", auth);
-            if (avatar) localStorage.setItem("m_amin_avatar_url", avatar);
+            if (auth) sessionStorage.setItem("admin_authenticated", auth);
+            if (avatar) localStorage.setItem("avatar_url", avatar);
             window.location.href = window.location.pathname + '?t=' + Date.now();
           }}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm"
@@ -223,7 +223,7 @@ export default function AdminNavbar({
                     </button>
                     <button
                       onClick={() => {
-                        localStorage.setItem("m_amin_avatar_url", avatarUrl);
+                        localStorage.setItem("avatar_url", avatarUrl);
                         setAvatarView("menu");
                         toast("Profile avatar updated successfully!");
                       }}
@@ -304,3 +304,4 @@ export default function AdminNavbar({
     </header>
   );
 }
+

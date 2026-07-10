@@ -120,7 +120,7 @@ export default function Footer() {
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("m_amin_footer_content");
+      const saved = localStorage.getItem("footer_content");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -133,7 +133,7 @@ export default function Footer() {
         }
       }
 
-      const savedBadges = localStorage.getItem("m_amin_footer_badges");
+      const savedBadges = localStorage.getItem("footer_badges");
       if (savedBadges) {
         try {
           const parsed = JSON.parse(savedBadges);
@@ -150,7 +150,7 @@ export default function Footer() {
         }
       }
 
-      const savedLicenses = localStorage.getItem("m_amin_footer_licenses");
+      const savedLicenses = localStorage.getItem("footer_licenses");
       if (savedLicenses) {
         try {
           const parsed = JSON.parse(savedLicenses);
@@ -167,7 +167,7 @@ export default function Footer() {
         }
       }
 
-      const savedPhones = localStorage.getItem("m_amin_footer_phones");
+      const savedPhones = localStorage.getItem("footer_phones");
       if (savedPhones) {
         try {
           setPhones(JSON.parse(savedPhones));
@@ -517,3 +517,4 @@ export default function Footer() {
     </footer>
   );
 }
+

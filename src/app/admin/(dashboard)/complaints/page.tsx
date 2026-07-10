@@ -27,23 +27,23 @@ export default function ComplaintsPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_complaints").then(saved => {
+    getSetting("complaints").then(saved => {
       if (saved) { setComplaints(saved as Complaint[]); }
-      else { setSetting("m_amin_complaints", defaultComplaints as Complaint[]); setComplaints(defaultComplaints); }
+      else { setSetting("complaints", defaultComplaints as Complaint[]); setComplaints(defaultComplaints); }
     });
   }, [router]);
 
   const updateStatus = (id: string, status: "Investigating" | "Resolved") => {
     const updated = complaints.map(c => c.id === id ? { ...c, status } : c);
-    setComplaints(updated); setSetting("m_amin_complaints", updated as Complaint[]);
+    setComplaints(updated); setSetting("complaints", updated as Complaint[]);
   };
 
   const deleteComplaint = async (id: string) => {
     if (!confirm("Delete this complaint?")) return;
     const updated = complaints.filter(c => c.id !== id);
-    setComplaints(updated); setSetting("m_amin_complaints", updated as Complaint[]);
+    setComplaints(updated); setSetting("complaints", updated as Complaint[]);
   };
 
   if (!auth) return null;
@@ -131,3 +131,4 @@ export default function ComplaintsPage() {
     </div>
   );
 }
+

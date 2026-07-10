@@ -73,7 +73,7 @@ const defaultZones: CoverageZone[] = [
 export default function Coverage() {
   const [pageContent, setPageContent] = React.useState(defaultCoveragePageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_coverage_page_content");
+    const s = localStorage.getItem("coverage_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -108,11 +108,11 @@ export default function Coverage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      getSetting("m_amin_coverage_zones").then(saved => {
+      getSetting("coverage_zones").then(saved => {
       if (saved) {
         setZones(saved as CoverageZone[]);
       } else {
-        setSetting("m_amin_coverage_zones", defaultZones as CoverageZone[]);
+        setSetting("coverage_zones", defaultZones as CoverageZone[]);
       }
     });
     }
@@ -565,3 +565,4 @@ export default function Coverage() {
     </div>
   );
 }
+

@@ -152,17 +152,17 @@ export default function ServicesHubPage() {
   const [newSvc, setNewSvc] = useState<ServiceCard>(blank);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_service_cards").then(s => {
+    getSetting("service_cards").then(s => {
       if (s) setServices(s as ServiceCard[]);
-      else setSetting("m_amin_service_cards", defaultServices as ServiceCard[]);
+      else setSetting("service_cards", defaultServices as ServiceCard[]);
     });
   }, [router]);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("m_amin_service_cards", services as ServiceCard[]);
+    setSetting("service_cards", services as ServiceCard[]);
     setSaved(true); setTimeout(() => setSaved(false), 3000);
   };
 
@@ -343,3 +343,4 @@ export default function ServicesHubPage() {
     </div>
   );
 }
+

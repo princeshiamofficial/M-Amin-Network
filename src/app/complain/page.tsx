@@ -8,7 +8,7 @@ import { defaultComplainPageContent } from "@/app/admin/(dashboard)/complain-pag
 export default function Complain() {
   const [pageContent, setPageContent] = React.useState(defaultComplainPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_complain_page_content");
+    const s = localStorage.getItem("complain_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -43,7 +43,7 @@ export default function Complain() {
     setTimeout(async () => {
       const generatedRef = `CMP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
       try {
-        const complaints = await getSetting("m_amin_complaints"); const complaintsArr = Array.isArray(complaints) ? complaints : [];
+        const complaints = await getSetting("complaints"); const complaintsArr = Array.isArray(complaints) ? complaints : [];
         const newComplaint = {
           id: generatedRef,
           clientId: form.clientId,
@@ -55,7 +55,7 @@ export default function Complain() {
           status: "Pending"
         };
         complaintsArr.push(newComplaint);
-        setSetting("m_amin_complaints", complaintsArr as Record<string, unknown>[]);
+        setSetting("complaints", complaintsArr as Record<string, unknown>[]);
       } catch (err) {
         console.error("Error saving complaint:", err);
       }
@@ -257,3 +257,4 @@ export default function Complain() {
     </div>
   );
 }
+

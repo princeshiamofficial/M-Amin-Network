@@ -28,9 +28,9 @@ export default function AdminDashboard() {
     const timer = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const auth = sessionStorage.getItem("m_amin_admin_authenticated");
+        const auth = sessionStorage.getItem("admin_authenticated");
         if (auth === "true") {
-          localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
+          localStorage.setItem("admin_token", "admin_logged_in_token");
           setIsAuthenticated(true);
           router.push("/admin/dashboard");
         }
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     const cleanUser = username.trim().toLowerCase();
     
     try {
-      let savedAuth = (await getSetting("m_amin_admin_auth")) as Record<string, string> | null;
+      let savedAuth = (await getSetting("admin_auth")) as Record<string, string> | null;
       if (!savedAuth) {
         setLoginError("System credentials not found. Please verify user table configuration.");
         setIsLoggingIn(false);
@@ -61,8 +61,8 @@ export default function AdminDashboard() {
       if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
         setIsAuthenticated(true);
         setLoginError("");
-        sessionStorage.setItem("m_amin_admin_authenticated", "true");
-        localStorage.setItem("m_amin_admin_token", "admin_logged_in_token");
+        sessionStorage.setItem("admin_authenticated", "true");
+        localStorage.setItem("admin_token", "admin_logged_in_token");
         router.push("/admin/dashboard");
       } else {
         setLoginError("Invalid username or password. Please try again.");
@@ -76,8 +76,8 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem("m_amin_admin_authenticated");
-    localStorage.removeItem("m_amin_admin_token");
+    sessionStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_token");
     setUsername("");
     setPassword("");
   };
@@ -310,3 +310,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

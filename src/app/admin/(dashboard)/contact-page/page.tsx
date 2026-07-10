@@ -77,12 +77,12 @@ export default function ContactPageAdmin() {
   const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    const s = localStorage.getItem("m_amin_contact_content_full");
+    const s = localStorage.getItem("contact_content_full");
     if (s) {
       try { 
         const parsed = JSON.parse(s);
@@ -96,13 +96,13 @@ export default function ContactPageAdmin() {
         setContent(parsed); 
       } catch { /* ignore */ }
     } else {
-      setSetting("m_amin_contact_content_full", defaultContactContent as unknown);
+      setSetting("contact_content_full", defaultContactContent as unknown);
     }
   }, [router]);
 
   const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    setSetting("m_amin_contact_content_full", content as unknown);
+    setSetting("contact_content_full", content as unknown);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -328,3 +328,4 @@ export default function ContactPageAdmin() {
     </div>
   );
 }
+

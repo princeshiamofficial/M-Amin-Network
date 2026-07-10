@@ -63,7 +63,7 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("m_amin_nav_links");
+      const saved = localStorage.getItem("nav_links");
       if (saved) {
         try {
           setLinksList(JSON.parse(saved));
@@ -314,3 +314,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

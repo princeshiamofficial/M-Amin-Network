@@ -30,22 +30,22 @@ export default function TicketsPage() {
   const filteredTickets = tickets.filter(t => statusFilter === "All" || t.status === statusFilter);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_tickets").then(saved => {
+    getSetting("tickets").then(saved => {
       if (saved) { setTickets(saved as any); }
-      else { setSetting("m_amin_tickets", defaultTickets as any); setTickets(defaultTickets); }
+      else { setSetting("tickets", defaultTickets as any); setTickets(defaultTickets); }
     });
   }, [router]);
 
   const updateStatus = (id: string, status: "Assigned" | "Resolved") => {
     const updated = tickets.map(t => t.id === id ? { ...t, status } : t);
-    setTickets(updated); setSetting("m_amin_tickets", updated as any);
+    setTickets(updated); setSetting("tickets", updated as any);
   };
   const deleteTicket = async (id: string) => {
     if (!confirm("Delete this ticket?")) return;
     const updated = tickets.filter(t => t.id !== id);
-    setTickets(updated); setSetting("m_amin_tickets", updated as any);
+    setTickets(updated); setSetting("tickets", updated as any);
   };
 
   if (!auth) return null;
@@ -159,3 +159,4 @@ export default function TicketsPage() {
     </div>
   );
 }
+

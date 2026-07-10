@@ -37,9 +37,9 @@ export default function BillsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) { router.replace("/admin"); return; }
+    if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
-    getSetting("m_amin_payments").then(saved => {
+    getSetting("payments").then(saved => {
       if (saved) setPayments(saved as any);
       else setPayments(defaultPayments);
     });
@@ -48,7 +48,7 @@ export default function BillsPage() {
   const deletePayment = async (id: string) => {
     const updated = payments.filter(p => p.id !== id);
     setPayments(updated);
-    setSetting("m_amin_payments", updated as any);
+    setSetting("payments", updated as any);
   };
 
   if (!auth) return null;
@@ -131,3 +131,4 @@ export default function BillsPage() {
     </div>
   );
 }
+

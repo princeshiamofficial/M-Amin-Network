@@ -190,24 +190,24 @@ export default function AboutPageAdmin() {
   const [activeTab, setActiveTab] = useState("header");
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
     
-    getSetting("m_amin_about_content_full").then(saved => {
+    getSetting("about_content_full").then(saved => {
       if (saved) {
         setContent(saved as unknown as AboutContentFull);
       } else {
-        setSetting("m_amin_about_content_full", defaultAboutContentFull as unknown as Record<string, unknown>);
+        setSetting("about_content_full", defaultAboutContentFull as unknown as Record<string, unknown>);
       }
     });
   }, [router]);
 
   const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    await setSetting("m_amin_about_content_full", content as unknown as Record<string, unknown>);
+    await setSetting("about_content_full", content as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -425,3 +425,4 @@ export default function AboutPageAdmin() {
     </div>
   );
 }
+

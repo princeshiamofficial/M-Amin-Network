@@ -20,7 +20,7 @@ interface UserProfile {
 export default function Portal() {
   const [pageContent, setPageContent] = React.useState(defaultPortalPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_portal_page_content");
+    const s = localStorage.getItem("portal_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -451,3 +451,4 @@ export default function Portal() {
     </div>
   );
 }
+

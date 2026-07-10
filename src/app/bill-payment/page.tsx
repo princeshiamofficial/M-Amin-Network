@@ -20,7 +20,7 @@ interface CustomerBill {
 export default function BillPayment() {
   const [pageContent, setPageContent] = React.useState(defaultBillPaymentPageContent);
   React.useEffect(() => {
-    const s = localStorage.getItem("m_amin_bill_payment_page_content");
+    const s = localStorage.getItem("bill_payment_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
@@ -121,7 +121,7 @@ export default function BillPayment() {
     setTimeout(async () => {
       const generatedTxn = `TXN-${selectedGateway.toUpperCase()}-${Date.now().toString().slice(-6)}-${Math.floor(10000 + Math.random() * 90000)}`;
       try {
-        const payments = await getSetting("m_amin_payments"); const paymentsArr = Array.isArray(payments) ? payments : [];
+        const payments = await getSetting("payments"); const paymentsArr = Array.isArray(payments) ? payments : [];
         const newPayment = {
           id: generatedTxn,
           clientId: billDetails.clientId,
@@ -136,7 +136,7 @@ export default function BillPayment() {
           paidDate: new Date().toLocaleString()
         };
         paymentsArr.push(newPayment);
-        setSetting("m_amin_payments", paymentsArr);
+        setSetting("payments", paymentsArr);
       } catch (err) {
         console.error("Error saving payment:", err);
       }
@@ -440,3 +440,4 @@ export default function BillPayment() {
     </div>
   );
 }
+

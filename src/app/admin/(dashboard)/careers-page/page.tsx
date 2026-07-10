@@ -308,19 +308,19 @@ export default function CareersPageAdmin() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem("m_amin_admin_token")) {
+    if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
     }
     setAuth(true);
-    getSetting("m_amin_careers_page_content").then(s => {
+    getSetting("careers_page_content").then(s => {
       if (s) setContent(s as any);
-      else setSetting("m_amin_careers_page_content", defaultCareersPageContent as any);
+      else setSetting("careers_page_content", defaultCareersPageContent as any);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("m_amin_careers_page_content", content as any);
+    setSetting("careers_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -2372,3 +2372,4 @@ export default function CareersPageAdmin() {
     </div>
   );
 }
+
