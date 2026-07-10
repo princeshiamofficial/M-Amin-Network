@@ -361,7 +361,7 @@ export default function AdminDashboardPage() {
 
 
   const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>(defaultQuickActions);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
@@ -385,16 +385,18 @@ export default function AdminDashboardPage() {
     toast(editingQuickAction ? "Quick action updated successfully!" : "Quick action added successfully!");
   };
 
-  const handleDragEnter = (targetIdx: number) => {
-    if (draggedIndex === null || draggedIndex === targetIdx) return;
+  const handleDragEnter = (targetId: string) => {
+    if (!draggedId || draggedId === targetId) return;
     setQuickActionsList((prevList) => {
+      const draggedIdx = prevList.findIndex(item => item.id === draggedId);
+      const targetIdx = prevList.findIndex(item => item.id === targetId);
+      if (draggedIdx === -1 || targetIdx === -1) return prevList;
+      
       const newList = [...prevList];
-      const draggedItem = newList[draggedIndex];
-      newList.splice(draggedIndex, 1);
+      const [draggedItem] = newList.splice(draggedIdx, 1);
       newList.splice(targetIdx, 0, draggedItem);
       return newList;
     });
-    setDraggedIndex(targetIdx);
   };
 
   // Database states
@@ -1630,30 +1632,31 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {quickActionsList.map((action, idx) => {
+                  {quickActionsList.map((action) => {
                     const ActionIcon = IconMap[action.iconName] || IconMap["Link"];
+                    const isDragged = draggedId === action.id;
                     return (
                     <div
                       key={action.id}
                       draggable
                       onDragStart={(e) => {
-                        setDraggedIndex(idx);
+                        setDraggedId(action.id);
                         e.dataTransfer.effectAllowed = "move";
                       }}
                       onDragOver={(e) => e.preventDefault()}
-                      onDragEnter={() => handleDragEnter(idx)}
+                      onDragEnter={() => handleDragEnter(action.id)}
                       onDragEnd={() => {
-                        setDraggedIndex(null);
+                        setDraggedId(null);
                         setSetting("m_amin_quick_actions", quickActionsList);
                         window.dispatchEvent(new Event("quick_actions_updated"));
                       }}
                       onClick={() => {
-                        if (draggedIndex === null) {
+                        if (draggedId === null) {
                           router.push(action.route);
                         }
                       }}
                       className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all relative ${
-                        draggedIndex === idx
+                        isDragged
                           ? "opacity-30 scale-95 border-dashed border-teal-350 bg-teal-50/10"
                           : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
                       }`}
