@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { getSetting, setSetting } from "@/actions/content";
 import {
@@ -362,6 +362,11 @@ export default function AdminDashboardPage() {
 
   const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>(defaultQuickActions);
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  
+  const quickActionsListRef = useRef<QuickAction[]>(quickActionsList);
+  useEffect(() => {
+    quickActionsListRef.current = quickActionsList;
+  }, [quickActionsList]);
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
@@ -1647,7 +1652,7 @@ export default function AdminDashboardPage() {
                       onDragEnter={() => handleDragEnter(action.id)}
                       onDragEnd={() => {
                         setDraggedId(null);
-                        setSetting("m_amin_quick_actions", quickActionsList);
+                        setSetting("m_amin_quick_actions", quickActionsListRef.current);
                         window.dispatchEvent(new Event("quick_actions_updated"));
                       }}
                       onClick={() => {
