@@ -47,15 +47,16 @@ export default function AdminDashboard() {
     try {
       let savedAuth = (await getSetting("m_amin_admin_auth")) as Record<string, string> | null;
       if (!savedAuth) {
-        // Fallback to defaults if no credentials saved yet
-        savedAuth = { email: "admin@mamin.net", password: "admin123", username: "admin", role: "Super Administrator" };
+        setLoginError("System credentials not found. Please verify user table configuration.");
+        setIsLoggingIn(false);
+        return;
       }
 
       const validEmail = savedAuth.email.toLowerCase();
       const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
       const hashedInput = await hashPassword(password);
-      const isPasswordValid = password === savedAuth.password || hashedInput === savedAuth.password;
+      const isPasswordValid = hashedInput === savedAuth.password;
 
       if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
         setIsAuthenticated(true);

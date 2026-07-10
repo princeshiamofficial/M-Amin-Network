@@ -19,8 +19,7 @@ export default function SettingsPage() {
   const [auth, setAuth] = useState(false);
   const [systemConfig, setSystemConfig] = useState<SystemConfig>(defaultSystemConfig);
   
-  const defaultAdminAuth = { email: "admin@mamin.net", password: "admin123", username: "admin" };
-  const [adminAuth, setAdminAuth] = useState(defaultAdminAuth);
+  const [adminAuth, setAdminAuth] = useState({ email: "", password: "", username: "" });
   const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
@@ -41,8 +40,6 @@ export default function SettingsPage() {
     getSetting("m_amin_admin_auth").then(savedAuth => {
       if (savedAuth) {
         setAdminAuth(savedAuth as any);
-      } else {
-        setSetting("m_amin_admin_auth", defaultAdminAuth as any);
       }
     });
   }, [router]);
