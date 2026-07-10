@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
+import { getSetting } from "@/actions/content";
+import { IconMap, defaultQuickActions, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
 import {
   Package,
   Tag,
@@ -65,104 +67,6 @@ const tabUrls: Record<string, string> = {
   "SEO Audit": "/admin/seo-audit",
 };
 
-const shortcutsList = [
-  {
-    name: "Packages",
-    href: "/admin/packages",
-    icon: <Package className="w-3.5 h-3.5 text-blue-500" />
-  },
-  {
-    name: "Offers",
-    href: "/admin/offers",
-    icon: <Tag className="w-3.5 h-3.5 text-indigo-500" />
-  },
-  {
-    name: "Coverage Areas",
-    href: "/admin/coverage-areas",
-    icon: <MapPin className="w-3.5 h-3.5 text-emerald-500" />
-  },
-  {
-    name: "Application",
-    href: "/admin/applications",
-    icon: <FileText className="w-3.5 h-3.5 text-sky-500" />
-  },
-  {
-    name: "Customer",
-    href: "/admin/customers",
-    icon: <Users className="w-3.5 h-3.5 text-violet-500" />
-  },
-  {
-    name: "Bills",
-    href: "/admin/bills",
-    icon: <Receipt className="w-3.5 h-3.5 text-teal-500" />
-  },
-  {
-    name: "Contact Messages",
-    href: "/admin/contact-messages",
-    icon: <Mail className="w-3.5 h-3.5 text-pink-500" />
-  },
-  {
-    name: "Complaints",
-    href: "/admin/complaints",
-    icon: <AlertTriangle className="w-3.5 h-3.5 text-red-500" />
-  },
-  {
-    name: "Jobs Add",
-    href: "/admin/jobs",
-    icon: <Briefcase className="w-3.5 h-3.5 text-cyan-500" />
-  },
-  {
-    name: "Job Applications",
-    href: "/admin/job-applications",
-    icon: <UserCog className="w-3.5 h-3.5 text-rose-500" />
-  },
-  {
-    name: "Site Content",
-    href: "/admin/site-content",
-    icon: <Zap className="w-3.5 h-3.5 text-amber-500" />
-  },
-  {
-    name: "Home Sections",
-    href: "/admin/home-sections",
-    icon: <Layers className="w-3.5 h-3.5 text-orange-500" />
-  },
-  {
-    name: "Hero Typography",
-    href: "/admin/hero-typography",
-    icon: <Type className="w-3.5 h-3.5 text-purple-500" />
-  },
-  {
-    name: "About Page",
-    href: "/admin/about-page",
-    icon: <Info className="w-3.5 h-3.5 text-emerald-600" />
-  },
-  {
-    name: "Contact Page",
-    href: "/admin/contact-page",
-    icon: <MapPin className="w-3.5 h-3.5 text-pink-600" />
-  },
-  {
-    name: "Top Bar and Footer",
-    href: "/admin/topbar-footer",
-    icon: <Star className="w-3.5 h-3.5 text-yellow-600" />
-  },
-  {
-    name: "Multimedia",
-    href: "/multimedia",
-    icon: <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
-  },
-  {
-    name: "Settings",
-    href: "/admin/settings",
-    icon: <Settings className="w-3.5 h-3.5 text-slate-500" />
-  },
-  {
-    name: "Users Control",
-    href: "/admin/users-roles",
-    icon: <ShieldCheck className="w-3.5 h-3.5 text-slate-700" />
-  }
-];
-
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -170,6 +74,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -180,11 +85,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           router.push("/admin");
         } else {
           setIsAuthenticated(true);
+          getSetting("m_amin_quick_actions").then((res) => {
+            if (res) {
+              setQuickActions(res as QuickAction[]);
+            } else {
+              setQuickActions(defaultQuickActions);
+            }
+          });
         }
       }
     }, 0);
     return () => clearTimeout(timer);
   }, [router]);
+
+  useEffect(() => {
+    const fetchQuickActions = () => {
+      getSetting("m_amin_quick_actions").then((res) => {
+        if (res) {
+          setQuickActions(res as QuickAction[]);
+        } else {
+          setQuickActions(defaultQuickActions);
+        }
+      });
+    };
+    
+    // Initial fetch if already authenticated
+    if (isAuthenticated) {
+      fetchQuickActions();
+    }
+
+    window.addEventListener("quick_actions_updated", fetchQuickActions);
+    return () => window.removeEventListener("quick_actions_updated", fetchQuickActions);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const currentTab = Object.entries(tabUrls).find(([, url]) => url === pathname)?.[0];
@@ -259,20 +191,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-8 py-3 flex flex-wrap items-center gap-2">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none">My shortcuts:</span>
             <div className="flex flex-wrap gap-2 items-center">
-              {shortcutsList.map((item) => {
-                const isActive = pathname === item.href || (item.name === "Packages" && pathname === "/admin/packages");
+              {quickActions.map((item) => {
+                const isActive = pathname === item.route || (item.label === "Packages" && pathname === "/admin/packages");
+                const ActionIcon = IconMap[item.iconName] || IconMap["Link"];
                 return (
                   <button
-                    key={item.name}
-                    onClick={() => router.push(item.href)}
+                    key={item.id}
+                    onClick={() => router.push(item.route)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 bg-white border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
                       isActive
                         ? "border-brand-blue bg-blue-50/20 text-brand-blue"
                         : "border-slate-200 hover:border-slate-350 text-slate-700 hover:bg-slate-50/50"
                     }`}
                   >
-                    {item.icon}
-                    <span>{item.name}</span>
+                    <ActionIcon className={`w-3.5 h-3.5 ${item.text.replace('text-', 'text-').replace('-600', '-500')}`} />
+                    <span>{item.label}</span>
                   </button>
                 );
               })}

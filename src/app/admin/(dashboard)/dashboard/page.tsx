@@ -25,8 +25,73 @@ import {
   PanelTop,
   Tv2,
   Settings,
-  UserCog
+  UserCog,
+  Link,
+  Star,
+  Activity,
+  Plus,
+  ChevronDown,
+  HelpCircle,
+  Layers,
+  Globe,
+  Lock,
+  BarChart3,
+  LogOut
 } from "lucide-react";
+
+export const IconMap: Record<string, React.ElementType> = {
+  Users, FileText, Receipt, LifeBuoy, MessageSquare, AlertTriangle, Mail, Package, Tag, MapPin, Briefcase, Zap, LayoutGrid, Type, Info, Phone, PanelTop, Tv2, Settings, UserCog, Link, Star, Activity, Plus, HelpCircle, Layers, Globe, Lock, BarChart3, LogOut
+};
+
+export interface QuickAction {
+  id: string;
+  label: string;
+  path: string;
+  route: string;
+  iconName: string;
+  bg: string;
+  text: string;
+}
+
+export const adminRoutes = [
+  { label: "Dashboard Overview", route: "/admin/dashboard" },
+  { label: "Packages", route: "/admin/packages" },
+  { label: "Offers", route: "/admin/offers" },
+  { label: "Coverage Areas", route: "/admin/coverage-areas" },
+  { label: "Applications", route: "/admin/applications" },
+  { label: "Customers", route: "/admin/customers" },
+  { label: "Bills", route: "/admin/bills" },
+  { label: "Tickets", route: "/admin/tickets" },
+  { label: "Package Requests", route: "/admin/package-requests" },
+  { label: "Contact Messages", route: "/admin/contact-messages" },
+  { label: "Complaints", route: "/admin/complaints" },
+  { label: "Jobs", route: "/admin/jobs" },
+  { label: "Job Applications", route: "/admin/job-applications" },
+  { label: "Testimonials", route: "/admin/testimonials" },
+  { label: "FAQs", route: "/admin/faqs" },
+  { label: "Site Content", route: "/admin/site-content" },
+  { label: "Home Sections", route: "/admin/home-sections" },
+  { label: "Hero Typography", route: "/admin/hero-typography" },
+  { label: "Network Features", route: "/admin/network-features" },
+  { label: "SEO & Sharing", route: "/admin/seo-sharing" },
+  { label: "About Page", route: "/admin/about-page" },
+  { label: "Contact Page", route: "/admin/contact-page" },
+  { label: "Complaint Page", route: "/admin/complaint-page" },
+  { label: "Support Page", route: "/admin/support-page" },
+  { label: "Careers Page", route: "/admin/careers-page" },
+  { label: "Coverage Areas Page", route: "/admin/coverage-page" },
+  { label: "Offers Page", route: "/admin/offers-page" },
+  { label: "Bill Payment Page", route: "/admin/bill-payment-page" },
+  { label: "Self-Care Portal Page", route: "/admin/portal-page" },
+  { label: "Top Bar & Footer", route: "/admin/topbar-footer" },
+  { label: "Services Hub", route: "/admin/services-hub" },
+  { label: "Service Reviews", route: "/admin/service-reviews" },
+  { label: "Users & Roles", route: "/admin/users-roles" },
+  { label: "Security", route: "/admin/security" },
+  { label: "SEO Audit", route: "/admin/seo-audit" }
+];
+
+
 
 interface Claim {
   id: string;
@@ -263,6 +328,28 @@ const tabUrls: Record<string, string> = {
   "SEO Audit": "/admin/seo-audit",
 };
 
+export const defaultQuickActions: QuickAction[] = [
+  { id: "qa-1", label: "Packages",        path: "/admin/packages",        route: "/admin/packages",        iconName: "Package",      bg: "bg-blue-50",    text: "text-blue-600" },
+  { id: "qa-2", label: "Offers",          path: "/admin/offers",          route: "/admin/offers",          iconName: "Tag",          bg: "bg-violet-50",  text: "text-violet-600" },
+  { id: "qa-3", label: "Coverage Areas",  path: "/admin/coverage",        route: "/admin/coverage-areas",  iconName: "MapPin",       bg: "bg-emerald-50", text: "text-emerald-600" },
+  { id: "qa-4", label: "Application",     path: "/admin/applications",    route: "/admin/applications",    iconName: "FileText",     bg: "bg-amber-50",   text: "text-amber-600" },
+  { id: "qa-5", label: "Customer",        path: "/admin/customers",        route: "/admin/customers",        iconName: "Users",        bg: "bg-sky-50",     text: "text-sky-600" },
+  { id: "qa-6", label: "Bills",           path: "/admin/bills",           route: "/admin/bills",           iconName: "Receipt",      bg: "bg-teal-50",    text: "text-teal-600" },
+  { id: "qa-7", label: "Contact Messages",path: "/admin/contact",         route: "/admin/contact-messages", iconName: "Mail",         bg: "bg-pink-50",    text: "text-pink-600" },
+  { id: "qa-8", label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      iconName: "AlertTriangle", bg: "bg-red-50",    text: "text-red-500" },
+  { id: "qa-9", label: "Jobs Add",        path: "/admin/jobs",            route: "/admin/jobs",            iconName: "Briefcase",    bg: "bg-orange-50",  text: "text-orange-600" },
+  { id: "qa-10", label: "Job Applications",path: "/admin/job-applications",route: "/admin/job-applications",iconName: "FileText",     bg: "bg-indigo-50",  text: "text-indigo-600" },
+  { id: "qa-11", label: "Site Content",    path: "/admin/content",         route: "/admin/site-content",    iconName: "Zap",          bg: "bg-yellow-50",  text: "text-yellow-600" },
+  { id: "qa-12", label: "Home Sections",   path: "/admin/home-sections",   route: "/admin/home-sections",   iconName: "LayoutGrid",   bg: "bg-fuchsia-50", text: "text-fuchsia-600" },
+  { id: "qa-13", label: "Hero Typography", path: "/admin/hero-typography", route: "/admin/hero-typography", iconName: "Type",         bg: "bg-cyan-50",    text: "text-cyan-600" },
+  { id: "qa-14", label: "About Page",      path: "/admin/about",           route: "/admin/about-page",      iconName: "Info",         bg: "bg-lime-50",    text: "text-lime-600" },
+  { id: "qa-15", label: "Contact Page",    path: "/admin/contact-page",   route: "/admin/contact-page",    iconName: "Phone",        bg: "bg-rose-50",    text: "text-rose-600" },
+  { id: "qa-16", label: "Top Bar & Footer",path: "/admin/layout",          route: "/admin/topbar-footer",   iconName: "PanelTop",     bg: "bg-slate-100",  text: "text-slate-600" },
+  { id: "qa-17", label: "Multimedia",      path: "/admin/services",        route: "/admin/services-hub",    iconName: "Tv2",          bg: "bg-purple-50",  text: "text-purple-600" },
+  { id: "qa-18", label: "Settings",        path: "/admin/settings",        route: "/admin/settings",        iconName: "Settings",     bg: "bg-gray-100",   text: "text-gray-600" },
+  { id: "qa-19", label: "Users & Roles",   path: "/admin/users",           route: "/admin/users-roles",     iconName: "UserCog",      bg: "bg-blue-50",    text: "text-blue-700" },
+];
+
 export default function AdminDashboardPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -271,29 +358,32 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [greeting, setGreeting] = useState("Welcome");
 
-  // Quick actions reordering state
-  const [quickActionsList, setQuickActionsList] = useState([
-    { label: "Packages",        path: "/admin/packages",        route: "/admin/packages",        icon: Package,      bg: "bg-blue-50",    text: "text-blue-600" },
-    { label: "Offers",          path: "/admin/offers",          route: "/admin/offers",          icon: Tag,          bg: "bg-violet-50",  text: "text-violet-600" },
-    { label: "Coverage Areas",  path: "/admin/coverage",        route: "/admin/coverage-areas",  icon: MapPin,       bg: "bg-emerald-50", text: "text-emerald-600" },
-    { label: "Application",     path: "/admin/applications",    route: "/admin/applications",    icon: FileText,     bg: "bg-amber-50",   text: "text-amber-600" },
-    { label: "Customer",        path: "/admin/customers",        route: "/admin/customers",        icon: Users,        bg: "bg-sky-50",     text: "text-sky-600" },
-    { label: "Bills",           path: "/admin/bills",           route: "/admin/bills",           icon: Receipt,      bg: "bg-teal-50",    text: "text-teal-600" },
-    { label: "Contact Messages",path: "/admin/contact",         route: "/admin/contact-messages", icon: Mail,         bg: "bg-pink-50",    text: "text-pink-600" },
-    { label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      icon: AlertTriangle, bg: "bg-red-50",    text: "text-red-500" },
-    { label: "Jobs Add",        path: "/admin/jobs",            route: "/admin/jobs",            icon: Briefcase,    bg: "bg-orange-50",  text: "text-orange-600" },
-    { label: "Job Applications",path: "/admin/job-applications",route: "/admin/job-applications",icon: FileText,     bg: "bg-indigo-50",  text: "text-indigo-600" },
-    { label: "Site Content",    path: "/admin/content",         route: "/admin/site-content",    icon: Zap,          bg: "bg-yellow-50",  text: "text-yellow-600" },
-    { label: "Home Sections",   path: "/admin/home-sections",   route: "/admin/home-sections",   icon: LayoutGrid,   bg: "bg-fuchsia-50", text: "text-fuchsia-600" },
-    { label: "Hero Typography", path: "/admin/hero-typography", route: "/admin/hero-typography", icon: Type,         bg: "bg-cyan-50",    text: "text-cyan-600" },
-    { label: "About Page",      path: "/admin/about",           route: "/admin/about-page",      icon: Info,         bg: "bg-lime-50",    text: "text-lime-600" },
-    { label: "Contact Page",    path: "/admin/contact-page",   route: "/admin/contact-page",    icon: Phone,        bg: "bg-rose-50",    text: "text-rose-600" },
-    { label: "Top Bar & Footer",path: "/admin/layout",          route: "/admin/topbar-footer",   icon: PanelTop,     bg: "bg-slate-100",  text: "text-slate-600" },
-    { label: "Multimedia",      path: "/admin/services",        route: "/admin/services-hub",    icon: Tv2,          bg: "bg-purple-50",  text: "text-purple-600" },
-    { label: "Settings",        path: "/admin/settings",        route: "/admin/settings",        icon: Settings,     bg: "bg-gray-100",   text: "text-gray-600" },
-    { label: "Users & Roles",   path: "/admin/users",           route: "/admin/users-roles",     icon: UserCog,      bg: "bg-blue-50",    text: "text-blue-700" },
-  ]);
+
+
+  const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>(defaultQuickActions);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
+  const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
+  const [editingQuickAction, setEditingQuickAction] = useState<QuickAction | null>(null);
+  const [quickActionFormData, setQuickActionFormData] = useState<Omit<QuickAction, "id">>({
+    label: "", path: "", route: "", iconName: "Link", bg: "bg-blue-50", text: "text-blue-600"
+  });
+
+  const handleSaveQuickAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    let updated: QuickAction[];
+    if (editingQuickAction) {
+      updated = quickActionsList.map(a => a.id === editingQuickAction.id ? { ...quickActionFormData, id: a.id } : a);
+    } else {
+      updated = [...quickActionsList, { ...quickActionFormData, id: `qa-${Date.now()}` }];
+    }
+    setQuickActionsList(updated);
+    setSetting("m_amin_quick_actions", updated);
+    window.dispatchEvent(new Event("quick_actions_updated"));
+    setIsQuickActionModalOpen(false);
+    toast(editingQuickAction ? "Quick action updated successfully!" : "Quick action added successfully!");
+  };
 
   const handleDragEnter = (targetIdx: number) => {
     if (draggedIndex === null || draggedIndex === targetIdx) return;
@@ -827,6 +917,15 @@ export default function AdminDashboardPage() {
       }
     });
 
+    getSetting("m_amin_quick_actions").then(savedActions => {
+      if (savedActions) {
+        setQuickActionsList(savedActions as QuickAction[]);
+      } else {
+        setSetting("m_amin_quick_actions", defaultQuickActions);
+        setQuickActionsList(defaultQuickActions);
+      }
+    });
+
     // Load snapshot counts
     try {
       const savedCustomers = localStorage.getItem("m_amin_customers");
@@ -944,6 +1043,7 @@ export default function AdminDashboardPage() {
       setSetting("m_amin_security_logs", defaultSecurityLogs);
       setSetting("m_amin_seo_audits", defaultSEOAuditReports);
       setSetting("m_amin_dashboard_shortcuts", defaultShortcuts);
+      setSetting("m_amin_quick_actions", defaultQuickActions);
       
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
@@ -1101,6 +1201,7 @@ export default function AdminDashboardPage() {
       setSecurityLogs(defaultSecurityLogs);
       setSeoAuditReports(defaultSEOAuditReports);
       setShortcuts(defaultShortcuts);
+      setQuickActionsList(defaultQuickActions);
 
       toast("Mock database has been reset successfully!");
     }
@@ -1124,6 +1225,7 @@ export default function AdminDashboardPage() {
       setSetting("m_amin_security_logs", []);
       setSetting("m_amin_seo_audits", []);
       setSetting("m_amin_dashboard_shortcuts", []);
+      setSetting("m_amin_quick_actions", []);
       setClaims([]);
       setComplaints([]);
       setTickets([]);
@@ -1139,6 +1241,7 @@ export default function AdminDashboardPage() {
       setSecurityLogs([]);
       setSeoAuditReports([]);
       setShortcuts([]);
+      setQuickActionsList([]);
       toast("Mock database cleared successfully!");
     }
   };
@@ -1174,9 +1277,10 @@ export default function AdminDashboardPage() {
   };
 
   const deleteTicket = async (id: string) => {
-    const updated = tickets.filter((t) => t.id !== id);
-    setTickets(updated);
-    setSetting("m_amin_tickets", updated);
+    const updated = quickActionsList.filter((a) => a.id !== id);
+    setQuickActionsList(updated);
+    setSetting("m_amin_quick_actions", updated);
+    window.dispatchEvent(new Event("quick_actions_updated"));
   };
 
   const deletePayment = async (id: string) => {
@@ -1513,15 +1617,24 @@ export default function AdminDashboardPage() {
               <div className="space-y-4 pt-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold text-slate-800 tracking-tight">Quick actions</h2>
-                  <button className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-all shadow-sm active:scale-95">
+                  <button 
+                    onClick={() => {
+                      setEditingQuickAction(null);
+                      setQuickActionFormData({ label: "", path: "", route: "", iconName: "Link", bg: "bg-blue-50", text: "text-blue-600" });
+                      setIsQuickActionModalOpen(true);
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-all shadow-sm active:scale-95"
+                  >
                     <span>+ Add</span>
                   </button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {quickActionsList.map((action, idx) => (
+                  {quickActionsList.map((action, idx) => {
+                    const ActionIcon = IconMap[action.iconName] || IconMap["Link"];
+                    return (
                     <div
-                      key={idx}
+                      key={action.id}
                       draggable
                       onDragStart={(e) => {
                         setDraggedIndex(idx);
@@ -1529,7 +1642,11 @@ export default function AdminDashboardPage() {
                       }}
                       onDragOver={(e) => e.preventDefault()}
                       onDragEnter={() => handleDragEnter(idx)}
-                      onDragEnd={() => setDraggedIndex(null)}
+                      onDragEnd={() => {
+                        setDraggedIndex(null);
+                        setSetting("m_amin_quick_actions", quickActionsList);
+                        window.dispatchEvent(new Event("quick_actions_updated"));
+                      }}
                       onClick={() => {
                         if (draggedIndex === null) {
                           router.push(action.route);
@@ -1550,7 +1667,7 @@ export default function AdminDashboardPage() {
                         </div>
                         {/* Icon in circle */}
                         <div className={`p-2 ${action.bg} rounded-full mr-3 ${action.text}`}>
-                          <action.icon className="h-5 w-5" />
+                          <ActionIcon className="h-5 w-5" />
                         </div>
                         {/* Title and path */}
                         <div className="text-left">
@@ -1564,7 +1681,9 @@ export default function AdminDashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push(action.route);
+                            setEditingQuickAction(action);
+                            setQuickActionFormData({ label: action.label, path: action.path, route: action.route, iconName: action.iconName, bg: action.bg, text: action.text });
+                            setIsQuickActionModalOpen(true);
                           }}
                           className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
                           title="Edit"
@@ -1576,9 +1695,11 @@ export default function AdminDashboardPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Delete shortcut by removing it from state!
                             if (confirm(`Are you sure you want to remove the ${action.label} shortcut?`)) {
-                              setQuickActionsList((prev) => prev.filter((item) => item.label !== action.label));
+                              const updated = quickActionsList.filter((item) => item.id !== action.id);
+                              setQuickActionsList(updated);
+                              setSetting("m_amin_quick_actions", updated);
+                              window.dispatchEvent(new Event("quick_actions_updated"));
                             }
                           }}
                           className="p-1 hover:bg-red-55 rounded text-red-500 hover:text-red-700 transition-colors cursor-pointer"
@@ -1590,11 +1711,131 @@ export default function AdminDashboardPage() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>
           )}
+
+      {/* Quick Action Modal */}
+      {isQuickActionModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="font-bold text-lg text-slate-800">{editingQuickAction ? "Edit Quick Action" : "Add Quick Action"}</h3>
+              <button onClick={() => setIsQuickActionModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <form onSubmit={handleSaveQuickAction} className="p-6 space-y-4">
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Label</label>
+                <input type="text" required value={quickActionFormData.label} onChange={(e) => setQuickActionFormData({ ...quickActionFormData, label: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue" placeholder="e.g. Packages" />
+              </div>
+              <div className="relative">
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Route URL</label>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsRouteDropdownOpen(!isRouteDropdownOpen)}
+                    className="w-full flex items-center justify-between px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue text-left shadow-sm"
+                  >
+                    <span className={quickActionFormData.route ? "text-slate-900" : "text-slate-400"}>
+                      {quickActionFormData.route || "Select a route"}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isRouteDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isRouteDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto animate-in fade-in zoom-in-95 duration-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                      {adminRoutes
+                        .filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id))
+                        .map((r) => (
+                        <button
+                          key={r.route}
+                          type="button"
+                          onClick={() => {
+                            setQuickActionFormData({ ...quickActionFormData, route: r.route, path: r.route });
+                            setIsRouteDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3.5 py-2.5 text-sm transition-colors border-b last:border-b-0 border-slate-50 ${quickActionFormData.route === r.route ? 'bg-brand-blue/5 text-brand-blue font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                        >
+                          {r.route}
+                        </button>
+                      ))}
+                      {adminRoutes.filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id)).length === 0 && (
+                        <div className="p-4 text-center text-sm text-slate-500">All available routes are added!</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Icon</label>
+                <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 border border-slate-200 rounded-xl bg-slate-50/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {Object.keys(IconMap).map((icon) => {
+                    const ActionIcon = IconMap[icon];
+                    const isSelected = quickActionFormData.iconName === icon;
+                    return (
+                      <button
+                        key={icon}
+                        type="button"
+                        onClick={() => setQuickActionFormData({ ...quickActionFormData, iconName: icon })}
+                        className={`p-2 rounded-lg transition-all cursor-pointer ${isSelected ? 'bg-brand-blue text-white shadow-md scale-105' : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-100 hover:text-slate-700'}`}
+                        title={icon}
+                      >
+                        <ActionIcon className="h-5 w-5" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Color Theme</label>
+                <div className="flex flex-wrap gap-2.5 p-3 border border-slate-200 rounded-xl bg-slate-50/50">
+                  {Object.entries({
+                    "bg-blue-50": "text-blue-600",
+                    "bg-violet-50": "text-violet-600",
+                    "bg-emerald-50": "text-emerald-600",
+                    "bg-amber-50": "text-amber-600",
+                    "bg-sky-50": "text-sky-600",
+                    "bg-teal-50": "text-teal-600",
+                    "bg-pink-50": "text-pink-600",
+                    "bg-red-50": "text-red-500",
+                    "bg-orange-50": "text-orange-600",
+                    "bg-indigo-50": "text-indigo-600",
+                    "bg-yellow-50": "text-yellow-600",
+                    "bg-fuchsia-50": "text-fuchsia-600",
+                    "bg-cyan-50": "text-cyan-600",
+                    "bg-lime-50": "text-lime-600",
+                    "bg-rose-50": "text-rose-600",
+                    "bg-slate-100": "text-slate-600",
+                    "bg-purple-50": "text-purple-600",
+                    "bg-gray-100": "text-gray-600",
+                  }).map(([bg, text]) => {
+                    const isSelected = quickActionFormData.bg === bg;
+                    return (
+                      <button
+                        key={bg}
+                        type="button"
+                        onClick={() => setQuickActionFormData({ ...quickActionFormData, bg, text })}
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer ${bg} ${text} border border-slate-200/50 ${isSelected ? 'ring-2 ring-brand-blue ring-offset-2 scale-110 shadow-sm' : 'hover:scale-110'}`}
+                        title={bg.replace('bg-', '').replace('-50', '').replace('-100', '')}
+                      >
+                        {isSelected && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="pt-4 flex justify-end gap-3">
+                <button type="button" onClick={() => setIsQuickActionModalOpen(false)} className="px-4 py-2 font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2 font-medium text-white bg-brand-blue hover:bg-brand-blue/90 rounded-xl shadow-md transition-colors cursor-pointer">{editingQuickAction ? "Save Changes" : "Add Action"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
