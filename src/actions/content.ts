@@ -119,11 +119,11 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     const rawItems = isArray ? (data as Record<string, unknown>[]) : [data as Record<string, unknown>];
     
     // Inject sort order to preserve insertion sequence in DB queries
-    const items = rawItems.map((item, index) => {
+    const items: Record<string, unknown>[] = rawItems.map((item, index) => {
       if (item && typeof item === 'object') {
-        return { ...item, _sort_order: index };
+        return { ...item, _sort_order: index } as Record<string, unknown>;
       }
-      return item;
+      return item as Record<string, unknown>;
     });
 
     if (items.length > 0 && items[0] && typeof items[0] === 'object') {
