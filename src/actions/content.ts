@@ -4,6 +4,39 @@ import pool from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
+const OBJECT_KEYS = [
+  "m_amin_system_config",
+  "m_amin_admin_auth",
+  "m_amin_site_content",
+  "m_amin_hero_typography",
+  "m_amin_hero_metrics",
+  "m_amin_offers_page_content",
+  "m_amin_footer_content",
+  "m_amin_bill_payment_page_content",
+  "m_amin_support_page_content",
+  "m_amin_portal_page_content",
+  "m_amin_about_content",
+  "m_amin_contact_content",
+  "m_amin_complaint_content_guidelines",
+  "system_config",
+  "admin_auth",
+  "site_content",
+  "hero_typography",
+  "hero_metrics",
+  "offers_page_content",
+  "footer_content",
+  "bill_payment_page_content",
+  "support_page_content",
+  "portal_page_content",
+  "about_content",
+  "contact_content",
+  "complaint_content_guidelines"
+];
+
+function isObjectKey(key: string): boolean {
+  return OBJECT_KEYS.includes(key);
+}
+
 function logDbError(action: string, key: string, error: unknown) {
   const err = error as Error & { code?: string };
   const logMsg = `[${new Date().toISOString()}] Action: ${action}, Key: ${key}\nError: ${err?.message || err}\nStack: ${err?.stack}\n\n`;
@@ -15,39 +48,16 @@ function logDbError(action: string, key: string, error: unknown) {
 }
 
 /**
- * Fetch a setting (either legacy JSON, or from its dedicated table)
+ * Fetch a setting from its dedicated table
  */
 export async function getSetting(key: string): Promise<unknown> {
   try {
-    const [metaRows] = await pool.query<import('mysql2').RowDataPacket[]>('SELECT data FROM site_settings WHERE id = ?', [key]);
-    
-    let isArray = false;
-    let isDynamicTable = false;
-    let legacyData = null;
-    
-    if (metaRows && metaRows.length > 0) {
-      const dataStr = metaRows[0].data as string;
-      if (dataStr === '{"__meta_type":"array"}') {
-        isArray = true;
-        isDynamicTable = true;
-      } else if (dataStr === '{"__meta_type":"object"}') {
-        isArray = false;
-        isDynamicTable = true;
-      } else {
-        // Legacy JSON string or primitive
-        try {
-          legacyData = JSON.parse(dataStr);
-        } catch {
-          legacyData = dataStr;
-        }
-      }
-    }
-    
     const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
-    
-    if (isDynamicTable) {
-      try {
-        let rows: import('mysql2').RowDataPacket[];
+    const isArray = !isObjectKey(key);
+
+    try {
+      let rows: import('mysql2').RowDataPacket[];
+      if (isArray) {
         try {
           const [orderedRows] = await pool.query<import('mysql2').RowDataPacket[]>(
             `SELECT * FROM \`${tableName}\` ORDER BY \`_sort_order\` ASC`
@@ -59,33 +69,36 @@ export async function getSetting(key: string): Promise<unknown> {
           );
           rows = unorderedRows;
         }
-
-        const parsedRows = rows.map(row => {
-          const newRow: Record<string, unknown> = {};
-          for (const [k, v] of Object.entries(row)) {
-            // Exclude our internal auto-generated key if it wasn't requested
-            if (k === '_auto_id' || k === '_sort_order') continue;
-            
-            if (typeof v === 'string' && (v.startsWith('{') || v.startsWith('['))) {
-              try { newRow[k] = JSON.parse(v); } catch { newRow[k] = v; }
-            } else {
-              newRow[k] = v;
-            }
-          }
-          return newRow;
-        });
-        return isArray ? parsedRows : (parsedRows[0] || null);
-      } catch (e: unknown) {
-        const err = e as { code?: string };
-        if (err.code === 'ER_NO_SUCH_TABLE') {
-          return isArray ? [] : null;
-        }
-        logDbError("getSetting SELECT", key, e);
-        throw e;
+      } else {
+        const [objRows] = await pool.query<import('mysql2').RowDataPacket[]>(
+          `SELECT * FROM \`${tableName}\` LIMIT 1`
+        );
+        rows = objRows;
       }
+
+      const parsedRows = rows.map(row => {
+        const newRow: Record<string, unknown> = {};
+        for (const [k, v] of Object.entries(row)) {
+          // Exclude our internal auto-generated keys
+          if (k === '_auto_id' || k === '_sort_order') continue;
+          
+          if (typeof v === 'string' && (v.startsWith('{') || v.startsWith('['))) {
+            try { newRow[k] = JSON.parse(v); } catch { newRow[k] = v; }
+          } else {
+            newRow[k] = v;
+          }
+        }
+        return newRow;
+      });
+
+      return isArray ? parsedRows : (parsedRows[0] || null);
+    } catch (e: any) {
+      if (e.code === 'ER_NO_SUCH_TABLE') {
+        return isArray ? [] : null;
+      }
+      logDbError("getSetting SELECT", key, e);
+      throw e;
     }
-    
-    return legacyData;
   } catch (error) {
     console.error("Database error fetching setting:", key, error);
     logDbError("getSetting", key, error);
@@ -98,24 +111,21 @@ export async function getSetting(key: string): Promise<unknown> {
  */
 export async function setSetting(key: string, data: unknown): Promise<boolean> {
   try {
+    const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+
     if (data === null || typeof data !== 'object') {
-      const jsonData = JSON.stringify(data);
-      await pool.query(
-        'INSERT INTO site_settings (id, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?',
-        [key, jsonData, jsonData]
-      );
+      try {
+        await pool.query(`CREATE TABLE IF NOT EXISTS \`${tableName}\` (\`value\` TEXT)`);
+        await pool.query(`DELETE FROM \`${tableName}\``);
+        await pool.query(`INSERT INTO \`${tableName}\` (\`value\`) VALUES (?)`, [data]);
+      } catch (e) {
+        logDbError("setSetting primitive", key, e);
+        return false;
+      }
       return true;
     }
 
     const isArray = Array.isArray(data);
-    const metaData = JSON.stringify({ __meta_type: isArray ? "array" : "object" });
-    await pool.query(
-      'INSERT INTO site_settings (id, data) VALUES (?, ?) ON DUPLICATE KEY UPDATE data = ?',
-      [key, metaData, metaData]
-    );
-
-    const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
-
     const rawItems = isArray ? (data as Record<string, unknown>[]) : [data as Record<string, unknown>];
     
     // Inject sort order to preserve insertion sequence in DB queries
@@ -137,10 +147,12 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
         
         for (const k of Object.keys(sample)) {
           if (!existingCols.includes(k)) {
-            let type = 'LONGTEXT';
+            let type = 'VARCHAR(255)';
             const val = sample[k];
             if (typeof val === 'number') type = 'DOUBLE';
             else if (typeof val === 'boolean') type = 'BOOLEAN';
+            else if (typeof val === 'string' && val.length > 255) type = 'TEXT';
+            else if (typeof val === 'object' && val !== null) type = 'TEXT';
             await pool.query(`ALTER TABLE \`${tableName}\` ADD COLUMN \`${k}\` ${type}`);
           }
         }
@@ -148,10 +160,12 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
         const err = e as { code?: string };
         if (err.code === 'ER_NO_SUCH_TABLE') {
           const colDefs = Object.keys(sample).map(k => {
-             let type = 'LONGTEXT';
+             let type = 'VARCHAR(255)';
              const val = sample[k];
              if (typeof val === 'number') type = 'DOUBLE';
              else if (typeof val === 'boolean') type = 'BOOLEAN';
+             else if (typeof val === 'string' && val.length > 255) type = 'TEXT';
+             else if (typeof val === 'object' && val !== null) type = 'TEXT';
              if (k === 'id') type = 'VARCHAR(255) PRIMARY KEY';
              return `\`${k}\` ${type}`;
           });
@@ -202,4 +216,3 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     return false;
   }
 }
-
