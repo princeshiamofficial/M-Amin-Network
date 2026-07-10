@@ -10,7 +10,8 @@ const mysql = require('mysql2/promise');
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'm_amin_network',
-    port: parseInt(process.env.DB_PORT || '3306', 10)
+    port: parseInt(process.env.DB_PORT || '3306', 10),
+    charset: 'utf8mb4'
   });
 
   console.log("Connected to database:", process.env.DB_NAME);
@@ -117,7 +118,7 @@ const mysql = require('mysql2/promise');
   await connection.query('DROP TABLE IF EXISTS `hero_typography`');
   console.log("Creating hero_typography table...");
   await connection.query(
-    'CREATE TABLE `hero_typography` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `slides` TEXT, `_sort_order` DOUBLE)'
+    'CREATE TABLE `hero_typography` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `slides` TEXT, `_sort_order` DOUBLE) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
   );
   console.log("Seeding hero_typography table...");
   await connection.query(
@@ -135,7 +136,7 @@ const mysql = require('mysql2/promise');
   await connection.query('DROP TABLE IF EXISTS `hero_metrics`');
   console.log("Creating hero_metrics table...");
   await connection.query(
-    'CREATE TABLE `hero_metrics` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE)'
+    'CREATE TABLE `hero_metrics` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
   );
   console.log("Seeding hero_metrics table...");
   const heroMetricsData = [
