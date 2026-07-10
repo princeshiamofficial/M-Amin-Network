@@ -43,8 +43,8 @@ const TABLES_SCHEMAS: Record<string, string> = {
   service_cards: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `icon` VARCHAR(255), `_sort_order` DOUBLE",
   system_config: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `peeringBandwidthLimit` VARCHAR(255), `maintenanceMode` BOOLEAN, `_sort_order` DOUBLE",
   site_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `siteTitle` VARCHAR(255), `hotline` VARCHAR(255), `supportEmail` VARCHAR(255), `address` TEXT, `_sort_order` DOUBLE",
-  hero_typography: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `_sort_order` DOUBLE",
-  hero_metrics: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `activeUsers` VARCHAR(255), `uptimePercentage` VARCHAR(255), `coverageAreas` VARCHAR(255), `_sort_order` DOUBLE",
+  hero_typography: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `slides` TEXT, `_sort_order` DOUBLE",
+  hero_metrics: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE",
   offers_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
   footer_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `aboutText` TEXT, `hotline` VARCHAR(255), `email` VARCHAR(255), `address` TEXT, `facebook` VARCHAR(255), `youtube` VARCHAR(255), `_sort_order` DOUBLE",
   bill_payment_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `instructionTitle` VARCHAR(255), `instructionText` TEXT, `_sort_order` DOUBLE",
@@ -170,10 +170,13 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
   ],
   hero_typography: [
-    { mainTitle: "Next Generation Fiber Broadband in South Keraniganj", subtitle: "Ultra-stable connection, high-speed GGC peering, and 24/7 dedicated local support.", _sort_order: 0 }
+    { mainTitle: "Blazing Fast Fiber | Internet in Keraniganj", subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.", slides: JSON.stringify(["/28ca5e1d52c944ebfc4dd9f2b300980d.jpg","/6c55d74de82b7eee7127c3e2d4939b1f.jpg","/933503ea823535235e8159f65709292f.jpg","/ea82d2834f062ee8d73d8b99aebe0d31.jpg"]), _sort_order: 0 }
   ],
   hero_metrics: [
-    { activeUsers: "1,500+", uptimePercentage: "99.9%", coverageAreas: "12+ Zones", _sort_order: 0 }
+    { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ", _sort_order: 0 },
+    { value: "2,000+", titleEn: "Active Clients", titleBn: "সক্রিয় গ্রাহক", descEn: "Trusted by homes & businesses", descBn: "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার", _sort_order: 1 },
+    { value: "10+", titleEn: "Cities Served", titleBn: "পরিষেবা এলাকা", descEn: "Across South Keraniganj", descBn: "দক্ষিণ কেরানীগঞ্জ জুড়ে", _sort_order: 2 },
+    { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট", _sort_order: 3 }
   ],
   offers_page_content: [
     { title: "Monsoon Campaigns & Discounts", subtitle: "Unlock high-speed splicing broadband peering plans at zero installation fees.", _sort_order: 0 }

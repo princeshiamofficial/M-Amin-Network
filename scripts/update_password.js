@@ -112,5 +112,44 @@ const mysql = require('mysql2/promise');
   }
   console.log("Coverage zones successfully seeded.");
 
+  // Hero Typography table migration
+  console.log("Dropping old hero_typography table if exists...");
+  await connection.query('DROP TABLE IF EXISTS `hero_typography`');
+  console.log("Creating hero_typography table...");
+  await connection.query(
+    'CREATE TABLE `hero_typography` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `slides` TEXT, `_sort_order` DOUBLE)'
+  );
+  console.log("Seeding hero_typography table...");
+  await connection.query(
+    'INSERT INTO `hero_typography` (`mainTitle`, `subtitle`, `slides`, `_sort_order`) VALUES (?, ?, ?, ?)',
+    [
+      "Blazing Fast Fiber | Internet in Keraniganj",
+      "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
+      JSON.stringify(["/28ca5e1d52c944ebfc4dd9f2b300980d.jpg","/6c55d74de82b7eee7127c3e2d4939b1f.jpg","/933503ea823535235e8159f65709292f.jpg","/ea82d2834f062ee8d73d8b99aebe0d31.jpg"]),
+      0
+    ]
+  );
+
+  // Hero Metrics table migration
+  console.log("Dropping old hero_metrics table if exists...");
+  await connection.query('DROP TABLE IF EXISTS `hero_metrics`');
+  console.log("Creating hero_metrics table...");
+  await connection.query(
+    'CREATE TABLE `hero_metrics` (`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE)'
+  );
+  console.log("Seeding hero_metrics table...");
+  const heroMetricsData = [
+    {value:"99.9%", titleEn:"Guaranteed Uptime", titleBn:"গ্যারান্টিড আপটাইম", descEn:"Redundant upstream connections", descBn:"অতিরিক্ত আপস্ট্রিম সংযোগ", _sort_order:0},
+    {value:"2,000+", titleEn:"Active Clients", titleBn:"সক্রিয় গ্রাহক", descEn:"Trusted by homes & businesses", descBn:"বাসা ও ব্যবসার বিশ্বস্ত অংশীদার", _sort_order:1},
+    {value:"10+", titleEn:"Cities Served", titleBn:"পরিষেবা এলাকা", descEn:"Across South Keraniganj", descBn:"দক্ষিণ কেরানীগঞ্জ জুড়ে", _sort_order:2},
+    {value:"24/7", titleEn:"Support Response", titleBn:"সহায়তা প্রতিক্রিয়া", descEn:"Expert technical field support", descBn:"দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট", _sort_order:3}
+  ];
+  for (const m of heroMetricsData) {
+    await connection.query(
+      'INSERT INTO `hero_metrics` (`value`, `titleEn`, `titleBn`, `descEn`, `descBn`, `_sort_order`) VALUES (?, ?, ?, ?, ?, ?)',
+      [m.value, m.titleEn, m.titleBn, m.descEn, m.descBn, m._sort_order]
+    );
+  }
+
   await connection.end();
 })();
