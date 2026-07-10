@@ -15,6 +15,8 @@ const mysql = require('mysql2/promise');
   });
 
   console.log("Connected to database:", process.env.DB_NAME);
+  // Ensure the session uses utf8mb4 for proper Unicode storage
+  await connection.query('SET NAMES utf8mb4');
 
   // Update password hash
   const correctHash = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
