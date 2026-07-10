@@ -7,6 +7,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getSetting } from "@/actions/content";
 
+async function hashPassword(msg: string) {
+  const msgBuffer = new TextEncoder().encode(msg);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -41,13 +48,16 @@ export default function AdminDashboard() {
       let savedAuth = (await getSetting("m_amin_admin_auth")) as Record<string, string> | null;
       if (!savedAuth) {
         // Fallback to defaults if no credentials saved yet
-        savedAuth = { email: "admin@mamin.net", password: "admin123", username: "admin" };
+        savedAuth = { email: "admin@mamin.net", password: "admin123", username: "admin", role: "Super Administrator" };
       }
 
       const validEmail = savedAuth.email.toLowerCase();
       const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
-      if ((cleanUser === validUsername || cleanUser === validEmail) && password === savedAuth.password) {
+      const hashedInput = await hashPassword(password);
+      const isPasswordValid = password === savedAuth.password || hashedInput === savedAuth.password;
+
+      if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
         setIsAuthenticated(true);
         setLoginError("");
         sessionStorage.setItem("m_amin_admin_authenticated", "true");

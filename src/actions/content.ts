@@ -52,7 +52,16 @@ function logDbError(action: string, key: string, error: unknown) {
  */
 export async function getSetting(key: string): Promise<unknown> {
   try {
-    const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    let tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    
+    // Map specific custom tables
+    if (tableName === "admin_users" || tableName === "admin_user") {
+      tableName = "users";
+    }
+    if (tableName === "admin_auth") {
+      tableName = "user";
+    }
+
     const isArray = !isObjectKey(key);
 
     try {
@@ -82,10 +91,16 @@ export async function getSetting(key: string): Promise<unknown> {
           // Exclude our internal auto-generated keys
           if (k === '_auto_id' || k === '_sort_order') continue;
           
+          let keyName = k;
+          // Map password_hash back to password property for JS compatibility
+          if (tableName === "user" && k === "password_hash") {
+            keyName = "password";
+          }
+
           if (typeof v === 'string' && (v.startsWith('{') || v.startsWith('['))) {
-            try { newRow[k] = JSON.parse(v); } catch { newRow[k] = v; }
+            try { newRow[keyName] = JSON.parse(v); } catch { newRow[keyName] = v; }
           } else {
-            newRow[k] = v;
+            newRow[keyName] = v;
           }
         }
         return newRow;
@@ -111,7 +126,15 @@ export async function getSetting(key: string): Promise<unknown> {
  */
 export async function setSetting(key: string, data: unknown): Promise<boolean> {
   try {
-    const tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    let tableName = key.startsWith("m_amin_") ? key.replace("m_amin_", "") : key;
+    
+    // Map specific custom tables
+    if (tableName === "admin_users" || tableName === "admin_user") {
+      tableName = "users";
+    }
+    if (tableName === "admin_auth") {
+      tableName = "user";
+    }
 
     if (data === null || typeof data !== 'object') {
       try {
@@ -126,7 +149,33 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     }
 
     const isArray = Array.isArray(data);
-    const rawItems = isArray ? (data as Record<string, unknown>[]) : [data as Record<string, unknown>];
+    
+    // Process input data for user/users structure mappings
+    let processedData = data;
+    const mapUserFields = (item: any) => {
+      if (!item || typeof item !== 'object') return item;
+      const newItem = { ...item };
+      
+      // If saving to user login table, enforce password_hash & role columns
+      if (tableName === "user") {
+        if (newItem.password !== undefined) {
+          newItem.password_hash = newItem.password;
+          delete newItem.password;
+        }
+        if (newItem.role === undefined) {
+          newItem.role = "Super Administrator";
+        }
+      }
+      return newItem;
+    };
+
+    if (isArray) {
+      processedData = (data as any[]).map(mapUserFields);
+    } else {
+      processedData = mapUserFields(data);
+    }
+
+    const rawItems = isArray ? (processedData as Record<string, unknown>[]) : [processedData as Record<string, unknown>];
     
     // Inject sort order to preserve insertion sequence in DB queries
     const items: Record<string, unknown>[] = rawItems.map((item, index) => {

@@ -47,6 +47,13 @@ export default function SettingsPage() {
     });
   }, [router]);
 
+async function hashPassword(msg: string) {
+  const msgBuffer = new TextEncoder().encode(msg);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
   const saveSystemConfig = async (e: React.FormEvent) => {
     e.preventDefault();
     setSetting("m_amin_system_config", systemConfig as any);
@@ -57,7 +64,8 @@ export default function SettingsPage() {
     e.preventDefault();
     const updatedAuth = { ...adminAuth };
     if (newPassword.trim() !== "") {
-      updatedAuth.password = newPassword;
+      const hashed = await hashPassword(newPassword);
+      updatedAuth.password = hashed;
     }
     setSetting("m_amin_admin_auth", updatedAuth as any);
     setAdminAuth(updatedAuth);
