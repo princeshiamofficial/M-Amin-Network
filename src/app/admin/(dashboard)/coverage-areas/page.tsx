@@ -113,9 +113,9 @@ export default function CoverageAreasPage() {
     if (typeof window === "undefined") return;
     getSetting("coverage_zones").then(saved => {
       if (saved) {
-        setZones(saved as any);
+        setZones(saved as unknown as CoverageZone[]);
       } else {
-        setSetting("coverage_zones", defaultZones as any);
+        setSetting("coverage_zones", defaultZones);
         setZones(defaultZones);
       }
     });
@@ -142,7 +142,7 @@ export default function CoverageAreasPage() {
   useEffect(() => {
     const handleReset = async () => {
       if (typeof window !== "undefined") {
-        setSetting("coverage_zones", defaultZones as any);
+        setSetting("coverage_zones", defaultZones);
         setZones(defaultZones);
       }
     };
@@ -204,7 +204,7 @@ export default function CoverageAreasPage() {
     }
 
     setZones(updated);
-    setSetting("coverage_zones", updated as any);
+    setSetting("coverage_zones", updated);
     setIsModalOpen(false);
     toast(editingIndex !== null ? "Coverage zone updated successfully!" : "New coverage zone added successfully!");
   };
@@ -213,7 +213,7 @@ export default function CoverageAreasPage() {
     if (!confirm("Are you sure you want to delete this coverage zone?")) return;
     const updated = zones.filter((_, i) => i !== index);
     setZones(updated);
-    setSetting("coverage_zones", updated as any);
+    setSetting("coverage_zones", updated);
   };
 
   if (!mounted || !isAuthenticated) return null;
