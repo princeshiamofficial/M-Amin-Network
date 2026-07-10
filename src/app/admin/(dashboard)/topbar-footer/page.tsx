@@ -1,5 +1,6 @@
 "use client";
 import { toast } from "sonner";
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
@@ -674,9 +675,11 @@ export default function TopbarFooterPage() {
                                 {/* Thumbnail Preview */}
                                 <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
                                   {lic.image ? (
-                                    <img
+                                    <Image
                                       src={lic.image}
                                       alt="License badge preview"
+                                      width={64}
+                                      height={48}
                                       className="max-w-full max-h-full object-contain p-1"
                                     />
                                   ) : (
@@ -796,9 +799,11 @@ export default function TopbarFooterPage() {
                       <div className="flex items-center gap-3 mt-1.5">
                         <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
                           {newLicense.image ? (
-                            <img
+                            <Image
                               src={newLicense.image}
                               alt="License preview"
+                              width={64}
+                              height={48}
                               className="max-w-full max-h-full object-contain p-1"
                             />
                           ) : (
@@ -1140,9 +1145,11 @@ export default function TopbarFooterPage() {
                                 {/* Thumbnail Preview */}
                                 <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
                                   {badge.image ? (
-                                    <img
+                                    <Image
                                       src={badge.image}
                                       alt="Badge preview"
+                                      width={64}
+                                      height={48}
                                       className="max-w-full max-h-full object-contain p-1"
                                     />
                                   ) : (
@@ -1248,9 +1255,11 @@ export default function TopbarFooterPage() {
                         {/* Thumbnail Preview */}
                         <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
                           {newBadge.image ? (
-                            <img
+                            <Image
                               src={newBadge.image}
                               alt="Badge preview"
+                              width={64}
+                              height={48}
                               className="max-w-full max-h-full object-contain p-1"
                             />
                           ) : (
