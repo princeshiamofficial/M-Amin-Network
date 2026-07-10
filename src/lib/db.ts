@@ -38,7 +38,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   quick_actions: "`id` VARCHAR(255) PRIMARY KEY, `label` VARCHAR(255), `path` VARCHAR(255), `route` VARCHAR(255), `iconName` VARCHAR(255), `bg` VARCHAR(255), `text` VARCHAR(255), `_sort_order` DOUBLE",
   packages_list: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `speed` VARCHAR(255), `price` DOUBLE, `features` TEXT, `popular` BOOLEAN, `type` VARCHAR(255), `_sort_order` DOUBLE",
   promo_offers: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `badge` VARCHAR(255), `discount` VARCHAR(255), `validity` VARCHAR(255), `_sort_order` DOUBLE",
-  coverage_zones: "`id` VARCHAR(255) PRIMARY KEY, `area` VARCHAR(255), `district` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
+  coverage_zones: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `status` VARCHAR(255), `subAreas` TEXT, `_sort_order` DOUBLE",
   package_requests: "`id` VARCHAR(255) PRIMARY KEY, `packageName` VARCHAR(255), `customerName` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `status` VARCHAR(255), `date` VARCHAR(255), `_sort_order` DOUBLE",
   service_cards: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `icon` VARCHAR(255), `_sort_order` DOUBLE",
   system_config: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `peeringBandwidthLimit` VARCHAR(255), `maintenanceMode` BOOLEAN, `_sort_order` DOUBLE",
@@ -147,8 +147,17 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "promo-2", title: "Free Installation Splicing", description: "Zero installation costs for active fiber installations in Kadomtoli.", badge: "Limited Time", discount: "Free", validity: "Valid till 15th July 2026", _sort_order: 1 }
   ],
   coverage_zones: [
-    { id: "cov-1", area: "Kadomtoli", district: "South Keraniganj", status: "Active", _sort_order: 0 },
-    { id: "cov-2", area: "Aganagar", district: "South Keraniganj", status: "Active", _sort_order: 1 }
+    { id: "cov-1", name: "Kadomtoli", status: "active", subAreas: JSON.stringify(["Kadomtoli Chowrasta", "Aganagar Road", "Babu Mia Mosque Road", "Al-Hira Goli"]), _sort_order: 0 },
+    { id: "cov-2", name: "Aganagar", status: "active", subAreas: JSON.stringify(["Main Bazaar Road", "Haji Market area", "Aganagar Union Parishad", "Aganagar High School Road"]), _sort_order: 1 },
+    { id: "cov-3", name: "Chunkutia", status: "active", subAreas: JSON.stringify(["Chunkutia East", "Chunkutia West", "Vidyut Office Road", "Girls School Goli"]), _sort_order: 2 },
+    { id: "cov-4", name: "Zinjira", status: "active", subAreas: JSON.stringify(["Bazar Road", "Zinjira Launch Ghat Road", "Pachpara", "Rahmatpur"]), _sort_order: 3 },
+    { id: "cov-5", name: "Kaliganj", status: "active", subAreas: JSON.stringify(["Iron Market", "Doli Market Road", "Kaliganj Canal Road"]), _sort_order: 4 },
+    { id: "cov-6", name: "Telghat", status: "active", subAreas: JSON.stringify(["Lauchat Road", "River view road", "Telghat Ferry Ghat"]), _sort_order: 5 },
+    { id: "cov-7", name: "Kholamura", status: "expanding", subAreas: JSON.stringify(["Kholamura Bazar", "Kholamura Ghat", "Model Town Block A & B"]), _sort_order: 6 },
+    { id: "cov-8", name: "East Aganagar", status: "expanding", subAreas: JSON.stringify(["East Union Road", "Bypass road sector 2", "Munshiganj Link Road"]), _sort_order: 7 },
+    { id: "cov-9", name: "Char Kaliganj", status: "expanding", subAreas: JSON.stringify(["Char Kaliganj Ferry Ghat Road", "Riverbank Road"]), _sort_order: 8 },
+    { id: "cov-10", name: "Doleshwar", status: "planned", subAreas: JSON.stringify(["Doleshwar Bazar", "Doleshwar Madrasah Road", "Doleshwar High School"]), _sort_order: 9 },
+    { id: "cov-11", name: "Hasnabad", status: "planned", subAreas: JSON.stringify(["Hasnabad Housing", "Hasnabad Cargo Terminal area", "N8 Highway Link"]), _sort_order: 10 }
   ],
   service_cards: [
     { id: "card-1", title: "Broadband Internet", description: "High-speed stable fiber internet for homes and offices.", icon: "Wifi", _sort_order: 0 },

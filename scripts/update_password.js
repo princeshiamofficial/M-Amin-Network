@@ -63,7 +63,7 @@ const mysql = require('mysql2/promise');
     await connection.query('ALTER TABLE `site_content` ADD COLUMN `siteTitle` VARCHAR(255)');
     console.log("Column 'siteTitle' successfully added to 'site_content' table.");
   } catch (err) {
-    if (err.code === 'ER_DUP_COLUMN_NAME') {
+    if (err.code === 'ER_DUP_COLUMN_NAME' || err.code === 'ER_DUP_FIELDNAME' || err.errno === 1060) {
       console.log("Column 'siteTitle' already exists in 'site_content' table.");
     } else {
       throw err;
@@ -79,6 +79,38 @@ const mysql = require('mysql2/promise');
     );
     console.log("Default siteTitle populated in site_content.");
   }
+
+  // Coverage zones table migration
+  console.log("Dropping old coverage_zones table...");
+  await connection.query('DROP TABLE IF EXISTS `coverage_zones`');
+  
+  console.log("Recreating coverage_zones table...");
+  await connection.query(
+    'CREATE TABLE `coverage_zones` (`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `status` VARCHAR(255), `subAreas` TEXT, `_sort_order` DOUBLE)'
+  );
+
+  console.log("Seeding coverage_zones table...");
+  const defaultZones = [
+    { id: "cov-1", name: "Kadomtoli", status: "active", subAreas: JSON.stringify(["Kadomtoli Chowrasta", "Aganagar Road", "Babu Mia Mosque Road", "Al-Hira Goli"]), _sort_order: 0 },
+    { id: "cov-2", name: "Aganagar", status: "active", subAreas: JSON.stringify(["Main Bazaar Road", "Haji Market area", "Aganagar Union Parishad", "Aganagar High School Road"]), _sort_order: 1 },
+    { id: "cov-3", name: "Chunkutia", status: "active", subAreas: JSON.stringify(["Chunkutia East", "Chunkutia West", "Vidyut Office Road", "Girls School Goli"]), _sort_order: 2 },
+    { id: "cov-4", name: "Zinjira", status: "active", subAreas: JSON.stringify(["Bazar Road", "Zinjira Launch Ghat Road", "Pachpara", "Rahmatpur"]), _sort_order: 3 },
+    { id: "cov-5", name: "Kaliganj", status: "active", subAreas: JSON.stringify(["Iron Market", "Doli Market Road", "Kaliganj Canal Road"]), _sort_order: 4 },
+    { id: "cov-6", name: "Telghat", status: "active", subAreas: JSON.stringify(["Lauchat Road", "River view road", "Telghat Ferry Ghat"]), _sort_order: 5 },
+    { id: "cov-7", name: "Kholamura", status: "expanding", subAreas: JSON.stringify(["Kholamura Bazar", "Kholamura Ghat", "Model Town Block A & B"]), _sort_order: 6 },
+    { id: "cov-8", name: "East Aganagar", status: "expanding", subAreas: JSON.stringify(["East Union Road", "Bypass road sector 2", "Munshiganj Link Road"]), _sort_order: 7 },
+    { id: "cov-9", name: "Char Kaliganj", status: "expanding", subAreas: JSON.stringify(["Char Kaliganj Ferry Ghat Road", "Riverbank Road"]), _sort_order: 8 },
+    { id: "cov-10", name: "Doleshwar", status: "planned", subAreas: JSON.stringify(["Doleshwar Bazar", "Doleshwar Madrasah Road", "Doleshwar High School"]), _sort_order: 9 },
+    { id: "cov-11", name: "Hasnabad", status: "planned", subAreas: JSON.stringify(["Hasnabad Housing", "Hasnabad Cargo Terminal area", "N8 Highway Link"]), _sort_order: 10 }
+  ];
+
+  for (const zone of defaultZones) {
+    await connection.query(
+      'INSERT INTO `coverage_zones` (`id`, `name`, `status`, `subAreas`, `_sort_order`) VALUES (?, ?, ?, ?, ?)',
+      [zone.id, zone.name, zone.status, zone.subAreas, zone._sort_order]
+    );
+  }
+  console.log("Coverage zones successfully seeded.");
 
   await connection.end();
 })();
