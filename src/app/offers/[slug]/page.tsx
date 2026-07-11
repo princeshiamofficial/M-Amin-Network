@@ -193,9 +193,7 @@ export default async function OfferDetailPage({
 
           {/* ── Right: 25% ── */}
           <div className="lg:w-[25%] w-full">
-            <div className="sticky top-28 space-y-4">
-              <SharePanel title={offer.title} />
-            </div>
+            <SharePanel title={offer.title} />
           </div>
 
         </div>

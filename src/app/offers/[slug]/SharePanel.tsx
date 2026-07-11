@@ -56,23 +56,25 @@ export default function SharePanel({ title }: { title: string }) {
   ];
 
   return (
-    <div className="bg-[#fafcff] rounded-lg border border-slate-200 overflow-hidden">
-      <div className="p-2 rounded-t-lg bg-blue-50 flex items-center gap-2">
-        <h2 className="text-sm font-bold text-[#0082C4] uppercase text-center w-full">Share</h2>
-      </div>
-      <div className="flex items-center gap-3 p-5 justify-center flex-wrap">
-        {shares.map((s) => (
-          <a
-            key={s.label}
-            href={s.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={s.label}
-            className={`${s.bg} transition-all p-2.5 text-white shadow-lg flex items-center justify-center rounded-full`}
-          >
-            {s.icon}
-          </a>
-        ))}
+    <div className="sticky top-28">
+      <div className="bg-[#fafcff] rounded-lg border border-slate-200 overflow-hidden">
+        <div className="p-2 rounded-t-lg bg-blue-50 flex items-center gap-2">
+          <h2 className="text-sm font-bold text-[#0082C4] uppercase text-center w-full">Share</h2>
+        </div>
+        <div className="flex items-center gap-3 p-5 justify-center flex-wrap">
+          {shares.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={s.label}
+              className={`${s.bg} transition-all p-2.5 text-white shadow-lg flex items-center justify-center rounded-full`}
+            >
+              {s.icon}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
