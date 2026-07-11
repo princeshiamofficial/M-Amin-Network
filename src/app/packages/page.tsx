@@ -401,10 +401,9 @@ function PackagesContent() {
                   onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
                   className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
                     activeTab === tab.id
-                      ? "shadow-md relative z-10"
+                      ? "force-active-tab shadow-md relative z-10"
                       : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
                   }`}
-                  style={activeTab === tab.id ? { backgroundColor: '#0072ff', color: '#ffffff' } : undefined}
                 >
                   {tab.label}
                 </button>

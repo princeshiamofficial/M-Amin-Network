@@ -102,14 +102,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* Stylesheets */}
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/3dyoda17z7vdw.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/41hxdqbq9x353.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/328-uwih_omq0.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/20mcgp0we_-w0.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/3zaui-bjnfpl-.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/1t7veh6pgwbdb.css" />
-        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/0jd2xvpvdi6fi.css" />
+
 
         {/* Custom Styles */}
         <style dangerouslySetInnerHTML={{ __html: `
@@ -166,6 +159,13 @@ export default async function RootLayout({
           @keyframes rzp-rot{to{transform: rotate(360deg);}}
           @-webkit-keyframes rzp-rot{to{-webkit-transform: rotate(360deg);}} 
           .razorpay-container > iframe {min-height: 100%!important;}
+          .force-active-tab {
+              background-color: #0072ff !important;
+              color: #ffffff !important;
+          }
+          .force-active-link {
+              color: #0072ff !important;
+          }
         `}} />
 
         {/* External Scripts */}
