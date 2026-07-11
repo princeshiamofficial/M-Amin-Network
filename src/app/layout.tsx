@@ -94,6 +94,101 @@ export default async function RootLayout({
             })
           }}
         />
+
+        {/* Preloads */}
+        <link rel="preload" href="https://lightswind.com/_next/static/media/1b99372b3eaef0c8-s.p.1gsd1jahc5dg_.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/31a9145ccb84606d-s.p.3j3x29wbycqkn.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/345c85a432359eed-s.p.0zem_9y19rte6.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/47fe1b7cd6e6ed85-s.p.3bh2vc0w-r-ll.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/80dbc432bf467303-s.p.2mn_dieig53zr.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/8e451580e5e95631-s.p.27vw08z6_vw0m.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/8e6fa89aa22d24ec-s.p.2o7m9ogm38dql.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/9be384ea93fe3f49-s.p.0ig786lf0ff2-.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/GeistMonoVF-s.p.1lv5tp2fpjxdz.woff" as="font" type="font/woff" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/GeistVF-s.p.0e569l9b0bre8.woff" as="font" type="font/woff" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/a218039a3287bcfd-s.p.43zbiuwnnoiok.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/c875c6f5d3e977ac-s.p.1h18_wedhzk4h.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/ce62453a442c7f35-s.p.0a0h245ktd4x0.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/e2334d715941921e-s.p.3o_v2fun1jzxk.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/f30fd2e485acf1bc-s.p.35belnv3c2-b-.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="https://lightswind.com/_next/static/media/fba5a26ea33df6a3-s.p.18rizl4rsrl42.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        
+        {/* Preconnects */}
+        <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+        {/* Stylesheets */}
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/3dyoda17z7vdw.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/41hxdqbq9x353.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/328-uwih_omq0.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/20mcgp0we_-w0.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/3zaui-bjnfpl-.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/1t7veh6pgwbdb.css" />
+        <link rel="stylesheet" href="https://lightswind.com/_next/static/chunks/0jd2xvpvdi6fi.css" />
+
+        {/* Custom Styles */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes lw-spin-border {
+              from { --lw-border-angle: 0deg; }
+              to   { --lw-border-angle: 360deg; }
+          }
+          @property --lw-border-angle {
+              syntax: '<angle>';
+              initial-value: 0deg;
+              inherits: false;
+          }
+          .lw-spin-border {
+              animation: lw-spin-border 3s linear infinite;
+              background: conic-gradient(
+                  from var(--lw-border-angle),
+                  transparent 70%,
+                  var(--primarylw) 80%,
+                  var(--greedy) 90%,
+                  transparent 100%
+              );
+          }
+          @keyframes lw-pulse-glow {
+              0%, 100% { opacity: 0.5; transform: scale(1); }
+              50%       { opacity: 1;   transform: scale(1.15); }
+          }
+          .lw-pulse-glow { animation: lw-pulse-glow 2.5s ease-in-out infinite; }
+
+          @keyframes lw-badge-shine {
+              0%   { background-position: -200% center; }
+              100% { background-position: 200% center; }
+          }
+          .lw-badge-shine {
+              background: linear-gradient(90deg, var(--primarylw) 0%, var(--greedy) 40%, #ffffff 50%, var(--greedy) 60%, var(--primarylw) 100%);
+              background-size: 200% auto;
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              animation: lw-badge-shine 3s linear infinite;
+          }
+
+          @keyframes lw-float {
+              0%, 100% { transform: translateY(0px); }
+              50%       { transform: translateY(-3px); }
+          }
+          .lw-float { animation: lw-float 3s ease-in-out infinite; }
+
+          @keyframes lw-btn-ripple {
+              0%   { transform: scale(0); opacity: 0.6; }
+              100% { transform: scale(2.5); opacity: 0; }
+          }
+          .lw-btn-ripple { animation: lw-btn-ripple 0.6s ease-out forwards; }
+          
+          @keyframes rzp-rot{to{transform: rotate(360deg);}}
+          @-webkit-keyframes rzp-rot{to{-webkit-transform: rotate(360deg);}} 
+          .razorpay-container > iframe {min-height: 100%!important;}
+        `}} />
+
+        {/* External Scripts */}
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async />
+        <script src="https://cdn.razorpay.com/static/cx/razorpay-risk-detection/bundle.js" async />
+        <script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.9vdPKhB0RUg.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/rs=AHpOoo97anj7zZ432JcN58tqJJp_A6WeOw/cb=gapi.loaded_0?le=scs" async />
       </head>
       <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
         <MaintenanceWrapper isMaintenance={isMaintenance}>
