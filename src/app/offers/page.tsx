@@ -28,6 +28,7 @@ export default function Offers() {
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translateOfferBadge = (b: string) => {
+    if (!b || typeof b !== "string") return "";
     if (b === "New Connection") return t(pageContent.str1En, pageContent.str1Bn);
     if (b === "Best Value") return t(pageContent.str2En, pageContent.str2Bn);
     if (b === "Gamer Special") return t(pageContent.str3En, pageContent.str3Bn);
@@ -36,6 +37,7 @@ export default function Offers() {
   };
 
   const translateOfferTitle = (title: string) => {
+    if (!title || typeof title !== "string") return "";
     if (title === "Zero Installation Fee") return t(pageContent.str5En, pageContent.str5Bn);
     if (title === "Pay 10 Months, Get 12") return t(pageContent.str6En, pageContent.str6Bn);
     if (title === "Free Public IP for Gamers") return t(pageContent.str7En, pageContent.str7Bn);
@@ -44,6 +46,7 @@ export default function Offers() {
   };
 
   const translateOfferDetails = (det: string) => {
+    if (!det || typeof det !== "string") return "";
     if (det.startsWith("Subscribe to any 20 Mbps")) return t(pageContent.str9En, pageContent.str9Bn);
     if (det.startsWith("Pay for 10 months")) return t(pageContent.str10En, pageContent.str10Bn);
     if (det.startsWith("Subscribe to the 30 Mbps")) return t(pageContent.str11En, pageContent.str11Bn);
@@ -52,6 +55,7 @@ export default function Offers() {
   };
 
   const translateValidUntil = (v: string) => {
+    if (!v || typeof v !== "string") return "";
     if (v === "31 Dec 2026") return t(pageContent.str13En, pageContent.str13Bn);
     if (v === "Ongoing Promotion") return t(pageContent.str14En, pageContent.str14Bn);
     if (v === "31 Oct 2026") return t(pageContent.str15En, pageContent.str15Bn);
