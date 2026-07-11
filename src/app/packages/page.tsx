@@ -519,7 +519,7 @@ function PackagesContent() {
                   <h3 className="text-white font-bold text-xl">{t("New Internet Connection", "নতুন ইন্টারনেট সংযোগ")}</h3>
                   <p className="text-xs text-slate-400 mt-1">
                     {t("Complete this form to request optical fiber setup for", "অপটিক্যাল ফাইবার সংযোগের অনুরোধ জানাতে এই ফর্মটি পূরণ করুন: ")}{" "}
-                    <span className="text-brand-cyan font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
+                    <span className="text-white font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
                   </p>
                 </div>
 
