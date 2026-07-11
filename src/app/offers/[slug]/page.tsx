@@ -103,7 +103,7 @@ export default async function OfferDetailPage({
         </Link>
 
         {/* DOT-style 75/25 layout */}
-        <div className="lg:flex grid grid-cols-1 gap-10">
+        <div className="lg:flex grid grid-cols-1 gap-10 items-start">
 
           {/* ── Left: 75% ── */}
           <div className="lg:w-[75%] w-full">
@@ -192,7 +192,7 @@ export default async function OfferDetailPage({
           </div>
 
           {/* ── Right: 25% ── */}
-          <div className="lg:w-[25%] w-full">
+          <div className="lg:w-[25%] w-full self-start">
             <SharePanel title={offer.title} />
           </div>
 
