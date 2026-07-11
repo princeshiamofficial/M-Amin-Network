@@ -367,6 +367,7 @@ export default function AdminDashboardPage() {
   quickActionsListRef.current = quickActionsList; // Sync during render!
 
   const draggedIdRef = useRef<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
@@ -388,21 +389,6 @@ export default function AdminDashboardPage() {
     window.dispatchEvent(new Event("quick_actions_updated"));
     setIsQuickActionModalOpen(false);
     toast(editingQuickAction ? "Quick action updated successfully!" : "Quick action added successfully!");
-  };
-
-  const handleDragEnter = (targetId: string) => {
-    const activeDraggedId = draggedIdRef.current;
-    if (!activeDraggedId || activeDraggedId === targetId) return;
-    setQuickActionsList((prevList) => {
-      const draggedIdx = prevList.findIndex(item => item.id === activeDraggedId);
-      const targetIdx = prevList.findIndex(item => item.id === targetId);
-      if (draggedIdx === -1 || targetIdx === -1) return prevList;
-      
-      const newList = [...prevList];
-      const [draggedItem] = newList.splice(draggedIdx, 1);
-      newList.splice(targetIdx, 0, draggedItem);
-      return newList;
-    });
   };
 
   // Database states
@@ -1650,12 +1636,39 @@ export default function AdminDashboardPage() {
                           setDraggedId(targetId);
                         }, 0);
                       }}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDragEnter={() => handleDragEnter(action.id)}
-                      onDragEnd={async () => {
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        const activeDraggedId = draggedIdRef.current;
+                        if (activeDraggedId && activeDraggedId !== action.id) {
+                          setHoveredId(action.id);
+                        }
+                      }}
+                      onDragLeave={() => {
+                        setHoveredId((prev) => (prev === action.id ? null : prev));
+                      }}
+                      onDrop={async (e) => {
+                        e.preventDefault();
+                        const activeDraggedId = draggedIdRef.current;
+                        const targetId = action.id;
+                        if (activeDraggedId && activeDraggedId !== targetId) {
+                          setQuickActionsList((prevList) => {
+                            const draggedIdx = prevList.findIndex(item => item.id === activeDraggedId);
+                            const targetIdx = prevList.findIndex(item => item.id === targetId);
+                            if (draggedIdx === -1 || targetIdx === -1) return prevList;
+                            
+                            const newList = [...prevList];
+                            const [draggedItem] = newList.splice(draggedIdx, 1);
+                            newList.splice(targetIdx, 0, draggedItem);
+                            setSetting("quick_actions", newList);
+                            return newList;
+                          });
+                        }
+                        setHoveredId(null);
+                      }}
+                      onDragEnd={() => {
                         draggedIdRef.current = null;
                         setDraggedId(null);
-                        await setSetting("quick_actions", quickActionsListRef.current);
+                        setHoveredId(null);
                         window.dispatchEvent(new Event("quick_actions_updated"));
                       }}
                       onClick={() => {
@@ -1663,11 +1676,11 @@ export default function AdminDashboardPage() {
                           router.push(action.route);
                         }
                       }}
-                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative ${
-                        draggedId !== null ? "transition-none" : "transition-all duration-200"
-                      } ${
+                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative transition-all duration-200 ${
                         isDragged
-                          ? "opacity-30 border-dashed border-slate-300 bg-slate-50"
+                          ? "opacity-30 border-dashed border-slate-300 bg-slate-50 scale-95"
+                          : hoveredId === action.id
+                          ? "border-primary/50 bg-primary/5 ring-2 ring-primary/10 shadow-md scale-[1.02] z-30"
                           : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
                       }`}
                     >
