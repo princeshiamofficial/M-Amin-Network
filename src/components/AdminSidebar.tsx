@@ -222,7 +222,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     <aside className={`shrink-0 bg-[#071120] border-r border-[#1e293b]/60 flex flex-col h-screen overflow-hidden transition-all duration-300 ${
       isCollapsed ? "w-20" : "w-72"
     }`}>
-      <div className={`sticky top-0 z-20 flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-black transition-all ${
+      <div className={`sticky top-0 z-20 flex items-center justify-center py-5 border-b border-[#1e293b]/65 bg-[#071120] transition-all ${
         isCollapsed ? "px-4" : "px-6"
       }`}>
         {isCollapsed ? (

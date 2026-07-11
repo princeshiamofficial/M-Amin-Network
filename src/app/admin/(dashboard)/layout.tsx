@@ -128,7 +128,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden">
+    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden admin-layout-root">
       <div className="relative shrink-0">
         <AdminSidebar
           activeTab={activeTab}

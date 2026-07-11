@@ -96,7 +96,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated) {
     return (
       <div
-        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
+        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans admin-layout-root"
         style={{
           backgroundImage: "linear-gradient(to bottom, rgba(10, 11, 16, 0.82), rgba(20, 24, 33, 0.95)), url('/sky_cloud_bg.png')"
         }}
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
+    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col admin-layout-root">
 
       {/* Main empty workspace placeholder */}
       <div className="grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">

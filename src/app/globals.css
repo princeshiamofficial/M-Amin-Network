@@ -280,6 +280,13 @@ body {
   color: #00f0ff !important;
 }
 
+/* Prevent full page scrolling on admin dashboard */
+html:has(.admin-layout-root),
+body:has(.admin-layout-root) {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
 /* Admin Sidebar Custom Scrollbar styling without cyan hover */
 .admin-sidebar-scroll::-webkit-scrollbar {
   width: 5px;
