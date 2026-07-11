@@ -169,7 +169,7 @@ export default function BillPayment() {
       <div className="w-full bg-white text-slate-800 py-12 grow border-t border-slate-200 relative z-10 flex items-center justify-center">
         <div className={`${hasSearched ? "max-w-2xl" : "max-w-5xl"} w-full mx-auto px-4 sm:px-6 transition-all duration-300`}>
           {!hasSearched ? (
-            <div className="bg-gradient-to-tr from-white to-[#F6F9FE] dark:from-[#1E293B] dark:to-[#9EBDFF29] from-60% md:px-12 px-8 lg:py-20 md:py-16 py-12 border border-[#ecf3ff] dark:border-gray-700 rounded-3xl grid md:grid-cols-2 grid-cols-1 md:gap-3 gap-8 md:divide-x divide-x-0 md:divide-y-0 divide-y dark:divide-[#3D4A67] divide-[#ecf3ff] selfCareCard">
+            <div className="bg-gradient-to-tr from-white to-[#F6F9FE] dark:from-[#1E293B] dark:to-[#9EBDFF29] from-60% md:px-12 px-8 lg:py-20 md:py-16 py-12 border border-[#ecf3ff] dark:border-gray-700 rounded-3xl grid md:grid-cols-2 grid-cols-1 md:gap-3 gap-8 selfCareCard">
               <div className="flex flex-col md:gap-4 gap-2 text-left">
                 <Image
                   alt="Quick Pay Icon"
@@ -213,8 +213,8 @@ export default function BillPayment() {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center">
-                <form onSubmit={handleSearch} className="flex flex-col gap-4 w-full md:pl-12 md:pt-0 pt-5 text-left">
+              <div className="flex justify-center items-center md:border-l border-t md:border-t-0 border-[#ecf3ff] dark:border-[#3D4A67] md:pl-12 pt-8 md:pt-0">
+                <form onSubmit={handleSearch} className="flex flex-col gap-4 w-full text-left">
                   <label className="text-[#4A535F] dark:text-[#ABB3C3] font-medium text-sm">
                     {t("Customer ID", "গ্রাহক আইডি")}
                   </label>
@@ -236,7 +236,7 @@ export default function BillPayment() {
                   <button
                     type="submit"
                     disabled={true}
-                    className="bg-[#2563EB] w-full rounded-lg text-white font-medium py-3 mt-12 flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/10 disabled:opacity-50 text-sm"
+                    className="bg-[#2563EB] w-full rounded-lg text-white font-medium py-3 mt-6 flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/10 disabled:opacity-50 text-sm"
                   >
                     {searching ? (
                       <>
