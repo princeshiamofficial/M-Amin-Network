@@ -64,22 +64,32 @@ export default function Multimedia() {
   ];
 
   return (
-    <div className="w-full py-12 relative overflow-hidden min-h-[80vh] flex flex-col">
+    <div className="w-full py-0 relative overflow-hidden min-h-[80vh] flex flex-col">
       {/* Background glow (decorative top background) */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
-      {/* Header Area - Dark Theme */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
-        <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-            Multimedia{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              &amp; BDIX Portal
-            </span>
-          </h1>
-          <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            Subscribers can access our local high-speed entertainment gateways. Stream movies, play game updates, and watch live TV at speeds up to 100 Mbps, regardless of your standard plan bandwidth speed.
-          </p>
+      {/* Header Area Banner */}
+      <div 
+        className="relative w-full overflow-hidden bg-slate-950 py-3 sm:py-6 border-b border-white/5 bg-cover bg-center"
+        style={{
+          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("/Multimedia.jpg")'
+        }}
+      >
+        <div className="absolute inset-0 bg-brand-dark/20 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/80 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
+              Multimedia{" "}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+                &amp; BDIX Portal
+              </span>
+            </h1>
+            <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
+              Access our high-speed local entertainment gateways to stream movies, play games, and watch live TV at speeds up to 100 Mbps.
+            </p>
+          </div>
         </div>
       </div>
 

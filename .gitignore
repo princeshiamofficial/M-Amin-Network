@@ -46,3 +46,6 @@ next-env.d.ts
 *.avi
 
 /src/generated/prisma
+
+# local log files
+db_error.log

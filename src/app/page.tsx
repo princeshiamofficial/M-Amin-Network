@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
+import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
 import * as Lucide from "lucide-react";
 
@@ -13,6 +14,15 @@ interface Plan {
   type: string;
   features: string[];
   popular?: boolean;
+}
+
+interface Testimonial {
+  name: string;
+  role: string;
+  comment: string;
+  rating: number;
+  isPublished: boolean;
+  src?: string;
 }
 
 interface CountUpProps {
@@ -92,49 +102,10 @@ export default function Home() {
     }
   ];
 
-  const [testimonials, setTestimonials] = useState(defaultTestimonialData);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonialData);
   const [showPopup, setShowPopup] = useState(false);
   
-  const defaultServiceCards = [
-    {
-      titleEn: "Home Internet (FTTH)",
-      titleBn: "হোম ইন্টারনেট (FTTH)",
-      descEn: "Uncapped, buffer-free fiber direct to your home. Enjoy seamless 4K streaming, home automation, and smooth remote learning.",
-      descBn: "আনক্যাপড ও বাফার-মুক্ত ফাইবার সরাসরি আপনার বাসায়। উপভোগ করুন সিমলেস ৪কে স্ট্রিমিং ও রিমোট লার্নিং।",
-      badgeEn: "Popular",
-      badgeBn: "জনপ্রিয়",
-      iconName: "Home"
-    },
-    {
-      titleEn: "Corporate Leased Line",
-      titleBn: "কর্পোরেট লিজড লাইন",
-      descEn: "1:1 symmetric dedicated bandwidth with 99.9% uptime SLA guarantee, static IP allocation, and 24/7 priority enterprise support.",
-      descBn: "৯৯.৯% আপটাইম এসএলএ গ্যারান্টি, স্ট্যাটিক আইপি এবং ২৪/৭ কর্পোরেট সাপোর্ট সহ সিমেট্রিক ব্যান্ডউইথ।",
-      badgeEn: "SLA Guaranteed",
-      badgeBn: "এসএলএ সমর্থিত",
-      iconName: "Building2"
-    },
-    {
-      titleEn: "SME & SOHO Connect",
-      titleBn: "এসএমই ও সোহো কানেক্ট",
-      descEn: "Symmetric internet connections tailored for businesses, shops, and startups. Secure connectivity with backup links.",
-      descBn: "ব্যবসা, দোকান ও স্টার্টআপের জন্য সিমেট্রিক ইন্টারনেট সংযোগ। ব্যাকআপ লিংক সহ নিরাপদ কানেক্টিভিটি।",
-      badgeEn: "Optimized",
-      badgeBn: "অপ্টিমাইজড",
-      iconName: "Briefcase"
-    },
-    {
-      titleEn: "Safe DNS & Smart Cache",
-      titleBn: "সেফ ডিএনএস ও স্মার্ট ক্যাশ",
-      descEn: "Family-safe DNS configurations, automated gaming cache, BDIX optimization, and localized FTP movie and TV caches.",
-      descBn: "ফ্যামিলি-সেফ ডিএনএস কনফিগারেশন, গেমিং ক্যাশ, BDIX অপ্টিমাইজেশান এবং লোকাল এফটিপি।",
-      badgeEn: "Included",
-      badgeBn: "অন্তর্ভুক্ত",
-      iconName: "Shield"
-    }
-  ];
 
-  const [serviceCards, setServiceCards] = useState(defaultServiceCards);
 
   useEffect(() => {
     const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
@@ -147,15 +118,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("service_cards");
-    if (saved) {
-      try {
-        setServiceCards(JSON.parse(saved));
-      } catch {
-        console.error("Failed to parse saved service cards");
-      }
-    }
-
     const savedTestimonials = localStorage.getItem("testimonials");
     if (savedTestimonials) {
       try {
@@ -474,9 +436,6 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs font-bold tracking-widest text-brand-blue uppercase mb-3">
-              {t("Broadband Packages", "ব্রডব্যান্ড প্যাকেজ সমূহ")}
-            </h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
               {t("Choose the Perfect Plan for You", "আপনার জন্য সেরা প্ল্যানটি বেছে নিন")}
             </h3>
@@ -576,7 +535,6 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs font-bold tracking-widest text-brand-cyan uppercase mb-3">{t("Core Infrastructure", "মূল অবকাঠামো")}</h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
               {t("Why Choose M Amin Network?", "কেন এম আমিন নেটওয়ার্ক বেছে নেবেন?")}
             </h3>
@@ -664,123 +622,34 @@ export default function Home() {
       </div>
       </section>
 
-      {/* Services & Solutions Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative overflow-hidden">
-        <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-brand-cyan/5 blur-[120px] pointer-events-none" />
-        
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs font-bold tracking-widest text-brand-cyan uppercase mb-3">{t("Services & Solutions", "সেবা ও সমাধান")}</h2>
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
-            {t("Tailored Connectivity For Everyone", "সবার জন্য উপযুক্ত কানেক্টিভিটি")}
-          </h3>
-          <p className="text-slate-400 mt-4 leading-relaxed">
-            {t(
-              "From seamless home streaming and competitive gaming paths to dedicated enterprise fiber optic leased lines, we provide rock-solid internet solutions in Keraniganj.",
-              "বাসাবাড়ির স্ট্রিমিং ও গেমিং পাথ থেকে শুরু করে ডেডিকেটেড এন্টারপ্রাইজ লিজড লাইন পর্যন্ত, আমরা কেরানীগঞ্জে নির্ভরযোগ্য ইন্টারনেট সেবা প্রদান করি।"
-            )}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {serviceCards.map((srv, i) => {
-            const SvcIcon = (Lucide as unknown as Record<string, React.ElementType>)[srv.iconName] || Lucide.HelpCircle;
-            return (
-              <div
-                key={i}
-                className="p-6 rounded-2xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left relative overflow-hidden group glass-panel"
-              >
-                {srv.badgeEn && (
-                  <div className="absolute top-0 right-0 p-2 text-[10px] font-black uppercase tracking-widest text-brand-cyan/70 bg-brand-cyan/5 rounded-bl-lg border-l border-b border-brand-cyan/10">
-                    {t(srv.badgeEn, srv.badgeBn || srv.badgeEn)}
-                  </div>
-                )}
-                <div className="w-10 h-10 rounded-lg bg-brand-cyan/10 flex items-center justify-center border border-brand-cyan/15 group-hover:bg-brand-cyan/20 group-hover:scale-105 transition-all duration-300">
-                  <SvcIcon className="w-5 h-5 text-brand-cyan" />
-                </div>
-                <h4 className="text-base font-bold text-white tracking-wide group-hover:text-brand-cyan transition-colors duration-300">
-                  {t(srv.titleEn, srv.titleBn || srv.titleEn)}
-                </h4>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                  {t(srv.descEn, srv.descBn || srv.descEn)}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
 
       {/* Customer Review Section */}
       <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h2 className="text-xs font-bold tracking-widest text-brand-blue uppercase mb-3">{t("Testimonials", "টেস্টিমোনিয়াল")}</h2>
-          <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers in Keraniganj Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            {testimonials.filter(t => t.isPublished).map((test, i) => (
-              <div key={i} className="p-8 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex flex-col justify-between">
-                <p className="text-slate-600 italic leading-relaxed text-sm">
-                  &ldquo;{t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment)}&rdquo;
-                </p>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-200/60 pt-4">
-                  <div>
-                    <h4 className="text-slate-900 font-bold text-sm">{test.name}</h4>
-                    <p className="text-xs text-brand-blue">
-                      {t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role)}
-                    </p>
-                  </div>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: test.rating }).map((_, starIdx) => (
-                      <svg
-                        key={starIdx}
-                        className="w-4 h-4 text-amber-400"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
+
+          <AnimatedTestimonials 
+            testimonials={testimonials.filter(test => test.isPublished).map((test, idx) => {
+              const localImages = [
+                "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+                "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
+                "/933503ea823535235e8159f65709292f.jpg",
+                "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
+              ];
+              return {
+                quote: t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment),
+                name: test.name,
+                designation: t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role),
+                src: test.src || localImages[idx % localImages.length],
+                rating: test.rating
+              };
+            })} 
+            autoplay={true} 
+          />
         </div>
       </section>
 
-      {/* CTA Box */}
-      <section className="w-full bg-white py-16 relative overflow-hidden border-b border-slate-100 shadow-inner -mt-20 -mb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-12 rounded-3xl bg-linear-to-r from-slate-50 to-slate-100/80 border border-slate-200 text-center relative overflow-hidden shadow-xl">
-            <div className="absolute inset-0 bg-brand-blue/5 animate-pulse-slow pointer-events-none" />
-            <h3 className="text-3xl font-extrabold text-slate-900 mb-4">
-              {t("Ready to Experience True High-Speed Internet?", "আপনি কি সত্যিকারের উচ্চগতির ইন্টারনেট উপভোগ করতে প্রস্তুত?")}
-            </h3>
-            <p className="text-slate-600 max-w-xl mx-auto mb-8 text-sm sm:text-base">
-              {t(
-                "Get in touch with our team today and enjoy free installation with selected annual subscription plans. Connection within 24 hours guaranteed!",
-                "আজই আমাদের টিমের সাথে যোগাযোগ করুন এবং বার্ষিক সাবস্ক্রিপশনে ফ্রি ইনস্টলেশন উপভোগ করুন। ২৪ ঘণ্টার মধ্যে সংযোগের নিশ্চয়তা!"
-              )}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/packages"
-                className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark px-8 py-4 rounded-xl text-base font-bold shadow-lg shadow-brand-blue/20 hover:opacity-90 transition-opacity cursor-pointer"
-              >
-                {t("Get Connected Now", "আজই সংযোগ নিন")}
-              </Link>
-              <a
-                href="tel:+8801707009267"
-                className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 hover:text-brand-blue px-8 py-4 rounded-xl text-base font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
-              >
-                <svg className="w-5 h-5 text-brand-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                {t("Call +8801707009267", "কল করুন +৮৮০১৭০৭০০৯২৬৭")}
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Home Page Pop-up Offer Modal */}
       {showPopup && (

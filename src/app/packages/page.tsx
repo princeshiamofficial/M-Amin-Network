@@ -389,8 +389,8 @@ function PackagesContent() {
       <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10 text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tab Selectors */}
-          <div className="flex justify-center mb-16">
-            <div className="inline-flex p-1 rounded-2xl bg-slate-50 border border-slate-200">
+          <div className="flex justify-center -mt-24 mb-24 relative z-20">
+            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl">
               {[
                 { id: "home", label: t("Home Internet", "হোম ইন্টারনেট") },
                 { id: "gaming", label: t("Gamer Packs", "গেমার প্যাক") },
@@ -401,7 +401,7 @@ function PackagesContent() {
                   onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
                   className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-brand-blue text-white shadow-md"
+                      ? "bg-brand-blue text-white shadow-md relative z-10"
                       : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
                   }`}
                 >

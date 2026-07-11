@@ -78,9 +78,7 @@ export default function Offers() {
     return det;
   };
 
-  const [promoInput, setPromoInput] = useState("");
-  const [promoStatus, setPromoStatus] = useState<{ status: "success" | "error"; msg: string } | null>(null);
-  const [checkingPromo, setCheckingPromo] = useState(false);
+
 
   // Claim offer modal
   const [selectedPromo, setSelectedPromo] = useState<PromoOffer | null>(null);
@@ -143,47 +141,7 @@ export default function Offers() {
     }
   }, []);
 
-  const handlePromoCheck = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!promoInput.trim()) return;
 
-    setCheckingPromo(true);
-    setPromoStatus(null);
-
-    setTimeout(async () => {
-      setCheckingPromo(false);
-      const codeUpper = promoInput.toUpperCase().trim();
-
-      const matched = activeOffers.some((o) => o.code === codeUpper);
-
-      if (matched) {
-        if (codeUpper === "FREEINSTALL2026") {
-          setPromoStatus({
-            status: "success",
-            msg: t(pageContent.str16En, pageContent.str16Bn),
-          });
-        } else if (codeUpper === "ANNUAL10") {
-          setPromoStatus({
-            status: "success",
-            msg: t(pageContent.str17En, pageContent.str17Bn),
-          });
-        } else {
-          setPromoStatus({
-            status: "success",
-            msg: t(
-              `Promo Code "${codeUpper}" is valid! Our representative will verify this code when activating your connection.`,
-              `প্রোমো কোড "${codeUpper}" কার্যকর! কানেকশন চালুর সময় আমাদের প্রতিনিধি এটি যাচাই করবেন।`
-            ),
-          });
-        }
-      } else {
-        setPromoStatus({
-          status: "error",
-          msg: t(pageContent.str18En, pageContent.str18Bn),
-        });
-      }
-    }, 1000);
-  };
 
   const handleClaimSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -277,16 +235,11 @@ export default function Offers() {
                           </p>
                         </div>
 
-                        {/* Description — grows to fill available space */}
-                        <div
-                          className="py-3 text-[#777B84] text-[15px] leading-relaxed overflow-hidden flex-1"
-                          style={{
-                            display: "-webkit-box",
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: "vertical",
-                          }}
-                        >
-                          {translateOfferDetails(offer.details)}
+                        {/* Description — wrapper handles padding, inner handles clamping */}
+                        <div className="py-3 flex-1">
+                          <div className="text-[#777B84] text-[15px] leading-relaxed line-clamp-3">
+                            {translateOfferDetails(offer.details)}
+                          </div>
                         </div>
 
                         {/* Learn More — always at bottom */}

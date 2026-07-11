@@ -460,7 +460,7 @@ export default function Coverage() {
     {/* Controls & Area Listing (Truly Full Width White Background) */}
     <div className="bg-white py-16 border-t border-slate-200 text-slate-900 relative z-10">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-200/90 shadow-xl relative z-20 -mt-24 mb-8 max-w-4xl mx-auto w-full">
             {/* Search */}
             <div className="relative w-full sm:max-w-xs">
               <input
@@ -493,7 +493,7 @@ export default function Coverage() {
                   onClick={() => setFilter(item.id as "all" | "active" | "expanding" | "planned")}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     filter === item.id
-                      ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20"
+                      ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20 relative z-10"
                       : "bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
@@ -509,7 +509,13 @@ export default function Coverage() {
               filteredZones.map((zone, i) => (
                 <div
                   key={i}
-                  className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-4 text-left"
+                  className="p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-4 text-left"
+                  style={{
+                    backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.65)), url('/mapImg.webp')",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-1.5 text-brand-blue">

@@ -121,7 +121,11 @@ export default function About() {
   useEffect(() => {
     getSetting("about_content_full").then(saved => {
       if (saved) {
-        setContent(saved as unknown as AboutContentFull);
+        const merged = { ...defaultContent, ...(saved as unknown as Partial<AboutContentFull>) };
+        // Ensure array fields always have valid arrays
+        if (!Array.isArray(merged.credentials)) merged.credentials = defaultContent.credentials;
+        if (!Array.isArray(merged.infraCards)) merged.infraCards = defaultContent.infraCards;
+        setContent(merged);
       } else {
         setContent(defaultContent);
       }
@@ -226,12 +230,6 @@ export default function About() {
                 className="bg-brand-blue hover:bg-brand-blue/90 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-sm transition-all cursor-pointer"
               >
                 {t(content.btn1En, content.btn1Bn)}
-              </Link>
-              <Link
-                href="/support"
-                className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 hover:text-brand-blue px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-sm"
-              >
-                {t(content.btn2En, content.btn2Bn)}
               </Link>
             </div>
           </div>

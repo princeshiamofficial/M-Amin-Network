@@ -344,14 +344,14 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/support" className="hover:text-brand-cyan transition-colors">
-                    {t("Diagnostics", "ডায়াগনস্টিকস")}
-                  </Link>
-                </li>
-                <li>
                   <Link href="/bill-payment" className="hover:text-brand-cyan transition-colors">
                     {t("Pay Bill", "বিল পরিশোধ")}
                   </Link>
+                </li>
+                <li>
+                  <a href="/btrc-tariff.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors whitespace-nowrap">
+                    {t("BTRC Approved Tariff", "বিটিআরসি অনুমোদিত ট্যারিফ")}
+                  </a>
                 </li>
               </ul>
               <ul className="space-y-3">

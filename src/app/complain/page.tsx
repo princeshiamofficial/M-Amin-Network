@@ -35,7 +35,7 @@ export default function Complain() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [complaintRef, setComplaintRef] = useState("");
+  const [complaintRef, setComplaintRef] = useState(""); const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,29 +77,24 @@ export default function Complain() {
     setComplaintRef("");
   };
 
+  const categoryOptions = [
+    { value: "Support Response Delay", label: t(pageContent.str17En, pageContent.str17Bn) },
+    { value: "Frequent Disconnections", label: t(pageContent.str18En, pageContent.str18Bn) },
+    { value: "Billing Discrepancy", label: t(pageContent.str19En, pageContent.str19Bn) },
+    { value: "Staff Misbehavior", label: t(pageContent.str20En, pageContent.str20Bn) },
+    { value: "Speed Not Matching Pack", label: t(pageContent.str21En, pageContent.str21Bn) },
+  ];
+
   return (
-    <div className="w-full py-12 relative overflow-hidden min-h-[80vh] flex flex-col">
+    <div className="w-full py-0 relative overflow-hidden min-h-[80vh] flex flex-col">
       {/* Background glow */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
-      {/* Header - Dark Theme */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10 mb-12">
-        <div className="text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-            {t(pageContent.str7En, pageContent.str7Bn)}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t(pageContent.str8En, pageContent.str8Bn)}
-            </span>
-          </h1>
-          <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
-            {t(pageContent.str9En, pageContent.str9Bn)}
-          </p>
-        </div>
-      </div>
+
 
       {/* Complain Card Section - White Background */}
-      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+      <div className="w-full bg-white text-slate-800 py-12 grow border-t border-slate-200 relative z-10 flex items-center justify-center">
+        <div className="max-w-2xl w-full mx-auto px-4 sm:px-6">
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm text-left space-y-6">
             {!success ? (
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -148,19 +143,48 @@ export default function Complain() {
                         className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan font-mono"
                       />
                     </div>
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1.5 relative">
                       <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str16En, pageContent.str16Bn)}</label>
-                      <select
-                        value={form.category}
-                        onChange={(e) => setForm({ ...form, category: e.target.value })}
-                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer"
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer flex justify-between items-center text-left"
                       >
-                        <option value="Support Response Delay">{t(pageContent.str17En, pageContent.str17Bn)}</option>
-                        <option value="Frequent Disconnections">{t(pageContent.str18En, pageContent.str18Bn)}</option>
-                        <option value="Billing Discrepancy">{t(pageContent.str19En, pageContent.str19Bn)}</option>
-                        <option value="Staff Misbehavior">{t(pageContent.str20En, pageContent.str20Bn)}</option>
-                        <option value="Speed Not Matching Pack">{t(pageContent.str21En, pageContent.str21Bn)}</option>
-                      </select>
+                        <span>
+                          {categoryOptions.find(opt => opt.value === form.category)?.label || form.category}
+                        </span>
+                        <svg className={`w-4 h-4 text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {dropdownOpen && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-40" 
+                            onClick={() => setDropdownOpen(false)}
+                          />
+                          <div className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-slate-200 rounded-xl shadow-lg py-1.5 z-50 text-left">
+                            {categoryOptions.map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => {
+                                  setForm({ ...form, category: opt.value });
+                                  setDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors cursor-pointer block ${
+                                  form.category === opt.value
+                                    ? "bg-brand-blue/10 text-brand-blue font-semibold"
+                                    : "text-slate-700 hover:bg-slate-50"
+                                }`}
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 

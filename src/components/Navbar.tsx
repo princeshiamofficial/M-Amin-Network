@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { getSetting } from "@/actions/content";
 
 interface NavLink {
   nameEn: string;
@@ -71,6 +72,22 @@ export default function Navbar() {
           console.error("Error parsing nav links config:", e);
         }
       }
+    }
+  }, []);
+
+  const [offerCount, setOfferCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getSetting("promo_offers").then((offers) => {
+        if (Array.isArray(offers) && offers.length > 0) {
+          setOfferCount(offers.length);
+        } else {
+          setOfferCount(4);
+        }
+      }).catch(() => {
+        setOfferCount(4);
+      });
     }
   }, []);
 
@@ -146,13 +163,18 @@ export default function Navbar() {
                 <Link
                   key={link.href + linkName}
                   href={link.href}
-                  className={`text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-full ${
+                  className={`text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-full flex items-center gap-1 ${
                     isActive
                       ? "bg-brand-blue/10 text-brand-blue"
                       : "text-slate-600 hover:text-brand-blue hover:bg-slate-100/50"
                   }`}
                 >
-                  {linkName}
+                  <span>{linkName}</span>
+                  {link.href === "/offers" && offerCount !== null && (
+                    <span className="px-1.5 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full leading-none min-w-[16px] text-center">
+                      {offerCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -268,13 +290,18 @@ export default function Navbar() {
                 key={link.href + linkName}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`block px-3 py-3 rounded-lg text-base font-medium transition-colors ${
+                className={`px-3 py-3 rounded-lg text-base font-medium transition-colors flex items-center justify-between ${
                   isActive
                     ? "bg-brand-blue/10 text-brand-blue border-l-4 border-brand-blue"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                {linkName}
+                <span>{linkName}</span>
+                {link.href === "/offers" && offerCount !== null && (
+                  <span className="px-2 py-0.5 bg-red-500 text-white text-[11px] font-bold rounded-full leading-none text-center">
+                    {offerCount}
+                  </span>
+                )}
               </Link>
             );
           })}

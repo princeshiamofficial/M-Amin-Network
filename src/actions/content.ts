@@ -114,7 +114,8 @@ export async function getSetting(key: string): Promise<unknown> {
       throw error;
     }
   } catch (error) {
-    console.error("Database error fetching setting:", key, error);
+    // Use console.warn instead of console.error to prevent Next.js RSC Error Overlay
+    console.warn("Database error fetching setting:", key, (error as Error).message);
     logDbError("getSetting", key, error);
     return null;
   }
@@ -264,7 +265,8 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     
     return true;
   } catch (error) {
-    console.error("Database error updating setting:", key, error);
+    // Use console.warn instead of console.error to prevent Next.js RSC Error Overlay
+    console.warn("Database error updating setting:", key, (error as Error).message);
     logDbError("setSetting", key, error);
     return false;
   }

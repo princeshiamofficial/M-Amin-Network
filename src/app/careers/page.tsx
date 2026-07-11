@@ -378,26 +378,26 @@ export default function Careers() {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col relative">
+    <div className="w-full min-h-screen flex flex-col relative text-left">
       {/* Background glow (decorative top background) */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
       {/* Header Area Banner */}
       <div 
-        className="relative w-full overflow-hidden bg-slate-950 py-20 border-b border-white/5 bg-cover bg-center"
+        className="relative w-full overflow-hidden bg-slate-950 py-8 sm:py-14 border-b border-white/5 bg-cover bg-center"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.35), rgba(9, 13, 24, 0.65)), url("/footer-bg.jpg")'
+          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("/footer-bg.jpg")'
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-              {t(pageContent.str29En, pageContent.str29Bn)}
+              {t(pageContent.str29En, pageContent.str29Bn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
                 {t(pageContent.str30En, pageContent.str30Bn)}
               </span>
             </h1>
-            <p className="text-slate-400 mt-4 text-sm sm:text-base leading-relaxed text-center">
+            <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium">
               {t(pageContent.str31En, pageContent.str31Bn)}
             </p>
           </div>
@@ -405,13 +405,73 @@ export default function Careers() {
       </div>
 
       {/* Job Postings Section - White Background */}
-      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
+      <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10 text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
+          {/* Search & Filter Bar Row (Overlapping Floating Bar) */}
+          <div className="bg-white border border-slate-200/90 shadow-xl rounded-2xl p-4 sm:p-5 mb-16 relative z-20 -mt-24 max-w-4xl mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
+              {/* Search Input (Takes 5 cols) */}
+              <div className="lg:col-span-5 relative flex items-center">
+                <span className="absolute left-3.5 text-slate-400">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder={t(pageContent.str36En, pageContent.str36Bn)}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-blue transition-all"
+                />
+              </div>
+
+              {/* Department Dropdown (Takes 3 cols) */}
+              <div className="lg:col-span-3">
+                <select
+                  value={selectedDept}
+                  onChange={(e) => setSelectedDept(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t(pageContent.str37En, pageContent.str37Bn)}</option>
+                  <option value="Network Engineering & Maintenance">{t(pageContent.str38En, pageContent.str38Bn)}</option>
+                  <option value="Helpdesk Operations">{t(pageContent.str2En, pageContent.str2Bn)}</option>
+                  <option value="Infrastructure Operations">{t(pageContent.str3En, pageContent.str3Bn)}</option>
+                </select>
+              </div>
+
+              {/* Type Dropdown (Takes 2 cols) */}
+              <div className="lg:col-span-2">
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t(pageContent.str39En, pageContent.str39Bn)}</option>
+                  <option value="Full-Time">{t(pageContent.str40En, pageContent.str40Bn)}</option>
+                </select>
+              </div>
+
+              {/* Location Dropdown (Takes 2 cols) */}
+              <div className="lg:col-span-2">
+                <select
+                  value={selectedLoc}
+                  onChange={(e) => setSelectedLoc(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
+                >
+                  <option value="All">{t(pageContent.str41En, pageContent.str41Bn)}</option>
+                  <option value="South Keraniganj">{t(pageContent.str7En, pageContent.str7Bn)}</option>
+                  <option value="Kadomtoli Office, Dhaka">{t(pageContent.str8En, pageContent.str8Bn)}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           {/* Open Positions Section Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">{t(pageContent.str32En, pageContent.str32Bn)}</h2>
+              <h2 className="text-2xl font-extrabold text-slate-900">{t(pageContent.str32En, pageContent.str32Bn)}</h2>
               <p className="text-xs text-slate-500 mt-1 font-semibold">
                 {filteredJobs.length} {filteredJobs.length === 1 ? t(pageContent.str33En, pageContent.str33Bn) : t(pageContent.str34En, pageContent.str34Bn)}
               </p>
@@ -435,7 +495,7 @@ export default function Careers() {
                   deadline: "Open Always"
                 });
               }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-5 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
             >
               <span>{t(pageContent.str35En, pageContent.str35Bn)}</span>
               <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -444,153 +504,95 @@ export default function Careers() {
             </button>
           </div>
 
-          {/* Search & Filter Bar Row */}
-          <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 sm:p-5 mb-8 flex flex-col gap-4 shadow-inner">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-              {/* Search Input (Takes 5 cols) */}
-              <div className="lg:col-span-5 relative flex items-center">
-                <span className="absolute left-3.5 text-slate-400">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder={t(pageContent.str36En, pageContent.str36Bn)}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-brand-blue transition-all"
-                />
-              </div>
-
-              {/* Department Dropdown (Takes 3 cols) */}
-              <div className="lg:col-span-3">
-                <select
-                  value={selectedDept}
-                  onChange={(e) => setSelectedDept(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t(pageContent.str37En, pageContent.str37Bn)}</option>
-                  <option value="Network Engineering & Maintenance">{t(pageContent.str38En, pageContent.str38Bn)}</option>
-                  <option value="Helpdesk Operations">{t(pageContent.str2En, pageContent.str2Bn)}</option>
-                  <option value="Infrastructure Operations">{t(pageContent.str3En, pageContent.str3Bn)}</option>
-                </select>
-              </div>
-
-              {/* Type Dropdown (Takes 2 cols) */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t(pageContent.str39En, pageContent.str39Bn)}</option>
-                  <option value="Full-Time">{t(pageContent.str40En, pageContent.str40Bn)}</option>
-                </select>
-              </div>
-
-              {/* Location Dropdown (Takes 2 cols) */}
-              <div className="lg:col-span-2">
-                <select
-                  value={selectedLoc}
-                  onChange={(e) => setSelectedLoc(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none focus:border-brand-blue cursor-pointer"
-                >
-                  <option value="All">{t(pageContent.str41En, pageContent.str41Bn)}</option>
-                  <option value="South Keraniganj">{t(pageContent.str7En, pageContent.str7Bn)}</option>
-                  <option value="Kadomtoli Office, Dhaka">{t(pageContent.str8En, pageContent.str8Bn)}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
           {/* Job Postings Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.length > 0 ? (
               filteredJobs.map((job, idx) => (
                 <div
                   key={idx}
-                  className="rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden text-left relative"
+                  className="group bg-white rounded-2xl shadow-md border border-white hover:border-brand-blue/40 transition-all overflow-hidden flex flex-col cursor-pointer"
                 >
-                  {job.image && (
-                    <div className="w-full h-44 overflow-hidden border-b border-slate-100">
-                      <img
-                        src={job.image}
-                        alt={translateJobTitle(job.title)}
-                        className="w-full h-full object-cover select-none"
-                      />
-                    </div>
-                  )}
-
-                  <div className="p-6 flex flex-col gap-4 grow">
-                    {/* Top Row: Title + Dept & Job Type Badge */}
-                    <div className="flex justify-between items-start w-full gap-4">
-                      <div>
-                        <h3 className="text-slate-900 font-extrabold text-xl tracking-tight leading-tight">{translateJobTitle(job.title)}</h3>
-                        <p className="text-xs text-slate-500 font-semibold mt-1">{translateDept(job.dept)}</p>
-                      </div>
-                      <span className="bg-[#0b2545] text-white text-[10px] sm:text-xs font-bold px-3.5 py-1 rounded-full shrink-0">
+                  {/* Banner image */}
+                  <div className="h-44 relative overflow-hidden bg-brand-blue shrink-0">
+                    <img
+                      src={job.image || "/offer-card-banner.png"}
+                      alt={translateJobTitle(job.title)}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute top-4 right-4 z-10">
+                      <span className="bg-brand-blue text-white text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
                         {translateJobType(job.type)}
                       </span>
                     </div>
+                  </div>
 
-                    {/* Middle Row: Description */}
-                    <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                      {translateJobDesc(job.desc)}
-                    </p>
+                  {/* Body */}
+                  <div className="px-5 lg:px-7 flex flex-col flex-1 gap-1">
+                    {/* Title row */}
+                    <div className="border-b border-[#e5e7eb] py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <p className="text-slate-800 group-hover:text-brand-blue transition-colors font-bold text-[18px] leading-snug">
+                        {translateJobTitle(job.title)}
+                      </p>
+                    </div>
 
-                    {/* Third Row: Details Info Badges */}
-                    <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 items-center font-bold mt-auto">
-                      <span className="flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    {/* Description */}
+                    <div className="py-3 flex-1">
+                      <p className="text-[#777B84] text-[15px] leading-relaxed line-clamp-3 font-medium">
+                        {translateJobDesc(job.desc)}
+                      </p>
+                    </div>
+
+                    {/* Metadata Row */}
+                    <div className="border-t border-slate-100 py-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 items-center font-bold">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 text-brand-blue shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         {translateLocation(job.location)}
                       </span>
-                      <span className="flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 text-brand-blue shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         {job.vacancy} {t(pageContent.str42En, pageContent.str42Bn)}
                       </span>
-                      <span className="flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <span className="flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5 text-brand-blue shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
                         </svg>
                         {job.salary}
                       </span>
-                      <span className="flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        {t(pageContent.str43En, pageContent.str43Bn)} {job.deadline}
-                      </span>
                     </div>
 
-                    {/* Fourth Row: Buttons */}
-                    <div className="grid grid-cols-2 gap-4 mt-2">
+                    {/* Actions Links at bottom */}
+                    <div className="flex items-center justify-between pb-5 border-t border-slate-100/50 pt-4 mt-auto">
                       <button
+                        type="button"
                         onClick={() => setDetailsJob(job)}
-                        className="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 py-3 rounded-xl font-bold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-sm"
+                        className="text-sm font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
                       >
                         {t(pageContent.str44En, pageContent.str44Bn)}
                       </button>
                       <button
+                        type="button"
                         onClick={() => {
                           setCurrentStep(1);
                           setSelectedJob(job);
                         }}
-                        className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] py-3 rounded-xl font-extrabold transition-all text-xs sm:text-sm cursor-pointer text-center shadow-lg shadow-brand-blue/20"
+                        className="text-sm font-bold text-brand-blue flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer"
                       >
                         {t(pageContent.str45En, pageContent.str45Bn)}
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
                       </button>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl col-span-1 md:col-span-2">
+              <div className="p-12 text-center bg-slate-50 border border-slate-200/60 rounded-3xl col-span-1 sm:col-span-2 lg:col-span-3">
                 <svg className="w-12 h-12 text-slate-350 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -600,10 +602,11 @@ export default function Careers() {
             )}
           </div>
         </div>
+      </div>
 
-        {/* Job Details Popup Modal */}
-        {detailsJob && (
-          <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+      {/* Job Details Popup Modal */}
+      {detailsJob && (
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
             <div className="flex min-h-full items-center justify-center p-4">
               <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 sm:p-8 max-w-lg w-full relative text-slate-800 text-left">
               <button
@@ -696,7 +699,7 @@ export default function Careers() {
 
         {/* Multi-step Application Modal */}
         {selectedJob && (
-          <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/40 backdrop-blur-sm">
             <div className="flex min-h-full items-center justify-center p-4">
               <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 sm:p-8 max-w-3xl w-full relative text-slate-800">
               <button
@@ -1702,8 +1705,6 @@ export default function Careers() {
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 }
-

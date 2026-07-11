@@ -95,7 +95,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden">
+      <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
         <MaintenanceWrapper isMaintenance={isMaintenance}>
           <Navbar />
           <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>
