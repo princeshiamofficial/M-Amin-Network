@@ -96,7 +96,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated) {
     return (
       <div
-        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans admin-layout-root"
+        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
         style={{
           backgroundImage: "linear-gradient(to bottom, rgba(10, 11, 16, 0.82), rgba(20, 24, 33, 0.95)), url('/sky_cloud_bg.png')"
         }}
@@ -135,10 +135,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Login Card Container */}
-        {/* Login Card Container */}
-        <div className="max-w-[400px] w-full bg-white/95 border border-slate-200/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
+        <div className="max-w-[400px] w-full bg-white/75 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[32px] p-8 sm:p-10 relative z-10 text-left space-y-6 backdrop-blur-xl">
           {/* Top Login Icon Box */}
-          <div className="w-14 h-14 bg-white border border-slate-200/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
+          <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
             <Image
               src="/xlogo.png"
               alt="Logo"
@@ -149,8 +148,8 @@ export default function AdminDashboard() {
           </div>
 
           <div className="text-center space-y-1.5">
-            <h2 className="text-slate-900 font-black text-[22px] tracking-tight text-center w-full block">Admin Portal Sign In</h2>
-            <p className="text-slate-600 text-xs font-medium leading-relaxed px-2 text-center w-full block">
+            <h2 className="text-[#111113] font-black text-[22px] tracking-tight text-center w-full block">Admin Portal Sign In</h2>
+            <p className="text-[#4b5563] text-xs font-medium leading-relaxed px-2 text-center w-full block">
               Access the administrative console to manage client databases, payments, and system alerts.
             </p>
           </div>
@@ -178,7 +177,7 @@ export default function AdminDashboard() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Email"
-                className="w-full bg-slate-100/60 border border-slate-200/50 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
             </div>
 
@@ -195,7 +194,7 @@ export default function AdminDashboard() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full bg-slate-100/60 border border-slate-200/50 rounded-xl pl-11 pr-11 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-300 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
+                className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-11 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
               />
               {/* Toggle visibility */}
               <button
@@ -224,7 +223,7 @@ export default function AdminDashboard() {
                   e.preventDefault();
                   toast("Demo: Password reset is not configured for admin profiles.");
                 }}
-                className="text-[11px] text-slate-600 font-bold hover:text-slate-900 transition-colors hover:underline"
+                className="text-[11px] text-[#4b5563] font-bold hover:text-[#111113] transition-colors hover:underline"
               >
                 Forgot password?
               </a>
@@ -234,7 +233,7 @@ export default function AdminDashboard() {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full bg-slate-900 hover:bg-slate-950 active:scale-[0.985] text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(30,41,59,0.15)] flex justify-center items-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-[#1f2025] hover:bg-[#111113] active:scale-[0.985] text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow-[0_4px_12px_rgba(31,32,37,0.15)] flex justify-center items-center cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoggingIn ? "Logging in..." : "Get Started"}
             </button>
@@ -243,7 +242,7 @@ export default function AdminDashboard() {
           {/* Divider */}
           <div className="flex items-center justify-center gap-3 my-1">
             <div className="border-t border-slate-200 grow" />
-            <span className="text-[10px] text-slate-400 font-black tracking-widest uppercase font-sans">Or sign in with</span>
+            <span className="text-[10px] text-[#8c94a0] font-black tracking-widest uppercase font-sans">Or sign in with</span>
             <div className="border-t border-slate-200 grow" />
           </div>
 
@@ -283,7 +282,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col admin-layout-root">
+    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
 
       {/* Main empty workspace placeholder */}
       <div className="grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">

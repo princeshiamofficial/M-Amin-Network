@@ -10,15 +10,6 @@
   --color-brand-border: #1e294b;
   --color-brand-text-muted: #94a3b8;
 
-  --color-slate-150: #eaedf2;
-  --color-slate-250: #d7dee8;
-  --color-slate-350: #b2bfd1;
-  --color-slate-450: #7c8ba1;
-  --color-slate-550: #55647a;
-  --color-slate-650: #3d4b5f;
-  --color-slate-750: #283548;
-  --color-slate-850: #162032;
-
   --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
@@ -278,13 +269,6 @@ body {
 .theme-light footer a:hover,
 .theme-light .bg-brand-dark\/95 a:hover {
   color: #00f0ff !important;
-}
-
-/* Prevent full page scrolling on admin dashboard */
-html:has(.admin-layout-root),
-body:has(.admin-layout-root) {
-  overflow: hidden !important;
-  height: 100vh !important;
 }
 
 /* Admin Sidebar Custom Scrollbar styling without cyan hover */

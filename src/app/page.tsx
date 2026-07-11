@@ -6,6 +6,7 @@ import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
+import * as Lucide from "lucide-react";
 
 interface Plan {
   speed: number;

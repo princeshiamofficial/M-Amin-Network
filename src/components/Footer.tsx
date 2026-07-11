@@ -137,7 +137,8 @@ export default function Footer() {
       if (savedBadges) {
         try {
           const parsed = JSON.parse(savedBadges);
-          const migrated = parsed.map((badge: AffiliationBadge) => {
+          // Auto-migrate badge configurations to add dynamic image paths for backward-compatibility
+          const migrated = parsed.map((badge: any) => {
             if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
               return { ...badge, image: "/ispab.jpeg" };
             }
@@ -154,7 +155,7 @@ export default function Footer() {
         try {
           const parsed = JSON.parse(savedLicenses);
           // Auto-migrate license configurations to add dynamic image paths for backward-compatibility
-          const migrated = parsed.map((lic: LicenseBadge) => {
+          const migrated = parsed.map((lic: any) => {
             if (lic.textEn === "BTRC Licensed" && !lic.image) {
               return { ...lic, image: "/btrc.png" };
             }
