@@ -87,7 +87,7 @@ export default async function OfferDetailPage({
   const fullDetails = offer.details || offer.description || "";
 
   return (
-    <div className="w-full grow bg-white text-slate-900">
+    <div className="w-full grow min-h-0 bg-white text-slate-900">
       {/* Page wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
 
@@ -192,7 +192,7 @@ export default async function OfferDetailPage({
           </div>
 
           {/* ── Right: 25% ── */}
-          <div className="lg:w-[25%] w-full self-start">
+          <div className="lg:w-[25%] w-full self-start sticky top-28">
             <SharePanel title={offer.title} />
           </div>
 
