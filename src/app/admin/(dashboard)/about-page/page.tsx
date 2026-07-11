@@ -253,19 +253,19 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.headerTitleEn} onChange={e => updateField("headerTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.headerTitleEn || ""} onChange={e => updateField("headerTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.headerTitleBn} onChange={e => updateField("headerTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.headerTitleBn || ""} onChange={e => updateField("headerTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={2} value={content.headerDescEn} onChange={e => updateField("headerDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={2} value={content.headerDescEn || ""} onChange={e => updateField("headerDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={2} value={content.headerDescBn} onChange={e => updateField("headerDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={2} value={content.headerDescBn || ""} onChange={e => updateField("headerDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -277,27 +277,27 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.missionTitleEn} onChange={e => updateField("missionTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.missionTitleEn || ""} onChange={e => updateField("missionTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.missionTitleBn} onChange={e => updateField("missionTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.missionTitleBn || ""} onChange={e => updateField("missionTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 1 (English)</label>
-                <textarea rows={4} value={content.missionP1En} onChange={e => updateField("missionP1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP1En || ""} onChange={e => updateField("missionP1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 1 (Bangla)</label>
-                <textarea rows={4} value={content.missionP1Bn} onChange={e => updateField("missionP1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP1Bn || ""} onChange={e => updateField("missionP1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 2 (English)</label>
-                <textarea rows={4} value={content.missionP2En} onChange={e => updateField("missionP2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP2En || ""} onChange={e => updateField("missionP2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 2 (Bangla)</label>
-                <textarea rows={4} value={content.missionP2Bn} onChange={e => updateField("missionP2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP2Bn || ""} onChange={e => updateField("missionP2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -309,11 +309,11 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.credTitleEn} onChange={e => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.credTitleEn || ""} onChange={e => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.credTitleBn} onChange={e => updateField("credTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.credTitleBn || ""} onChange={e => updateField("credTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
             
@@ -321,10 +321,10 @@ export default function AboutPageAdmin() {
               {content.credentials.map((cred, i) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-center">
                   <div className="grid grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Key EN" value={cred.keyEn} onChange={e => { const c = [...content.credentials]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value EN" value={cred.valEn} onChange={e => { const c = [...content.credentials]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Key BN" value={cred.keyBn} onChange={e => { const c = [...content.credentials]; c[i].keyBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value BN" value={cred.valBn} onChange={e => { const c = [...content.credentials]; c[i].valBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Key EN" value={cred.keyEn || ""} onChange={e => { const c = [...content.credentials]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Value EN" value={cred.valEn || ""} onChange={e => { const c = [...content.credentials]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Key BN" value={cred.keyBn || ""} onChange={e => { const c = [...content.credentials]; c[i].keyBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Value BN" value={cred.valBn || ""} onChange={e => { const c = [...content.credentials]; c[i].valBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
                   </div>
                   <button onClick={() => updateField("credentials", content.credentials.filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
                     <Lucide.X className="w-4 h-4" />
@@ -344,19 +344,19 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.infraTitleEn} onChange={e => updateField("infraTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.infraTitleEn || ""} onChange={e => updateField("infraTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.infraTitleBn} onChange={e => updateField("infraTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.infraTitleBn || ""} onChange={e => updateField("infraTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={2} value={content.infraDescEn} onChange={e => updateField("infraDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={2} value={content.infraDescEn || ""} onChange={e => updateField("infraDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={2} value={content.infraDescBn} onChange={e => updateField("infraDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={2} value={content.infraDescBn || ""} onChange={e => updateField("infraDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
 
@@ -365,10 +365,10 @@ export default function AboutPageAdmin() {
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-4 items-start">
                   <IconPicker value={card.iconName} onChange={v => { const c = [...content.infraCards]; c[i].iconName = v; updateField("infraCards", c); }} />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Title EN" value={card.titleEn} onChange={e => { const c = [...content.infraCards]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Title BN" value={card.titleBn} onChange={e => { const c = [...content.infraCards]; c[i].titleBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc EN" value={card.descEn} onChange={e => { const c = [...content.infraCards]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc BN" value={card.descBn} onChange={e => { const c = [...content.infraCards]; c[i].descBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Title EN" value={card.titleEn || ""} onChange={e => { const c = [...content.infraCards]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Title BN" value={card.titleBn || ""} onChange={e => { const c = [...content.infraCards]; c[i].titleBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <textarea rows={2} placeholder="Desc EN" value={card.descEn || ""} onChange={e => { const c = [...content.infraCards]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <textarea rows={2} placeholder="Desc BN" value={card.descBn || ""} onChange={e => { const c = [...content.infraCards]; c[i].descBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
                   </div>
                   <button onClick={() => updateField("infraCards", content.infraCards.filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
                     <Lucide.X className="w-4 h-4" />
@@ -388,35 +388,35 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.integrityTitleEn} onChange={e => updateField("integrityTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.integrityTitleEn || ""} onChange={e => updateField("integrityTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.integrityTitleBn} onChange={e => updateField("integrityTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.integrityTitleBn || ""} onChange={e => updateField("integrityTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={3} value={content.integrityDescEn} onChange={e => updateField("integrityDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={3} value={content.integrityDescEn || ""} onChange={e => updateField("integrityDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={3} value={content.integrityDescBn} onChange={e => updateField("integrityDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={3} value={content.integrityDescBn || ""} onChange={e => updateField("integrityDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Primary Button (English)</label>
-                <input type="text" value={content.btn1En} onChange={e => updateField("btn1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn1En || ""} onChange={e => updateField("btn1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Primary Button (Bangla)</label>
-                <input type="text" value={content.btn1Bn} onChange={e => updateField("btn1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn1Bn || ""} onChange={e => updateField("btn1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Secondary Button (English)</label>
-                <input type="text" value={content.btn2En} onChange={e => updateField("btn2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn2En || ""} onChange={e => updateField("btn2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Secondary Button (Bangla)</label>
-                <input type="text" value={content.btn2Bn} onChange={e => updateField("btn2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn2Bn || ""} onChange={e => updateField("btn2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
