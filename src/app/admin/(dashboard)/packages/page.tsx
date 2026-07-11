@@ -355,7 +355,8 @@ export default function AdminPackagesPage() {
                   <TableCell colSpan={7} className="py-8 text-center text-slate-400">No broadband packages found.</TableCell>
                 </TableRow>
               ) : (
-                packages
+                [...packages]
+                  .reverse()
                   .filter((p) =>
                     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     p.category.toLowerCase().includes(searchTerm.toLowerCase())
