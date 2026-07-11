@@ -112,11 +112,6 @@ export default async function OfferDetailPage({
             </h1>
             <p className="pb-6 text-gray-500 md:text-sm text-xs mt-1">
               Valid until: <span className="font-semibold">{offer.validUntil}</span>
-              {offer.discount && (
-                <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-600">
-                  {offer.discount}
-                </span>
-              )}
             </p>
 
             {/* Cover image */}
