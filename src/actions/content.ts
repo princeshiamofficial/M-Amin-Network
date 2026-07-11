@@ -184,6 +184,8 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
       return item as Record<string, unknown>;
     });
 
+
+
     if (items.length > 0 && items[0] && typeof items[0] === 'object') {
       const sample = items[0];
       

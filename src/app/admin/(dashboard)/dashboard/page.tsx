@@ -364,9 +364,9 @@ export default function AdminDashboardPage() {
   const [draggedId, setDraggedId] = useState<string | null>(null);
   
   const quickActionsListRef = useRef<QuickAction[]>(quickActionsList);
-  useEffect(() => {
-    quickActionsListRef.current = quickActionsList;
-  }, [quickActionsList]);
+  quickActionsListRef.current = quickActionsList; // Sync during render!
+
+  const draggedIdRef = useRef<string | null>(null);
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
@@ -391,9 +391,10 @@ export default function AdminDashboardPage() {
   };
 
   const handleDragEnter = (targetId: string) => {
-    if (!draggedId || draggedId === targetId) return;
+    const activeDraggedId = draggedIdRef.current;
+    if (!activeDraggedId || activeDraggedId === targetId) return;
     setQuickActionsList((prevList) => {
-      const draggedIdx = prevList.findIndex(item => item.id === draggedId);
+      const draggedIdx = prevList.findIndex(item => item.id === activeDraggedId);
       const targetIdx = prevList.findIndex(item => item.id === targetId);
       if (draggedIdx === -1 || targetIdx === -1) return prevList;
       
@@ -1642,14 +1643,19 @@ export default function AdminDashboardPage() {
                       key={action.id}
                       draggable
                       onDragStart={(e) => {
-                        setDraggedId(action.id);
                         e.dataTransfer.effectAllowed = "move";
+                        const targetId = action.id;
+                        draggedIdRef.current = targetId;
+                        setTimeout(() => {
+                          setDraggedId(targetId);
+                        }, 0);
                       }}
                       onDragOver={(e) => e.preventDefault()}
                       onDragEnter={() => handleDragEnter(action.id)}
-                      onDragEnd={() => {
+                      onDragEnd={async () => {
+                        draggedIdRef.current = null;
                         setDraggedId(null);
-                        setSetting("quick_actions", quickActionsListRef.current);
+                        await setSetting("quick_actions", quickActionsListRef.current);
                         window.dispatchEvent(new Event("quick_actions_updated"));
                       }}
                       onClick={() => {
@@ -1657,9 +1663,11 @@ export default function AdminDashboardPage() {
                           router.push(action.route);
                         }
                       }}
-                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all relative ${
+                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative ${
+                        draggedId !== null ? "transition-none" : "transition-all duration-200"
+                      } ${
                         isDragged
-                          ? "opacity-30 scale-95 border-dashed border-teal-350 bg-teal-50/10"
+                          ? "opacity-30 border-dashed border-slate-300 bg-slate-50"
                           : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
                       }`}
                     >
