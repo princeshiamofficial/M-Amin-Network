@@ -36,7 +36,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   seo_audits: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `page` VARCHAR(255), `score` DOUBLE, `ssl` BOOLEAN, `mobileFriendly` BOOLEAN, `_sort_order` DOUBLE",
   dashboard_shortcuts: "`id` VARCHAR(255) PRIMARY KEY, `label` VARCHAR(255), `targetTab` VARCHAR(255), `_sort_order` DOUBLE",
   quick_actions: "`id` VARCHAR(255) PRIMARY KEY, `label` VARCHAR(255), `path` VARCHAR(255), `route` VARCHAR(255), `iconName` VARCHAR(255), `bg` VARCHAR(255), `text` VARCHAR(255), `_sort_order` DOUBLE",
-  packages_list: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `speed` VARCHAR(255), `price` DOUBLE, `features` TEXT, `popular` BOOLEAN, `type` VARCHAR(255), `_sort_order` DOUBLE",
+  packages_list: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `speed` VARCHAR(255), `price` DOUBLE, `features` TEXT, `popular` BOOLEAN, `category` VARCHAR(255), `tagline` VARCHAR(255), `_sort_order` DOUBLE",
   promo_offers: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `badge` VARCHAR(255), `discount` VARCHAR(255), `validity` VARCHAR(255), `_sort_order` DOUBLE",
   coverage_zones: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `status` VARCHAR(255), `subAreas` TEXT, `_sort_order` DOUBLE",
   package_requests: "`id` VARCHAR(255) PRIMARY KEY, `packageName` VARCHAR(255), `customerName` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `status` VARCHAR(255), `date` VARCHAR(255), `_sort_order` DOUBLE",
@@ -138,9 +138,9 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "qa-19", label: "Users & Roles", path: "/admin/users", route: "/admin/users-roles", iconName: "UserCog", bg: "bg-blue-50", text: "text-blue-700", _sort_order: 18 }
   ],
   packages_list: [
-    { id: "plan-1", name: "Eco Starter", speed: "10 Mbps", price: 500, features: ["Unlimited Data", "24/7 Support", "Ideal for 1-2 devices"], popular: false, type: "home", _sort_order: 0 },
-    { id: "plan-2", name: "Standard Home", speed: "20 Mbps", price: 800, features: ["Unlimited Data", "Youtube Cache", "Best for family"], popular: true, type: "home", _sort_order: 1 },
-    { id: "plan-3", name: "Premium Splice", speed: "50 Mbps", price: 1500, features: ["Dedicated Core", "Real IP Included", "Priority Support"], popular: false, type: "corporate", _sort_order: 2 }
+    { id: "plan-1", name: "Eco Starter", speed: "10 Mbps", price: 500, features: ["Unlimited Data", "24/7 Support", "Ideal for 1-2 devices"], popular: false, category: "home", tagline: "Great for casual browsing & SD streaming", _sort_order: 0 },
+    { id: "plan-2", name: "Standard Home", speed: "20 Mbps", price: 800, features: ["Unlimited Data", "Youtube Cache", "Best for family"], popular: true, category: "home", tagline: "Perfect for families & HD streaming", _sort_order: 1 },
+    { id: "plan-3", name: "Premium Splice", speed: "50 Mbps", price: 1500, features: ["Dedicated Core", "Real IP Included", "Priority Support"], popular: false, category: "corporate", tagline: "Symmetric bandwidth for small businesses", _sort_order: 2 }
   ],
   promo_offers: [
     { id: "promo-1", title: "Double Peering Monsoon", description: "Get double GGC/SNA cache bandwidth for home splicing plans.", badge: "New Year Special", discount: "20%", validity: "Valid till 31st July 2026", _sort_order: 0 },
