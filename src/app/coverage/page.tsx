@@ -493,7 +493,7 @@ export default function Coverage() {
                   onClick={() => setFilter(item.id as "all" | "active" | "expanding" | "planned")}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     filter === item.id
-                      ? "bg-brand-blue text-white shadow-md shadow-brand-blue/20 relative z-10"
+                      ? "bg-brand-blue! text-white! shadow-md shadow-brand-blue/20 relative z-10"
                       : "bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
