@@ -165,7 +165,7 @@ export default function Navbar() {
                   href={link.href}
                   className={`text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-full flex items-center gap-1 ${
                     isActive
-                      ? "bg-brand-blue/10 text-brand-blue"
+                      ? "bg-brand-blue/10 text-brand-blue!"
                       : "text-slate-600 hover:text-brand-blue hover:bg-slate-100/50"
                   }`}
                 >
@@ -292,7 +292,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className={`px-3 py-3 rounded-lg text-base font-medium transition-colors flex items-center justify-between ${
                   isActive
-                    ? "bg-brand-blue/10 text-brand-blue border-l-4 border-brand-blue"
+                    ? "bg-brand-blue/10 text-brand-blue! border-l-4 border-brand-blue"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
