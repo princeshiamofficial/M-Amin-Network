@@ -37,7 +37,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   dashboard_shortcuts: "`id` VARCHAR(255) PRIMARY KEY, `label` VARCHAR(255), `targetTab` VARCHAR(255), `_sort_order` DOUBLE",
   quick_actions: "`id` VARCHAR(255) PRIMARY KEY, `label` VARCHAR(255), `path` VARCHAR(255), `route` VARCHAR(255), `iconName` VARCHAR(255), `bg` VARCHAR(255), `text` VARCHAR(255), `_sort_order` DOUBLE",
   packages_list: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `speed` VARCHAR(255), `price` DOUBLE, `features` TEXT, `popular` BOOLEAN, `category` VARCHAR(255), `tagline` VARCHAR(255), `_sort_order` DOUBLE",
-  promo_offers: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `badge` VARCHAR(255), `discount` VARCHAR(255), `validity` VARCHAR(255), `_sort_order` DOUBLE",
+  promo_offers: "`code` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `badge` VARCHAR(255), `badgeColor` VARCHAR(255), `details` TEXT, `validUntil` VARCHAR(255), `_sort_order` DOUBLE",
   coverage_zones: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `status` VARCHAR(255), `subAreas` TEXT, `_sort_order` DOUBLE",
   package_requests: "`id` VARCHAR(255) PRIMARY KEY, `packageName` VARCHAR(255), `customerName` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `status` VARCHAR(255), `date` VARCHAR(255), `_sort_order` DOUBLE",
   service_cards: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `icon` VARCHAR(255), `_sort_order` DOUBLE",
@@ -143,8 +143,42 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "plan-3", name: "Premium Splice", speed: "50 Mbps", price: 1500, features: ["Dedicated Core", "Real IP Included", "Priority Support"], popular: false, category: "corporate", tagline: "Symmetric bandwidth for small businesses", _sort_order: 2 }
   ],
   promo_offers: [
-    { id: "promo-1", title: "Double Peering Monsoon", description: "Get double GGC/SNA cache bandwidth for home splicing plans.", badge: "New Year Special", discount: "20%", validity: "Valid till 31st July 2026", _sort_order: 0 },
-    { id: "promo-2", title: "Free Installation Splicing", description: "Zero installation costs for active fiber installations in Kadomtoli.", badge: "Limited Time", discount: "Free", validity: "Valid till 15th July 2026", _sort_order: 1 }
+    {
+      title: "Zero Installation Fee",
+      badge: "New Connection",
+      badgeColor: "bg-brand-cyan/15 border-brand-cyan/30 text-brand-cyan",
+      details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
+      code: "FREEINSTALL2026",
+      validUntil: "31 Dec 2026",
+      _sort_order: 0
+    },
+    {
+      title: "Pay 10 Months, Get 12",
+      badge: "Best Value",
+      badgeColor: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 animate-pulse",
+      details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
+      code: "ANNUAL10",
+      validUntil: "Ongoing Promotion",
+      _sort_order: 1
+    },
+    {
+      title: "Free Public IP for Gamers",
+      badge: "Gamer Special",
+      badgeColor: "bg-brand-blue/15 border-brand-blue/30 text-brand-blue",
+      details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
+      code: "GAMERIP",
+      validUntil: "31 Oct 2026",
+      _sort_order: 2
+    },
+    {
+      title: "Refer a Friend",
+      badge: "Community Deal",
+      badgeColor: "bg-purple-500/10 border-purple-500/30 text-purple-400",
+      details: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.",
+      code: "REFER50",
+      validUntil: "Ongoing Promotion",
+      _sort_order: 3
+    }
   ],
   coverage_zones: [
     { id: "cov-1", name: "Kadomtoli", status: "active", subAreas: JSON.stringify(["Kadomtoli Chowrasta", "Aganagar Road", "Babu Mia Mosque Road", "Al-Hira Goli"]), _sort_order: 0 },
