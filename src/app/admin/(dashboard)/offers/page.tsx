@@ -35,6 +35,38 @@ interface PromoOffer {
   validUntil: string;
 }
 
+type PromoOfferRecord = Record<string, unknown>;
+
+const getStringValue = (item: PromoOfferRecord, keys: string[], fallback = "") => {
+  for (const key of keys) {
+    const value = item[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return fallback;
+};
+
+const normalizePromoOffer = (item: unknown): PromoOffer => {
+  const record = item && typeof item === "object" ? item as PromoOfferRecord : {};
+  const badge = getStringValue(record, ["badge", "category"], "Promotion");
+
+  return {
+    title: getStringValue(record, ["title", "campaignTitle", "campaign_title", "name"], "Untitled Campaign"),
+    badge,
+    badgeColor: getStringValue(record, ["badgeColor", "badge_color"], "bg-slate-500/10 border-slate-500/30 text-slate-400"),
+    details: getStringValue(record, ["details", "description", "desc"]),
+    code: getStringValue(record, ["code", "promoCode", "promo_code", "couponCode", "coupon_code", "coupon"]).toUpperCase(),
+    validUntil: getStringValue(record, ["validUntil", "valid_until", "validity", "expiresAt", "expires_at"], "Ongoing Promotion"),
+  };
+};
+
+const normalizePromoOffers = (offers: unknown): PromoOffer[] => {
+  if (!Array.isArray(offers)) return [];
+  return offers.map(normalizePromoOffer);
+};
+
 const defaultPromoOffers: PromoOffer[] = [
   {
     title: "Zero Installation Fee",
@@ -99,10 +131,11 @@ export default function OffersPage() {
 
     // Load promo campaigns
     getSetting("promo_offers").then(savedOffers => {
-      if (savedOffers) {
-        setPromoOffers(savedOffers as any);
+      const normalizedOffers = normalizePromoOffers(savedOffers);
+      if (normalizedOffers.length > 0) {
+        setPromoOffers(normalizedOffers);
       } else {
-        setSetting("promo_offers", defaultPromoOffers as any);
+        setSetting("promo_offers", defaultPromoOffers);
         setPromoOffers(defaultPromoOffers);
       }
     });
@@ -139,7 +172,7 @@ export default function OffersPage() {
       updated = [...promoOffers];
       updated[promoFormIndex] = offerData;
     } else {
-      if (promoOffers.some(o => o.code === codeUpper)) {
+      if (promoOffers.some((o, index) => o.code === codeUpper && index !== promoFormIndex)) {
         toast("A campaign with this promo code already exists!");
         return;
       }
@@ -147,7 +180,7 @@ export default function OffersPage() {
     }
 
     setPromoOffers(updated);
-    setSetting("promo_offers", updated as any);
+    setSetting("promo_offers", updated);
     setIsPromoModalOpen(false);
     toast(promoFormIndex !== null ? "Campaign updated successfully!" : "New campaign created successfully!");
   };
@@ -156,7 +189,7 @@ export default function OffersPage() {
     if (!confirm("Are you sure you want to delete this promotional campaign?")) return;
     const updated = promoOffers.filter((_, i) => i !== index);
     setPromoOffers(updated);
-    setSetting("promo_offers", updated as any);
+    setSetting("promo_offers", updated);
   };
 
   if (!isAuthenticated) return null;
@@ -207,9 +240,10 @@ export default function OffersPage() {
               </TableRow>
             ) : (
               promoOffers
-                .filter((o) => o.title.toLowerCase().includes(searchTerm.toLowerCase()) || o.code.toLowerCase().includes(searchTerm.toLowerCase()))
-                .map((o, idx) => (
-                  <TableRow key={o.code}>
+                .map((offer, originalIndex) => ({ offer, originalIndex }))
+                .filter(({ offer }) => offer.title.toLowerCase().includes(searchTerm.toLowerCase()) || offer.code.toLowerCase().includes(searchTerm.toLowerCase()))
+                .map(({ offer: o, originalIndex }) => (
+                  <TableRow key={`${o.code || o.title || "promo-offer"}-${originalIndex}`}>
                     <TableCell>
                       <span className="font-extrabold text-slate-900 block">{o.title}</span>
                     </TableCell>
@@ -226,7 +260,7 @@ export default function OffersPage() {
                     </TableCell>
                     <TableCell>
                       <span className="bg-blue-50/70 text-brand-blue border border-blue-100/50 rounded-lg px-2.5 py-1 font-bold inline-flex items-center text-xs">
-                        {o.code}
+                        {o.code || "NO CODE"}
                       </span>
                     </TableCell>
                     <TableCell className="text-slate-500 font-medium">{o.validUntil}</TableCell>
@@ -242,7 +276,7 @@ export default function OffersPage() {
                           <DropdownMenuItem
                             onClick={() => {
                               setPromoFormData({ title: o.title, badge: o.badge, badgeColor: o.badgeColor, details: o.details, code: o.code, validUntil: o.validUntil });
-                              setPromoFormIndex(idx);
+                              setPromoFormIndex(originalIndex);
                               setIsPromoModalOpen(true);
                             }}
                             className="px-3 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
@@ -251,7 +285,7 @@ export default function OffersPage() {
                             <span>Edit</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleDeletePromoOffer(idx)}
+                            onClick={() => handleDeletePromoOffer(originalIndex)}
                             className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -288,7 +322,7 @@ export default function OffersPage() {
                 <div className="space-y-1">
                   <label className="text-slate-700 font-bold block">Promo Coupon Code</label>
                   <input type="text" required placeholder="e.g. FREEINSTALL2026" value={promoFormData.code}
-                    disabled={promoFormIndex !== null}
+                    disabled={promoFormIndex !== null && !!promoFormData.code}
                     onChange={(e) => setPromoFormData({ ...promoFormData, code: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:outline-none focus:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed" />
                 </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultOffersPageContent } from "@/app/admin/(dashboard)/offers-page/page";
@@ -15,6 +16,38 @@ interface PromoOffer {
   validUntil: string;
 }
 
+type PromoOfferRecord = Record<string, unknown>;
+
+const getStringValue = (item: PromoOfferRecord, keys: string[], fallback = "") => {
+  for (const key of keys) {
+    const value = item[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return fallback;
+};
+
+const normalizePromoOffer = (item: unknown): PromoOffer => {
+  const record = item && typeof item === "object" ? item as PromoOfferRecord : {};
+  const badge = getStringValue(record, ["badge", "category"], "Promotion");
+
+  return {
+    title: getStringValue(record, ["title", "campaignTitle", "campaign_title", "name"], "Untitled Campaign"),
+    badge,
+    badgeColor: getStringValue(record, ["badgeColor", "badge_color"], "bg-slate-500/10 border-slate-500/30 text-slate-400"),
+    details: getStringValue(record, ["details", "description", "desc"]),
+    code: getStringValue(record, ["code", "promoCode", "promo_code", "couponCode", "coupon_code", "coupon"]).toUpperCase(),
+    validUntil: getStringValue(record, ["validUntil", "valid_until", "validity", "expiresAt", "expires_at"], "Ongoing Promotion"),
+  };
+};
+
+const normalizePromoOffers = (offers: unknown): PromoOffer[] => {
+  if (!Array.isArray(offers)) return [];
+  return offers.map(normalizePromoOffer);
+};
+
 export default function Offers() {
   const [pageContent, setPageContent] = React.useState(defaultOffersPageContent);
   React.useEffect(() => {
@@ -26,15 +59,6 @@ export default function Offers() {
 
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
-
-  const translateOfferBadge = (b: string) => {
-    if (!b || typeof b !== "string") return "";
-    if (b === "New Connection") return t(pageContent.str1En, pageContent.str1Bn);
-    if (b === "Best Value") return t(pageContent.str2En, pageContent.str2Bn);
-    if (b === "Gamer Special") return t(pageContent.str3En, pageContent.str3Bn);
-    if (b === "Community Deal") return t(pageContent.str4En, pageContent.str4Bn);
-    return b;
-  };
 
   const translateOfferTitle = (title: string) => {
     if (!title || typeof title !== "string") return "";
@@ -52,22 +76,6 @@ export default function Offers() {
     if (det.startsWith("Subscribe to the 30 Mbps")) return t(pageContent.str11En, pageContent.str11Bn);
     if (det.startsWith("Refer a neighbor")) return t(pageContent.str12En, pageContent.str12Bn);
     return det;
-  };
-
-  const translateValidUntil = (v: string) => {
-    if (!v || typeof v !== "string") return "";
-    if (v === "31 Dec 2026") return t(pageContent.str13En, pageContent.str13Bn);
-    if (v === "Ongoing Promotion") return t(pageContent.str14En, pageContent.str14Bn);
-    if (v === "31 Oct 2026") return t(pageContent.str15En, pageContent.str15Bn);
-    return v;
-  };
-
-  const getBadgeStyles = (badge: string) => {
-    if (badge === "New Connection") return "bg-cyan-50 border-cyan-200 text-cyan-700 font-bold";
-    if (badge === "Best Value") return "bg-emerald-50 border-emerald-250 text-emerald-600 font-bold";
-    if (badge === "Gamer Special") return "bg-blue-50 border-blue-200 text-blue-600 font-bold";
-    if (badge === "Community Deal") return "bg-purple-50 border-purple-200 text-purple-600 font-bold";
-    return "bg-slate-100 border-slate-200 text-slate-500";
   };
 
   const [promoInput, setPromoInput] = useState("");
@@ -124,10 +132,11 @@ export default function Offers() {
 
     if (typeof window !== "undefined") {
       getSetting("promo_offers").then(savedOffers => {
-      if (savedOffers) {
-        setActiveOffers(savedOffers as any);
+      const normalizedOffers = normalizePromoOffers(savedOffers);
+      if (normalizedOffers.length > 0) {
+        setActiveOffers(normalizedOffers);
       } else {
-        setSetting("promo_offers", defaultOffers as any);
+        setSetting("promo_offers", defaultOffers);
         setActiveOffers(defaultOffers);
       }
     });
@@ -182,7 +191,8 @@ export default function Offers() {
     setSubmittingClaim(true);
     setTimeout(async () => {
       try {
-        const claims = await getSetting("claims"); const claimsArr = Array.isArray(claims) ? claims : [];
+        const claims = await getSetting("claims");
+        const claimsArr = Array.isArray(claims) ? claims as Record<string, unknown>[] : [];
         const newClaim = {
           id: `CLM-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
           name: claimForm.name,
@@ -194,7 +204,7 @@ export default function Offers() {
           status: "Pending"
         };
         claimsArr.push(newClaim);
-        setSetting("claims", claimsArr as any);
+        setSetting("claims", claimsArr);
       } catch (err) {
         console.error("Error saving claim:", err);
       }
@@ -237,102 +247,61 @@ export default function Offers() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start text-left">
             {/* Left Column: Offers Grid */}
-            <div className="lg:col-span-8 space-y-6 text-left">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                {activeOffers.map((offer, i) => (
-                  <div
-                    key={i}
-                    className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left transition-all hover:shadow-md hover:border-slate-300"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4 text-left">
-                        <span className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border ${getBadgeStyles(offer.badge)}`}>
-                          {translateOfferBadge(offer.badge)}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-mono">{t(pageContent.str23En, pageContent.str23Bn)}: {translateValidUntil(offer.validUntil)}</span>
+            <div className="lg:col-span-12 space-y-6 text-left">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                {activeOffers.map((offer, i) => {
+                  const slug = offer.title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-");
+                  return (
+                    <Link
+                      key={i}
+                      href={`/offers/${slug}`}
+                      className="group bg-white rounded-2xl shadow-md border border-white hover:border-orange-300 transition-all overflow-hidden flex flex-col"
+                    >
+                      {/* Banner image */}
+                      <div className="h-44 relative rounded-t-2xl overflow-hidden bg-[#f7bd08] shrink-0">
+                        <Image
+                          src="/offer-card-banner.png"
+                          alt={translateOfferTitle(offer.title)}
+                          fill
+                          priority={i < 2}
+                          className="object-cover"
+                        />
                       </div>
-                      <h3 className="text-slate-900 font-extrabold text-lg leading-tight mb-3 text-left">{translateOfferTitle(offer.title)}</h3>
-                      <p className="text-xs text-slate-500 leading-relaxed mb-6 text-left">{translateOfferDetails(offer.details)}</p>
-                    </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto text-left">
-                      <div className="font-mono text-xs text-left">
-                        <span className="text-slate-400 block text-left">{t(pageContent.str24En, pageContent.str24Bn)}</span>
-                        <span className="text-brand-blue font-bold uppercase tracking-wider text-left">{offer.code}</span>
+                      {/* Body */}
+                      <div className="px-5 lg:px-7 flex flex-col flex-1">
+                        {/* Title row */}
+                        <div className="border-b border-[#e5e7eb] py-3">
+                          <p className="text-[#2E3033] group-hover:text-[#0082C4] transition-colors font-bold text-[18px] leading-snug">
+                            {translateOfferTitle(offer.title)}
+                          </p>
+                        </div>
+
+                        {/* Description — grows to fill available space */}
+                        <div
+                          className="py-3 text-[#777B84] text-[15px] leading-relaxed overflow-hidden flex-1"
+                          style={{
+                            display: "-webkit-box",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
+                          }}
+                        >
+                          {translateOfferDetails(offer.details)}
+                        </div>
+
+                        {/* Learn More — always at bottom */}
+                        <div className="flex items-center pb-5 mt-auto">
+                          <p className="text-base font-semibold text-[#F74F22] flex items-center gap-2 group-hover:gap-3 transition-all">
+                            Learn More
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </p>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => setSelectedPromo(offer)}
-                        className="bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-205 transition-all cursor-pointer"
-                      >
-                        {t(pageContent.str25En, pageContent.str25Bn)}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Column: Code Checker panel */}
-            <div className="lg:col-span-4 text-left">
-              <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 sticky top-28 shadow-sm text-left">
-                <div>
-                  <h3 className="text-slate-900 font-extrabold text-lg">{t(pageContent.str26En, pageContent.str26Bn)}</h3>
-                  <p className="text-xs text-slate-450 mt-1">
-                    {t(pageContent.str27En, pageContent.str27Bn)}
-                  </p>
-                </div>
-
-                <form onSubmit={handlePromoCheck} className="flex gap-2 text-left">
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. ANNUAL10"
-                    value={promoInput}
-                    onChange={(e) => setPromoInput(e.target.value)}
-                    className="bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue grow font-mono uppercase"
-                  />
-                  <button
-                    type="submit"
-                    disabled={checkingPromo}
-                    className="bg-brand-blue text-white px-5 py-3 rounded-xl text-xs font-bold hover:bg-brand-blue/90 transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    {t(pageContent.str28En, pageContent.str28Bn)}
-                  </button>
-                </form>
-
-                {/* Promo Result status */}
-                {checkingPromo && (
-                  <div className="flex items-center justify-center gap-2 text-xs text-slate-500 font-mono">
-                    <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
-                    <span>{t(pageContent.str29En, pageContent.str29Bn)}</span>
-                  </div>
-                )}
-
-                {promoStatus && (
-                  <div
-                    className={`p-4 rounded-xl border text-xs leading-relaxed ${
-                      promoStatus.status === "success"
-                        ? "bg-emerald-50 border-emerald-250 text-emerald-600"
-                        : "bg-rose-55 border-rose-200 text-rose-600"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 font-bold mb-1">
-                      <span className={`w-2 h-2 rounded-full ${
-                        promoStatus.status === "success" ? "bg-emerald-500" : "bg-rose-500"
-                      }`} />
-                      {promoStatus.status === "success" ? t(pageContent.str30En, pageContent.str30Bn) : t(pageContent.str31En, pageContent.str31Bn)}
-                    </div>
-                    <p className="text-slate-650 mt-1.5 leading-relaxed">{promoStatus.msg}</p>
-                    {promoStatus.status === "success" && (
-                      <Link
-                        href={`/packages?promo=${promoInput.toUpperCase().trim()}`}
-                        className="mt-3 inline-block text-[10px] text-brand-blue hover:underline font-bold"
-                      >
-                        {t(pageContent.str32En, pageContent.str32Bn)}
-                      </Link>
-                    )}
-                  </div>
-                )}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>

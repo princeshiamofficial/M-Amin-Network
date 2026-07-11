@@ -361,13 +361,23 @@ export default function AdminDashboardPage() {
 
 
   const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>(defaultQuickActions);
-  const [draggedId, setDraggedId] = useState<string | null>(null);
   
   const quickActionsListRef = useRef<QuickAction[]>(quickActionsList);
-  quickActionsListRef.current = quickActionsList; // Sync during render!
+  useEffect(() => {
+    quickActionsListRef.current = quickActionsList;
+  }, [quickActionsList]);
 
-  const draggedIdRef = useRef<string | null>(null);
+  const ignoreNextClickRef = useRef<boolean>(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [draggingQuickActionId, setDraggingQuickActionId] = useState<string | null>(null);
+  const quickActionPointerDragRef = useRef<{
+    id: string;
+    pointerId: number;
+    startX: number;
+    startY: number;
+    moved: boolean;
+  } | null>(null);
+  const quickActionsReorderedRef = useRef(false);
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
@@ -389,6 +399,90 @@ export default function AdminDashboardPage() {
     window.dispatchEvent(new Event("quick_actions_updated"));
     setIsQuickActionModalOpen(false);
     toast(editingQuickAction ? "Quick action updated successfully!" : "Quick action added successfully!");
+  };
+
+  const reorderQuickAction = (draggedId: string, targetId: string) => {
+    if (draggedId === targetId) return;
+
+    const currentList = quickActionsListRef.current;
+    const draggedIdx = currentList.findIndex((item) => item.id === draggedId);
+    const targetIdx = currentList.findIndex((item) => item.id === targetId);
+
+    if (draggedIdx === -1 || targetIdx === -1) return;
+
+    const newList = [...currentList];
+    const [draggedItem] = newList.splice(draggedIdx, 1);
+    newList.splice(targetIdx, 0, draggedItem);
+
+    quickActionsListRef.current = newList;
+    quickActionsReorderedRef.current = true;
+    setQuickActionsList(newList);
+  };
+
+  const getQuickActionIdFromPoint = (clientX: number, clientY: number) => {
+    const element = document.elementFromPoint(clientX, clientY);
+    if (!(element instanceof Element)) return null;
+
+    return element.closest<HTMLElement>("[data-quick-action-id]")?.dataset.quickActionId ?? null;
+  };
+
+  const handleQuickActionPointerDown = (e: React.PointerEvent<HTMLDivElement>, id: string) => {
+    if (e.button !== 0) return;
+
+    const target = e.target;
+    if (target instanceof Element && target.closest("button, a, input, textarea, select")) return;
+
+    quickActionPointerDragRef.current = {
+      id,
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      moved: false,
+    };
+    quickActionsReorderedRef.current = false;
+    ignoreNextClickRef.current = false;
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleQuickActionPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const dragState = quickActionPointerDragRef.current;
+    if (!dragState || dragState.pointerId !== e.pointerId) return;
+
+    const distance = Math.hypot(e.clientX - dragState.startX, e.clientY - dragState.startY);
+    if (!dragState.moved && distance < 6) return;
+
+    if (!dragState.moved) {
+      dragState.moved = true;
+      ignoreNextClickRef.current = true;
+      setDraggingQuickActionId(dragState.id);
+    }
+
+    const targetId = getQuickActionIdFromPoint(e.clientX, e.clientY);
+    setHoveredId(targetId && targetId !== dragState.id ? targetId : null);
+
+    if (targetId) {
+      reorderQuickAction(dragState.id, targetId);
+    }
+  };
+
+  const finishQuickActionPointerDrag = async (e: React.PointerEvent<HTMLDivElement>) => {
+    const dragState = quickActionPointerDragRef.current;
+    if (!dragState || dragState.pointerId !== e.pointerId) return;
+
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+
+    quickActionPointerDragRef.current = null;
+    setHoveredId(null);
+    setDraggingQuickActionId(null);
+
+    if (dragState.moved && quickActionsReorderedRef.current) {
+      await setSetting("quick_actions", quickActionsListRef.current);
+      window.dispatchEvent(new Event("quick_actions_updated"));
+    }
+
+    quickActionsReorderedRef.current = false;
   };
 
   // Database states
@@ -1623,62 +1717,24 @@ export default function AdminDashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {quickActionsList.map((action) => {
                     const ActionIcon = IconMap[action.iconName] || IconMap["Link"];
-                    const isDragged = draggedId === action.id;
                     return (
                     <div
                       key={action.id}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.effectAllowed = "move";
-                        const targetId = action.id;
-                        draggedIdRef.current = targetId;
-                        setTimeout(() => {
-                          setDraggedId(targetId);
-                        }, 0);
-                      }}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        const activeDraggedId = draggedIdRef.current;
-                        if (activeDraggedId && activeDraggedId !== action.id) {
-                          setHoveredId(action.id);
-                        }
-                      }}
-                      onDragLeave={() => {
-                        setHoveredId((prev) => (prev === action.id ? null : prev));
-                      }}
-                      onDrop={async (e) => {
-                        e.preventDefault();
-                        const activeDraggedId = draggedIdRef.current;
-                        const targetId = action.id;
-                        if (activeDraggedId && activeDraggedId !== targetId) {
-                          setQuickActionsList((prevList) => {
-                            const draggedIdx = prevList.findIndex(item => item.id === activeDraggedId);
-                            const targetIdx = prevList.findIndex(item => item.id === targetId);
-                            if (draggedIdx === -1 || targetIdx === -1) return prevList;
-                            
-                            const newList = [...prevList];
-                            const [draggedItem] = newList.splice(draggedIdx, 1);
-                            newList.splice(targetIdx, 0, draggedItem);
-                            setSetting("quick_actions", newList);
-                            return newList;
-                          });
-                        }
-                        setHoveredId(null);
-                      }}
-                      onDragEnd={() => {
-                        draggedIdRef.current = null;
-                        setDraggedId(null);
-                        setHoveredId(null);
-                        window.dispatchEvent(new Event("quick_actions_updated"));
-                      }}
+                      data-quick-action-id={action.id}
+                      onPointerDown={(e) => handleQuickActionPointerDown(e, action.id)}
+                      onPointerMove={handleQuickActionPointerMove}
+                      onPointerUp={finishQuickActionPointerDrag}
+                      onPointerCancel={finishQuickActionPointerDrag}
                       onClick={() => {
-                        if (draggedId === null) {
-                          router.push(action.route);
+                        if (ignoreNextClickRef.current) {
+                          ignoreNextClickRef.current = false;
+                          return;
                         }
+                        router.push(action.route);
                       }}
-                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative transition-all duration-200 ${
-                        isDragged
-                          ? "opacity-30 border-dashed border-slate-300 bg-slate-50 scale-95"
+                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative transition-all duration-200 select-none touch-none ${
+                        draggingQuickActionId === action.id
+                          ? "opacity-40 border-dashed border-slate-300 bg-slate-50 scale-95 cursor-grabbing z-40"
                           : hoveredId === action.id
                           ? "border-primary/50 bg-primary/5 ring-2 ring-primary/10 shadow-md scale-[1.02] z-30"
                           : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"

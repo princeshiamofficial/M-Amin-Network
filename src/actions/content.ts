@@ -184,7 +184,10 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
       return item as Record<string, unknown>;
     });
 
-
+    console.log("SERVER content.ts: setSetting key =", key, "tableName =", tableName, "items count =", items.length);
+    if (tableName === "quick_actions") {
+      console.log("SERVER quick_actions first 3 items:", items.slice(0, 3).map(i => ({ id: i.id, label: i.label, _sort_order: i._sort_order })));
+    }
 
     if (items.length > 0 && items[0] && typeof items[0] === 'object') {
       const sample = items[0];
