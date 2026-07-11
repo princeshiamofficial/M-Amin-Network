@@ -169,8 +169,8 @@ export default function BillPayment() {
       <div className="w-full bg-white text-slate-800 py-12 grow border-t border-slate-200 relative z-10 flex items-center justify-center">
         <div className={`${hasSearched ? "max-w-2xl" : "max-w-5xl"} w-full mx-auto px-4 sm:px-6 transition-all duration-300`}>
           {!hasSearched ? (
-            <div className="bg-gradient-to-tr from-white to-[#F6F9FE] dark:from-[#1E293B] dark:to-[#9EBDFF29] from-60% md:px-12 px-8 lg:py-20 md:py-16 py-12 border border-[#ecf3ff] dark:border-gray-700 rounded-3xl grid md:grid-cols-2 grid-cols-1 md:gap-3 gap-8 md:divide-x divide-x-0 md:divide-y-0 divide-y dark:divide-[#3D4A67] divide-[#ecf3ff] selfCareCard">
-              <div className="flex flex-col md:gap-4 gap-2 text-left">
+            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-xs grid md:grid-cols-2 grid-cols-1 md:gap-3 gap-8 md:divide-x divide-x-0 md:divide-y-0 divide-y dark:divide-[#3D4A67] divide-slate-100 selfCareCard">
+              <div className="flex flex-col gap-5 text-left md:pr-12">
                 <Image
                   alt="Quick Pay Icon"
                   src="/quickPayIcon.png"
@@ -178,65 +178,66 @@ export default function BillPayment() {
                   height={56}
                   className="object-contain"
                 />
-                <h1 className="text-[#2563EB] dark:text-[#548AFF] md:text-3xl text-2xl font-bold">
+                <h1 className="text-[#2563EB] dark:text-[#548AFF] text-3xl font-extrabold tracking-tight">
                   {t("Quick Pay", "কুইক পে")}
                 </h1>
-                <p className="text-[#4A535F] dark:text-[#ABB3C3] font-medium md:w-11/12 w-full text-sm leading-relaxed">
+                <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed">
                   {t(
                     "Instantly make your payment using a variety of available facilities, such as bKash, MasterCard, Visa card, and other payment methods.",
                     "বিকাশ, মাস্টারকার্ড, ভিসা কার্ড এবং অন্যান্য পেমেন্ট চ্যানেল ব্যবহার করে তাৎক্ষণিকভাবে আপনার পেমেন্ট করুন।"
                   )}
                 </p>
-                <div className="flex mt-4">
-                  <div className="px-5 py-3 dark:bg-[#253040] border border-[#ecf3ff] dark:border-gray-700 rounded-lg flex items-center gap-4 flex-wrap bg-white">
+                <div className="flex mt-2">
+                  <div className="px-5 py-3 border border-slate-100 dark:border-slate-800 rounded-2xl flex items-center gap-4 bg-white dark:bg-slate-950 shadow-2xs">
                     <Image
                       alt="Bkash Logo"
                       src="/bkashLogo.png"
-                      width={86}
-                      height={41}
+                      width={72}
+                      height={34}
                       className="block dark:hidden object-contain"
                     />
                     <Image
                       alt="Bkash White Logo"
                       src="/bkashWhiteLogo.png"
-                      width={93}
-                      height={41}
+                      width={72}
+                      height={34}
                       className="hidden dark:block object-contain"
                     />
+                    <div className="h-8 w-px bg-slate-200 dark:bg-slate-800" />
                     <Image
                       alt="Payment Methods"
                       src="/paymentMethods.png"
-                      width={69}
-                      height={52}
+                      width={60}
+                      height={45}
                       className="object-contain"
                     />
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center items-center">
-                <form onSubmit={handleSearch} className="flex flex-col gap-4 w-full md:pl-12 md:pt-0 pt-5 text-left">
-                  <label className="text-[#4A535F] dark:text-[#ABB3C3] font-medium text-sm">
+              <div className="flex items-center w-full md:pl-12 md:pt-0 pt-8">
+                <form onSubmit={handleSearch} className="flex flex-col gap-4 w-full text-left">
+                  <label className="text-slate-600 dark:text-slate-350 font-bold text-sm">
                     {t("Customer ID", "গ্রাহক আইডি")}
                   </label>
-                  <div className="flex items-center border-2 dark:border border-[#ecf3ff] dark:border-gray-600 bg-white dark:bg-[#1A2230] rounded-lg divide-x-2 dark:divide-x divide-[#ecf3ff] dark:divide-gray-600">
-                    <span className="px-4 text-[#2563EB] dark:text-white shrink-0">
-                      <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M313.6 304c-28.7 0-42.5 16-89.6 16-47.1 0-60.8-16-89.6-16C60.2 304 0 364.2 0 438.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-25.6c0-74.2-60.2-134.4-134.4-134.4zM400 464H48v-25.6c0-47.6 38.8-86.4 86.4-86.4 14.6 0 38.3 16 89.6 16 51.7 0 74.9-16 89.6-16 47.6 0 86.4 38.8 86.4 86.4V464zM224 288c79.5 0 144-64.5 144-144S303.5 0 224 0 80 64.5 80 144s64.5 144 144 144zm0-240c52.9 0 96 43.1 96 96s-43.1 96-96 96-96-43.1-96-96 43.1-96 96-96z"></path>
+                  <div className="flex items-center bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 focus-within:border-brand-blue focus-within:ring-1 focus-within:ring-brand-blue transition-all">
+                    <span className="text-brand-blue pr-4 border-r border-slate-200 dark:border-slate-800 py-3 flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </span>
                     <input
                       type="text"
                       required
-                      placeholder={t("Ex: 123456", "উদা: 123456")}
+                      placeholder={t("EX: 123456", "উদা: 123456")}
                       value={clientIdInput}
                       onChange={(e) => setClientIdInput(e.target.value)}
-                      className="focus:outline-none px-3 py-3 bg-transparent text-sm w-full font-mono uppercase text-slate-800 dark:text-white"
+                      className="focus:outline-none px-4 py-3 bg-transparent text-sm w-full font-mono uppercase text-slate-800 dark:text-white placeholder:text-slate-400 placeholder:font-normal"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={true}
-                    className="bg-[#2563EB] w-full rounded-lg text-white font-medium py-3 mt-12 flex items-center justify-center gap-2 cursor-pointer hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/10 disabled:opacity-50 text-sm"
+                    className="bg-[#85A5FF] disabled:opacity-75 disabled:cursor-not-allowed w-full rounded-xl text-white font-bold py-3.5 mt-8 flex items-center justify-center gap-2 transition-colors text-sm shadow-md shadow-blue-500/5"
                   >
                     {searching ? (
                       <>
@@ -245,9 +246,9 @@ export default function BillPayment() {
                       </>
                     ) : (
                       <>
-                        {t("Pay Now", "পে নাও")}{" "}
-                        <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                          <path fill="none" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="48" d="m268 112 144 144-144 144m124-144H100"></path>
+                        <span>{t("Pay Now", "পে নাও")}</span>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                       </>
                     )}
