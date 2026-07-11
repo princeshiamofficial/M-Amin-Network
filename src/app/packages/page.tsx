@@ -501,12 +501,12 @@ function PackagesContent() {
 
       {/* Order connection Modal */}
       {isModalOpen && selectedPlan && (
-        <div className="fixed inset-0 z-100 overflow-y-auto bg-brand-dark/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/60 backdrop-blur-sm">
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="bg-brand-card border border-brand-border rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-left">
+            <div className="bg-white border border-slate-100 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-left">
             <button
               onClick={resetForm}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -516,16 +516,16 @@ function PackagesContent() {
             {!orderSuccess ? (
               <form onSubmit={handleOrderSubmit} className="space-y-5 text-left">
                 <div>
-                  <h3 className="text-white font-bold text-xl">{t("New Internet Connection", "নতুন ইন্টারনেট সংযোগ")}</h3>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <h3 className="text-slate-900 font-bold text-xl">{t("New Internet Connection", "নতুন ইন্টারনেট সংযোগ")}</h3>
+                  <p className="text-xs text-slate-500 mt-1">
                     {t("Complete this form to request optical fiber setup for", "অপটিক্যাল ফাইবার সংযোগের অনুরোধ জানাতে এই ফর্মটি পূরণ করুন: ")}{" "}
-                    <span className="text-white font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
+                    <span className="text-[#0072ff] font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 text-left">
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
                     <input
                       type="text"
                       name="name"
@@ -533,13 +533,13 @@ function PackagesContent() {
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g. Mehan Ahmed"
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                     <div className="flex flex-col gap-1.5 text-left">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
                       <input
                         type="tel"
                         name="phone"
@@ -547,49 +547,49 @@ function PackagesContent() {
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="e.g. 01707009267"
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5 text-left">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder={t("optional", "ঐচ্ছিক")}
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                     <div className="flex flex-col gap-1.5 text-left">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Coverage Zone", "কাভারেজ এলাকা")}</label>
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Coverage Zone", "কাভারেজ এলাকা")}</label>
                       <select
                         name="area"
                         value={formData.area}
                         onChange={handleInputChange}
-                        className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-cyan cursor-pointer"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20 cursor-pointer"
                       >
                         {coverageAreas.map((area) => (
-                          <option key={area} value={area} className="bg-brand-card">
+                          <option key={area} value={area} className="bg-white text-slate-900">
                             {area}
                           </option>
                         ))}
                       </select>
                     </div>
                     <div className="flex flex-col gap-1.5 text-left">
-                      <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Monthly Pricing", "মাসিক মূল্য")}</label>
-                      <div className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-slate-300 font-mono flex items-center justify-between">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Monthly Pricing", "মাসিক মূল্য")}</label>
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600 font-mono flex items-center justify-between">
                         <span>{t("Rate", "মূল্য")}</span>
-                        <span className="font-bold text-white">৳{selectedPlan.price} BDT</span>
+                        <span className="font-bold text-slate-900">৳{selectedPlan.price} BDT</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t("Installation Address", "সংযোগের ঠিকানা")}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Installation Address", "সংযোগের ঠিকানা")}</label>
                     <textarea
                       name="address"
                       required
@@ -597,12 +597,12 @@ function PackagesContent() {
                       value={formData.address}
                       onChange={handleInputChange}
                       placeholder="e.g. House No. 25, Lane 3, Kadomtoli, South Keraniganj"
-                      className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none font-sans"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20 resize-none font-sans"
                     />
                   </div>
                 </div>
 
-                <div className="bg-brand-cyan/5 border border-brand-cyan/20 rounded-xl p-3.5 text-xs text-brand-cyan leading-relaxed flex gap-2 text-left">
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3.5 text-xs text-blue-700 leading-relaxed flex gap-2 text-left">
                   <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
@@ -628,31 +628,31 @@ function PackagesContent() {
               </form>
             ) : (
               <div className="text-center py-8 space-y-6">
-                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-400 animate-pulse">
+                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-600 animate-pulse">
                   <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-extrabold text-2xl">{t("Request Submitted!", "অনুরোধ জমা দেওয়া হয়েছে!")}</h3>
-                  <p className="text-sm text-slate-400">
-                    {t("Thank you, ", "ধন্যবাদ, ")} <span className="text-slate-200 font-bold">{formData.name}</span>. {t("Your internet connection ticket has been successfully registered.", "আপনার internet সংযোগ অনুরোধ টিকিটটি সফলভাবে নিবন্ধিত হয়েছে।")}
+                  <h3 className="text-slate-900 font-extrabold text-2xl">{t("Request Submitted!", "অনুরোধ জমা দেওয়া হয়েছে!")}</h3>
+                  <p className="text-sm text-slate-500">
+                    {t("Thank you, ", "ধন্যবাদ, ")} <span className="text-slate-700 font-bold">{formData.name}</span>. {t("Your internet connection ticket has been successfully registered.", "আপনার internet সংযোগ অনুরোধ টিকিটটি সফলভাবে নিবন্ধিত হয়েছে।")}
                   </p>
                 </div>
 
-                <div className="bg-brand-dark border border-brand-border rounded-2xl p-5 max-w-sm mx-auto font-mono text-left">
-                  <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left">
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2 mb-2 text-xs text-slate-500">
                     <span>{t("Order Reference", "অর্ডার রেফারেন্স")}</span>
-                    <span className="text-brand-cyan font-bold">{orderRef}</span>
+                    <span className="text-[#0072ff] font-bold">{orderRef}</span>
                   </div>
-                  <div className="flex justify-between border-b border-brand-border/40 pb-2 mb-2 text-xs text-slate-400">
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2 mb-2 text-xs text-slate-500">
                     <span>{t("Selected Plan", "নির্বাচিত প্ল্যান")}</span>
-                    <span className="text-white font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
+                    <span className="text-slate-800 font-bold">{translateName(selectedPlan.name)} ({selectedPlan.speed})</span>
                   </div>
-                  <div className="flex justify-between text-xs text-slate-400">
+                  <div className="flex justify-between text-xs text-slate-500">
                     <span>{t("Contact Phone", "যোগাযোগের ফোন নম্বর")}</span>
-                    <span className="text-white font-bold">{formData.phone}</span>
+                    <span className="text-slate-800 font-bold">{formData.phone}</span>
                   </div>
                 </div>
 
@@ -662,7 +662,7 @@ function PackagesContent() {
 
                 <button
                   onClick={resetForm}
-                  className="px-6 py-2.5 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-sm font-bold transition-colors cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-sm font-bold transition-colors cursor-pointer"
                 >
                   {t("Close Window", "উইন্ডো বন্ধ করুন")}
                 </button>
