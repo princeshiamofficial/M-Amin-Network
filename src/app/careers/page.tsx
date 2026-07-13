@@ -3,7 +3,7 @@ import { toast } from "sonner";
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useState } from "react";
-import { getSetting, setSetting } from "@/actions/content";
+import { submitJobApplicationAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultCareersPageContent } from "@/app/admin/(dashboard)/careers-page/page";
 
@@ -297,21 +297,20 @@ export default function Careers() {
     setSubmitting(true);
     setTimeout(async () => {
       try {
-        const applications = await getSetting("job_applications"); const applicationsArr = Array.isArray(applications) ? applications : [];
-        const newApplication = {
-          id: `APP-${Date.now().toString().slice(-6)}`,
-          position: selectedJob?.title,
-          ...applyForm,
-          workExperiences,
-          dateApplied: new Date().toLocaleString()
-        };
-        applicationsArr.push(newApplication);
-        setSetting("job_applications", applicationsArr as Record<string, unknown>[]);
+        const result = await submitJobApplicationAction(
+          applyForm as unknown as Record<string, unknown>,
+          workExperiences as unknown as Record<string, unknown>[],
+          selectedJob?.title || ""
+        );
+        if (result.success) {
+          setSuccess(true);
+        } else {
+          console.error("Failed to submit job application.");
+        }
       } catch (err) {
         console.error("Error saving job application:", err);
       }
       setSubmitting(false);
-      setSuccess(true);
     }, 1800);
   };
 
@@ -1064,17 +1063,25 @@ export default function Careers() {
                         <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">{t(pageContent.str94En, pageContent.str94Bn)}</h4>
                         <div className="space-y-4">
                           {/* MBA */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str95En, pageContent.str95Bn)}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="col-span-2 text-xs font-bold text-slate-700 pl-1">{t(pageContent.str95En, pageContent.str95Bn)}</span>
                             <input
                               type="text"
                               name="eduMBA_Uni"
                               value={applyForm.eduMBA_Uni}
                               onChange={handleApplyChange}
                               placeholder="Board / University"
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              className="col-span-4 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                             />
-                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                            <input
+                              type="text"
+                              name="eduMBA_Major"
+                              value={applyForm.eduMBA_Major}
+                              onChange={handleApplyChange}
+                              placeholder="Major / Subject"
+                              className="col-span-3 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-3">
                               <input
                                 type="text"
                                 name="eduMBA_Year"
@@ -1088,24 +1095,32 @@ export default function Careers() {
                                 name="eduMBA_CGPA"
                                 value={applyForm.eduMBA_CGPA}
                                 onChange={handleApplyChange}
-                                placeholder="CGPA / Class"
+                                placeholder="CGPA"
                                 className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                               />
                             </div>
                           </div>
 
                           {/* BBA */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str96En, pageContent.str96Bn)}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="col-span-2 text-xs font-bold text-slate-700 pl-1">{t(pageContent.str96En, pageContent.str96Bn)}</span>
                             <input
                               type="text"
                               name="eduBBA_Uni"
                               value={applyForm.eduBBA_Uni}
                               onChange={handleApplyChange}
                               placeholder="Board / University"
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              className="col-span-4 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                             />
-                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                            <input
+                              type="text"
+                              name="eduBBA_Major"
+                              value={applyForm.eduBBA_Major}
+                              onChange={handleApplyChange}
+                              placeholder="Major / Subject"
+                              className="col-span-3 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-3">
                               <input
                                 type="text"
                                 name="eduBBA_Year"
@@ -1119,24 +1134,32 @@ export default function Careers() {
                                 name="eduBBA_CGPA"
                                 value={applyForm.eduBBA_CGPA}
                                 onChange={handleApplyChange}
-                                placeholder="CGPA / Class"
+                                placeholder="CGPA"
                                 className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                               />
                             </div>
                           </div>
 
                           {/* HSC */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str97En, pageContent.str97Bn)}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="col-span-2 text-xs font-bold text-slate-700 pl-1">{t(pageContent.str97En, pageContent.str97Bn)}</span>
                             <input
                               type="text"
                               name="eduHSC_Uni"
                               value={applyForm.eduHSC_Uni}
                               onChange={handleApplyChange}
                               placeholder="Board / Institute"
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              className="col-span-4 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                             />
-                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                            <input
+                              type="text"
+                              name="eduHSC_Major"
+                              value={applyForm.eduHSC_Major}
+                              onChange={handleApplyChange}
+                              placeholder="Group / Subject"
+                              className="col-span-3 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-3">
                               <input
                                 type="text"
                                 name="eduHSC_Year"
@@ -1157,17 +1180,25 @@ export default function Careers() {
                           </div>
 
                           {/* SSC */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str98En, pageContent.str98Bn)}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="col-span-2 text-xs font-bold text-slate-700 pl-1">{t(pageContent.str98En, pageContent.str98Bn)}</span>
                             <input
                               type="text"
                               name="eduSSC_Uni"
                               value={applyForm.eduSSC_Uni}
                               onChange={handleApplyChange}
                               placeholder="Board / School"
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              className="col-span-4 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                             />
-                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                            <input
+                              type="text"
+                              name="eduSSC_Major"
+                              value={applyForm.eduSSC_Major}
+                              onChange={handleApplyChange}
+                              placeholder="Group / Subject"
+                              className="col-span-3 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                            />
+                            <div className="grid grid-cols-2 gap-1 col-span-3">
                               <input
                                 type="text"
                                 name="eduSSC_Year"
@@ -1188,17 +1219,17 @@ export default function Careers() {
                           </div>
 
                           {/* JSC */}
-                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
-                            <span className="text-xs font-bold text-slate-700 pl-1">{t(pageContent.str99En, pageContent.str99Bn)}</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <span className="col-span-2 text-xs font-bold text-slate-700 pl-1">{t(pageContent.str99En, pageContent.str99Bn)}</span>
                             <input
                               type="text"
                               name="eduJSC_Uni"
                               value={applyForm.eduJSC_Uni}
                               onChange={handleApplyChange}
                               placeholder="School"
-                              className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
+                              className="col-span-7 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none"
                             />
-                            <div className="grid grid-cols-2 gap-1 col-span-2">
+                            <div className="grid grid-cols-2 gap-1 col-span-3">
                               <input
                                 type="text"
                                 name="eduJSC_Year"

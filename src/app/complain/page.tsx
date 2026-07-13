@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { getSetting, setSetting } from "@/actions/content";
+import { submitComplaintAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultComplainPageContent } from "@/app/admin/(dashboard)/complain-page/page";
 
@@ -41,27 +41,24 @@ export default function Complain() {
     e.preventDefault();
     setSubmitting(true);
     setTimeout(async () => {
-      const generatedRef = `CMP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
       try {
-        const complaints = await getSetting("complaints"); const complaintsArr = Array.isArray(complaints) ? complaints : [];
-        const newComplaint = {
-          id: generatedRef,
+        const result = await submitComplaintAction({
           clientId: form.clientId,
           name: form.name,
           phone: form.phone,
           category: form.category,
           desc: form.desc,
-          date: new Date().toLocaleString(),
-          status: "Pending"
-        };
-        complaintsArr.push(newComplaint);
-        setSetting("complaints", complaintsArr as Record<string, unknown>[]);
+        });
+        if (result.success && result.ref) {
+          setComplaintRef(result.ref);
+          setSuccess(true);
+        } else {
+          console.error("Failed to submit complaint.");
+        }
       } catch (err) {
         console.error("Error saving complaint:", err);
       }
       setSubmitting(false);
-      setSuccess(true);
-      setComplaintRef(generatedRef);
     }, 1500);
   };
 

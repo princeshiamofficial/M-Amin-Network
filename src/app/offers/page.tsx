@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getSetting, setSetting } from "@/actions/content";
+import { getSetting, setSetting, submitClaimAction } from "@/actions/content";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -14,6 +14,8 @@ interface PromoOffer {
   details: string;
   code: string;
   validUntil: string;
+  imageUrl: string;
+  htmlDetails?: string;
 }
 
 type PromoOfferRecord = Record<string, unknown>;
@@ -40,6 +42,8 @@ const normalizePromoOffer = (item: unknown): PromoOffer => {
     details: getStringValue(record, ["details", "description", "desc"]),
     code: getStringValue(record, ["code", "promoCode", "promo_code", "couponCode", "coupon_code", "coupon"]).toUpperCase(),
     validUntil: getStringValue(record, ["validUntil", "valid_until", "validity", "expiresAt", "expires_at"], "Ongoing Promotion"),
+    imageUrl: getStringValue(record, ["imageUrl", "image_url", "image", "thumbnail"], "/offer-card-banner.png"),
+    htmlDetails: getStringValue(record, ["htmlDetails", "html_details", "htmlDesc", "html_desc", "htmlCode", "html_code", "html"]),
   };
 };
 
@@ -101,6 +105,7 @@ export default function Offers() {
         details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
         code: "FREEINSTALL2026",
         validUntil: "31 Dec 2026",
+        imageUrl: "/offer-card-banner.png",
       },
       {
         title: "Pay 10 Months, Get 12",
@@ -109,6 +114,7 @@ export default function Offers() {
         details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
         code: "ANNUAL10",
         validUntil: "Ongoing Promotion",
+        imageUrl: "/offer-card-banner.png",
       },
       {
         title: "Free Public IP for Gamers",
@@ -117,6 +123,7 @@ export default function Offers() {
         details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
         code: "GAMERIP",
         validUntil: "31 Oct 2026",
+        imageUrl: "/offer-card-banner.png",
       },
       {
         title: "Refer a Friend",
@@ -125,6 +132,7 @@ export default function Offers() {
         details: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.",
         code: "REFER50",
         validUntil: "Ongoing Promotion",
+        imageUrl: "/offer-card-banner.png",
       },
     ];
 
@@ -149,25 +157,26 @@ export default function Offers() {
     setSubmittingClaim(true);
     setTimeout(async () => {
       try {
-        const claims = await getSetting("claims");
-        const claimsArr = Array.isArray(claims) ? claims as Record<string, unknown>[] : [];
-        const newClaim = {
-          id: `CLM-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`,
-          name: claimForm.name,
-          phone: claimForm.phone,
-          address: claimForm.address,
-          promoCode: selectedPromo.code,
-          promoTitle: selectedPromo.title,
-          date: new Date().toLocaleString(),
-          status: "Pending"
-        };
-        claimsArr.push(newClaim);
-        setSetting("claims", claimsArr);
+        const result = await submitClaimAction(
+          {
+            name: claimForm.name,
+            phone: claimForm.phone,
+            address: claimForm.address,
+          },
+          {
+            code: selectedPromo.code,
+            title: selectedPromo.title,
+          }
+        );
+        if (result.success) {
+          setClaimSuccess(true);
+        } else {
+          console.error("Failed to submit claim.");
+        }
       } catch (err) {
         console.error("Error saving claim:", err);
       }
       setSubmittingClaim(false);
-      setClaimSuccess(true);
     }, 1500);
   };
 
@@ -218,7 +227,7 @@ export default function Offers() {
                       {/* Banner image */}
                       <div className="h-44 relative rounded-t-2xl overflow-hidden bg-[#f7bd08] shrink-0">
                         <Image
-                          src="/offer-card-banner.png"
+                          src={offer.imageUrl || "/offer-card-banner.png"}
                           alt={translateOfferTitle(offer.title)}
                           fill
                           priority={i < 2}
@@ -236,16 +245,18 @@ export default function Offers() {
                         </div>
 
                         {/* Description — wrapper handles padding, inner handles clamping */}
-                        <div className="py-3 flex-1">
-                          <div className="text-[#777B84] text-[15px] leading-relaxed line-clamp-3">
-                            {translateOfferDetails(offer.details)}
+                        {offer.details && offer.details.trim() && (
+                          <div className="py-3 flex-1">
+                            <div className="text-[#777B84] text-[15px] leading-relaxed line-clamp-3 font-sans font-medium">
+                              {translateOfferDetails(offer.details)}
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         {/* Learn More — always at bottom */}
                         <div className="flex items-center pb-5 mt-auto">
                           <p className="text-base font-semibold text-[#F74F22] flex items-center gap-2 group-hover:gap-3 transition-all">
-                            Learn More
+                            Claim Offer
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>

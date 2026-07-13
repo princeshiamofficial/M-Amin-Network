@@ -149,7 +149,7 @@ export default function HeroTypographyPage() {
             <p className="text-[10px] text-slate-400 mb-1">Use the pipe symbol <code className="bg-slate-100 px-1 py-0.5 rounded font-bold text-slate-700">|</code> to separate the regular white text from the glowing cyan/blue text (e.g. <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-700">Blazing Fast Fiber | Internet in Keraniganj</code>).</p>
             <textarea
               rows={2}
-              value={heroTypography.mainTitle}
+              value={heroTypography.mainTitle || ""}
               onChange={(e) => setHeroTypography({ ...heroTypography, mainTitle: e.target.value })}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-semibold resize-none"
             />
@@ -158,7 +158,7 @@ export default function HeroTypographyPage() {
             <label className="text-xs font-bold text-slate-700 block">Sub-Headline Text</label>
             <textarea
               rows={3}
-              value={heroTypography.subtitle}
+              value={heroTypography.subtitle || ""}
               onChange={(e) => setHeroTypography({ ...heroTypography, subtitle: e.target.value })}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
             />
@@ -225,7 +225,7 @@ export default function HeroTypographyPage() {
                       <label className="text-[10px] font-bold text-slate-500 block uppercase">Card Value / Stat</label>
                       <input
                         type="text"
-                        value={metric.value}
+                        value={metric.value || ""}
                         onChange={(e) => handleMetricChange(idx, "value", e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                         placeholder="e.g. 99.9% or 2,000+"
@@ -237,7 +237,7 @@ export default function HeroTypographyPage() {
                         <label className="text-[10px] font-bold text-slate-500 block uppercase">Title (English)</label>
                         <input
                           type="text"
-                          value={metric.titleEn}
+                          value={metric.titleEn || ""}
                           onChange={(e) => handleMetricChange(idx, "titleEn", e.target.value)}
                           className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                           placeholder="e.g. Guaranteed Uptime"
@@ -248,7 +248,7 @@ export default function HeroTypographyPage() {
                         <label className="text-[10px] font-bold text-slate-500 block uppercase">Title (Bangla)</label>
                         <input
                           type="text"
-                          value={metric.titleBn}
+                          value={metric.titleBn || ""}
                           onChange={(e) => handleMetricChange(idx, "titleBn", e.target.value)}
                           className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                           placeholder="e.g. গ্যারান্টিড আপটাইম"
@@ -261,7 +261,7 @@ export default function HeroTypographyPage() {
                         <label className="text-[10px] font-bold text-slate-500 block uppercase">Description (English)</label>
                         <input
                           type="text"
-                          value={metric.descEn}
+                          value={metric.descEn || ""}
                           onChange={(e) => handleMetricChange(idx, "descEn", e.target.value)}
                           className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                           placeholder="e.g. Redundant connections"
@@ -272,7 +272,7 @@ export default function HeroTypographyPage() {
                         <label className="text-[10px] font-bold text-slate-500 block uppercase">Description (Bangla)</label>
                         <input
                           type="text"
-                          value={metric.descBn}
+                          value={metric.descBn || ""}
                           onChange={(e) => handleMetricChange(idx, "descBn", e.target.value)}
                           className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                           placeholder="e.g. অতিরিক্ত আপস্ট্রিম সংযোগ"

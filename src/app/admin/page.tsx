@@ -5,14 +5,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getSetting } from "@/actions/content";
-
-async function hashPassword(msg: string) {
-  const msgBuffer = new TextEncoder().encode(msg);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-}
+import { verifyAdminLoginAction, logoutAdminAction } from "@/actions/content";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -42,44 +35,30 @@ export default function AdminDashboard() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    const cleanUser = username.trim().toLowerCase();
     
     try {
-      const savedAuth = (await getSetting("admin_auth")) as Record<string, string> | null;
-      if (!savedAuth) {
-        setLoginError("System credentials not found. Please verify user table configuration.");
-        setIsLoggingIn(false);
-        return;
-      }
-
-      const validEmail = savedAuth.email.toLowerCase();
-      const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
-
-      const hashedInput = await hashPassword(password);
-      const isPasswordValid = hashedInput === savedAuth.password;
-
-      if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
+      const result = await verifyAdminLoginAction(username, password);
+      if (result.success) {
         setIsAuthenticated(true);
         setLoginError("");
         sessionStorage.setItem("admin_authenticated", "true");
         localStorage.setItem("admin_token", "admin_logged_in_token");
         router.push("/admin/dashboard");
       } else {
-        setLoginError("Invalid username or password. Please try again.");
+        setLoginError(result.error || "Invalid username or password. Please try again.");
       }
-    } catch (err) {
-      console.error("Login error:", err);
+    } catch {
       setLoginError("An error occurred while verifying credentials.");
     }
     setIsLoggingIn(false);
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    await logoutAdminAction();
     sessionStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_token");
-    setUsername("");
-    setPassword("");
+    setIsAuthenticated(false);
+    router.push("/admin");
   };
 
   if (!mounted) {

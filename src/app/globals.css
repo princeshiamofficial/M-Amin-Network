@@ -10,6 +10,91 @@
   --color-brand-border: #1e294b;
   --color-brand-text-muted: #94a3b8;
 
+  --color-utility-neutral-50: #f9fafb;
+  --color-utility-neutral-100: #f3f4f6;
+  --color-utility-neutral-200: #e5e7eb;
+  --color-utility-neutral-300: #d1d5db;
+  --color-utility-neutral-400: #9ca3af;
+  --color-utility-neutral-500: #6b7280;
+  --color-utility-neutral-700: #374151;
+
+  --color-utility-brand-50: #f5f3ff;
+  --color-utility-brand-100: #ede9fe;
+  --color-utility-brand-200: #ddd6fe;
+  --color-utility-brand-400: #a78bfa;
+  --color-utility-brand-500: #8b5cf6;
+  --color-utility-brand-700: #6d28d9;
+
+  --color-utility-red-50: #fef2f2;
+  --color-utility-red-100: #fee2e2;
+  --color-utility-red-200: #fca5a5;
+  --color-utility-red-400: #f87171;
+  --color-utility-red-500: #ef4444;
+  --color-utility-red-700: #b91c1c;
+
+  --color-utility-yellow-50: #fffbeb;
+  --color-utility-yellow-100: #fef3c7;
+  --color-utility-yellow-200: #fde68a;
+  --color-utility-yellow-400: #fbbf24;
+  --color-utility-yellow-500: #f59e0b;
+  --color-utility-yellow-700: #b45309;
+
+  --color-utility-green-50: #ecfdf5;
+  --color-utility-green-100: #d1fae5;
+  --color-utility-green-200: #a7f3d0;
+  --color-utility-green-400: #34d399;
+  --color-utility-green-500: #10b981;
+  --color-utility-green-700: #047857;
+
+  --color-utility-slate-50: #f8fafc;
+  --color-utility-slate-100: #f1f5f9;
+  --color-utility-slate-200: #e2e8f0;
+  --color-utility-slate-400: #94a3b8;
+  --color-utility-slate-500: #64748b;
+  --color-utility-slate-700: #334155;
+
+  --color-utility-sky-50: #f0f9ff;
+  --color-utility-sky-100: #e0f2fe;
+  --color-utility-sky-200: #bae6fd;
+  --color-utility-sky-400: #38bdf8;
+  --color-utility-sky-500: #0ea5e9;
+  --color-utility-sky-700: #0369a1;
+
+  --color-utility-blue-50: #eff6ff;
+  --color-utility-blue-100: #dbeafe;
+  --color-utility-blue-200: #bfdbfe;
+  --color-utility-blue-400: #60a5fa;
+  --color-utility-blue-500: #3b82f6;
+  --color-utility-blue-700: #1d4ed8;
+
+  --color-utility-indigo-50: #eef2ff;
+  --color-utility-indigo-100: #e0e7ff;
+  --color-utility-indigo-200: #c7d2fe;
+  --color-utility-indigo-400: #818cf8;
+  --color-utility-indigo-500: #6366f1;
+  --color-utility-indigo-700: #4338ca;
+
+  --color-utility-purple-50: #faf5ff;
+  --color-utility-purple-100: #f3e8ff;
+  --color-utility-purple-200: #e9d5ff;
+  --color-utility-purple-400: #c084fc;
+  --color-utility-purple-500: #a855f7;
+  --color-utility-purple-700: #7e22ce;
+
+  --color-utility-pink-50: #fdf2f8;
+  --color-utility-pink-100: #fce7f3;
+  --color-utility-pink-200: #fbcfe8;
+  --color-utility-pink-400: #f472b6;
+  --color-utility-pink-500: #ec4899;
+  --color-utility-pink-700: #be185d;
+
+  --color-utility-orange-50: #fff7ed;
+  --color-utility-orange-100: #ffedd5;
+  --color-utility-orange-200: #fed7aa;
+  --color-utility-orange-400: #fb923c;
+  --color-utility-orange-500: #f97316;
+  --color-utility-orange-700: #c2410c;
+
   --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 
@@ -60,6 +145,16 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 :root {

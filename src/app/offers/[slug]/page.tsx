@@ -5,6 +5,7 @@ import Image from "next/image";
 import { getSetting } from "@/actions/content";
 import type { Metadata } from "next";
 import SharePanel from "./SharePanel";
+import SafeIframe from "./SafeIframe";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,40 @@ type PromoOffer = {
   badge: string;
   badgeColor: string;
   details: string;
-  code: string;
-  validUntil: string;
   discount: string;
   description: string;
+  imageUrl: string;
+  createdAt?: string;
+  htmlDetails?: string;
 };
+
+const isDefaultButtonsOnly = (html?: string): boolean => {
+  if (!html) return false;
+  const text = html.replace(/<[^>]*>/g, "").trim();
+  return text.length < 80 && (html.includes("/packages") || html.includes("/contact"));
+};
+
+function formatCreateDate(dateStr?: string): string {
+  const date = dateStr ? new Date(dateStr) : new Date();
+  if (isNaN(date.getTime())) return "9:31 PM, September 30, 2023";
+  
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const timeStr = `${hours}:${minutes} ${ampm}`;
+  
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+  
+  return `${timeStr}, ${month} ${day}, ${year}`;
+}
 
 function normalizeOffer(raw: Record<string, unknown>): PromoOffer {
   const str = (keys: string[], fb = "") => {
@@ -43,9 +73,10 @@ function normalizeOffer(raw: Record<string, unknown>): PromoOffer {
     badgeColor: str(["badgeColor", "badge_color"], "bg-slate-500"),
     details: str(["details", "description", "desc"]),
     description: str(["description", "details", "desc"]),
-    code: str(["code", "promoCode", "couponCode"]).toUpperCase(),
-    validUntil: str(["validUntil", "valid_until", "validity", "expiresAt"], "Ongoing"),
     discount: str(["discount"], ""),
+    imageUrl: str(["imageUrl", "image_url", "image", "thumbnail"], "/offer-card-banner.png"),
+    createdAt: str(["createdAt", "created_at", "created"], ""),
+    htmlDetails: str(["htmlDetails", "html_details", "htmlDesc", "html_desc", "htmlCode", "html_code", "html"], ""),
   };
 }
 
@@ -54,7 +85,7 @@ async function getOfferBySlug(slug: string): Promise<PromoOffer | null> {
   const list = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
   for (const item of list) {
     const offer = normalizeOffer(item);
-    if (toSlug(offer.title) === slug || toSlug(offer.code) === slug) {
+    if (toSlug(offer.title) === slug) {
       return offer;
     }
   }
@@ -84,7 +115,7 @@ export default async function OfferDetailPage({
   const offer = await getOfferBySlug(slug);
   if (!offer) notFound();
 
-  const fullDetails = offer.details || offer.description || "";
+  const fullDetails = offer.htmlDetails || offer.details || offer.description || "";
 
   return (
     <div className="w-full grow min-h-0 bg-white text-slate-900">
@@ -110,14 +141,14 @@ export default async function OfferDetailPage({
             <h1 className="font-extrabold tracking-tight pt-0 text-gray-800 md:text-4xl text-2xl">
               {offer.title}
             </h1>
-            <p className="pb-6 text-gray-500 md:text-sm text-xs mt-1">
-              Valid until: <span className="font-semibold">{offer.validUntil}</span>
+            <p className="pb-6 text-gray-550 md:text-sm text-xs mt-1">
+              Published on: <span className="font-semibold">{formatCreateDate(offer.createdAt)}</span>
             </p>
 
             {/* Cover image */}
             <div className="w-full lg:h-[450px] h-auto overflow-hidden rounded-xl">
               <Image
-                src="/offer-card-banner.png"
+                src={offer.imageUrl || "/offer-card-banner.png"}
                 alt={offer.title}
                 width={900}
                 height={450}
@@ -128,66 +159,23 @@ export default async function OfferDetailPage({
 
             {/* Rich content body */}
             <div className="mt-8 space-y-6 text-slate-700 leading-relaxed">
-
-              {/* Promo code highlight */}
-              <div className="bg-brand-dark text-white rounded-2xl px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4 border border-brand-border">
-                <div className="flex-1">
-                  <p className="text-xs text-brand-text-muted uppercase tracking-widest font-bold mb-1">Your Promo Code</p>
-                  <span className="font-mono text-2xl font-extrabold text-brand-cyan tracking-widest">
-                    {offer.code || "N/A"}
-                  </span>
-                </div>
-                <div className="text-sm text-brand-text-muted">
-                  Valid until: <span className="text-white font-bold">{offer.validUntil}</span>
-                </div>
-              </div>
-
               {/* Full description */}
-              <div>
-                <h2 className="font-extrabold text-gray-800 text-xl mb-3">About This Offer</h2>
-                <p className="text-[15px] text-gray-600 leading-relaxed">
-                  {fullDetails || "Full offer details are available at our office or via hotline."}
-                </p>
-              </div>
+              {offer.htmlDetails && offer.htmlDetails.trim() && isDefaultButtonsOnly(offer.htmlDetails) && offer.details && offer.details.trim() && (
+                <div className="text-[15px] text-gray-650 leading-relaxed font-sans font-medium">
+                  {offer.details}
+                </div>
+              )}
 
-              {/* Terms */}
-              <div>
-                <h3 className="font-extrabold text-gray-800 text-lg mb-3">Terms &amp; Conditions</h3>
-                <ol className="list-decimal list-inside text-[14px] text-gray-600 space-y-2 leading-relaxed">
-                  <li>Offer valid for eligible customers in M Amin Network coverage areas only.</li>
-                  <li>Promo code must be mentioned at the time of connection activation or billing.</li>
-                  <li>Cannot be combined with other active promotions unless otherwise stated.</li>
-                  <li>M Amin Network reserves the right to modify, suspend, or withdraw the offer at any time.</li>
-                  <li>For queries, contact our hotline: <strong>+880 1901-348400</strong>.</li>
-                </ol>
-              </div>
-
-              {/* Note */}
-              <div className="border-l-4 border-orange-400 bg-orange-50 px-5 py-4 rounded-r-xl">
-                <p className="text-sm font-semibold text-orange-700">Note</p>
-                <p className="text-sm text-orange-600 mt-1">
-                  M Amin Network reserves the right to change the terms and conditions, suspend, modify, or discontinue this offer at any time without prior notice.
-                </p>
-              </div>
-
-              {/* CTA row */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Link
-                  href="/packages"
-                  className="inline-flex items-center justify-center gap-2 py-3 px-6 bg-brand-blue hover:bg-brand-blue/90 text-white font-extrabold rounded-xl text-sm transition-all shadow-lg shadow-brand-blue/20 active:scale-95"
-                >
-                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                  View Packages
-                </Link>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-2 py-3 px-6 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-sm transition-all border border-slate-200 shadow-sm active:scale-95"
-                >
-                  Contact Us to Claim
-                </Link>
-              </div>
+              {offer.htmlDetails && offer.htmlDetails.trim() ? (
+                <SafeIframe html={offer.htmlDetails} />
+              ) : (
+                <div 
+                  className="text-[15px] text-gray-600 leading-relaxed"
+                  dangerouslySetInnerHTML={{
+                    __html: fullDetails || "Full offer details are available at our office or via hotline."
+                  }}
+                />
+              )}
             </div>
           </div>
 

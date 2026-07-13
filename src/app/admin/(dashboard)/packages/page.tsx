@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
+import { confirmAction } from "@/lib/confirmHelper";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -292,8 +293,8 @@ export default function AdminPackagesPage() {
     toast(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
   };
 
-  const handleDelete = (name: string) => {
-    if (confirm(`Are you sure you want to delete package "${name}"?`)) {
+  const handleDelete = async (name: string) => {
+    if (await confirmAction(`Are you sure you want to delete package "${name}"?`)) {
       const updated = packages.filter((p) => p.name !== name);
       setPackages(updated);
       setSetting("packages_list", updated as any);

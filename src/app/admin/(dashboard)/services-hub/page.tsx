@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { confirmAction } from "@/lib/confirmHelper";
 import * as Lucide from "lucide-react";
 
 interface ServiceCard {
@@ -177,8 +178,8 @@ export default function ServicesHubPage() {
   const change = (idx: number, f: keyof ServiceCard, v: string) => {
     const u = [...services]; u[idx] = { ...u[idx], [f]: v }; setServices(u);
   };
-  const del = (idx: number) => {
-    if (!confirm("Delete this service card?")) return;
+  const del = async (idx: number) => {
+    if (!(await confirmAction("Delete this service card?"))) return;
     setServices(services.filter((_, i) => i !== idx));
   };
   const add = (e: React.FormEvent) => {
@@ -237,32 +238,32 @@ export default function ServicesHubPage() {
                   <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block"></span> English Title</label>
-                      <input type="text" value={svc.titleEn} onChange={e => change(idx, "titleEn", e.target.value)} required
+                      <input type="text" value={svc.titleEn || ""} onChange={e => change(idx, "titleEn", e.target.value)} required
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 inline-block"></span> Bangla Title</label>
-                      <input type="text" value={svc.titleBn} onChange={e => change(idx, "titleBn", e.target.value)}
+                      <input type="text" value={svc.titleBn || ""} onChange={e => change(idx, "titleBn", e.target.value)}
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block"></span> English Description</label>
-                      <textarea value={svc.descEn} rows={3} onChange={e => change(idx, "descEn", e.target.value)} required
+                      <textarea value={svc.descEn || ""} rows={3} onChange={e => change(idx, "descEn", e.target.value)} required
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all resize-none" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-orange-400 inline-block"></span> Bangla Description</label>
-                      <textarea value={svc.descBn} rows={3} onChange={e => change(idx, "descBn", e.target.value)}
+                      <textarea value={svc.descBn || ""} rows={3} onChange={e => change(idx, "descBn", e.target.value)}
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all resize-none" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block"></span> Badge (English)</label>
-                      <input type="text" value={svc.badgeEn} onChange={e => change(idx, "badgeEn", e.target.value)} placeholder="e.g. Popular"
+                      <input type="text" value={svc.badgeEn || ""} onChange={e => change(idx, "badgeEn", e.target.value)} placeholder="e.g. Popular"
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all" />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 inline-block"></span> Badge (Bangla)</label>
-                      <input type="text" value={svc.badgeBn} onChange={e => change(idx, "badgeBn", e.target.value)} placeholder="e.g. জনপ্রিয়"
+                      <input type="text" value={svc.badgeBn || ""} onChange={e => change(idx, "badgeBn", e.target.value)} placeholder="e.g. জনপ্রিয়"
                         className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 focus:border-blue-400 focus:bg-white rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all" />
                     </div>
                   </div>
@@ -307,11 +308,11 @@ export default function ServicesHubPage() {
                     <span className={`w-1.5 h-1.5 rounded-full ${dots[f]} inline-block`}></span>{labels[f]}
                   </label>
                   {isDesc ? (
-                    <textarea value={newSvc[f] as string} rows={3} onChange={e => setNewSvc({ ...newSvc, [f]: e.target.value })}
+                    <textarea value={(newSvc[f] as string) || ""} rows={3} onChange={e => setNewSvc({ ...newSvc, [f]: e.target.value })}
                       placeholder={isBn ? "বাংলায় লিখুন..." : "Enter description..."}
                       className="w-full bg-white border border-slate-200 hover:border-slate-300 focus:border-blue-400 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all resize-none" />
                   ) : (
-                    <input type="text" value={newSvc[f] as string} onChange={e => setNewSvc({ ...newSvc, [f]: e.target.value })}
+                    <input type="text" value={(newSvc[f] as string) || ""} onChange={e => setNewSvc({ ...newSvc, [f]: e.target.value })}
                       placeholder={isBadge ? (isBn ? "e.g. জনপ্রিয়" : "e.g. Popular") : (isBn ? "বাংলায় লিখুন..." : "Enter English...")}
                       className="w-full bg-white border border-slate-200 hover:border-slate-300 focus:border-blue-400 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none transition-all" />
                   )}

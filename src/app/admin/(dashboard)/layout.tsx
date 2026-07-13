@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+
+declare global {
+  interface Window {
+    customConfirm?: (message: string) => Promise<boolean>;
+  }
+}
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
-import { getSetting } from "@/actions/content";
+import { getSetting, isAdminAuthenticated } from "@/actions/content";
 import { IconMap, defaultQuickActions, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
 
 
@@ -57,6 +63,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
 
+  // State for global custom confirmation popup
+  const [confirmDialog, setConfirmDialog] = useState<{
+    message: string;
+    resolve: (val: boolean) => void;
+  } | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.customConfirm = (msg: string) => {
+        return new Promise<boolean>((resolve) => {
+          setConfirmDialog({
+            message: msg,
+            resolve,
+          });
+        });
+      };
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        delete window.customConfirm;
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setMounted(true);
@@ -65,12 +95,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (auth !== "true") {
           router.push("/admin");
         } else {
-          setIsAuthenticated(true);
-          getSetting("quick_actions").then((res) => {
-            if (res) {
-              setQuickActions(res as QuickAction[]);
+          isAdminAuthenticated().then((isServerAuth) => {
+            if (!isServerAuth) {
+              sessionStorage.removeItem("admin_authenticated");
+              localStorage.removeItem("admin_token");
+              router.push("/admin");
             } else {
-              setQuickActions(defaultQuickActions);
+              setIsAuthenticated(true);
+              getSetting("quick_actions").then((res) => {
+                if (res) {
+                  setQuickActions(res as QuickAction[]);
+                } else {
+                  setQuickActions(defaultQuickActions);
+                }
+              });
             }
           });
         }
@@ -198,6 +236,49 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </main>
+
+      {/* Custom Confirmation Modal */}
+      {confirmDialog && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 animate-fade-in">
+          <div className="bg-white border border-slate-100 shadow-2xl rounded-3xl p-6 sm:p-7 max-w-sm w-full space-y-5 text-left">
+            <div className="flex gap-4 items-start">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div className="space-y-1.5 grow">
+                <h4 className="text-slate-900 font-extrabold text-sm uppercase tracking-wider">Confirm Action</h4>
+                <p className="text-xs text-slate-500 font-medium leading-relaxed font-sans">
+                  {confirmDialog.message}
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  confirmDialog.resolve(false);
+                  setConfirmDialog(null);
+                }}
+                className="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-extrabold text-slate-700 cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  confirmDialog.resolve(true);
+                  setConfirmDialog(null);
+                }}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-colors shadow-md shadow-red-500/10"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

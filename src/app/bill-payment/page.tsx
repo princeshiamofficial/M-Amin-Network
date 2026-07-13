@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 import React, { useState } from "react";
 import Image from "next/image";
-import { getSetting, setSetting } from "@/actions/content";
+import { submitPaymentAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultBillPaymentPageContent } from "@/app/admin/(dashboard)/bill-payment-page/page";
 
@@ -119,11 +119,8 @@ export default function BillPayment() {
 
     setPaying(true);
     setTimeout(async () => {
-      const generatedTxn = `TXN-${selectedGateway.toUpperCase()}-${Date.now().toString().slice(-6)}-${Math.floor(10000 + Math.random() * 90000)}`;
       try {
-        const payments = await getSetting("payments"); const paymentsArr = Array.isArray(payments) ? payments : [];
-        const newPayment = {
-          id: generatedTxn,
+        const result = await submitPaymentAction({
           clientId: billDetails.clientId,
           name: billDetails.name,
           phone: billDetails.phone,
@@ -131,21 +128,19 @@ export default function BillPayment() {
           speed: billDetails.speed,
           amount: billDetails.dueBill,
           gateway: selectedGateway,
-          date: new Date().toLocaleString(),
           dueDate: billDetails.dueDate,
-          paidDate: new Date().toLocaleString()
-        };
-        paymentsArr.push(newPayment);
-        setSetting("payments", paymentsArr);
+        });
+        if (result.success && result.txnId) {
+          setTxnId(result.txnId);
+          setPaymentSuccess(true);
+          setBillDetails((prev) => (prev ? { ...prev, dueBill: 0 } : null));
+        } else {
+          console.error("Failed to submit payment.");
+        }
       } catch (err) {
         console.error("Error saving payment:", err);
       }
       setPaying(false);
-      setPaymentSuccess(true);
-      setTxnId(generatedTxn);
-      
-      // Update local state to reflect paid status
-      setBillDetails((prev) => (prev ? { ...prev, dueBill: 0 } : null));
     }, 2000);
   };
 

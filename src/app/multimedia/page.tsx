@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import { MagicCard } from "@/components/lightswind/magic-card";
 
 interface MediaPortal {
   name: string;
@@ -9,6 +11,7 @@ interface MediaPortal {
   desc: string;
   speed: string;
   status: "Online" | "Offline" | "Maintenance";
+  image: string;
 }
 
 export default function Multimedia() {
@@ -20,6 +23,7 @@ export default function Multimedia() {
       desc: "Stream and download thousands of Hollywood, Bollywood, and Bangla movies in full 1080p/4K resolution directly from our local SAN caches.",
       speed: "Up to 100 Mbps",
       status: "Online",
+      image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
     },
     {
       name: "BDIX Live TV Portal",
@@ -28,6 +32,7 @@ export default function Multimedia() {
       desc: "Watch 120+ high-definition local and international satellite television channels live with zero buffer lag using our local TV gateway.",
       speed: "Up to 100 Mbps",
       status: "Online",
+      image: "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
     },
     {
       name: "Gaming Caches Server",
@@ -36,6 +41,7 @@ export default function Multimedia() {
       desc: "Download PC game installation packages, Steam backup folders, patches, and console software updates from our high-speed cache storage.",
       speed: "Up to 100 Mbps",
       status: "Online",
+      image: "/933503ea823535235e8159f65709292f.jpg",
     },
     {
       name: "BDIX Torrent Cache",
@@ -44,6 +50,7 @@ export default function Multimedia() {
       desc: "High-speed torrent peer caching utilizing localized peering routing (AS150164). Replaces slow international seeds with local fast peers.",
       speed: "Up to 100 Mbps",
       status: "Online",
+      image: "/footer-bg.jpg",
     },
     {
       name: "FTP Anime Archive",
@@ -52,6 +59,7 @@ export default function Multimedia() {
       desc: "Watch subbed and dubbed anime series in HD quality directly hosted on our local media servers.",
       speed: "Up to 50 Mbps",
       status: "Online",
+      image: "/Multimedia.jpg",
     },
     {
       name: "BDIX Sports Live",
@@ -60,8 +68,15 @@ export default function Multimedia() {
       desc: "Never miss a match. Stream live ICC cricket matches, football tournaments, and local leagues in HD quality.",
       speed: "Up to 100 Mbps",
       status: "Maintenance",
+      image: "/offer-card-banner.png",
     },
   ];
+
+  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
+
+  const filteredPortals = portals.filter(
+    (portal) => selectedCategory === "all" || portal.category === selectedCategory
+  );
 
   return (
     <div className="w-full py-0 relative overflow-hidden min-h-[80vh] flex flex-col">
@@ -96,69 +111,55 @@ export default function Multimedia() {
       {/* Grid of portals - White Background Section */}
       <div className="w-full bg-white text-slate-800 py-16 grow border-t border-slate-200 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {portals.map((portal, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex flex-col justify-between text-left"
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap justify-center gap-2.5 mb-12">
+            {[
+              { id: "all", label: "All Portals" },
+              { id: "ftp", label: "FTP Servers" },
+              { id: "tv", label: "Live TV" },
+              { id: "gaming", label: "Gaming Caches" },
+              { id: "torrent", label: "BDIX Torrents" }
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  selectedCategory === cat.id
+                    ? "bg-brand-blue text-white shadow-md shadow-brand-blue/15"
+                    : "bg-slate-50 border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-800"
+                }`}
               >
-                <div>
-                  <div className="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-4">
-                    <span
-                      className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 rounded-full border ${
-                        portal.category === "ftp"
-                          ? "bg-brand-blue/10 border-brand-blue/20 text-brand-blue"
-                          : portal.category === "tv"
-                          ? "bg-brand-blue/15 border-brand-blue/25 text-brand-blue"
-                          : portal.category === "torrent"
-                          ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-600"
-                          : "bg-purple-500/10 border-purple-500/25 text-purple-600"
-                      }`}
-                    >
-                      {portal.category.toUpperCase()}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold ${
-                        portal.status === "Online"
-                          ? "text-emerald-600"
-                          : portal.status === "Offline"
-                          ? "text-rose-600"
-                          : "text-amber-600"
-                      }`}
-                    >
-                      ● {portal.status}
-                    </span>
-                  </div>
+                {cat.label}
+              </button>
+            ))}
+          </div>
 
-                  <h3 className="text-slate-900 font-extrabold text-lg leading-tight mb-2">{portal.name}</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed mb-6">{portal.desc}</p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-slate-200/60 mt-auto">
-                  <div className="font-mono text-xs">
-                    <span className="text-slate-400 block">FTP SPEED</span>
-                    <span className="text-slate-900 font-bold">{portal.speed}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-5xl mx-auto">
+            {filteredPortals.map((portal, i) => (
+              <a
+                key={i}
+                href={portal.status === "Online" ? portal.url : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={portal.status === "Online" ? "cursor-pointer" : "cursor-not-allowed"}
+              >
+                <MagicCard
+                  imageUrl={portal.image}
+                  imageAlt={portal.name}
+                  className="aspect-square p-4 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex items-center justify-center text-center"
+                >
+                  <div className="flex items-center justify-center w-full h-full p-1">
+                    <Image
+                      src={portal.image}
+                      alt={portal.name}
+                      width={120}
+                      height={120}
+                      className="object-cover aspect-square rounded-2xl max-w-[85%] max-h-[85%]"
+                    />
                   </div>
-                  
-                  {portal.status === "Online" ? (
-                    <a
-                      href={portal.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-brand-blue text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-brand-blue/90 transition-colors shadow-sm"
-                    >
-                      Access Server
-                    </a>
-                  ) : (
-                    <button
-                      disabled
-                      className="bg-slate-100 border border-slate-200 text-slate-400 text-xs font-bold px-4 py-2.5 rounded-xl"
-                    >
-                      Restricted
-                    </button>
-                  )}
-                </div>
-              </div>
+                </MagicCard>
+              </a>
             ))}
           </div>
         </div>
@@ -166,4 +167,3 @@ export default function Multimedia() {
     </div>
   );
 }
-

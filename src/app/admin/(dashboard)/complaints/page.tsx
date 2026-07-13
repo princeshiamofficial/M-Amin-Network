@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
+import { confirmAction } from "@/lib/confirmHelper";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,7 +42,7 @@ export default function ComplaintsPage() {
   };
 
   const deleteComplaint = async (id: string) => {
-    if (!confirm("Delete this complaint?")) return;
+    if (!(await confirmAction("Delete this complaint?"))) return;
     const updated = complaints.filter(c => c.id !== id);
     setComplaints(updated); setSetting("complaints", updated as Complaint[]);
   };
