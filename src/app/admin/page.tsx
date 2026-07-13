@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { verifyAdminLoginAction, logoutAdminAction } from "@/actions/content";
+import { verifyAdminLoginAction } from "@/actions/content";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -53,13 +53,6 @@ export default function AdminDashboard() {
     setIsLoggingIn(false);
   };
 
-  const handleLogout = async () => {
-    await logoutAdminAction();
-    sessionStorage.removeItem("admin_authenticated");
-    localStorage.removeItem("admin_token");
-    setIsAuthenticated(false);
-    router.push("/admin");
-  };
 
   if (!mounted) {
     return (
@@ -260,33 +253,6 @@ export default function AdminDashboard() {
     );
   }
 
-  return (
-    <div className="min-h-screen -mt-24 bg-brand-dark text-slate-100 flex flex-col">
-
-      {/* Main empty workspace placeholder */}
-      <div className="grow flex flex-col items-center justify-center p-8 text-center animate-fade-in">
-        <div className="max-w-md w-full glass-panel border-brand-border/50 rounded-[32px] p-10 space-y-6 shadow-2xl bg-brand-card/30 backdrop-blur-xl">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-3xl shadow-lg shadow-emerald-500/5">
-            🔑
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-white font-extrabold text-xl tracking-tight">Access Securely Opened</h2>
-            <p className="text-xs text-slate-400 leading-relaxed px-4">
-              You are securely logged into the M-Amin Network operations administration console.
-              The system metrics dashboard has been removed from this profile.
-            </p>
-          </div>
-          <div className="pt-2 border-t border-brand-border/40 flex justify-center">
-            <button
-              onClick={handleLogout}
-              className="px-6 py-2.5 bg-red-500/15 hover:bg-red-500/25 border border-red-500/30 hover:border-red-500/50 text-red-400 rounded-xl text-xs font-bold transition-all cursor-pointer"
-            >
-              Log Out Session
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
