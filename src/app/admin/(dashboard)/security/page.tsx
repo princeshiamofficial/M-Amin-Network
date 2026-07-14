@@ -29,9 +29,9 @@ export default function SecurityPage() {
     setAuth(true);
     getSetting("security_logs").then(saved => {
       if (saved) {
-        setSecurityLogs(saved as any);
+        setSecurityLogs(saved as unknown as SecurityLog[]);
       } else {
-        setSetting("security_logs", defaultSecurityLogs as any);
+        setSetting("security_logs", defaultSecurityLogs as unknown as Record<string, unknown>[]);
         setSecurityLogs(defaultSecurityLogs);
       }
     });
@@ -41,7 +41,7 @@ export default function SecurityPage() {
     if (!confirm("Are you sure you want to purge this security log?")) return;
     const updated = securityLogs.filter((l) => l.id !== id);
     setSecurityLogs(updated);
-    setSetting("security_logs", updated as any);
+    setSetting("security_logs", updated as unknown as Record<string, unknown>[]);
   };
 
   if (!auth) return null;
