@@ -84,8 +84,11 @@ export default function TestimonialsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState<Partial<Testimonial>>({ rating: 5, image: "" });
   const [uploading, setUploading] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
@@ -127,6 +130,12 @@ export default function TestimonialsPage() {
     }
   };
 
+  const openNewForm = () => {
+    setCurrentTestimonial({ rating: 5, image: "" });
+    setIsEditing(false);
+    setIsFormOpen(true);
+  };
+
   const saveTestimonial = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentTestimonial.author || !currentTestimonial.text) return;
@@ -152,16 +161,19 @@ export default function TestimonialsPage() {
     setSetting("testimonials", updated as Testimonial[]);
     setCurrentTestimonial({ rating: 5, image: "" });
     setIsEditing(false);
+    setIsFormOpen(false);
   };
 
   const editTestimonial = (t: Testimonial) => {
     setCurrentTestimonial(t);
     setIsEditing(true);
+    setIsFormOpen(true);
   };
 
   const cancelEdit = () => {
     setCurrentTestimonial({ rating: 5, image: "" });
     setIsEditing(false);
+    setIsFormOpen(false);
   };
 
   const togglePublish = (id: string) => {
@@ -188,101 +200,116 @@ export default function TestimonialsPage() {
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Manage Customer Testimonials</h2>
           <p className="text-sm text-slate-500 mt-0.5">Add, edit, review feedback, toggle display status, or delete client reviews.</p>
         </div>
+        <button
+          onClick={openNewForm}
+          className="px-4 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
+        >
+          <Lucide.Plus className="w-4 h-4" /> Add Testimonial
+        </button>
       </div>
 
-      <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        <h3 className="text-sm font-bold text-slate-800 mb-4">{isEditing ? "Edit Testimonial" : "Add New Testimonial"}</h3>
-        <form onSubmit={saveTestimonial} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 block">Customer Name</label>
-            <input
-              type="text"
-              required
-              value={currentTestimonial.author || ""}
-              onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, author: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-              placeholder="e.g. Mehan Ahmed"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 block">Role / Location</label>
-            <input
-              type="text"
-              required
-              value={currentTestimonial.role || ""}
-              onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, role: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-              placeholder="e.g. Local Freelance Web Developer"
-            />
-          </div>
-          <div className="space-y-1 md:col-span-2">
-            <label className="text-xs font-bold text-slate-700 block">Avatar Image</label>
-            <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold shrink-0 text-xs">
-                {currentTestimonial.image ? (
-                  <Image src={currentTestimonial.image} alt="" width={48} height={48} className="w-full h-full object-cover" />
-                ) : (
-                  "No Image"
-                )}
-              </div>
-              <div className="flex-1 flex items-center gap-3">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-slate-700 hover:file:bg-slate-100 cursor-pointer border border-slate-200/60 rounded-xl p-1 bg-white"
-                />
-                {uploading && <span className="text-[10px] text-slate-500 animate-pulse font-bold">Uploading...</span>}
-              </div>
-            </div>
-          </div>
-          <div className="space-y-1 md:col-span-2">
-            <div className="flex justify-between items-center">
-              <label className="text-xs font-bold text-slate-700 block">Review Text</label>
-              <span className="text-[10px] text-slate-400 font-mono">{(currentTestimonial.text || "").length}/300</span>
-            </div>
-            <textarea
-              required
-              rows={3}
-              maxLength={300}
-              value={currentTestimonial.text || ""}
-              onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, text: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
-              placeholder="Enter the customer's review..."
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 block">Rating (1-5)</label>
-            <input
-              type="number"
-              min="1"
-              max="5"
-              required
-              value={currentTestimonial.rating || 5}
-              onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, rating: parseInt(e.target.value) })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-            />
-          </div>
-          
-          <div className="md:col-span-2 flex items-center gap-3 mt-2">
-            <button
-              type="submit"
-              className="px-5 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95"
+      {mounted && isFormOpen && createPortal(
+        <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 max-w-xl w-full relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={cancelEdit} 
+              className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             >
-              {isEditing ? "Update Testimonial" : "Add Testimonial"}
+              <Lucide.X className="w-4 h-4" />
             </button>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active:scale-95"
-              >
-                Cancel
-              </button>
-            )}
+            <h3 className="text-sm font-extrabold text-slate-800 mb-4">{isEditing ? "Edit Testimonial" : "Add New Testimonial"}</h3>
+            <form onSubmit={saveTestimonial} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Customer Name</label>
+                <input
+                  type="text"
+                  required
+                  value={currentTestimonial.author || ""}
+                  onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, author: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  placeholder="e.g. Mehan Ahmed"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Role / Location</label>
+                <input
+                  type="text"
+                  required
+                  value={currentTestimonial.role || ""}
+                  onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, role: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  placeholder="e.g. Local Freelance Web Developer"
+                />
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <label className="text-xs font-bold text-slate-700 block">Avatar Image</label>
+                <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold shrink-0 text-xs">
+                    {currentTestimonial.image ? (
+                      <Image src={currentTestimonial.image} alt="" width={48} height={48} className="w-full h-full object-cover" />
+                    ) : (
+                      "No Image"
+                    )}
+                  </div>
+                  <div className="flex-1 flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-slate-700 hover:file:bg-slate-100 cursor-pointer border border-slate-200/60 rounded-xl p-1 bg-white"
+                    />
+                    {uploading && <span className="text-[10px] text-slate-500 animate-pulse font-bold">Uploading...</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-1 md:col-span-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-slate-700 block">Review Text</label>
+                  <span className="text-[10px] text-slate-400 font-mono">{(currentTestimonial.text || "").length}/300</span>
+                </div>
+                <textarea
+                  required
+                  rows={3}
+                  maxLength={300}
+                  value={currentTestimonial.text || ""}
+                  onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, text: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
+                  placeholder="Enter the customer's review..."
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Rating (1-5)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  required
+                  value={currentTestimonial.rating || 5}
+                  onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, rating: parseInt(e.target.value) })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                />
+              </div>
+              
+              <div className="md:col-span-2 flex items-center justify-end gap-3 mt-2 border-t border-slate-100 pt-3">
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  {isEditing ? "Update Testimonial" : "Add Testimonial"}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+        </div>,
+        document.body
+      )}
 
       <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
         <div className="overflow-visible min-h-[180px]">
