@@ -114,6 +114,22 @@ export default function Home() {
   const [showPopup, setShowPopup] = useState(false);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [homeSections, setHomeSections] = useState<Record<string, boolean>>({
+    hero: true,
+    packages: true,
+    offers: true,
+    coverage: true,
+    testimonials: true,
+    faq: true
+  });
+
+  useEffect(() => {
+    getSetting("home_sections").then((saved) => {
+      if (saved) {
+        setHomeSections(saved as Record<string, boolean>);
+      }
+    });
+  }, []);
   
 
 
@@ -262,8 +278,9 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-20 pb-20 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] lg:min-h-[90vh] flex flex-col items-center justify-center pt-16 pb-16 lg:pt-10 lg:pb-16 overflow-hidden">
-        {/* Background Decorative Wrappers */}
+      {homeSections.hero !== false && (
+        <section className="relative min-h-[85vh] lg:min-h-[90vh] flex flex-col items-center justify-center pt-16 pb-16 lg:pt-10 lg:pb-16 overflow-hidden">
+          {/* Background Decorative Wrappers */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
           {/* Morph Carousel Background Animation */}
           <div className="absolute inset-0 w-full h-full opacity-[0.8] transition-opacity duration-300">
@@ -321,12 +338,14 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
-              <Link
-                href="/coverage"
-                className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-brand-card hover:bg-brand-border/60 border border-brand-border text-white text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
-              >
-                Check Coverage
-              </Link>
+              {homeSections.coverage !== false && (
+                <Link
+                  href="/coverage"
+                  className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-brand-card hover:bg-brand-border/60 border border-brand-border text-white text-xs sm:text-sm font-semibold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
+                >
+                  Check Coverage
+                </Link>
+              )}
             </div>
 
             {/* Quick Coverage Form */}
@@ -450,10 +469,12 @@ export default function Home() {
         </div>
       </div>
     </section>
+    )}
 
       {/* Packages Section */}
-      <section className="w-full bg-white py-16 relative overflow-hidden border-t border-slate-100 shadow-inner text-slate-900 -mt-20">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
+      {homeSections.packages !== false && (
+        <section className="w-full bg-white py-16 relative overflow-hidden border-t border-slate-100 shadow-inner text-slate-900 -mt-20">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -549,6 +570,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Network Features Section */}
       <section className="w-full bg-black py-16 relative overflow-hidden border-t border-brand-border/40 text-white -mt-20 -mb-20">
@@ -645,31 +667,33 @@ export default function Home() {
 
 
       {/* Customer Review Section */}
-      <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      {homeSections.testimonials !== false && (
+        <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
 
-          <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
+            <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
 
-          <AnimatedTestimonials 
-            testimonials={testimonials.filter(test => test.isPublished).map((test, idx) => {
-              const localImages = [
-                "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-                "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-                "/933503ea823535235e8159f65709292f.jpg",
-                "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
-              ];
-              return {
-                quote: t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment),
-                name: test.name,
-                designation: t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role),
-                src: test.src || localImages[idx % localImages.length],
-                rating: test.rating
-              };
-            })} 
-            autoplay={true} 
-          />
-        </div>
-      </section>
+            <AnimatedTestimonials 
+              testimonials={testimonials.filter(test => test.isPublished).map((test, idx) => {
+                const localImages = [
+                  "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+                  "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
+                  "/933503ea823535235e8159f65709292f.jpg",
+                  "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
+                ];
+                return {
+                  quote: t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment),
+                  name: test.name,
+                  designation: t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role),
+                  src: test.src || localImages[idx % localImages.length],
+                  rating: test.rating
+                };
+              })} 
+              autoplay={true} 
+            />
+          </div>
+        </section>
+      )}
 
 
       {/* FAQ Section */}
