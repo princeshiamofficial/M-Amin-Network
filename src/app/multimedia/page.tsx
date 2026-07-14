@@ -135,7 +135,7 @@ export default function Multimedia() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {filteredPortals.map((portal, i) => (
               <a
                 key={i}
@@ -147,16 +147,19 @@ export default function Multimedia() {
                 <MagicCard
                   imageUrl={portal.image}
                   imageAlt={portal.name}
-                  className="aspect-square p-4 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex items-center justify-center text-center"
+                  className="aspect-square p-4 rounded-3xl bg-slate-50 border border-slate-200/60 shadow-sm hover:shadow-md hover:border-brand-blue/20 hover:scale-[1.01] transition-all flex flex-col items-center justify-center text-center"
                 >
-                  <div className="flex items-center justify-center w-full h-full p-1">
+                  <div className="flex flex-col items-center justify-center w-full h-full gap-3 p-1">
                     <Image
                       src={portal.image}
                       alt={portal.name}
-                      width={120}
-                      height={120}
-                      className="object-cover aspect-square rounded-2xl max-w-[85%] max-h-[85%]"
+                      width={100}
+                      height={100}
+                      className="object-cover aspect-square rounded-2xl max-w-[65%] max-h-[65%]"
                     />
+                    <p className="text-xs sm:text-sm font-extrabold text-slate-800 leading-tight line-clamp-2 px-1">
+                      {portal.name}
+                    </p>
                   </div>
                 </MagicCard>
               </a>
