@@ -27,7 +27,7 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
         <div className="relative z-10 flex flex-col items-center w-full mt-[-80px]">
           {/* Typography */}
           <h1 className="text-[2.5rem] sm:text-[3.2rem] md:text-[3.8rem] font-semibold text-[#015296] text-center leading-[1.2] tracking-tight">
-            This site is under<br />maintenance
+            This site is under maintenance
           </h1>
           <p className="text-[#63a1cb] text-lg sm:text-xl md:text-2xl mt-5 font-normal tracking-wide text-center px-6 max-w-2xl leading-relaxed">
             {maintenanceMessage || "We're preparing to serve you better."}
