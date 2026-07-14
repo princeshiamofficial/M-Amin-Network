@@ -21,14 +21,12 @@ interface SystemConfig {
   peeringBandwidthLimit: string;
   maintenanceMode: boolean;
   maintenanceMessage?: string;
-  estimatedReturn?: string;
 }
 
 const defaultSystemConfig: SystemConfig = {
   peeringBandwidthLimit: "10 Gbps",
   maintenanceMode: false,
   maintenanceMessage: "M-Amin Network is currently undergoing scheduled backend fiber infrastructure upgrades. We will be back online shortly.",
-  estimatedReturn: new Date(Date.now() + 3600000 * 2).toISOString().slice(0, 16) // 2 hours from now
 };
 
 export default function SettingsPage() {
@@ -64,7 +62,6 @@ export default function SettingsPage() {
           peeringBandwidthLimit: (config.peeringBandwidthLimit as string) || "10 Gbps",
           maintenanceMode: !!config.maintenanceMode,
           maintenanceMessage: (config.maintenanceMessage as string) || defaultSystemConfig.maintenanceMessage,
-          estimatedReturn: (config.estimatedReturn as string) || defaultSystemConfig.estimatedReturn
         });
       } else {
         setSetting("system_config", defaultSystemConfig);
@@ -423,22 +420,6 @@ export default function SettingsPage() {
                       className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-none font-medium"
                       placeholder="Display message for landing page visitors..."
                     />
-                  </div>
-
-                  {/* Estimated Return Time */}
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Estimated Return Time</label>
-                    <div className="relative flex items-center">
-                      <span className="absolute left-3.5 text-slate-400">
-                        <Clock className="w-4 h-4" />
-                      </span>
-                      <input
-                        type="datetime-local"
-                        value={systemConfig.estimatedReturn || ""}
-                        onChange={(e) => setSystemConfig({ ...systemConfig, estimatedReturn: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold"
-                      />
-                    </div>
                   </div>
                 </div>
               )}
