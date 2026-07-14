@@ -197,9 +197,9 @@ export default function AdminPackagesPage() {
     if (typeof window === "undefined") return;
     getSetting("packages_list").then(saved => {
       if (saved) {
-        setPackages(saved as any);
+        setPackages(saved as unknown as Plan[]);
       } else {
-        setSetting("packages_list", defaultPackages as any);
+        setSetting("packages_list", defaultPackages as unknown as Record<string, unknown>[]);
         setPackages(defaultPackages);
       }
     });
@@ -226,7 +226,7 @@ export default function AdminPackagesPage() {
   useEffect(() => {
     const handleReset = async () => {
       if (typeof window !== "undefined") {
-        setSetting("packages_list", defaultPackages as any);
+        setSetting("packages_list", defaultPackages as unknown as Record<string, unknown>[]);
         setPackages(defaultPackages);
       }
     };
@@ -288,7 +288,7 @@ export default function AdminPackagesPage() {
     }
 
     setPackages(updated);
-    setSetting("packages_list", updated as any);
+    setSetting("packages_list", updated as unknown as Record<string, unknown>[]);
     setIsModalOpen(false);
     toast(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
   };
@@ -297,7 +297,7 @@ export default function AdminPackagesPage() {
     if (await confirmAction(`Are you sure you want to delete package "${name}"?`)) {
       const updated = packages.filter((p) => p.name !== name);
       setPackages(updated);
-      setSetting("packages_list", updated as any);
+      setSetting("packages_list", updated as unknown as Record<string, unknown>[]);
     }
   };
 
