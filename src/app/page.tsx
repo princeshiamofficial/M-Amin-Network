@@ -7,6 +7,7 @@ import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSetting } from "@/actions/content";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface Plan {
   speed: number;
@@ -23,6 +24,13 @@ interface Testimonial {
   rating: number;
   isPublished: boolean;
   src?: string;
+}
+
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  isPublished: boolean;
 }
 
 interface CountUpProps {
@@ -104,6 +112,8 @@ export default function Home() {
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonialData);
   const [showPopup, setShowPopup] = useState(false);
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   
 
 
@@ -128,6 +138,20 @@ export default function Home() {
           rating: (t.rating as number) || 5,
           isPublished: t.isPublished !== false,
           src: t.image as string | undefined
+        })));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    getSetting("faqs").then((saved) => {
+      if (saved) {
+        const list = saved as Record<string, unknown>[];
+        setFaqs(list.map((f) => ({
+          id: (f.id as string) || String(Math.random()),
+          question: (f.question as string) || "",
+          answer: (f.answer as string) || "",
+          isPublished: f.isPublished !== false
         })));
       }
     });
@@ -646,6 +670,62 @@ export default function Home() {
           />
         </div>
       </section>
+
+
+      {/* FAQ Section */}
+      {faqs.filter(f => f.isPublished).length > 0 && (
+        <section className="w-full bg-slate-50 py-16 border-b border-slate-100 shadow-inner text-slate-900">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-extrabold text-slate-900">
+                {t("Frequently Asked Questions", "সাধারণ জিজ্ঞাসা (FAQ)")}
+              </h3>
+              <p className="text-slate-500 mt-2 text-sm">
+                {t("Find quick answers to common questions about our services", "আমাদের সেবা সম্পর্কে সাধারণ প্রশ্নের উত্তরসমূহ এখানে খুঁজুন")}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {faqs.filter(f => f.isPublished).map((faq, index) => {
+                const isOpen = openFaqIndex === index;
+                return (
+                  <div 
+                    key={faq.id} 
+                    className="bg-white border border-slate-200/60 rounded-2xl overflow-hidden transition-all duration-300 shadow-xs hover:shadow-md"
+                  >
+                    <button
+                      onClick={() => setOpenFaqIndex(isOpen ? null : index)}
+                      className="w-full text-left px-6 py-5 flex justify-between items-center gap-4 focus:outline-none cursor-pointer"
+                    >
+                      <span className="font-bold text-slate-800 text-sm md:text-base leading-snug">
+                        {faq.question}
+                      </span>
+                      <span className="text-brand-blue flex-shrink-0 transition-transform duration-200">
+                        {isOpen ? (
+                          <ChevronUp className="w-5 h-5" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5" />
+                        )}
+                      </span>
+                    </button>
+                    
+                    {/* Animated accordion panel */}
+                    <div 
+                      className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                        isOpen ? "max-h-[500px] border-t border-slate-100/50" : "max-h-0"
+                      }`}
+                    >
+                      <div className="px-6 py-5 text-slate-600 text-xs md:text-sm leading-relaxed whitespace-pre-line bg-slate-50/40">
+                        {faq.answer}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
 
       {/* Home Page Pop-up Offer Modal */}
