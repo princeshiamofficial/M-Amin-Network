@@ -198,9 +198,16 @@ export default function AboutPageAdmin() {
     
     getSetting("about_content_full").then(saved => {
       if (saved) {
-        setContent(saved as unknown as AboutContentFull);
+        const parsed = saved as unknown as AboutContentFull;
+        setContent({
+          ...defaultAboutContentFull,
+          ...parsed,
+          credentials: parsed.credentials || defaultAboutContentFull.credentials || [],
+          infraCards: parsed.infraCards || defaultAboutContentFull.infraCards || []
+        });
       } else {
         setSetting("about_content_full", defaultAboutContentFull as unknown as Record<string, unknown>);
+        setContent(defaultAboutContentFull);
       }
     });
   }, [router]);
@@ -318,20 +325,20 @@ export default function AboutPageAdmin() {
             </div>
             
             <div className="space-y-3">
-              {content.credentials.map((cred, i) => (
+              {(content.credentials || []).map((cred, i) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-center">
                   <div className="grid grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Key EN" value={cred.keyEn} onChange={e => { const c = [...content.credentials]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value EN" value={cred.valEn} onChange={e => { const c = [...content.credentials]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Key BN" value={cred.keyBn} onChange={e => { const c = [...content.credentials]; c[i].keyBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value BN" value={cred.valBn} onChange={e => { const c = [...content.credentials]; c[i].valBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Key EN" value={cred.keyEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Value EN" value={cred.valEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Key BN" value={cred.keyBn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Value BN" value={cred.valBn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
                   </div>
-                  <button onClick={() => updateField("credentials", content.credentials.filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <button onClick={() => updateField("credentials", (content.credentials || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("credentials", [...content.credentials, { keyEn: "", keyBn: "", valEn: "", valBn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
+              <button onClick={() => updateField("credentials", [...(content.credentials || []), { keyEn: "", keyBn: "", valEn: "", valBn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
                 + Add Credential
               </button>
             </div>
@@ -361,16 +368,16 @@ export default function AboutPageAdmin() {
             </div>
 
             <div className="space-y-4">
-              {content.infraCards.map((card, i) => (
+              {(content.infraCards || []).map((card, i) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-4 items-start">
-                  <IconPicker value={card.iconName} onChange={v => { const c = [...content.infraCards]; c[i].iconName = v; updateField("infraCards", c); }} />
+                  <IconPicker value={card.iconName} onChange={v => { const c = [...(content.infraCards || [])]; c[i].iconName = v; updateField("infraCards", c); }} />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Title EN" value={card.titleEn} onChange={e => { const c = [...content.infraCards]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Title BN" value={card.titleBn} onChange={e => { const c = [...content.infraCards]; c[i].titleBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc EN" value={card.descEn} onChange={e => { const c = [...content.infraCards]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc BN" value={card.descBn} onChange={e => { const c = [...content.infraCards]; c[i].descBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Title EN" value={card.titleEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Title BN" value={card.titleBn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <textarea rows={2} placeholder="Desc EN" value={card.descEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <textarea rows={2} placeholder="Desc BN" value={card.descBn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
                   </div>
-                  <button onClick={() => updateField("infraCards", content.infraCards.filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <button onClick={() => updateField("infraCards", (content.infraCards || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
