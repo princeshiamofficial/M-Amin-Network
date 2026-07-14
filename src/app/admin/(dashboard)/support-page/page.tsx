@@ -136,13 +136,13 @@ export default function SupportPageAdmin() {
     }
     setAuth(true);
     getSetting("support_page_content").then(s => {
-      if (s) setContent(s as any);
-      else setSetting("support_page_content", defaultSupportPageContent as any);
+      if (s) setContent(s as unknown as SupportPageContent);
+      else setSetting("support_page_content", defaultSupportPageContent as unknown as Record<string, unknown>);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("support_page_content", content as any);
+    setSetting("support_page_content", content as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
