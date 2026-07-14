@@ -2,7 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
 type Testimonial = {
@@ -24,24 +24,26 @@ export const AnimatedTestimonials = ({
 }) => {
   const [active, setActive] = useState(0);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
+    if (testimonials.length === 0) return;
     setActive((prev) => (prev + 1) % testimonials.length);
-  };
+  }, [testimonials]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
+    if (testimonials.length === 0) return;
     setActive((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+  }, [testimonials]);
 
   const isActive = (index: number) => {
     return index === active;
   };
 
   useEffect(() => {
-    if (autoplay) {
+    if (autoplay && testimonials.length > 0) {
       const interval = setInterval(handleNext, 5000);
       return () => clearInterval(interval);
     }
-  }, [autoplay]);
+  }, [autoplay, handleNext, testimonials.length]);
 
   const randomRotateY = (index: number) => {
     const rotations = [-10, 5, -5, 10, -8, 8, -3, 3, -7, 7];
