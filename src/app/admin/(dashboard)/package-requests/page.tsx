@@ -18,6 +18,7 @@ interface PackageRequest {
   zone: string;
   price: number;
   address: string;
+  referralCode?: string;
   planName: string;
   speed: string;
   status: "Pending" | "Completed" | "Cancelled";
@@ -186,6 +187,7 @@ export default function PackageRequestsPage() {
               <th className="pb-3">Email</th>
               <th className="pb-3">Zone</th>
               <th className="pb-3">Price</th>
+              <th className="pb-3">Refer / Promo</th>
               <th className="pb-3">Address</th>
               <th className="pb-3">Status</th>
               <th className="pb-3 text-right">Action</th>
@@ -194,7 +196,7 @@ export default function PackageRequestsPage() {
           <tbody className="divide-y divide-slate-100">
             {filteredRequests.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-slate-400">
+                <td colSpan={9} className="py-8 text-center text-slate-400">
                   No package requests found.
                 </td>
               </tr>
@@ -209,6 +211,7 @@ export default function PackageRequestsPage() {
                   <td className="py-3.5 font-mono text-slate-550">{r.email}</td>
                   <td className="py-3.5 font-semibold text-slate-700">{r.zone}</td>
                   <td className="py-3.5 font-black text-emerald-600">৳{r.price} BDT</td>
+                  <td className="py-3.5 font-mono text-slate-600">{r.referralCode || "N/A"}</td>
                   <td className="py-3.5 text-slate-650 max-w-xs truncate" title={r.address}>{r.address}</td>
                   <td className="py-3.5">
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase whitespace-nowrap ${

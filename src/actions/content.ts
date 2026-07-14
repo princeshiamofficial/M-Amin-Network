@@ -545,6 +545,30 @@ export async function submitJobApplicationAction(
   }
 }
 
+export async function submitPackageRequestAction(
+  requestInfo: Record<string, unknown>
+): Promise<{ success: boolean; id?: string }> {
+  try {
+    const raw = await getSettingInternal("package_requests");
+    const requestsArr = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+
+    const generatedId = `REQ-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newRequest = {
+      id: generatedId,
+      ...requestInfo,
+      status: "Pending",
+      date: new Date().toLocaleString()
+    };
+
+    requestsArr.unshift(newRequest);
+    const success = await setSettingInternal("package_requests", requestsArr);
+    return { success, id: generatedId };
+  } catch (error) {
+    console.error("submitPackageRequestAction error:", error);
+    return { success: false };
+  }
+}
+
 export async function submitPaymentAction(
   paymentInfo: {
     clientId: string;

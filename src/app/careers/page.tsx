@@ -3,11 +3,12 @@ import { toast } from "sonner";
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useState } from "react";
-import { submitJobApplicationAction } from "@/actions/content";
+import { getSetting, submitJobApplicationAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { defaultCareersPageContent } from "@/app/admin/(dashboard)/careers-page/page";
 
 interface JobOpening {
+  id?: string;
   title: string;
   dept: string;
   location: string;
@@ -18,6 +19,57 @@ interface JobOpening {
   salary: string;
   deadline: string;
   image?: string;
+  status?: "Open" | "Closed";
+}
+
+function getStringValue(item: Record<string, unknown>, keys: string[], fallback: string): string {
+  for (const key of keys) {
+    const value = item[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+    if (typeof value === "number") return String(value);
+  }
+
+  return fallback;
+}
+
+function getRequirementsValue(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    const items = value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+    return items.length ? items : ["Relevant experience for this role"];
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const lines = value
+      .split(/\r?\n/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+    return lines.length ? lines : [value.trim()];
+  }
+
+  return ["Relevant experience for this role"];
+}
+
+function normalizePostedJob(item: Record<string, unknown>): JobOpening | null {
+  const status = getStringValue(item, ["status"], "Open");
+  if (status !== "Open") return null;
+
+  const title = getStringValue(item, ["title"], "");
+  if (!title) return null;
+
+  return {
+    id: getStringValue(item, ["id"], title),
+    title,
+    dept: getStringValue(item, ["dept", "department"], "General Support"),
+    location: getStringValue(item, ["location"], "South Keraniganj"),
+    type: getStringValue(item, ["type"], "Full-Time"),
+    desc: getStringValue(item, ["desc", "description"], "Apply for this open position at M Amin Network."),
+    requirements: getRequirementsValue(item.requirements),
+    vacancy: getStringValue(item, ["vacancy"], "1"),
+    salary: getStringValue(item, ["salary"], "Negotiable"),
+    deadline: getStringValue(item, ["deadline"], "Open Until Filled"),
+    image: getStringValue(item, ["image", "imageUrl"], ""),
+    status: "Open",
+  };
 }
 
 export default function Careers() {
@@ -155,60 +207,22 @@ export default function Careers() {
   const [selectedDept, setSelectedDept] = useState("All");
   const [selectedType, setSelectedType] = useState("All");
   const [selectedLoc, setSelectedLoc] = useState("All");
+  const [postedJobs, setPostedJobs] = useState<JobOpening[]>([]);
 
-  const jobs: JobOpening[] = [
-    {
-      title: "Support Technician (Field Operations)",
-      dept: "Network Engineering & Maintenance",
-      location: "South Keraniganj",
-      type: "Full-Time",
-      desc: "We are looking for dedicated field technicians to lay fiber cables, splice optical lines, install ONTs, and troubleshoot client premises issues.",
-      requirements: [
-        "Prior experience in fiber splicing (laser splicing machines)",
-        "Familiarity with OLT port configs & client router configurations",
-        "Willingness to travel around South Keraniganj neighborhoods",
-        "Excellent communication and problem-solving skills",
-      ],
-      vacancy: "5",
-      salary: "14,000-20,000",
-      deadline: "2026-08-15",
-      image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
-    },
-    {
-      title: "Customer Support Executive",
-      dept: "Helpdesk Operations",
-      location: "Kadomtoli Office, Dhaka",
-      type: "Full-Time",
-      desc: "Manage customer queries, guide clients through router reboots, catalog support tickets, and direct field teams to fiber line breaks.",
-      requirements: [
-        "Higher Secondary Certificate (HSC) or Bachelor degree",
-        "Polite tone and high patience for user support",
-        "Basic computer knowledge (Google Sheets, ticket dashboards)",
-        "Ability to speak fluent Bangla (English is a plus)",
-      ],
-      vacancy: "3",
-      salary: "15,000-22,000",
-      deadline: "2026-08-20",
-      image: "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg"
-    },
-    {
-      title: "Junior Network Engineer",
-      dept: "Infrastructure Operations",
-      location: "Kadomtoli Office, Dhaka",
-      type: "Full-Time",
-      desc: "Assist in monitoring the BGP network (AS150164), configure OLT splitters, manage DNS and local caching servers (FTP, BDIX).",
-      requirements: [
-        "Diploma in Computer/Telecommunication Engineering or CCNA certified",
-        "Familiarity with Mikrotik RouterOS and basic Linux scripting",
-        "Understanding of IPv4 subnetting and dynamic BGP routing",
-        "Willingness to work in rotating shifts",
-      ],
-      vacancy: "2",
-      salary: "18,000-25,000",
-      deadline: "2026-08-25",
-      image: "/933503ea823535235e8159f65709292f.jpg"
-    },
-  ];
+  React.useEffect(() => {
+    getSetting("jobs").then((saved) => {
+      if (!Array.isArray(saved)) return;
+      const normalizedJobs = (saved as Record<string, unknown>[])
+        .map(normalizePostedJob)
+        .filter((job): job is JobOpening => job !== null);
+      setPostedJobs(normalizedJobs);
+    });
+  }, []);
+
+  const jobs = postedJobs;
+  const departmentOptions = Array.from(new Set(jobs.map((job) => job.dept).filter(Boolean)));
+  const typeOptions = Array.from(new Set(jobs.map((job) => job.type).filter(Boolean)));
+  const locationOptions = Array.from(new Set(jobs.map((job) => job.location).filter(Boolean)));
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
@@ -434,9 +448,9 @@ export default function Careers() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
                   <option value="All">{t(pageContent.str37En, pageContent.str37Bn)}</option>
-                  <option value="Network Engineering & Maintenance">{t(pageContent.str38En, pageContent.str38Bn)}</option>
-                  <option value="Helpdesk Operations">{t(pageContent.str2En, pageContent.str2Bn)}</option>
-                  <option value="Infrastructure Operations">{t(pageContent.str3En, pageContent.str3Bn)}</option>
+                  {departmentOptions.map((dept) => (
+                    <option key={dept} value={dept}>{translateDept(dept)}</option>
+                  ))}
                 </select>
               </div>
 
@@ -448,7 +462,9 @@ export default function Careers() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
                   <option value="All">{t(pageContent.str39En, pageContent.str39Bn)}</option>
-                  <option value="Full-Time">{t(pageContent.str40En, pageContent.str40Bn)}</option>
+                  {typeOptions.map((type) => (
+                    <option key={type} value={type}>{translateJobType(type)}</option>
+                  ))}
                 </select>
               </div>
 
@@ -460,8 +476,9 @@ export default function Careers() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-brand-blue cursor-pointer"
                 >
                   <option value="All">{t(pageContent.str41En, pageContent.str41Bn)}</option>
-                  <option value="South Keraniganj">{t(pageContent.str7En, pageContent.str7Bn)}</option>
-                  <option value="Kadomtoli Office, Dhaka">{t(pageContent.str8En, pageContent.str8Bn)}</option>
+                  {locationOptions.map((location) => (
+                    <option key={location} value={location}>{translateLocation(location)}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -513,11 +530,13 @@ export default function Careers() {
                 >
                   {/* Banner image */}
                   <div className="h-44 relative overflow-hidden bg-brand-blue shrink-0">
-                    <img
-                      src={job.image || "/offer-card-banner.png"}
-                      alt={translateJobTitle(job.title)}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                    {job.image ? (
+                      <img
+                        src={job.image}
+                        alt={translateJobTitle(job.title)}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : null}
                     <div className="absolute top-4 right-4 z-10">
                       <span className="bg-brand-blue text-white text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow-md">
                         {translateJobType(job.type)}

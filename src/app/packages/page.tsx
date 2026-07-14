@@ -4,7 +4,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getSetting, setSetting } from "@/actions/content";
+import { getSetting, setSetting, submitPackageRequestAction } from "@/actions/content";
 
 interface Plan {
   speed: string;
@@ -125,6 +125,7 @@ function PackagesContent() {
     email: "",
     address: "",
     area: "Kadomtoli",
+    referralCode: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -320,16 +321,33 @@ function PackagesContent() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleOrderSubmit = (e: React.FormEvent) => {
+  const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedPlan) return;
+
     setIsSubmitting(true);
-    
-    // Simulate API request
-    setTimeout(() => {
+
+    const result = await submitPackageRequestAction({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email || "N/A",
+      zone: formData.area,
+      price: selectedPlan.price,
+      address: formData.address,
+      planName: selectedPlan.name,
+      speed: selectedPlan.speed,
+      referralCode: formData.referralCode.trim() || "N/A",
+    });
+
+    if (result.success && result.id) {
       setIsSubmitting(false);
       setOrderSuccess(true);
-      setOrderRef(`MAN-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`);
-    }, 1500);
+      setOrderRef(result.id);
+      return;
+    }
+
+    setIsSubmitting(false);
+    alert(t("Could not submit request. Please try again.", "অনুরোধ জমা দেওয়া যায়নি। আবার চেষ্টা করুন।"));
   };
 
   const resetForm = () => {
@@ -339,6 +357,7 @@ function PackagesContent() {
       email: "",
       address: "",
       area: "Kadomtoli",
+      referralCode: "",
     });
     setOrderSuccess(false);
     setIsModalOpen(false);
@@ -586,6 +605,18 @@ function PackagesContent() {
                         <span className="font-bold text-slate-900">৳{selectedPlan.price} BDT</span>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Refer / Promo Code", "রেফার / প্রোমো কোড")}</label>
+                    <input
+                      type="text"
+                      name="referralCode"
+                      value={formData.referralCode}
+                      onChange={handleInputChange}
+                      placeholder={t("optional", "ঐচ্ছিক")}
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
+                    />
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
