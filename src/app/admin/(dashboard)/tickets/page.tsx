@@ -33,19 +33,19 @@ export default function TicketsPage() {
     if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
     getSetting("tickets").then(saved => {
-      if (saved) { setTickets(saved as any); }
-      else { setSetting("tickets", defaultTickets as any); setTickets(defaultTickets); }
+      if (saved) { setTickets(saved as unknown as Ticket[]); }
+      else { setSetting("tickets", defaultTickets as unknown as Record<string, unknown>[]); setTickets(defaultTickets); }
     });
   }, [router]);
 
   const updateStatus = (id: string, status: "Assigned" | "Resolved") => {
     const updated = tickets.map(t => t.id === id ? { ...t, status } : t);
-    setTickets(updated); setSetting("tickets", updated as any);
+    setTickets(updated); setSetting("tickets", updated as unknown as Record<string, unknown>[]);
   };
   const deleteTicket = async (id: string) => {
     if (!confirm("Delete this ticket?")) return;
     const updated = tickets.filter(t => t.id !== id);
-    setTickets(updated); setSetting("tickets", updated as any);
+    setTickets(updated); setSetting("tickets", updated as unknown as Record<string, unknown>[]);
   };
 
   if (!auth) return null;
