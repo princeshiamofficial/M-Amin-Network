@@ -674,7 +674,7 @@ export default function Home() {
 
       {/* FAQ Section */}
       {faqs.filter(f => f.isPublished).length > 0 && (
-        <section className="w-full bg-slate-50 py-16 border-b border-slate-100 shadow-inner text-slate-900">
+        <section className="w-full bg-white pb-16 pt-4 border-b border-slate-100 shadow-inner text-slate-900 -mb-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-12">
               <h3 className="text-3xl font-extrabold text-slate-900">
