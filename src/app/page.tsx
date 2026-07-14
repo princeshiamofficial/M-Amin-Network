@@ -6,7 +6,7 @@ import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
-import * as Lucide from "lucide-react";
+import { getSetting } from "@/actions/content";
 
 interface Plan {
   speed: number;
@@ -118,22 +118,19 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const savedTestimonials = localStorage.getItem("testimonials");
-    if (savedTestimonials) {
-      try {
-        const parsed = JSON.parse(savedTestimonials);
-        // Map the admin keys to the frontend expectations, or use them directly if matching
-        setTestimonials(parsed.map((t: Record<string, unknown>) => ({
-          name: t.author,
-          role: t.role,
-          comment: t.text,
-          rating: t.rating,
-          isPublished: t.isPublished
+    getSetting("testimonials").then((saved) => {
+      if (saved) {
+        const list = saved as Record<string, unknown>[];
+        setTestimonials(list.map((t) => ({
+          name: (t.author as string) || "Anonymous",
+          role: (t.role as string) || "Customer",
+          comment: (t.text as string) || "",
+          rating: (t.rating as number) || 5,
+          isPublished: t.isPublished !== false,
+          src: t.image as string | undefined
         })));
-      } catch {
-        console.error("Failed to parse saved testimonials");
       }
-    }
+    });
   }, []);
 
   const handleClosePopup = () => {

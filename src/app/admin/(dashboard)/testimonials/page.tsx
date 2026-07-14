@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import * as Lucide from "lucide-react";
 
 interface Testimonial {
@@ -12,11 +13,12 @@ interface Testimonial {
   text: string;
   rating: number;
   isPublished: boolean;
+  image?: string;
 }
 
 const defaultTestimonials: Testimonial[] = [
-  { id: "1", author: "Mehan Ahmed", role: "Local Freelance Web Developer", text: "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!", rating: 5, isPublished: true },
-  { id: "2", author: "Kamrul Hasan", role: "Proprietor, Hasan Trading, Aganagar", text: "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.", rating: 5, isPublished: true },
+  { id: "1", author: "Mehan Ahmed", role: "Local Freelance Web Developer", text: "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!", rating: 5, isPublished: true, image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg" },
+  { id: "2", author: "Kamrul Hasan", role: "Proprietor, Hasan Trading, Aganagar", text: "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.", rating: 5, isPublished: true, image: "/6c55d74de82b7eee7127c3e2d4939b1f.jpg" },
 ];
 
 function ActionMenu({ t, onToggle, onEdit, onDelete }: { t: Testimonial, onToggle: () => void, onEdit: () => void, onDelete: () => void }) {
@@ -80,7 +82,8 @@ export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   
   const [isEditing, setIsEditing] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState<Partial<Testimonial>>({ rating: 5 });
+  const [currentTestimonial, setCurrentTestimonial] = useState<Partial<Testimonial>>({ rating: 5, image: "" });
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -97,6 +100,32 @@ export default function TestimonialsPage() {
       }
     });
   }, [router]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload-testimonial-image", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        setCurrentTestimonial((prev) => ({ ...prev, image: data.url }));
+      } else {
+        alert(data.error || "Upload failed");
+      }
+    } catch {
+      alert("Image upload error");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const saveTestimonial = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +150,7 @@ export default function TestimonialsPage() {
     
     setTestimonials(updated);
     setSetting("testimonials", updated as Testimonial[]);
-    setCurrentTestimonial({ rating: 5 });
+    setCurrentTestimonial({ rating: 5, image: "" });
     setIsEditing(false);
   };
 
@@ -131,7 +160,7 @@ export default function TestimonialsPage() {
   };
 
   const cancelEdit = () => {
-    setCurrentTestimonial({ rating: 5 });
+    setCurrentTestimonial({ rating: 5, image: "" });
     setIsEditing(false);
   };
 
@@ -185,6 +214,27 @@ export default function TestimonialsPage() {
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
               placeholder="e.g. Local Freelance Web Developer"
             />
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <label className="text-xs font-bold text-slate-700 block">Avatar Image</label>
+            <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-500 font-bold shrink-0 text-xs">
+                {currentTestimonial.image ? (
+                  <Image src={currentTestimonial.image} alt="" width={48} height={48} className="w-full h-full object-cover" />
+                ) : (
+                  "No Image"
+                )}
+              </div>
+              <div className="flex-1 flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-white file:text-slate-700 hover:file:bg-slate-100 cursor-pointer border border-slate-200/60 rounded-xl p-1 bg-white"
+                />
+                {uploading && <span className="text-[10px] text-slate-500 animate-pulse font-bold">Uploading...</span>}
+              </div>
+            </div>
           </div>
           <div className="space-y-1 md:col-span-2">
             <label className="text-xs font-bold text-slate-700 block">Review Text</label>
@@ -246,8 +296,27 @@ export default function TestimonialsPage() {
               {testimonials.map((t) => (
                 <tr key={t.id} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 pr-4">
-                    <span className="font-extrabold text-slate-800 block">{t.author}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">{t.role}</span>
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                        {t.image ? (
+                          <Image
+                            src={t.image}
+                            alt={t.author}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100 text-xs">
+                            {t.author.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <span className="font-extrabold text-slate-800 block">{t.author}</span>
+                        <span className="text-[10px] text-slate-500 font-mono">{t.role}</span>
+                      </div>
+                    </div>
                   </td>
                   <td className="py-3.5 pr-4 font-bold text-amber-500">{"★".repeat(t.rating)}</td>
                   <td className="py-3.5 pr-4 text-slate-600 max-w-sm truncate">{t.text}</td>
