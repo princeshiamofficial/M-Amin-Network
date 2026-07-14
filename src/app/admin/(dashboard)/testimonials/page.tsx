@@ -237,10 +237,14 @@ export default function TestimonialsPage() {
             </div>
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-xs font-bold text-slate-700 block">Review Text</label>
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-bold text-slate-700 block">Review Text</label>
+              <span className="text-[10px] text-slate-400 font-mono">{(currentTestimonial.text || "").length}/300</span>
+            </div>
             <textarea
               required
               rows={3}
+              maxLength={300}
               value={currentTestimonial.text || ""}
               onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, text: e.target.value })}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
