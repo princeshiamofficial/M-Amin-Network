@@ -126,7 +126,11 @@ export default function Home() {
   useEffect(() => {
     getSetting("home_sections").then((saved) => {
       if (saved) {
-        setHomeSections(saved as Record<string, boolean>);
+        const normalized: Record<string, boolean> = {};
+        for (const [k, v] of Object.entries(saved as Record<string, unknown>)) {
+          normalized[k] = v === true || v === 1 || v === "1";
+        }
+        setHomeSections(normalized);
       }
     });
   }, []);
