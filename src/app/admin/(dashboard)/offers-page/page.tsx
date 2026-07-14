@@ -114,13 +114,13 @@ export default function OffersPageAdmin() {
     }
     setAuth(true);
     getSetting("offers_page_content").then(s => {
-      if (s) setContent(s as any);
-      else setSetting("offers_page_content", defaultOffersPageContent as any);
+      if (s) setContent(s as unknown as OffersPageContent);
+      else setSetting("offers_page_content", defaultOffersPageContent as unknown as Record<string, unknown>);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("offers_page_content", content as any);
+    setSetting("offers_page_content", content as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
