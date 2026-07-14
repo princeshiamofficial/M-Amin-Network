@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-export default function MaintenanceWrapper({ children, isMaintenance }: { children: React.ReactNode; isMaintenance: boolean }) {
+export default function MaintenanceWrapper({ children, isMaintenance, maintenanceMessage }: { children: React.ReactNode; isMaintenance: boolean; maintenanceMessage?: string }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
@@ -29,8 +29,8 @@ export default function MaintenanceWrapper({ children, isMaintenance }: { childr
           <h1 className="text-[2.5rem] sm:text-[3.2rem] md:text-[3.8rem] font-semibold text-[#015296] text-center leading-[1.2] tracking-tight">
             This site is under<br />maintenance
           </h1>
-          <p className="text-[#63a1cb] text-lg sm:text-xl md:text-2xl mt-5 font-normal tracking-wide">
-            We&apos;re preparing to serve you better.
+          <p className="text-[#63a1cb] text-lg sm:text-xl md:text-2xl mt-5 font-normal tracking-wide text-center px-6 max-w-2xl leading-relaxed">
+            {maintenanceMessage || "We're preparing to serve you better."}
           </p>
 
           {/* SVG Plugs Illustration */}

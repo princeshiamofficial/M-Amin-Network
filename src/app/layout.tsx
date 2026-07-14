@@ -44,8 +44,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean | number } | null;
+  const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean | number; maintenanceMessage?: string } | null;
   const isMaintenance = !!sysConfig?.maintenanceMode;
+  const maintenanceMessage = sysConfig?.maintenanceMessage || "";
 
   return (
     <html
@@ -174,7 +175,7 @@ export default async function RootLayout({
         <script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.9vdPKhB0RUg.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/rs=AHpOoo97anj7zZ432JcN58tqJJp_A6WeOw/cb=gapi.loaded_0?le=scs" async />
       </head>
       <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
-        <MaintenanceWrapper isMaintenance={isMaintenance}>
+        <MaintenanceWrapper isMaintenance={isMaintenance} maintenanceMessage={maintenanceMessage}>
           <Navbar />
           <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>
           <Footer />
