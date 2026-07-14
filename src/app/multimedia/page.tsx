@@ -153,9 +153,9 @@ export default function Multimedia() {
                     <Image
                       src={portal.image}
                       alt={portal.name}
-                      width={100}
-                      height={100}
-                      className="object-cover aspect-square rounded-2xl max-w-[65%] max-h-[65%]"
+                      width={120}
+                      height={120}
+                      className="object-cover aspect-square rounded-2xl max-w-[75%] max-h-[75%]"
                     />
                     <p className="text-xs sm:text-sm font-extrabold text-slate-800 leading-tight line-clamp-2 px-1">
                       {portal.name}
