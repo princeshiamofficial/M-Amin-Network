@@ -13,7 +13,8 @@ import {
   ArrowDown,
   Plus,
   Trash2,
-  Menu
+  Menu,
+  Upload
 } from "lucide-react";
 
 interface FooterContent {
@@ -145,6 +146,7 @@ export default function TopbarFooterPage() {
   const [licenses, setLicenses] = useState<LicenseBadge[]>(defaultLicenses);
   const [phones, setPhones] = useState<string[]>(defaultPhones);
   const [activeSection, setActiveSection] = useState("menu");
+  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   // New item form states
   const [newLink, setNewLink] = useState<NavLink>({ nameEn: "", nameBn: "", href: "" });
@@ -223,6 +225,37 @@ export default function TopbarFooterPage() {
       }
     });
   }, [router]);
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("File is too large. Max allowed size is 15MB.");
+      return;
+    }
+
+    setIsUploadingPdf(true);
+    const fd = new FormData();
+    fd.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload-btrc-tariff", {
+        method: "POST",
+        body: fd,
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        toast.success("BTRC Approved Tariff PDF uploaded and saved successfully!");
+      } else {
+        toast.error(data.error || "File upload failed.");
+      }
+    } catch {
+      toast.error("File upload connection error.");
+    } finally {
+      setIsUploadingPdf(false);
+    }
+  };
 
   const saveAllConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1478,6 +1511,33 @@ export default function TopbarFooterPage() {
                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                     required
                   />
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-4 border-t border-slate-100 animate-fade-in">
+                <span className="text-xs font-black uppercase tracking-wider text-slate-800 block">BTRC Regulatory Documents</span>
+                <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <span className="text-xs font-bold text-slate-800 block">BTRC Approved Tariff Plan PDF</span>
+                      <span className="text-[10px] text-slate-400 block font-medium">Upload the official regulatory PDF document to serve on the website footer link.</span>
+                    </div>
+                    <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-655 cursor-pointer transition-all active:scale-95 shadow-sm">
+                      {isUploadingPdf ? (
+                        <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      <span>{isUploadingPdf ? "Uploading PDF..." : "Upload Tariff PDF"}</span>
+                      <input
+                        type="file"
+                        accept="application/pdf"
+                        className="hidden"
+                        onChange={handlePdfUpload}
+                        disabled={isUploadingPdf}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>

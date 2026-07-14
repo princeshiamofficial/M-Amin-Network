@@ -2,6 +2,7 @@
 import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
+import { useAdminSecurity } from "@/hooks/useAdminSecurity";
 import { getSetting, setSetting } from "@/actions/content";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -195,6 +196,11 @@ export default function OffersPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const { canAdd, canEdit, canDelete } = useAdminSecurity();
+  const allowAdd = canAdd("/admin/offers");
+  const allowEdit = canEdit("/admin/offers");
+  const allowDelete = canDelete("/admin/offers");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Search & Filter State
@@ -509,15 +515,17 @@ export default function OffersPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            resetPromoForm();
-            setIsPromoModalOpen(true);
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg font-semibold text-xs transition duration-200 cursor-pointer active:scale-95 shrink-0"
-        >
-          + New Campaign
-        </button>
+        {allowAdd && (
+          <button
+            onClick={() => {
+              resetPromoForm();
+              setIsPromoModalOpen(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg font-semibold text-xs transition duration-200 cursor-pointer active:scale-95 shrink-0"
+          >
+            + New Campaign
+          </button>
+        )}
       </div>
 
       {/* ── TOOLBAR ── */}
@@ -594,15 +602,17 @@ export default function OffersPage() {
                 No promotions match your search filter settings. Create a new campaign to begin.
               </p>
             </div>
-            <button
-              onClick={() => {
-                resetPromoForm();
-                setIsPromoModalOpen(true);
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 inline-flex items-center gap-1 cursor-pointer"
-            >
-              + Create Campaign
-            </button>
+            {allowAdd && (
+              <button
+                onClick={() => {
+                  resetPromoForm();
+                  setIsPromoModalOpen(true);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold transition-all shadow-md active:scale-95 inline-flex items-center gap-1 cursor-pointer"
+              >
+                + Create Campaign
+              </button>
+            )}
           </div>
         ) : (
           /* Main Table */
@@ -649,65 +659,75 @@ export default function OffersPage() {
                       {new Date(createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                     <td className="text-right pr-8">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button className="text-gray-550 text-2xl font-bold hover:text-slate-800 transition-colors p-1 rounded-md hover:bg-slate-100 cursor-pointer focus:outline-none">
-                            ⋮
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-30 font-sans">
-                          <DropdownMenuItem
-                            onClick={() => setSelectedOfferForPreview({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms, note, status, createdAt })}
-                            className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                          >
-                            <Eye className="w-3.5 h-3.5 text-slate-400" />
-                            <span>View Detail</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setPromoFormData({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms: terms || "", note: note || "", status, createdAt, htmlDetails: htmlDetails || "" });
-                              setPromoFormIndex(originalIndex);
-                              setPromoImageFile(null);
-                              setPromoImagePreview(imageUrl || "");
-                              setIsPromoModalOpen(true);
-                            }}
-                            className="px-3.5 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                          >
-                            <Pencil className="w-3.5 h-3.5 text-brand-blue/80" />
-                            <span>Edit Campaign</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDuplicatePromoOffer({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms, note, status, createdAt })}
-                            className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                          >
-                            <Copy className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Duplicate</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleTogglePause(originalIndex)}
-                            className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                          >
-                            {status === "Active" ? (
-                              <>
-                                <Pause className="w-3.5 h-3.5 text-slate-400" />
-                                <span>Pause</span>
-                              </>
-                            ) : (
-                              <>
-                                <Play className="w-3.5 h-3.5 text-emerald-550" />
-                                <span>Resume</span>
-                              </>
+                      {(allowEdit || allowDelete || allowAdd) && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="text-gray-550 text-2xl font-bold hover:text-slate-800 transition-colors p-1 rounded-md hover:bg-slate-100 cursor-pointer focus:outline-none">
+                              ⋮
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-30 font-sans">
+                            <DropdownMenuItem
+                              onClick={() => setSelectedOfferForPreview({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms, note, status, createdAt })}
+                              className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-slate-400" />
+                              <span>View Detail</span>
+                            </DropdownMenuItem>
+                            {allowEdit && (
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setPromoFormData({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms: terms || "", note: note || "", status, createdAt, htmlDetails: htmlDetails || "" });
+                                  setPromoFormIndex(originalIndex);
+                                  setPromoImageFile(null);
+                                  setPromoImagePreview(imageUrl || "");
+                                  setIsPromoModalOpen(true);
+                                }}
+                                className="px-3.5 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                              >
+                                <Pencil className="w-3.5 h-3.5 text-brand-blue/80" />
+                                <span>Edit Campaign</span>
+                              </DropdownMenuItem>
                             )}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setDeleteConfirmIndex(originalIndex)}
-                            className="px-3.5 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-red-650/80" />
-                            <span>Delete</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            {allowAdd && (
+                              <DropdownMenuItem
+                                onClick={() => handleDuplicatePromoOffer({ id, title, badge, badgeColor, details, code, validUntil, imageUrl, terms, note, status, createdAt })}
+                                className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                              >
+                                <Copy className="w-3.5 h-3.5 text-slate-400" />
+                                <span>Duplicate</span>
+                              </DropdownMenuItem>
+                            )}
+                            {allowEdit && (
+                              <DropdownMenuItem
+                                onClick={() => handleTogglePause(originalIndex)}
+                                className="px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                              >
+                                {status === "Active" ? (
+                                  <>
+                                    <Pause className="w-3.5 h-3.5 text-slate-400" />
+                                    <span>Pause</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="w-3.5 h-3.5 text-emerald-550" />
+                                    <span>Resume</span>
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                            )}
+                            {allowDelete && (
+                              <DropdownMenuItem
+                                onClick={() => setDeleteConfirmIndex(originalIndex)}
+                                className="px-3.5 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-red-650/80" />
+                                <span>Delete</span>
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </td>
                   </TableRow>
                 );

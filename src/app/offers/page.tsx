@@ -5,7 +5,53 @@ import { getSetting, setSetting, submitClaimAction } from "@/actions/content";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
-import { defaultOffersPageContent } from "@/app/admin/(dashboard)/offers-page/page";
+const defaultOffersPageContent = {
+  str1En: "New Connection", str1Bn: "নতুন সংযোগ",
+  str2En: "Best Value", str2Bn: "সেরা মূল্য",
+  str3En: "Gamer Special", str3Bn: "গেমার স্পেশাল",
+  str4En: "Community Deal", str4Bn: "কমিউনিটি ডিল",
+  str5En: "Zero Installation Fee", str5Bn: "বিনামূল্যে ইনস্টলেশন",
+  str6En: "Pay 10 Months, Get 12", str6Bn: "১০ মাস দিন, ১২ মাস পান",
+  str7En: "Free Public IP for Gamers", str7Bn: "গেমারদের জন্য বিনামূল্যে পাবলিক আইপি",
+  str8En: "Refer a Friend", str8Bn: "বন্ধুকে রেফার করুন",
+  str9En: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).", str9Bn: "যেকোনো ২০ এমবিপিএস বা তার বেশি হোম ইন্টারনেট প্যাকেজে ন্যূনতম ৬ মাসের চুক্তিতে সাবস্ক্রাইব করুন এবং স্ট্যান্ডার্ড ইনস্টলেশন ও অপটিক্যাল ফাইবার লাইন সংযোগ সম্পূর্ণ বিনামূল্যে পান (৳১,০০০ BDT সাশ্রয়)।",
+  str10En: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).", str10Bn: "যেকোনো হোম ব্রডব্যান্ড বা গেমার প্যাক প্ল্যানে ১০ মাসের অগ্রিম পেমেন্ট করুন এবং অতিরিক্ত ২ মাস সম্পূর্ণ বিনামূল্যে পান (৳৩,০০০ BDT পর্যন্ত সাশ্রয়)।",
+  str11En: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).", str11Bn: "৩০ এমবিপিএস গেমার প্যাক বা তার বেশিতে সাবস্ক্রাইব করুন এবং লবি হোস্টিং ও সর্বনিম্ন পিং পাওয়ার জন্য বিনামূল্যে একটি ডেডিকেটেড স্ট্যাটিক পাবলিক আইপি পান (মাসে ৳১৫০ সাশ্রয়)।",
+  str12En: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.", str12Bn: "দক্ষিণ কেরানীগঞ্জে একজন প্রতিবেশী বা বন্ধুকে রেফার করুন। তাদের সংযোগ সক্রিয় হলে আপনি এবং আপনার রেফার করা বন্ধু উভয়ই পরবর্তী মাসের ইন্টারনেট বিলে ৫০% ছাড় পাবেন।",
+  str13En: "Valid Until", str13Bn: "মেয়াদ শেষ",
+  str14En: "Ongoing Promotion", str14Bn: "চলমান অফার",
+  str15En: "Claim Offer", str15Bn: "অফার দাবি করুন",
+  str16En: "Learn More", str16Bn: "আরও জানুন",
+  str17En: "Active Campaigns", str17Bn: "সক্রিয় অফার",
+  str18En: "& Promotions", str18Bn: "ও প্রমোশন",
+  str19En: "Available offers for home and corporate subscribers.", str19Bn: "হোম ও কর্পোরেট গ্রাহকদের জন্য উপলব্ধ অফার।",
+  str20En: "Monsoon Campaigns", str20Bn: "বর্ষা মৌসুমী ক্যাম্পেইন",
+  str21En: "& Discounts", str21Bn: "ও ছাড়",
+  str22En: "Unlock high-speed splicing broadband peering plans at zero installation fees.", str22Bn: "শূন্য ইনস্টলেশন ফি-তে হাই-স্পিড ব্রডব্যান্ড পিয়ারিং প্ল্যান আনলক করুন।",
+  str23En: "All Offers", str23Bn: "সকল অফার",
+  str24En: "Home Packages", str24Bn: "হোম প্যাকেজ",
+  str25En: "Gamer Packs", str25Bn: "গেমার প্যাক",
+  str26En: "Corporate Plans", str26Bn: "কর্পোরেট প্ল্যান",
+  str27En: "New Connections", str27Bn: "নতুন সংযোগ",
+  str28En: "Referral Deals", str28Bn: "রেফারেল ডিল",
+  str29En: "No active offers at this time.", str29Bn: "এই মুহূর্তে কোনো সক্রিয় অফার নেই।",
+  str30En: "Check back soon for new campaigns.", str30Bn: "নতুন ক্যাম্পেইনের জন্য শীঘ্রই দেখুন।",
+  str31En: "Code", str31Bn: "কোড",
+  str32En: "Copy Code", str32Bn: "কোড কপি করুন",
+  str33En: "Claim This Offer", str33Bn: "এই অফার দাবি করুন",
+  str34En: "You are claiming promo code", str34Bn: "আপনি প্রমো কোড দাবি করছেন",
+  str35En: "Full Name", str35Bn: "পূর্ণ নাম",
+  str36En: "Phone Number", str36Bn: "মোবাইল নম্বর",
+  str37En: "Your Address", str37Bn: "আপনার ঠিকানা",
+  str38En: "Submitting...", str38Bn: "জমা দেওয়া হচ্ছে...",
+  str39En: "Submit Claim", str39Bn: "দাবি জমা দিন",
+  str40En: "Claim Submitted!", str40Bn: "দাবি জমা হয়েছে!",
+  str41En: "Your claim for", str41Bn: "আপনার দাবি",
+  str42En: "has been registered. Our team will contact you shortly.", str42Bn: "নিবন্ধিত হয়েছে। আমাদের দল শীঘ্রই আপনার সাথে যোগাযোগ করবে।",
+  str43En: "A coordinator will verify your subscription eligibility and activate the promotional benefit within 24 hours.", str43Bn: "একজন সমন্বয়কারী আপনার সাবস্ক্রিপশন যোগ্যতা যাচাই করবেন এবং ২৪ ঘণ্টার মধ্যে প্রচারমূলক সুবিধা সক্রিয় করবেন।",
+  str44En: "Close", str44Bn: "বন্ধ করুন",
+};
+import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface PromoOffer {
   title: string;
@@ -54,11 +100,15 @@ const normalizePromoOffers = (offers: unknown): PromoOffer[] => {
 
 export default function Offers() {
   const [pageContent, setPageContent] = React.useState(defaultOffersPageContent);
+  const [headerData, setHeaderData] = React.useState<PageHeaderData>(defaultPageHeaders);
   React.useEffect(() => {
     const s = localStorage.getItem("offers_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
+    getSetting("page_headers").then(saved => {
+      if (saved) setHeaderData(saved as PageHeaderData);
+    });
   }, []);
 
   const lang = useTranslation();
@@ -188,23 +238,40 @@ export default function Offers() {
 
   return (
     <div className="w-full grow relative text-left">
-      {/* Top Section Header with Background Image */}
+      {/* Top Section Header with Background asset */}
       <div 
-        className="w-full relative py-6 sm:py-10 bg-cover bg-center bg-no-repeat border-b border-brand-border/40"
-        style={{ backgroundImage: "url('/offer.jpg')" }}
+        className="w-full relative py-6 sm:py-10 border-b border-brand-border/40 overflow-hidden bg-slate-950"
       >
-        <div className="absolute inset-0 bg-brand-dark/30 mix-blend-multiply pointer-events-none" />
-        <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/90 pointer-events-none" />
+        {/* Background video/image */}
+        <div className="absolute inset-0 z-0">
+          {headerData.offers_bg?.endsWith(".mp4") ? (
+            <video
+              autoPlay
+              loop
+              muted={true}
+              playsInline
+              className="w-full h-full object-cover opacity-50"
+            >
+              <source src={headerData.offers_bg} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="w-full h-full bg-cover bg-center opacity-50"
+              style={{ backgroundImage: `url('${headerData.offers_bg}')` }}
+            />
+          )}
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
+        </div>
         
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-0 text-center w-full block drop-shadow-md">
-            {t(pageContent.str20En, pageContent.str20Bn)}{" "}
+            {t(headerData.offers_title_en, headerData.offers_title_bn)}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t(pageContent.str21En, pageContent.str21Bn)}
+              {t(headerData.offers_title_highlight_en, headerData.offers_title_highlight_bn)}
             </span>
           </h1>
           <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-            {t(pageContent.str22En, pageContent.str22Bn)}
+            {t(headerData.offers_subtitle_en, headerData.offers_subtitle_bn)}
           </p>
         </div>
       </div> {/* Close Top Section Wrapper */}

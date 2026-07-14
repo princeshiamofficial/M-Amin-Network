@@ -4,7 +4,52 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { submitPaymentAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
-import { defaultBillPaymentPageContent } from "@/app/admin/(dashboard)/bill-payment-page/page";
+const defaultBillPaymentPageContent = {
+  str1En: "Home Standard", str1Bn: "হোম স্ট্যান্ডার্ড",
+  str2En: "Gamer Professional", str2Bn: "গেমার প্রফেশনাল",
+  str3En: "Home Elite", str3Bn: "হোম এলিট",
+  str4En: "July", str4Bn: "জুলাই",
+  str5En: "Demo Subscriber", str5Bn: "ডেমো গ্রাহক",
+  str6En: "Quick Pay", str6Bn: "কুইক পে",
+  str7En: "Instantly make your payment using a variety of available facilities, such as bKash, MasterCard, Visa card, and other payment methods.", str7Bn: "বিকাশ, মাস্টারকার্ড, ভিসা কার্ড এবং অন্যান্য পেমেন্ট চ্যানেল ব্যবহার করে তাৎক্ষণিকভাবে আপনার পেমেন্ট করুন।",
+  str8En: "Customer ID", str8Bn: "গ্রাহক আইডি",
+  str9En: "Ex: 123456", str9Bn: "উদা: 123456",
+  str10En: "Verifying...", str10Bn: "যাচাই করা হচ্ছে...",
+  str11En: "Pay Now", str11Bn: "পে নাও",
+  str12En: "Account Not Found", str12Bn: "অ্যাকাউন্ট পাওয়া যায়নি",
+  str13En: "No billing record found for this Client ID. Please check the ID and try again.", str13Bn: "এই ক্লায়েন্ট আইডিতে কোনো বিলিং রেকর্ড পাওয়া যায়নি। আইডিটি পুনরায় পরীক্ষা করুন।",
+  str14En: "Try Again", str14Bn: "আবার চেষ্টা করুন",
+  str15En: "Bill Payment", str15Bn: "বিল পরিশোধ",
+  str16En: "Pay your monthly broadband bill securely online.", str16Bn: "নিরাপদে অনলাইনে আপনার মাসিক ব্রডব্যান্ড বিল পরিশোধ করুন।",
+  str17En: "Secure Payment", str17Bn: "নিরাপদ পেমেন্ট",
+  str18En: "Client ID", str18Bn: "ক্লায়েন্ট আইডি",
+  str19En: "Phone", str19Bn: "ফোন",
+  str20En: "Change Account", str20Bn: "অ্যাকাউন্ট পরিবর্তন",
+  str21En: "Package", str21Bn: "প্যাকেজ",
+  str22En: "Monthly Bill", str22Bn: "মাসিক বিল",
+  str23En: "Per Month", str23Bn: "প্রতি মাসে",
+  str24En: "Due Amount", str24Bn: "বকেয়া পরিমাণ",
+  str25En: "Due by", str25Bn: "মেয়াদ",
+  str26En: "Select Payment Gateway", str26Bn: "পেমেন্ট গেটওয়ে নির্বাচন করুন",
+  str27En: "All payments are secured with 256-bit SSL encryption. Your card details are never stored on our servers.", str27Bn: "সমস্ত পেমেন্ট ২৫৬-বিট SSL এনক্রিপশন দ্বারা সুরক্ষিত। আপনার কার্ডের তথ্য কখনও আমাদের সার্ভারে সংরক্ষণ করা হয় না।",
+  str28En: "Processing Payment...", str28Bn: "পেমেন্ট প্রক্রিয়া করা হচ্ছে...",
+  str29En: "Pay ৳", str29Bn: "পরিশোধ করুন ৳",
+  str30En: "BDT Now", str30Bn: "BDT এখনই",
+  str31En: "Account Up to Date", str31Bn: "অ্যাকাউন্ট আপডেট",
+  str32En: "Account", str32Bn: "অ্যাকাউন্ট",
+  str33En: "has no outstanding dues.", str33Bn: "এর কোনো বকেয়া নেই।",
+  str34En: "Your next payment is due by", str34Bn: "পরবর্তী পেমেন্টের তারিখ",
+  str35En: "Check Another Account", str35Bn: "অন্য অ্যাকাউন্ট পরীক্ষা করুন",
+  str36En: "Payment Successful!", str36Bn: "পেমেন্ট সফল!",
+  str37En: "Thank you,", str37Bn: "ধন্যবাদ,",
+  str38En: "Transaction ID", str38Bn: "ট্রানজেকশন আইডি",
+  str39En: "Gateway", str39Bn: "গেটওয়ে",
+  str40En: "Amount Paid", str40Bn: "পরিশোধিত পরিমাণ",
+  str41En: "Status", str41Bn: "স্ট্যাটাস",
+  str42En: "Confirmed", str42Bn: "নিশ্চিত",
+  str43En: "Pay Another Bill", str43Bn: "আরেকটি বিল পরিশোধ করুন",
+  str44En: "Download Receipt", str44Bn: "রসিদ ডাউনলোড করুন",
+};
 
 interface CustomerBill {
   clientId: string;

@@ -3,7 +3,66 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
-import { defaultPortalPageContent } from "@/app/admin/(dashboard)/portal-page/page";
+const defaultPortalPageContent = {
+  str1En: "Standard Fiber", str1Bn: "স্ট্যান্ডার্ড ফাইবার",
+  str2En: "Gamer Pro Max", str2Bn: "গেমার প্রো ম্যাক্স",
+  str3En: "Corporate Ultra", str3Bn: "কর্পোরেট আল্ট্রা",
+  str4En: "Upgraded Pack", str4Bn: "আপগ্রেডেড প্যাক",
+  str5En: "Active", str5Bn: "সক্রিয়",
+  str6En: "Expired", str6Bn: "মেয়াদোত্তীর্ণ",
+  str7En: "Suspended", str7Bn: "স্থগিত",
+  str8En: "Days", str8Bn: "দিন",
+  str9En: "Hours", str9Bn: "ঘণ্টা",
+  str10En: "July", str10Bn: "জুলাই",
+  str11En: "Guest Member", str11Bn: "অতিথি সদস্য",
+  str12En: "Subscriber record not found.", str12Bn: "গ্রাহকের রেকর্ড পাওয়া যায়নি।",
+  str13En: "Subscriber Portal", str13Bn: "গ্রাহক পোর্টাল",
+  str14En: "Manage your connection settings, track live usage, and pay bills.", str14Bn: "আপনার কানেকশন সেটিংস পরিচালনা করুন, লাইভ ব্যবহার ট্র্যাক করুন এবং বিল পরিশোধ করুন।",
+  str15En: "Subscriber ID", str15Bn: "গ্রাহক আইডি",
+  str16En: "Portal Password", str16Bn: "পোর্টাল পাসওয়ার্ড",
+  str17En: "Logging in...", str17Bn: "লগইন হচ্ছে...",
+  str18En: "Sign In Securely", str18Bn: "নিরাপদে লগইন করুন",
+  str19En: "Forgot your password? Contact M-Amin Support desk.", str19Bn: "পাসওয়ার্ড ভুলে গেছেন? এম-আমিন সাপোর্ট ডেস্কে যোগাযোগ করুন।",
+  str20En: "Log Out", str20Bn: "লগ আউট",
+  str21En: "Connection Speed", str21Bn: "সংযোগের গতি",
+  str22En: "SPEED", str22Bn: "গতি",
+  str23En: "ONU RX Power", str23Bn: "ONU আরএক্স পাওয়ার",
+  str24En: "Optical fiber power level", str24Bn: "অপটিক্যাল ফাইবার পাওয়ার লেভেল",
+  str25En: "SIGNAL", str25Bn: "সিগন্যাল",
+  str26En: "Continuous Uptime", str26Bn: "অবিচ্ছিন্ন আপটাইম",
+  str27En: "Current session duration", str27Bn: "চলতি সেশনের সময়কাল",
+  str28En: "UPTIME", str28Bn: "আপটাইম",
+  str29En: "Outstanding Dues", str29Bn: "বকেয়া বিল",
+  str30En: "No outstanding payments", str30Bn: "কোন বকেয়া বিল নেই",
+  str31En: "Payment due date:", str31Bn: "বিল পরিশোধের শেষ তারিখ:",
+  str32En: "BILLING", str32Bn: "বিলিং",
+  str33En: "Real-time Throughput", str33Bn: "রিয়েল-টাইম থ্রুপুট",
+  str34En: "Live bandwidth tracking metrics in Megabits per second (Mbps).", str34Bn: "মেগাবিট প্রতি সেকেন্ড (Mbps) এ লাইভ ব্যান্ডউইথ ট্র্যাকিং পরিমাপ।",
+  str35En: "Download:", str35Bn: "ডাউনলোড:",
+  str36En: "Upload:", str36Bn: "আপলোড:",
+  str37En: "Max speed allocation", str37Bn: "সর্বোচ্চ গতি বরাদ্দ",
+  str38En: "Average local peering usage", str38Bn: "গড় লোকাল পিয়ারিং ব্যবহার",
+  str39En: "Idle state throughput", str39Bn: "আইডল স্টেট থ্রুপুট",
+  str40En: "Metrics update frequency: 2 seconds", str40Bn: "পরিমাপ আপডেট ফ্রিকোয়েন্সি: ২ সেকেন্ড",
+  str41En: "Active connection interface: FTTH Optic Fiber", str41Bn: "সক্রিয় সংযোগ ইন্টারফেস: FTTH অপটিক ফাইবার",
+  str42En: "Unpaid Subscription Invoice", str42Bn: "অপ পরিশোধিত সাবস্ক্রিপশন ইনভয়েস",
+  str43En: "You have a balance of", str43Bn: "আপনার বকেয়া পরিমাণ",
+  str44En: "remaining.", str44Bn: "অবशिष्ट আছে।",
+  str45En: "Pay Outstanding Bill", str45Bn: "বকেয়া বিল পরিশোধ করুন",
+  str46En: "Upgrade Connectivity", str46Bn: "কানেক্টিভিটি আপগ্রেড করুন",
+  str47En: "Instantly upgrade your optical fiber speed dynamically without NOC intervention.", str47Bn: "এনওসি-র হস্তক্ষেপ ছাড়াই তাত্ক্ষণিকভাবে আপনার অপটিক্যাল ফাইবারের গতি আপগ্রেড করুন।",
+  str48En: "Select target package speed", str48Bn: "টার্গেট প্যাকেজ গতি নির্বাচন করুন",
+  str49En: "30 Mbps - Regular Peering (৳800 BDT/month)", str49Bn: "৩০ এমবিপিএস - রেগুলার পিয়ারিং (৳৮০০ বিডিটি/মাস)",
+  str50En: "50 Mbps - Premium Peering (৳1200 BDT/month)", str50Bn: "৫০ এমবিপিএস - প্রিমিয়াম পিয়ারিং (৳১২০০ বিডিটি/মাস)",
+  str51En: "60 Mbps - Ultimate Peering (৳1500 BDT/month)", str51Bn: "৬০ এমবিপিএস - আল্টিমেট পিয়ারিং (৳১৫০০ বিডিটি/মাস)",
+  str52En: "100 Mbps - Dedicated Splice (৳2500 BDT/month)", str52Bn: "১০০ এমবিপিএস - ডেডিকেটেড স্প্লাইস (৳২৫০০ বিডিটি/মাস)",
+  str53En: "Provisioning speed upgrade...", str53Bn: "স্পিড আপগ্রেড প্রোভিশনিং হচ্ছে...",
+  str54En: "Confirm Package Upgrade", str54Bn: "প্যাকেজ আপগ্রেড নিশ্চিত করুন",
+  str55En: "Speed Provisioned Successfully", str55Bn: "গতি সফলভাবে প্রোভিশন করা হয়েছে",
+  str56En: "Your bandwidth allocation has been successfully upgraded to", str56Bn: "আপনার ব্যান্ডউইথ বরাদ্দ সফলভাবে আপগ্রেড করা হয়েছে",
+  str57En: "Return to Dashboard", str57Bn: "ড্যাশবোর্ডে ফিরে যান",
+};
+import { verifyPortalLoginAction } from "@/actions/content";
 
 interface UserProfile {
   name: string;
@@ -117,21 +176,44 @@ export default function Portal() {
     return () => clearInterval(interval);
   }, [isLoggedIn, profile]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
     setLoggingIn(true);
 
-    setTimeout(() => {
+    try {
+      const result = await verifyPortalLoginAction(clientId, password);
       setLoggingIn(false);
-      const idKey = clientId.toLowerCase().trim();
-      
-      if (mockUsers[idKey]) {
-        setProfile(mockUsers[idKey]);
+
+      if (result.success && result.subscriber) {
+        const sub = result.subscriber;
+        const planName = (sub.planName as string) || "Home Standard";
+        const name = (sub.name as string) || "Subscriber";
+        const id = (sub.id as string) || "";
+        const status = (sub.status as string) || "Active";
+        
+        const speedVal = planName.match(/\d+\s*Mbps/i)?.[0] || "30 Mbps";
+        setProfile({
+          name,
+          clientId: id,
+          planName,
+          speed: speedVal,
+          status: status === "Active" ? "Active" : "Suspended",
+          dueAmount: status === "Active" ? 0 : 1200,
+          dueDate: "10 July 2026",
+          rxPower: "-19.2 dBm",
+          uptime: status === "Active" ? "4 Days, 8 Hours" : "0 Hours",
+        });
         setIsLoggedIn(true);
+      } else if (result.error === "Incorrect password.") {
+        setErrorMsg("Incorrect password. Please try again.");
       } else {
-        // Create a default subscriber profile if client ID doesn't exist
-        if (idKey.startsWith("man-")) {
+        // Fallback to mock data for backward compatibility
+        const idKey = clientId.toLowerCase().trim();
+        if (mockUsers[idKey]) {
+          setProfile(mockUsers[idKey]);
+          setIsLoggedIn(true);
+        } else if (idKey.startsWith("man-")) {
           const generatedProfile: UserProfile = {
             name: t(pageContent.str11En, pageContent.str11Bn),
             clientId: clientId.toUpperCase(),
@@ -146,10 +228,13 @@ export default function Portal() {
           setProfile(generatedProfile);
           setIsLoggedIn(true);
         } else {
-          setErrorMsg(t(pageContent.str12En, pageContent.str12Bn));
+          setErrorMsg(result.error || t(pageContent.str12En, pageContent.str12Bn));
         }
       }
-    }, 1200);
+    } catch {
+      setLoggingIn(false);
+      setErrorMsg("An authentication error occurred.");
+    }
   };
 
   const handleUpgradeSubmit = (e: React.FormEvent) => {

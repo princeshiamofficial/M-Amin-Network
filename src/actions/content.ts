@@ -31,7 +31,8 @@ const OBJECT_KEYS = [
   "portal_page_content",
   "about_content",
   "contact_content",
-  "complaint_content_guidelines"
+  "complaint_content_guidelines",
+  "page_headers"
 ];
 
 function isObjectKey(key: string): boolean {
@@ -181,7 +182,7 @@ async function getSettingInternal(key: string): Promise<unknown> {
  */
 export async function getSetting(key: string): Promise<unknown> {
   const restrictedKeys = [
-    "admin_auth", "user", "users", "admin_users", 
+    "admin_auth", "user", "users", "admin_users", "admin_roles",
     "security_logs", "complaints", "job_applications", 
     "payments", "tickets", "claims", "package_requests", 
     "contact_messages", "subscribers"
@@ -294,6 +295,7 @@ async function setSettingInternal(key: string, data: unknown): Promise<boolean> 
             if (typeof val === 'number') type = 'DOUBLE';
             else if (typeof val === 'boolean') type = 'BOOLEAN';
             else if (k === 'id') type = 'VARCHAR(255)';
+            else if (typeof val === 'string' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) type = 'LONGTEXT';
             await pool.query(`ALTER TABLE \`${tableName}\` ADD COLUMN \`${k}\` ${type}`);
             existingCols.push(k);
             colTypes[k] = type.toLowerCase();
@@ -308,6 +310,7 @@ async function setSettingInternal(key: string, data: unknown): Promise<boolean> 
              if (typeof val === 'number') type = 'DOUBLE';
              else if (typeof val === 'boolean') type = 'BOOLEAN';
              if (k === 'id') type = 'VARCHAR(255) PRIMARY KEY';
+             else if (typeof val === 'string' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) type = 'LONGTEXT';
              return `\`${k}\` ${type}`;
           });
           
@@ -337,13 +340,19 @@ async function setSettingInternal(key: string, data: unknown): Promise<boolean> 
           item.id = generatedId;
         }
 
-        // 2. Upgrade VARCHAR columns to TEXT dynamically if value exceeds 255 characters
+        // 2. Upgrade VARCHAR/TEXT columns dynamically if value exceeds 255 or 60000 characters
         for (const [k, val] of Object.entries(item)) {
           if (existingCols.includes(k)) {
             const currentType = colTypes[k];
-            if (currentType && currentType.includes('varchar') && typeof val === 'string' && val.length > 255) {
-              await pool.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${k}\` TEXT`);
-              colTypes[k] = 'text';
+            if (typeof val === 'string') {
+              if (currentType && currentType.includes('varchar') && val.length > 255) {
+                const targetType = (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64")) ? 'LONGTEXT' : 'TEXT';
+                await pool.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${k}\` ${targetType}`);
+                colTypes[k] = targetType.toLowerCase();
+              } else if (currentType && currentType === 'text' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) {
+                await pool.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${k}\` LONGTEXT`);
+                colTypes[k] = 'longtext';
+              }
             }
           }
         }
@@ -405,7 +414,7 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
   console.log(`[setSetting] key=${key} authenticated=${authenticated}`);
   
   const restrictedKeys = [
-    "admin_auth", "user", "users", "admin_users", 
+    "admin_auth", "user", "users", "admin_users", "admin_roles",
     "security_logs", "complaints", "job_applications", 
     "payments", "tickets", "claims", "package_requests", 
     "contact_messages", "subscribers"
@@ -437,10 +446,17 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
   const success = await setSettingInternal(key, data);
   if (success && key === "system_config") {
     try {
-      const config = data as { maintenanceMode?: boolean | number; maintenanceMessage?: string };
+      const config = data as { 
+        maintenanceMode?: boolean | number; 
+        maintenanceMessage?: string;
+        popupEnabled?: boolean;
+        popupImage?: string;
+      };
       broadcastMaintenance({
         isMaintenance: !!config.maintenanceMode,
-        maintenanceMessage: config.maintenanceMessage || ""
+        maintenanceMessage: config.maintenanceMessage || "",
+        popupEnabled: config.popupEnabled !== false,
+        popupImage: config.popupImage || "/popup.webp"
       });
     } catch (e) {
       console.warn("WebSocket broadcast failed:", e);
@@ -453,7 +469,7 @@ function hashPasswordServer(password: string): string {
   return createHash("sha256").update(password).digest("hex");
 }
 
-export async function verifyAdminLoginAction(usernameInput: string, passwordInput: string): Promise<{ success: boolean; error?: string }> {
+export async function verifyAdminLoginAction(usernameInput: string, passwordInput: string): Promise<{ success: boolean; error?: string; username?: string; role?: string }> {
   try {
     const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
     if (!savedAuth) {
@@ -461,27 +477,71 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
     }
 
     const cleanUser = usernameInput.trim().toLowerCase();
-    const validEmail = savedAuth.email.toLowerCase();
-    const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
-
     const hashedInput = hashPasswordServer(passwordInput);
     const isPasswordValid = hashedInput === savedAuth.password;
 
-    if ((cleanUser === validUsername || cleanUser === validEmail) && isPasswordValid) {
-      const cookieStore = await cookies();
-      const headersList = await headers();
-      const host = headersList.get("host") || "";
-      const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
-      const secure = process.env.NODE_ENV === "production" && !isLocalhost;
+    if (isPasswordValid) {
+      const validEmail = savedAuth.email.toLowerCase();
+      const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
-      cookieStore.set("admin_session", "secure_admin_logged_in_token_713", {
-        httpOnly: true,
-        secure,
-        sameSite: "strict",
-        maxAge: 60 * 60 * 2, // 2 hours
-        path: "/",
-      });
-      return { success: true };
+      let matchedUsername = "";
+      let matchedRole = "";
+
+      if (cleanUser === validUsername || cleanUser === validEmail) {
+        matchedUsername = "admin";
+        matchedRole = "Super Administrator";
+      } else {
+        const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+        const userList = Array.isArray(savedUsers) ? savedUsers : [];
+        const matchedUser = userList.find(u => {
+          const uName = String(u.username || "").trim().toLowerCase();
+          const uEmail = String(u.email || "").trim().toLowerCase();
+          return uName === cleanUser || uEmail === cleanUser;
+        });
+
+        if (matchedUser) {
+          if (matchedUser.status === "Banned") {
+            return { success: false, error: "This administrative user account is banned." };
+          }
+          matchedUsername = String(matchedUser.username || "");
+          matchedRole = String(matchedUser.role || "Support Staff");
+        }
+      }
+
+      if (matchedUsername) {
+        // Update lastLogin in admin_users
+        try {
+          const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+          const userList = Array.isArray(savedUsers) ? savedUsers : [];
+          const matchedUser = userList.find(u => {
+            const uName = String(u.username || "").trim().toLowerCase();
+            const uEmail = String(u.email || "").trim().toLowerCase();
+            return uName === matchedUsername.toLowerCase() || uEmail === matchedUsername.toLowerCase();
+          });
+          if (matchedUser) {
+            matchedUser.lastLogin = new Date().toLocaleString("en-US", { hour12: true });
+            await setSettingInternal("admin_users", userList);
+          }
+        } catch (e) {
+          console.warn("Failed to update admin user lastLogin:", e);
+        }
+
+        const cookieStore = await cookies();
+        const headersList = await headers();
+        const host = headersList.get("host") || "";
+        const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
+        const secure = process.env.NODE_ENV === "production" && !isLocalhost;
+
+        cookieStore.set("admin_session", "secure_admin_logged_in_token_713", {
+          httpOnly: true,
+          secure,
+          sameSite: "strict",
+          maxAge: 60 * 60 * 2, // 2 hours
+          path: "/",
+        });
+
+        return { success: true, username: matchedUsername, role: matchedRole };
+      }
     }
     return { success: false, error: "Invalid username or password." };
   } catch {
@@ -499,6 +559,31 @@ export async function logoutAdminAction(): Promise<boolean> {
     return true;
   } catch {
     return false;
+  }
+}
+
+export async function verifyPortalLoginAction(clientIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string; subscriber?: Record<string, unknown> }> {
+  try {
+    await dbInitPromise;
+    const raw = await getSettingInternal("subscribers");
+    const subscribersArr = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    
+    const idKey = clientIdInput.toLowerCase().trim();
+    const matchedSub = subscribersArr.find(
+      s => (s.userId && (s.userId as string).toLowerCase().trim() === idKey) || (s.id as string).toLowerCase().trim() === idKey
+    );
+
+    if (!matchedSub) {
+      return { success: false, error: "Subscriber profile not found." };
+    }
+
+    if (matchedSub.password && matchedSub.password !== passwordInput) {
+      return { success: false, error: "Incorrect password." };
+    }
+
+    return { success: true, subscriber: matchedSub };
+  } catch {
+    return { success: false, error: "Server portal login error." };
   }
 }
 
@@ -657,6 +742,79 @@ export async function submitClaimAction(
   } catch (error) {
     console.error("submitClaimAction error:", error);
     return { success: false };
+  }
+}
+
+export async function requestPasswordResetAction(emailInput: string): Promise<{ success: boolean; error?: string; code?: string }> {
+  try {
+    const cleanEmail = emailInput.trim().toLowerCase();
+    
+    // Check primary admin
+    const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
+    let emailFound = false;
+    if (savedAuth && savedAuth.email && savedAuth.email.toLowerCase() === cleanEmail) {
+      emailFound = true;
+    }
+    
+    // Check sub-admins
+    if (!emailFound) {
+      const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+      const userList = Array.isArray(savedUsers) ? savedUsers : [];
+      const matchedUser = userList.find(u => String(u.email || "").trim().toLowerCase() === cleanEmail);
+      if (matchedUser) {
+        emailFound = true;
+      }
+    }
+    
+    if (emailFound) {
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      return { success: true, code: resetCode };
+    }
+    
+    return { success: false, error: "No administrator account registered with this email address." };
+  } catch {
+    return { success: false, error: "An error occurred during password reset check." };
+  }
+}
+
+export async function resetPasswordAction(emailInput: string, newPasswordInput: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const cleanEmail = emailInput.trim().toLowerCase();
+    const hashed = hashPasswordServer(newPasswordInput);
+    
+    // Check primary admin
+    const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
+    if (savedAuth && savedAuth.email && savedAuth.email.toLowerCase() === cleanEmail) {
+      savedAuth.password = hashed;
+      await setSettingInternal("admin_auth", savedAuth);
+      return { success: true };
+    }
+    
+    // Check sub-admins
+    const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+    const userList = Array.isArray(savedUsers) ? savedUsers : [];
+    let updated = false;
+    const updatedUsers = userList.map(u => {
+      if (String(u.email || "").trim().toLowerCase() === cleanEmail) {
+        updated = true;
+        return { ...u, password: newPasswordInput };
+      }
+      return u;
+    });
+    
+    if (updated) {
+      // Also update primary credentials just in case since sub-admins share auth checks
+      if (savedAuth) {
+        savedAuth.password = hashed;
+        await setSettingInternal("admin_auth", savedAuth);
+      }
+      await setSettingInternal("admin_users", updatedUsers);
+      return { success: true };
+    }
+    
+    return { success: false, error: "User account not found." };
+  } catch {
+    return { success: false, error: "Failed to reset password." };
   }
 }
 

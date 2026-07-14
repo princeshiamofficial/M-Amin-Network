@@ -18,9 +18,17 @@ if (process.env.NODE_ENV !== 'production') {
   globalForDb.pool = pool;
 }
 
+import { initWebSocketServer } from './wsServer';
+try {
+  initWebSocketServer();
+} catch (e) {
+  console.warn("WS init failed on startup:", e);
+}
+
 const TABLES_SCHEMAS: Record<string, string> = {
   user: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `email` VARCHAR(255), `role` VARCHAR(255), `password_hash` VARCHAR(255), `_sort_order` DOUBLE",
   users: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `role` VARCHAR(255), `email` VARCHAR(255), `lastLogin` VARCHAR(255), `_sort_order` DOUBLE",
+  admin_roles: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `description` TEXT, `pageAccess` LONGTEXT, `_sort_order` DOUBLE",
   claims: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `promoCode` VARCHAR(255), `promoTitle` VARCHAR(255), `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
   complaints: "`id` VARCHAR(255) PRIMARY KEY, `clientId` VARCHAR(255), `name` VARCHAR(255), `phone` VARCHAR(255), `category` VARCHAR(255), `desc` TEXT, `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
   tickets: "`id` VARCHAR(255) PRIMARY KEY, `clientId` VARCHAR(255), `name` VARCHAR(255), `phone` VARCHAR(255), `category` VARCHAR(255), `desc` TEXT, `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
@@ -39,9 +47,9 @@ const TABLES_SCHEMAS: Record<string, string> = {
   packages_list: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `speed` VARCHAR(255), `price` DOUBLE, `features` TEXT, `popular` BOOLEAN, `category` VARCHAR(255), `tagline` VARCHAR(255), `_sort_order` DOUBLE",
   promo_offers: "`code` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `badge` VARCHAR(255), `badgeColor` VARCHAR(255), `details` TEXT, `validUntil` VARCHAR(255), `imageUrl` VARCHAR(255), `_sort_order` DOUBLE",
   coverage_zones: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `status` VARCHAR(255), `subAreas` TEXT, `_sort_order` DOUBLE",
-  package_requests: "`id` VARCHAR(255) PRIMARY KEY, `packageName` VARCHAR(255), `customerName` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `status` VARCHAR(255), `date` VARCHAR(255), `_sort_order` DOUBLE",
+  package_requests: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `phone` VARCHAR(255), `email` VARCHAR(255), `zone` VARCHAR(255), `price` DOUBLE, `address` TEXT, `planName` VARCHAR(255), `speed` VARCHAR(255), `status` VARCHAR(255), `date` VARCHAR(255), `referralCode` VARCHAR(255), `_sort_order` DOUBLE",
   service_cards: "`id` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `description` TEXT, `icon` VARCHAR(255), `_sort_order` DOUBLE",
-  system_config: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `peeringBandwidthLimit` VARCHAR(255), `maintenanceMode` BOOLEAN, `_sort_order` DOUBLE",
+  system_config: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `peeringBandwidthLimit` VARCHAR(255), `maintenanceMode` BOOLEAN, `maintenanceMessage` TEXT, `popupEnabled` BOOLEAN, `popupImage` LONGTEXT, `_sort_order` DOUBLE",
   site_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `siteTitle` VARCHAR(255), `hotline` VARCHAR(255), `supportEmail` VARCHAR(255), `address` TEXT, `_sort_order` DOUBLE",
   hero_typography: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `mainTitle` TEXT, `subtitle` TEXT, `slides` TEXT, `_sort_order` DOUBLE",
   hero_metrics: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE",
@@ -52,7 +60,9 @@ const TABLES_SCHEMAS: Record<string, string> = {
   portal_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
   about_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `storyTitle` VARCHAR(255), `storyBody` TEXT, `_sort_order` DOUBLE",
   contact_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
-  complaint_content_guidelines: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `body` TEXT, `_sort_order` DOUBLE"
+  complaint_content_guidelines: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `body` TEXT, `_sort_order` DOUBLE",
+  network_features: "`id` VARCHAR(255) PRIMARY KEY, `titleEn` VARCHAR(255), `titleBn` VARCHAR(500), `descEn` TEXT, `descBn` TEXT, `iconName` VARCHAR(255), `_sort_order` DOUBLE",
+  page_headers: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `packages_bg` VARCHAR(500), `packages_title_en` VARCHAR(255), `packages_title_bn` VARCHAR(255), `packages_title_highlight_en` VARCHAR(255), `packages_title_highlight_bn` VARCHAR(255), `packages_subtitle_en` TEXT, `packages_subtitle_bn` TEXT, `offers_bg` VARCHAR(500), `offers_title_en` VARCHAR(255), `offers_title_bn` VARCHAR(255), `offers_title_highlight_en` VARCHAR(255), `offers_title_highlight_bn` VARCHAR(255), `offers_subtitle_en` TEXT, `offers_subtitle_bn` TEXT, `coverage_bg` VARCHAR(500), `coverage_title_en` VARCHAR(255), `coverage_title_bn` VARCHAR(255), `coverage_title_highlight_en` VARCHAR(255), `coverage_title_highlight_bn` VARCHAR(255), `coverage_subtitle_en` TEXT, `coverage_subtitle_bn` TEXT, `multimedia_bg` VARCHAR(500), `multimedia_title_en` VARCHAR(255), `multimedia_title_bn` VARCHAR(255), `multimedia_title_highlight_en` VARCHAR(255), `multimedia_title_highlight_bn` VARCHAR(255), `multimedia_subtitle_en` TEXT, `multimedia_subtitle_bn` TEXT, `careers_bg` VARCHAR(500), `careers_title_en` VARCHAR(255), `careers_title_bn` VARCHAR(255), `careers_title_highlight_en` VARCHAR(255), `careers_title_highlight_bn` VARCHAR(255), `careers_subtitle_en` TEXT, `careers_subtitle_bn` TEXT, `_sort_order` DOUBLE"
 };
 
 const SEED_DATA: Record<string, Record<string, unknown>[]> = {
@@ -63,9 +73,17 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "USR-1", username: "admin", role: "Super Administrator", email: "admin@maminnetwork.test", lastLogin: "7/3/2026, 10:30 AM", _sort_order: 0 },
     { id: "USR-2", username: "moderator_support", role: "Support Staff", email: "support@maminnetwork.test", lastLogin: "7/2/2026, 04:15 PM", _sort_order: 1 }
   ],
+  admin_roles: [
+    { id: "ROLE-1", name: "Super Administrator", description: "Full dashboard access with all management permissions.", pageAccess: "[]", _sort_order: 0 },
+    { id: "ROLE-2", name: "Support Staff", description: "Support desk access for customer communication and issue handling.", pageAccess: "[]", _sort_order: 1 }
+  ],
   claims: [
     { id: "CLM-72648-2849", name: "Mehan Ahmed", phone: "01707009267", address: "House 12, Road 4, Kadomtoli, South Keraniganj", promoCode: "ANNUAL10", promoTitle: "Pay 10 Months, Get 12", date: "7/2/2026, 11:34 AM", status: "Pending", _sort_order: 0 },
     { id: "CLM-19472-8829", name: "Nasrin Sultana", phone: "01819284920", address: "Block C, Bashundhara R/A, South Keraniganj", promoCode: "FREEINSTALL2026", promoTitle: "Zero Installation Fee", date: "7/2/2026, 2:15 PM", status: "Approved", _sort_order: 1 }
+  ],
+  package_requests: [
+    { id: "REQ-88293-1920", name: "Mehan Ahmed", phone: "01707009267", email: "mehan@mamin.net", zone: "Kadomtoli", price: 1250, address: "House No. 12, Road 4, Kadomtoli, South Keraniganj", planName: "Enterprise Splice", speed: "100 Mbps", status: "Pending", date: "7/5/2026, 11:34 AM", referralCode: "N/A", _sort_order: 0 },
+    { id: "REQ-19402-2849", name: "Kamrul Hasan", phone: "01812345678", email: "kamrul@gmail.com", zone: "Aganagar", price: 800, address: "Lane 2, Block A, Aganagar, South Keraniganj", planName: "Home Standard", speed: "20 Mbps", status: "Completed", date: "7/4/2026, 4:15 PM", referralCode: "N/A", _sort_order: 1 }
   ],
   complaints: [
     { id: "CMP-88239-1102", clientId: "SUB-88293", name: "Mehan Ahmed", phone: "01707009267", category: "Billing Dispute", desc: "Charged double for the standard premium plan subscription this month without notice.", date: "7/2/2026, 1:44 PM", status: "Pending", _sort_order: 0 },
@@ -127,14 +145,13 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "qa-8", label: "Complaints", path: "/admin/complaints", route: "/admin/complaints", iconName: "AlertTriangle", bg: "bg-red-50", text: "text-red-500", _sort_order: 7 },
     { id: "qa-9", label: "Jobs Add", path: "/admin/jobs", route: "/admin/jobs", iconName: "Briefcase", bg: "bg-orange-50", text: "text-orange-600", _sort_order: 8 },
     { id: "qa-10", label: "Job Applications", path: "/admin/job-applications", route: "/admin/job-applications", iconName: "FileText", bg: "bg-indigo-50", text: "text-indigo-600", _sort_order: 9 },
-    { id: "qa-11", label: "Site Content", path: "/admin/content", route: "/admin/site-content", iconName: "Zap", bg: "bg-yellow-50", text: "text-yellow-600", _sort_order: 10 },
     { id: "qa-13", label: "Hero Typography", path: "/admin/hero-typography", route: "/admin/hero-typography", iconName: "Type", bg: "bg-cyan-50", text: "text-cyan-600", _sort_order: 12 },
     { id: "qa-14", label: "About Page", path: "/admin/about", route: "/admin/about-page", iconName: "Info", bg: "bg-lime-50", text: "text-lime-600", _sort_order: 13 },
     { id: "qa-15", label: "Contact Page", path: "/admin/contact-page", route: "/admin/contact-page", iconName: "Phone", bg: "bg-rose-50", text: "text-rose-600", _sort_order: 14 },
     { id: "qa-16", label: "Top Bar & Footer", path: "/admin/layout", route: "/admin/topbar-footer", iconName: "PanelTop", bg: "bg-slate-100", text: "text-slate-600", _sort_order: 15 },
     { id: "qa-17", label: "Multimedia", path: "/admin/services", route: "/admin/services-hub", iconName: "Tv2", bg: "bg-purple-50", text: "text-purple-600", _sort_order: 16 },
     { id: "qa-18", label: "Settings", path: "/admin/settings", route: "/admin/settings", iconName: "Settings", bg: "bg-gray-100", text: "text-gray-600", _sort_order: 17 },
-    { id: "qa-19", label: "Users & Roles", path: "/admin/users", route: "/admin/users-roles", iconName: "UserCog", bg: "bg-blue-50", text: "text-blue-700", _sort_order: 18 }
+    { id: "qa-19", label: "Manage User", path: "/admin/users", route: "/admin/manage-user", iconName: "UserCog", bg: "bg-blue-50", text: "text-blue-700", _sort_order: 18 }
   ],
   packages_list: [
     { id: "plan-1", name: "Eco Starter", speed: "10 Mbps", price: 500, features: ["Unlimited Data", "24/7 Support", "Ideal for 1-2 devices"], popular: false, category: "home", tagline: "Great for casual browsing & SD streaming", _sort_order: 0 },
@@ -234,6 +251,59 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   ],
   complaint_content_guidelines: [
     { title: "BTRC Internet Complaint Desk", body: "Under BTRC guidelines, you can report direct splicing issues or SLA dispute reports to our NOC team for instant resolving.", _sort_order: 0 }
+  ],
+  network_features: [
+    { id: "nf-1", titleEn: "100% Fiber Optic (FTTH)", titleBn: "১০০% ফাইবার অপটিক (FTTH)", descEn: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.", descBn: "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।", iconName: "Zap", _sort_order: 0 },
+    { id: "nf-2", titleEn: "Dedicated BGP Routing", titleBn: "ডেডিকেটেড বিজিপি রাউটিং", descEn: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.", descBn: "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।", iconName: "Wifi", _sort_order: 1 },
+    { id: "nf-3", titleEn: "Low-Ping Gamer Optimizations", titleBn: "লো-পিং গেমার অপ্টিমাইজেশান", descEn: "Specialized low-latency paths to Southeast Asia and European servers (PUBG, Free Fire, CS2, Valorant). Zero packet loss, steady pings, and jitter control.", descBn: "দক্ষিণ-পূর্ব এশিয়া ও ইউরোপীয় সার্ভারে বিশেষায়িত লো-লেটেন্সি পাথ (PUBG, Free Fire, CS2, Valorant)। শূন্য প্যাকেট লস, স্থির পিং এবং জিটার কন্ট্রোল।", iconName: "Gamepad2", _sort_order: 2 },
+    { id: "nf-4", titleEn: "24/7 Priority SLA Support", titleBn: "২৪/৭ অগ্রাধিকার SLA সাপোর্ট", descEn: "No waiting for hours. Our localized support hub in South Keraniganj ensures our field technicians are dispatched to your home or office in record time.", descBn: "ঘণ্টার পর ঘণ্টা অপেক্ষা করতে হবে না। দক্ষিণ কেরানীগঞ্জে আমাদের লোকাল সাপোর্ট হাব নিশ্চিত করে যে আমাদের টেকনিশিয়ানরা রেকর্ড সময়ে আপনার বাসা বা অফিসে পৌঁছে যাবে।", iconName: "LifeBuoy", _sort_order: 3 },
+    { id: "nf-5", titleEn: "BDIX & Local FTP Access", titleBn: "BDIX ও লোকাল এফটিপি অ্যাক্সেস", descEn: "Get unlimited speeds of up to 100 Mbps to localized Bangladesh Internet Exchange (BDIX) resources, local FTP server movies, live TV, and games caches.", descBn: "বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) রিসোর্স, লোকাল এফটিপি মুভি, লাইভ টিভি এবং গেম ক্যাশে ১০০ এমবিপিএস পর্যন্ত আনলিমিটেড স্পিড পান।", iconName: "Cloud", _sort_order: 4 },
+    { id: "nf-6", titleEn: "Corporate Dedicated Backup", titleBn: "কর্পোরেট ডেডিকেটেড ব্যাকআপ", descEn: "Dual backbones with auto-failover, ensuring continuous SLA-backed business operations. Static IPs, multi-router protocols, and direct client portal support.", descBn: "অটো-ফেইলওভার সহ ডুয়াল ব্যাকবোন, যা অব্যাহত SLA-সমর্থিত ব্যবসায়িক কার্যক্রম নিশ্চিত করে। স্ট্যাটিক আইপি এবং ডিরেক্ট ক্লায়েন্ট সাপোর্ট।", iconName: "Building2", _sort_order: 5 }
+  ],
+  page_headers: [
+    {
+      packages_bg: "/video/package-header.mp4",
+      packages_title_en: "Flexible & Premium",
+      packages_title_bn: "ফ্লেক্সিবল ও প্রিমিয়াম",
+      packages_title_highlight_en: "Broadband Plans",
+      packages_title_highlight_bn: "ব্রডব্যান্ড প্ল্যান",
+      packages_subtitle_en: "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
+      packages_subtitle_bn: "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।",
+      
+      offers_bg: "/offer.jpg",
+      offers_title_en: "Monsoon Campaigns",
+      offers_title_bn: "বর্ষা মৌসুমী ক্যাম্পেইন",
+      offers_title_highlight_en: "& Discounts",
+      offers_title_highlight_bn: "ও ছাড়",
+      offers_subtitle_en: "Unlock high-speed splicing broadband peering plans at zero installation fees.",
+      offers_subtitle_bn: "শূন্য ইনস্টলেশন ফি-তে হাই-স্পিড ব্রডব্যান্ড পিয়ারিং প্ল্যান আনলক করুন।",
+      
+      coverage_bg: "/coverage.jpg",
+      coverage_title_en: "Active Coverage",
+      coverage_title_bn: "সক্রিয় কভারেজ",
+      coverage_title_highlight_en: "& Splicing Zones",
+      coverage_title_highlight_bn: "ও স্প্লাইসিং জোন",
+      coverage_subtitle_en: "Check if our fiber optic broadband coverage is available in your neighborhood of South Keraniganj.",
+      coverage_subtitle_bn: "দক্ষিণ কেরানীগঞ্জে আপনার এলাকায় আমাদের ফাইবার অপটিক ব্রডব্যান্ড সংযোগ আছে কিনা তা পরীক্ষা করুন।",
+      
+      multimedia_bg: "/Multimedia.jpg",
+      multimedia_title_en: "Multimedia",
+      multimedia_title_bn: "মাল্টিমিডিয়া",
+      multimedia_title_highlight_en: "& BDIX Portal",
+      multimedia_title_highlight_bn: "ও বিডিআইএক্স পোর্টাল",
+      multimedia_subtitle_en: "Access our high-speed local entertainment gateways to stream movies, play games, and watch live TV at speeds up to 100 Mbps.",
+      multimedia_subtitle_bn: "মুভি স্ট্রিম করতে, গেম খেলতে এবং লাইভ টিভি দেখতে আমাদের হাই-স্পিড লোকাল বিনোদন গেটওয়েগুলো অ্যাক্সেস করুন।",
+      
+      careers_bg: "/footer-bg.jpg",
+      careers_title_en: "Build Your Career",
+      careers_title_bn: "আপনার ক্যারিয়ার গড়ুন",
+      careers_title_highlight_en: "With NOC Splicers",
+      careers_title_highlight_bn: "এনওসি স্প্লাইসারদের সাথে",
+      careers_subtitle_en: "Explore open opportunities, engineering apprenticeships, and localized support roles at South Keraniganj.",
+      careers_subtitle_bn: "দক্ষিণ কেরানীগঞ্জে আমাদের সাথে নতুন সুযোগ, ইঞ্জিনিয়ারিং শিক্ষানবিস এবং লোকাল সাপোর্ট ভূমিকা অন্বেষণ করুন।",
+      
+      _sort_order: 0
+    }
   ]
 };
 

@@ -5,6 +5,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSetting, setSetting, submitPackageRequestAction } from "@/actions/content";
+import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface Plan {
   speed: string;
@@ -283,16 +284,22 @@ function PackagesContent() {
   ];
 
   const [allPlans, setAllPlans] = useState<Plan[]>([]);
+  const [headerData, setHeaderData] = useState<PageHeaderData>(defaultPageHeaders);
   useEffect(() => {
     if (typeof window !== "undefined") {
       getSetting("packages_list").then(saved => {
-      if (saved) {
-        setAllPlans(saved as Plan[]);
-      } else {
-        setSetting("packages_list", defaultPlans as Plan[]);
-        setAllPlans(defaultPlans);
-      }
-    });
+        if (saved) {
+          setAllPlans(saved as Plan[]);
+        } else {
+          setSetting("packages_list", defaultPlans as Plan[]);
+          setAllPlans(defaultPlans);
+        }
+      });
+      getSetting("page_headers").then(saved => {
+        if (saved) {
+          setHeaderData(saved as PageHeaderData);
+        }
+      });
     }
   }, []);
 
@@ -365,19 +372,26 @@ function PackagesContent() {
 
   return (
     <div className="w-full grow relative text-left">
-      {/* Full-width Header Hero Section with background video */}
+      {/* Full-width Header Hero Section with background asset */}
       <div className="relative w-full overflow-hidden bg-slate-950 py-16 border-b border-white/5">
-        {/* Background video */}
+        {/* Background video/image */}
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            loop
-            muted={true}
-            playsInline
-            className="w-full h-full object-cover opacity-50"
-          >
-            <source src="/video/package-header.mp4" type="video/mp4" />
-          </video>
+          {headerData.packages_bg?.endsWith(".mp4") ? (
+            <video
+              autoPlay
+              loop
+              muted={true}
+              playsInline
+              className="w-full h-full object-cover opacity-50"
+            >
+              <source src={headerData.packages_bg} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="w-full h-full bg-cover bg-center opacity-50"
+              style={{ backgroundImage: `url('${headerData.packages_bg}')` }}
+            />
+          )}
           <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
         </div>
 
@@ -389,16 +403,13 @@ function PackagesContent() {
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight text-center w-full block">
-              {t("Flexible & Premium", "ফ্লেক্সিবল ও প্রিমিয়াম")}{" "}
+              {t(headerData.packages_title_en, headerData.packages_title_bn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t("Broadband Plans", "ব্রডব্যান্ড প্ল্যান")}
+                {t(headerData.packages_title_highlight_en, headerData.packages_title_highlight_bn)}
               </span>
             </h1>
             <p className="text-slate-400 mt-4 text-sm sm:text-base text-center">
-              {t(
-                "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
-                "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।"
-              )}
+              {t(headerData.packages_subtitle_en, headerData.packages_subtitle_bn)}
             </p>
           </div>
         </div>

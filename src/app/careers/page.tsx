@@ -5,7 +5,154 @@ import { toast } from "sonner";
 import React, { useState } from "react";
 import { getSetting, submitJobApplicationAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
-import { defaultCareersPageContent } from "@/app/admin/(dashboard)/careers-page/page";
+const defaultCareersPageContent = {
+  str1En: "Network Engineering & Maintenance", str1Bn: "নেটওয়ার্ক ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ",
+  str2En: "Helpdesk Operations", str2Bn: "হেল্পডেস্ক অপারেশনস",
+  str3En: "Infrastructure Operations", str3Bn: "ইনফ্রাস্ট্রাকচার অপারেশনস",
+  str4En: "Support Technician (Field Operations)", str4Bn: "সহায়তা টেকনিশিয়ান (ফিল্ড অপারেশন)",
+  str5En: "Customer Support Executive", str5Bn: "কাস্টমার সাপোর্ট এক্সিকিউটিভ",
+  str6En: "Junior Network Engineer", str6Bn: "জুনিয়র নেটওয়ার্ক ইঞ্জিনিয়ার",
+  str7En: "South Keraniganj", str7Bn: "দক্ষিণ কেরানীগঞ্জ",
+  str8En: "Kadomtoli Office, Dhaka", str8Bn: "কদমতলী অফিস, ঢাকা",
+  str9En: "Full Time", str9Bn: "ফুল টাইম",
+  str10En: "We are looking for dedicated field technicians to lay fiber cables, splice optical lines, install ONTs, and troubleshoot client premises issues.", str10Bn: "আমরা ফাইবার ক্যাবল স্থাপন, অপটিক্যাল লাইন স্প্লাইসিং, ওএনটি ইনস্টল এবং গ্রাহকের সংযোগ সমস্যার সমাধান করার জন্য ডেডিকেটেড ফিল্ড টেকনিশিয়ান খুঁজছি।",
+  str11En: "Manage customer queries, guide clients through router reboots, catalog support tickets, and direct field teams to fiber line breaks.", str11Bn: "গ্রাহকের জিজ্ঞাসা পরিচালনা, রাউটার রিবুট গাইডলাইন প্রদান, সাপোর্ট টিকিট ক্যাটালগ এবং ফিল্ড টিমকে লাইন মেরামতের নির্দেশ প্রদান করা।",
+  str12En: "Assist in monitoring the BGP network (AS150164), configure OLT splitters, manage DNS and local caching servers (FTP, BDIX).", str12Bn: "বিজিপি নেটওয়ার্ক (AS150164) পর্যবেক্ষণ, ওএলটি স্প্লিটার কনফিগারেশন, ডিএনএস এবং লোকাল ক্যাশিং সার্ভার (এফটিপি, বিডিআইএক্স) পরিচালনায় সহায়তা করা।",
+  str13En: "Prior experience in fiber splicing (laser splicing machines)", str13Bn: "ফাইবার স্প্লাইসিংয়ে (লেজার স্প্লাইসিং মেশিন) পূর্ব অভিজ্ঞতা",
+  str14En: "Familiarity with OLT port configs & client router configurations", str14Bn: "ওএলটি পোর্ট এবং ক্লায়েন্ট রাউটার কনফিগারেশন সম্পর্কে ধারণা",
+  str15En: "Willingness to travel around South Keraniganj neighborhoods", str15Bn: "দক্ষিণ কেরানীগঞ্জের বিভিন্ন এলাকায় যাতায়াতের মানসিকতা",
+  str16En: "Excellent communication and problem-solving skills", str16Bn: "চমৎকার যোগাযোগ ও সমস্যা সমাধানের দক্ষতা",
+  str17En: "Higher Secondary Certificate (HSC) or Bachelor degree", str17Bn: "উচ্চ মাধ্যমিক সার্টিফিকেট (এইচএসসি) বা স্নাতক ডিগ্রি",
+  str18En: "Polite tone and high patience for user support", str18Bn: "গ্রাহক সেবার জন্য নম্র কণ্ঠস্বর এবং উচ্চ ধৈর্যশীলতা",
+  str19En: "Basic computer knowledge (Google Sheets, ticket dashboards)", str19Bn: "বেসিক কম্পিউটার জ্ঞান (গুগল শিট, টিকিট ড্যাশবোর্ড)",
+  str20En: "Ability to speak fluent Bangla (English is a plus)", str20Bn: "সাবলীল বাংলায় কথা বলার ক্ষমতা (ইংরেজি জানা অতিরিক্ত যোগ্যতা হিসেবে বিবেচিত)",
+  str21En: "Diploma in Computer/Telecommunication Engineering or CCNA certified", str21Bn: "কম্পিউটার/টেলিকমিউনিকেশন ইঞ্জিনিয়ারিংয়ে ডিপ্লোমা অথবা সিসিএনএ সার্টিফাইড",
+  str22En: "Familiarity with Mikrotik RouterOS and basic Linux scripting", str22Bn: "মাইক্রোটিক রাউটার ওএস এবং বেসিক লিনাক্স স্ক্রিপ্টিংয়ে ধারণা",
+  str23En: "Understanding of IPv4 subnetting and dynamic BGP routing", str23Bn: "IPv4 সাবনেটিং এবং ডায়নামিক বিজিপি রাউটিং সম্পর্কে ধারণা",
+  str24En: "Willingness to work in rotating shifts", str24Bn: "রোটেটিং শিফটে কাজ করার মানসিকতা",
+  str25En: "Please fill in all required fields (marked with *).", str25Bn: "অনুগ্রহ করে সকল তারকা চিহ্নিত (*) প্রয়োজনীয় ক্ষেত্রগুলো পূরণ করুন।",
+  str26En: "Please enter present and permanent address details.", str26Bn: "অনুগ্রহ করে বর্তমান এবং স্থায়ী ঠিকানা বিবরণ প্রদান করুন।",
+  str27En: "Please agree to the certification terms and provide your signature.", str27Bn: "আবেদনপত্র জমা দিতে আপনার সম্মতি দিন এবং স্বাক্ষর প্রদান করুন।",
+  str28En: "Join M Amin Network", str28Bn: "এম আমিন নেটওয়ার্ক পরিবারে যোগ দিন",
+  str29En: "Careers & ", str29Bn: "ক্যারিয়ার ও ",
+  str30En: "Opportunities", str30Bn: "সুযোগসমূহ",
+  str31En: "Work with South Keraniganj's leading network engineers. We offer attractive bonuses, hands-on training on optical line terminals, and CCNA certifications sponsorship.", str31Bn: "দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় নেটওয়ার্ক ইঞ্জিনিয়ারদের সাথে কাজ করুন। আমরা আকর্ষণীয় বোনাস, অপটিক্যাল লাইনের ওপর ব্যবহারিক প্রশিক্ষণ ও সিসিএনএ সার্টিফিকেশনের সহায়তা প্রদান করি।",
+  str32En: "Open Positions", str32Bn: "উন্মুক্ত পদসমূহ",
+  str33En: "position found", str33Bn: "টি পদ পাওয়া গেছে",
+  str34En: "positions found", str34Bn: "টি পদ পাওয়া গেছে",
+  str35En: "General Application", str35Bn: "সাধারণ আবেদন",
+  str36En: "Search title, department, keyword...", str36Bn: "পদবি, বিভাগ বা কিওয়ার্ড অনুসন্ধান করুন...",
+  str37En: "All departments", str37Bn: "সকল বিভাগ",
+  str38En: "Engineering & Maintenance", str38Bn: "ইঞ্জিনিয়ারিং ও রক্ষণাবেক্ষণ",
+  str39En: "All types", str39Bn: "সকল টাইপ",
+  str40En: "Full-Time", str40Bn: "পূর্ণকালীন",
+  str41En: "All locations", str41Bn: "সকল লোকেশন",
+  str42En: "vacancy", str42Bn: "vacancy",
+  str43En: "Deadline:", str43Bn: "Deadline:",
+  str44En: "Details", str44Bn: "বিস্তারিত",
+  str45En: "Apply Now", str45Bn: "আবেদন করুন",
+  str46En: "No open positions match your search criteria", str46Bn: "কোনো পদের সন্ধান মেলেনি",
+  str47En: "Try adjusting your keywords or clearing selected filters.", str47Bn: "অনুগ্রহ করে আপনার ফিল্টার বা কিওয়ার্ড পরিবর্তন করে পুনরায় চেষ্টা করুন।",
+  str48En: "Location:", str48Bn: "অবস্থান:",
+  str49En: "Vacancy:", str49Bn: "শূন্যপদ:",
+  str50En: "position", str50Bn: "টি",
+  str51En: "Salary:", str51Bn: "বেতন:",
+  str52En: "Deadline:", str52Bn: "শেষ সময়:",
+  str53En: "About the Role:", str53Bn: "ভূমিকা সম্পর্কে:",
+  str54En: "Candidate Requirements:", str54Bn: "প্রার্থীর যোগ্যতা ও প্রয়োজনীয়তা:",
+  str55En: "Close", str55Bn: "বন্ধ করুন",
+  str56En: "Employment Application", str56Bn: "কর্মসংস্থান আবেদনপত্র",
+  str57En: "Position Applied For:", str57Bn: "আবেদনকৃত পদ:",
+  str58En: "Personal", str58Bn: "ব্যক্তিগত",
+  str59En: "Education", str59Bn: "শিক্ষা",
+  str60En: "Experience", str60Bn: "অভিজ্ঞতা",
+  str61En: "Questions", str61Bn: "প্রশ্নাবলী",
+  str62En: "Review & Submit", str62Bn: "রিভিউ ও সাবমিট",
+  str63En: "Experienced", str63Bn: "অভিজ্ঞ",
+  str64En: "Fresh", str64Bn: "নতুন (অভিজ্ঞতাহীন)",
+  str65En: "Full Name (English as per Certificate) *", str65Bn: "পূর্ণ নাম (সার্টিফিকেট অনুযায়ী ইংরেজি) *",
+  str66En: "Full Name (Bangla) *", str66Bn: "পূর্ণ নাম (বাংলা) *",
+  str67En: "Fathers Name", str67Bn: "পিতার নাম",
+  str68En: "Father's Occupation", str68Bn: "পিতার পেশা",
+  str69En: "Mothers Name", str69Bn: "মাতার নাম",
+  str70En: "Mother's Occupation", str70Bn: "মাতার পেশা",
+  str71En: "Date of Birth *", str71Bn: "জন্ম তারিখ *",
+  str72En: "Place of Birth", str72Bn: "জন্মস্থান",
+  str73En: "Gender", str73Bn: "লিঙ্গ",
+  str74En: "Male", str74Bn: "পুরুষ",
+  str75En: "Female", str75Bn: "নারী",
+  str76En: "Other", str76Bn: "অন্যান্য",
+  str77En: "Blood Group", str77Bn: "রক্তের গ্রুপ",
+  MaritalStatus: "বৈবাহিক অবস্থা", // Wait, keep variables keys matching! Let's write keys as:
+  str78En: "Marital Status", str78Bn: "বৈবাহিক অবস্থা",
+  str79En: "Single", str79Bn: "অবিবাহিত",
+  str80En: "Married", str80Bn: "বিবাহিত",
+  str81En: "Divorced", str81Bn: "তালাকপ্রাপ্ত",
+  str82En: "Widowed", str82Bn: "বিধবা/বিপত্নীক",
+  str83En: "Spouse's Name", str83Bn: "স্বামী/স্ত্রীর নাম",
+  str84En: "No. of Children", str84Bn: "সন্তানের সংখ্যা",
+  str85En: "Religion", str85Bn: "ধর্ম",
+  str86En: "Nationality", str86Bn: "জাতীয়তা",
+  str87En: "NID or BRC Card No *", str87Bn: "এনআইডি অথবা জন্ম নিবন্ধন নং *",
+  str88En: "Contact Mobile Number *", str88Bn: "মোবাইল নম্বর *",
+  str89En: "Email Address *", str89Bn: "ইমেইল ঠিকানা *",
+  str90En: "Emergency Contact Phone", str90Bn: "জরুরি যোগাযোগ নম্বর",
+  str91En: "Present Address *", str91Bn: "বর্তমান ঠিকানা *",
+  str92En: "Permanent Address *", str92Bn: "স্থায়ী ঠিকানা *",
+  str93En: "Same as Present", str93Bn: "বর্তমান ঠিকানার অনুরূপ",
+  str94En: "Educational Qualifications", str94Bn: "শিক্ষাগত যোগ্যতা",
+  str95En: "Master's (MBA/MSc/MA)", str95Bn: "মাস্টার্স (এমবিএ/এমএসসি)",
+  str96En: "Bachelor's (BBA/BSc/BA)", str96Bn: "স্নাতক (বিবিএ/বিএসসি)",
+  str97En: "HSC / Diploma", str97Bn: "এইচএসসি / ডিপ্লোমা",
+  str98En: "SSC / O' Level", str98Bn: "এসএসসি / ও লেভেল",
+  str99En: "JSC / Equivalent", str99Bn: "জেএসসি / সমমান",
+  str100En: "Other Qualifications (Licenses, Skills, Trainings, Awards, Achievements)", str100Bn: "অন্যান্য যোগ্যতা (লাইসেন্স, দক্ষতা, প্রশিক্ষণ, পুরষ্কার, অর্জন)",
+  str101En: "Work Experience", str101Bn: "কাজের অভিজ্ঞতা (পূর্ববর্তী চাকরি)",
+  str102En: "Add Experience Row", str102Bn: "চাকরি যোগ করুন",
+  str103En: "Remove", str103Bn: "বাতিল",
+  str104En: "Company Name", str104Bn: "প্রতিষ্ঠানের নাম",
+  str105En: "Designation", str105Bn: "পদবি",
+  str106En: "Duration (From & To)", str106Bn: "সময়সীমা (শুরু ও শেষ)",
+  str107En: "Monthly Salary (TK)", str107Bn: "মাসিক বেতন (টাকা)",
+  str108En: "Reason for Leaving", str108Bn: "চাকরি ছাড়ার কারণ",
+  str109En: "Extra-Curricular Activities", str109Bn: "सह-শিক্ষা কার্যক্রম",
+  str110En: "Do you consider yourself a highly motivated person? Why?", str110Bn: "আপনি কি নিজেকে উচ্চ অনুপ্রাণিত ব্যক্তি মনে করেন? কেন?",
+  str111En: "What environments are you comfortable working in?", str111Bn: "কোন পরিবেশে কাজ করতে আপনি সবচেয়ে স্বাচ্ছন্দ্য বোধ করেন?",
+  str112En: "As a part of a team", str112Bn: "টিমের অংশ হিসেবে",
+  str113En: "Leading a team", str113Bn: "টিম লিড হিসেবে",
+  str114En: "Work Individually", str114Bn: "এককভাবে",
+  str115En: "What are your expectations from M Amin Network?", str115Bn: "আমাদের সংস্থার নিকট আপনার প্রত্যাশা কি?",
+  str116En: "Criminal offence history?", str116Bn: "ফৌজদারি মামলার রেকর্ড রয়েছে?",
+  str117En: "Yes", str117Bn: "হ্যাঁ",
+  str118En: "No", str118Bn: "না",
+  str119En: "Any relative working in M Amin Network?", str119Bn: "কোন আত্মীয় আমাদের সংস্থায় কর্মরত আছেন?",
+  str120En: "References (Provide Two)", str120Bn: "তথ্য সূত্র/রেফারেন্স (দুটি প্রদান করুন)",
+  str121En: "Reference 1", str121Bn: "রেফারেন্স ১",
+  str122En: "Reference 2", str122Bn: "রেফারেন্স ২",
+  str123En: "Confirm Application Summary", str123Bn: "আবেদনপত্রের সারসংক্ষেপ নিশ্চিত করুন",
+  str124En: "Candidate Type:", str124Bn: "আবেদনকারীর ধরন:",
+  str125En: "Applicant Name (EN):", str125Bn: "নাম (ইংরেজি):",
+  str126En: "Mobile Phone:", str126Bn: "মোবাইল নম্বর:",
+  str127En: "Email ID:", str127Bn: "ইমেইল:",
+  str128En: "NID/BRC NO:", str128Bn: "এনআইডি/জন্ম নিবন্ধন:",
+  str129En: "Date of Birth:", str129Bn: "জন্ম তারিখ:",
+  str130En: "Expected Salary Range (Monthly TK) *", str130Bn: "প্রত্যাশিত মাসিক বেতন (টাকা) *",
+  str131En: "Application Date", str131Bn: "আবেদনের তারিখ",
+  str132En: "Applicant Certification", str132Bn: "আবেদনকারীর ঘোষণা",
+  str133En: "I certify that the information contained in this employment application is true and complete to the best of my knowledge. I understand that false or misleading information or omissions may result in immediate rejection of my application or termination of employment if hired.", str133Bn: "আমি ঘোষণা করছি যে, এই আবেদনপত্রে আমার প্রদত্ত সকল তথ্য সত্য, সঠিক এবং সম্পূর্ণ। আমি বুঝতে পারছি যে, কোনো অসত্য, মিথ্যা বা বিভ্রান্তিকর তথ্য প্রদান করা হলে বা কোনো গুরুত্বপূর্ণ তথ্য গোপন রাখা হলে আমার আবেদনপত্র সরাসরি বাতিল করা হতে পারে বা চাকরিতে যোগদানের পরও যেকোনো সময় চাকরি থেকে অব্যাহতি দেওয়া হতে পারে।",
+  str134En: "Applicant Signature (Type Name) *", str134Bn: "আবেদনকারীর স্বাক্ষর (আপনার নাম) *",
+  str135En: "I certify and agree to the above terms *", str135Bn: "আমি স্বাক্ষর করছি এবং উপরোক্ত শর্তাবলীতে সম্মত আছি *",
+  str136En: "Back", str136Bn: "পূর্ববর্তী",
+  str137En: "Continue", str137Bn: "পরবর্তী",
+  str138En: "Submitting...", str138Bn: "জমাদান হচ্ছে...",
+  str139En: "Submit Application", str139Bn: "আবেদন জমা দিন",
+  str140En: "Application Received Successfully!", str140Bn: "আবেদনপত্র সফলভাবে গৃহীত হয়েছে!",
+  str141En: "Thank you", str141Bn: "ধন্যবাদ",
+  str142En: "We have saved your application request for", str142Bn: "আমরা আপনার আবেদনপত্রটি সংরক্ষণ করেছি:",
+  str143En: "Our HR team will review your qualifications, references, and credentials as per your submitted employment form. If your background aligns with our operational needs, our office coordinator will contact you to schedule an interview at our Kadomtoli branch.", str143Bn: "আমাদের এইচআর বিভাগ আপনার প্রদত্ত তথ্য সূত্র, শিক্ষাগত যোগ্যতা এবং অভিজ্ঞতার রেকর্ড পর্যালোচনা করবে। আপনার আবেদনটি যদি আমাদের চাহিদার সাথে সামঞ্জস্যপূর্ণ হয়, তবে পরবর্তী সরাসরি সাক্ষাৎকারের জন্য আমাদের অফিস কো-অর্ডিনেটর কদমতলী শাখা থেকে আপনার সাথে যোগাযোগ করবেন।",
+  str144En: "Close Window", str144Bn: "উইন্ডো বন্ধ করুন",
+};
+import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface JobOpening {
   id?: string;
@@ -74,11 +221,15 @@ function normalizePostedJob(item: Record<string, unknown>): JobOpening | null {
 
 export default function Careers() {
   const [pageContent, setPageContent] = React.useState(defaultCareersPageContent);
+  const [headerData, setHeaderData] = React.useState<PageHeaderData>(defaultPageHeaders);
   React.useEffect(() => {
     const s = localStorage.getItem("careers_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
+    getSetting("page_headers").then(saved => {
+      if (saved) setHeaderData(saved as PageHeaderData);
+    });
   }, []);
 
   const lang = useTranslation();
@@ -398,20 +549,38 @@ export default function Careers() {
       {/* Header Area Banner */}
       <div 
         className="relative w-full overflow-hidden bg-slate-950 py-8 sm:py-14 border-b border-white/5 bg-cover bg-center"
-        style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("/footer-bg.jpg")'
-        }}
       >
+        {/* Background video/image */}
+        <div className="absolute inset-0 z-0">
+          {headerData.careers_bg?.endsWith(".mp4") ? (
+            <video
+              autoPlay
+              loop
+              muted={true}
+              playsInline
+              className="w-full h-full object-cover opacity-50"
+            >
+              <source src={headerData.careers_bg} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="w-full h-full bg-cover bg-center opacity-50"
+              style={{ backgroundImage: `url('${headerData.careers_bg}')` }}
+            />
+          )}
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-              {t(pageContent.str29En, pageContent.str29Bn)}{" "}
+              {t(headerData.careers_title_en, headerData.careers_title_bn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t(pageContent.str30En, pageContent.str30Bn)}
+                {t(headerData.careers_title_highlight_en, headerData.careers_title_highlight_bn)}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium">
-              {t(pageContent.str31En, pageContent.str31Bn)}
+              {t(headerData.careers_subtitle_en, headerData.careers_subtitle_bn)}
             </p>
           </div>
         </div>

@@ -4,7 +4,39 @@ import React, { useState, useEffect, useRef } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
 import { useTranslation } from "@/hooks/useTranslation";
-import { defaultCoveragePageContent } from "@/app/admin/(dashboard)/coverage-page/page";
+const defaultCoveragePageContent = {
+  str1En: "Fiber Network", str1Bn: "ফাইবার নেটওয়ার্ক",
+  str2En: "Coverage Area", str2Bn: "কাভারেজ এলাকা",
+  str3En: "M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.", str3Bn: "এম আমিন নেটওয়ার্ক দক্ষিণ কেরানীগঞ্জ জুড়ে একটি বিস্তৃত ফাইবার অপটিক নেটওয়ার্ক পরিচালনা করে। আমাদের সক্রিয় কাভারেজ এলাকা দেখুন অথবা নতুন সংযোগের সম্ভাব্যতা অনুরোধ জানান।",
+  str4En: "South Keraniganj Grid", str4Bn: "দক্ষিণ কেরানীগঞ্জ গ্রিড",
+  str5En: "Digital Fiber Backbone Topology (AS150164)", str5Bn: "ডিজিটাল ফাইবার ব্যাকবোন টপোলজি (AS150164)",
+  str6En: "Network Online", str6Bn: "নেটওয়ার্ক অনলাইন",
+  str7En: "Active Fiber Coverage", str7Bn: "সক্রিয় ফাইবার কাভারেজ",
+  str8En: "Expanding Fiber Lines", str8Bn: "সম্প্রসারণাধীন ফাইবার লাইন",
+  str9En: "Planned Coverage", str9Bn: "পরিকল্পিত কাভারেজ",
+  str10En: "Request Coverage", str10Bn: "কাভারেজের অনুরোধ",
+  str11En: "Don't see your area on the list? Submit a request so our engineers can perform a fiber routing survey.", str11Bn: "তালিকায় আপনার এলাকাটি দেখছেন না? একটি অনুরোধ জমা দিন যাতে আমাদের প্রকৌশলীরা ফাইবার রাউটিং সমীক্ষা করতে পারেন।",
+  str12En: "Your Name", str12Bn: "আপনার নাম",
+  str13En: "Phone Number", str13Bn: "মোবাইল নম্বর",
+  str14En: "Target Area", str14Bn: "কাঙ্ক্ষিত এলাকা",
+  str15En: "Descriptive Address", str15Bn: "বিস্তারিত ঠিকানা",
+  str16En: "Specify landmarks, mosque, or school names near your premises", str16Bn: "আপনার বাড়ির নিকটবর্তী ল্যান্ডমার্ক, মসজিদ বা স্কুলের নাম উল্লেখ করুন",
+  str17En: "Saving Request...", str17Bn: "অনুরোধ সংরক্ষণ করা হচ্ছে...",
+  str18En: "Submit Feasibility Request", str18Bn: "সম্ভাব্যতা যাচাইয়ের আবেদন জমা দিন",
+  str19En: "Survey Registered!", str19Bn: "সমীক্ষা নিবন্ধিত হয়েছে!",
+  str20En: "We have saved your request for", str20Bn: "আমরা আপনার অনুরোধটি সংরক্ষণ করেছি: ",
+  str21En: "Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.", str21Bn: "আমাদের নেটওয়ার্ক পরিকল্পনা ইউনিট নতুন সংযোগ প্রদানের জন্য নিয়মিত অনুরোধগুলো মূল্যায়ন করে। আপনার এলাকায় ফাইবার লাইন সম্প্রসারিত হলে আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবেন।",
+  str22En: "Submit Another Area", str22Bn: "অন্য কোনো এলাকার অনুরোধ দিন",
+  str23En: "Filter by area...", str23Bn: "এলাকা দিয়ে ফিল্টার করুন...",
+  str24En: "Show All", str24Bn: "সবগুলো দেখুন",
+  str25En: "Active Only", str25Bn: "শুধুমাত্র সক্রিয়",
+  str26En: "Expanding", str26Bn: "সম্প্রসারণাধীন",
+  str27En: "Planned", str27Bn: "পরিকল্পিত",
+  str28En: "Active Fiber", str28Bn: "সক্রিয় ফাইবার",
+  str29En: "Active Sub-areas / Road Peering:", str29Bn: "সক্রিয় উপ-এলাকা / সড়কসমূহ:",
+  str30En: "No coverage zones match your search query.", str30Bn: "আপনার অনুসন্ধানের সাথে মেলে এমন কোনো এলাকা পাওয়া যায়নি।",
+};
+import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface CoverageZone {
   name: string;
@@ -72,11 +104,15 @@ const defaultZones: CoverageZone[] = [
 
 export default function Coverage() {
   const [pageContent, setPageContent] = React.useState(defaultCoveragePageContent);
+  const [headerData, setHeaderData] = React.useState<PageHeaderData>(defaultPageHeaders);
   React.useEffect(() => {
     const s = localStorage.getItem("coverage_page_content");
     if (s) {
       try { setPageContent(JSON.parse(s)); } catch { /* ignore */ }
     }
+    getSetting("page_headers").then(saved => {
+      if (saved) setHeaderData(saved as PageHeaderData);
+    });
   }, []);
 
   const lang = useTranslation();
@@ -436,23 +472,40 @@ export default function Coverage() {
       </div>
     </div> {/* Close top max-w-1440 section wrapper */}
 
-    {/* New Simple Header with Background Image */}
+    {/* New Simple Header with Background asset */}
     <div 
-      className="w-full relative py-6 sm:py-10 bg-cover bg-center bg-no-repeat border-b border-brand-border/40"
-      style={{ backgroundImage: "url('/coverage.jpg')" }}
+      className="w-full relative py-6 sm:py-10 border-b border-brand-border/40 overflow-hidden bg-slate-950"
     >
-      <div className="absolute inset-0 bg-brand-dark/30 mix-blend-multiply pointer-events-none" />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/90 pointer-events-none" />
+      {/* Background video/image */}
+      <div className="absolute inset-0 z-0">
+        {headerData.coverage_bg?.endsWith(".mp4") ? (
+          <video
+            autoPlay
+            loop
+            muted={true}
+            playsInline
+            className="w-full h-full object-cover opacity-50"
+          >
+            <source src={headerData.coverage_bg} type="video/mp4" />
+          </video>
+        ) : (
+          <div
+            className="w-full h-full bg-cover bg-center opacity-50"
+            style={{ backgroundImage: `url('${headerData.coverage_bg}')` }}
+          />
+        )}
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
+      </div>
       
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 drop-shadow-md">
-          {t(pageContent.str1En, pageContent.str1Bn)}{" "}
+          {t(headerData.coverage_title_en, headerData.coverage_title_bn)}{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-            {t(pageContent.str2En, pageContent.str2Bn)}
+            {t(headerData.coverage_title_highlight_en, headerData.coverage_title_highlight_bn)}
           </span>
         </h1>
         <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed font-medium drop-shadow-sm">
-          {t(pageContent.str3En, pageContent.str3Bn)}
+          {t(headerData.coverage_subtitle_en, headerData.coverage_subtitle_bn)}
         </p>
       </div>
     </div>

@@ -69,23 +69,16 @@ export const adminRoutes = [
   { label: "Job Applications", route: "/admin/job-applications" },
   { label: "Testimonials", route: "/admin/testimonials" },
   { label: "FAQs", route: "/admin/faqs" },
-  { label: "Site Content", route: "/admin/site-content" },
+  { label: "Multimedia", route: "/admin/multimedia" },
   { label: "Hero Typography", route: "/admin/hero-typography" },
-  { label: "Network Features", route: "/admin/network-features" },
+  { label: "Page Headers", route: "/admin/page-headers" },
   { label: "SEO & Sharing", route: "/admin/seo-sharing" },
   { label: "About Page", route: "/admin/about-page" },
   { label: "Contact Page", route: "/admin/contact-page" },
-  { label: "Complaint Page", route: "/admin/complaint-page" },
   { label: "Support Page", route: "/admin/support-page" },
-  { label: "Careers Page", route: "/admin/careers-page" },
-  { label: "Coverage Areas Page", route: "/admin/coverage-page" },
-  { label: "Offers Page", route: "/admin/offers-page" },
-  { label: "Bill Payment Page", route: "/admin/bill-payment-page" },
-  { label: "Self-Care Portal Page", route: "/admin/portal-page" },
   { label: "Top Bar & Footer", route: "/admin/topbar-footer" },
-  { label: "Services Hub", route: "/admin/services-hub" },
-  { label: "Service Reviews", route: "/admin/service-reviews" },
-  { label: "Users & Roles", route: "/admin/users-roles" },
+  { label: "Manage User", route: "/admin/manage-user" },
+  { label: "User Role", route: "/admin/user-role" },
   { label: "Security", route: "/admin/security" },
   { label: "SEO Audit", route: "/admin/seo-audit" }
 ];
@@ -312,17 +305,16 @@ const tabUrls: Record<string, string> = {
   "Job Applications": "/admin/job-applications",
   "Testimonials": "/admin/testimonials",
   "FAQs": "/admin/faqs",
-  "Site Content": "/admin/site-content",
   "Hero Typography": "/admin/hero-typography",
+  "Multimedia": "/admin/multimedia",
+  "Page Headers": "/admin/page-headers",
   "SEO & Sharing": "/admin/seo-sharing",
   "About Page": "/admin/about-page",
   "Contact Page": "/admin/contact-page",
-  "Complaint Page": "/admin/complaint-page",
   "Top Bar & Footer": "/admin/topbar-footer",
-  "Services Hub": "/admin/services-hub",
-  "Service Reviews": "/admin/service-reviews",
   "Settings": "/admin/settings",
-  "Users & Roles": "/admin/users-roles",
+  "Manage User": "/admin/manage-user",
+  "User Role": "/admin/user-role",
   "Security": "/admin/security",
   "SEO Audit": "/admin/seo-audit",
 };
@@ -338,14 +330,13 @@ export const defaultQuickActions: QuickAction[] = [
   { id: "qa-8", label: "Complaints",      path: "/admin/complaints",      route: "/admin/complaints",      iconName: "AlertTriangle", bg: "bg-red-50",    text: "text-red-500" },
   { id: "qa-9", label: "Jobs Add",        path: "/admin/jobs",            route: "/admin/jobs",            iconName: "Briefcase",    bg: "bg-orange-50",  text: "text-orange-600" },
   { id: "qa-10", label: "Job Applications",path: "/admin/job-applications",route: "/admin/job-applications",iconName: "FileText",     bg: "bg-indigo-50",  text: "text-indigo-600" },
-  { id: "qa-11", label: "Site Content",    path: "/admin/content",         route: "/admin/site-content",    iconName: "Zap",          bg: "bg-yellow-50",  text: "text-yellow-600" },
+  { id: "qa-11", label: "Page Headers",    path: "/admin/page-headers",    route: "/admin/page-headers",    iconName: "PanelTop",     bg: "bg-yellow-50",  text: "text-yellow-600" },
   { id: "qa-13", label: "Hero Typography", path: "/admin/hero-typography", route: "/admin/hero-typography", iconName: "Type",         bg: "bg-cyan-50",    text: "text-cyan-600" },
   { id: "qa-14", label: "About Page",      path: "/admin/about",           route: "/admin/about-page",      iconName: "Info",         bg: "bg-lime-50",    text: "text-lime-600" },
   { id: "qa-15", label: "Contact Page",    path: "/admin/contact-page",   route: "/admin/contact-page",    iconName: "Phone",        bg: "bg-rose-50",    text: "text-rose-600" },
   { id: "qa-16", label: "Top Bar & Footer",path: "/admin/layout",          route: "/admin/topbar-footer",   iconName: "PanelTop",     bg: "bg-slate-100",  text: "text-slate-600" },
-  { id: "qa-17", label: "Multimedia",      path: "/admin/services",        route: "/admin/services-hub",    iconName: "Tv2",          bg: "bg-purple-50",  text: "text-purple-600" },
   { id: "qa-18", label: "Settings",        path: "/admin/settings",        route: "/admin/settings",        iconName: "Settings",     bg: "bg-gray-100",   text: "text-gray-600" },
-  { id: "qa-19", label: "Users & Roles",   path: "/admin/users",           route: "/admin/users-roles",     iconName: "UserCog",      bg: "bg-blue-50",    text: "text-blue-700" },
+  { id: "qa-19", label: "Manage User",     path: "/admin/users",           route: "/admin/manage-user",     iconName: "UserCog",      bg: "bg-blue-50",    text: "text-blue-700" },
 ];
 
 export default function AdminDashboardPage() {
@@ -355,6 +346,7 @@ export default function AdminDashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
   const [greeting, setGreeting] = useState("Welcome");
+  const [adminName, setAdminName] = useState("Mehan Ahmed");
 
 
 
@@ -836,19 +828,29 @@ export default function AdminDashboardPage() {
 
     getSetting("complaints").then(savedComplaints => {
       if (savedComplaints) {
-        setComplaints(savedComplaints as Complaint[]);
+        const list = savedComplaints as Complaint[];
+        setComplaints(list);
+        setCountAllComplaints(list.length);
+        const todayStr = new Date().toLocaleDateString();
+        const filedToday = list.filter((c: Complaint) => c.date && c.date.includes(todayStr));
+        setCountComplaintsToday(filedToday.length);
       } else {
         setSetting("complaints", defaultComplaints);
         setComplaints(defaultComplaints);
+        setCountAllComplaints(defaultComplaints.length);
+        setCountComplaintsToday(0);
       }
     });
 
     getSetting("tickets").then(savedTickets => {
       if (savedTickets) {
-        setTickets(savedTickets as Ticket[]);
+        const list = savedTickets as Ticket[];
+        setTickets(list);
+        setCountTickets(list.length);
       } else {
         setSetting("tickets", defaultTickets);
         setTickets(defaultTickets);
+        setCountTickets(defaultTickets.length);
       }
     });
 
@@ -863,10 +865,13 @@ export default function AdminDashboardPage() {
 
     getSetting("contact_submissions").then(savedMessages => {
       if (savedMessages) {
-        setMessages(savedMessages as ContactMessage[]);
+        const list = savedMessages as ContactMessage[];
+        setMessages(list);
+        setCountContactInbox(list.length);
       } else {
         setSetting("contact_submissions", defaultMessages);
         setMessages(defaultMessages);
+        setCountContactInbox(defaultMessages.length);
       }
     });
 
@@ -881,10 +886,13 @@ export default function AdminDashboardPage() {
 
     getSetting("job_applications").then(savedApps => {
       if (savedApps) {
-        setJobApplications(savedApps as JobApplication[]);
+        const list = savedApps as JobApplication[];
+        setJobApplications(list);
+        setCountApplications(list.length);
       } else {
         setSetting("job_applications", defaultJobApplications);
         setJobApplications(defaultJobApplications);
+        setCountApplications(defaultJobApplications.length);
       }
     });
 
@@ -1011,56 +1019,37 @@ export default function AdminDashboardPage() {
       }
     });
 
-    // Load snapshot counts
-    try {
-      const savedCustomers = localStorage.getItem("customers");
-      if (savedCustomers) {
-        setCountCustomers(JSON.parse(savedCustomers).length);
+    getSetting("promo_offers").then(saved => {
+      if (saved && Array.isArray(saved)) {
+        setCountOffers(saved.length);
+      } else {
+        setCountOffers(7);
+      }
+    });
+
+    getSetting("coverage_zones").then(saved => {
+      if (saved && Array.isArray(saved)) {
+        setCountCoverageAreas(saved.length);
+      } else {
+        setCountCoverageAreas(11);
+      }
+    });
+
+    getSetting("packages_list").then(saved => {
+      if (saved && Array.isArray(saved)) {
+        setCountPackages(saved.length);
+      } else {
+        setCountPackages(5);
+      }
+    });
+
+    getSetting("subscribers").then(saved => {
+      if (saved && Array.isArray(saved)) {
+        setCountCustomers(saved.length);
       } else {
         setCountCustomers(3);
       }
-
-      const savedApps = localStorage.getItem("job_applications");
-      if (savedApps) {
-        setCountApplications(JSON.parse(savedApps).length);
-      }
-
-      const savedTickets = localStorage.getItem("tickets");
-      if (savedTickets) {
-        setCountTickets(JSON.parse(savedTickets).length);
-      }
-
-      const savedComplaints = localStorage.getItem("complaints");
-      if (savedComplaints) {
-        const list = JSON.parse(savedComplaints);
-        setCountAllComplaints(list.length);
-        const todayStr = new Date().toLocaleDateString();
-        const filedToday = list.filter((c: Complaint) => c.date && c.date.includes(todayStr));
-        setCountComplaintsToday(filedToday.length);
-      }
-
-      const savedMessages = localStorage.getItem("contact_submissions");
-      if (savedMessages) {
-        setCountContactInbox(JSON.parse(savedMessages).length);
-      }
-
-      const savedPackages = localStorage.getItem("packages");
-      if (savedPackages) {
-        setCountPackages(JSON.parse(savedPackages).length);
-      }
-
-      const savedClaims = localStorage.getItem("claims");
-      if (savedClaims) {
-        setCountOffers(JSON.parse(savedClaims).length);
-      }
-
-      const savedAreas = localStorage.getItem("coverage_zones");
-      if (savedAreas) {
-        setCountCoverageAreas(JSON.parse(savedAreas).length);
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    });
   }
 
   useEffect(() => {
@@ -1083,6 +1072,28 @@ export default function AdminDashboardPage() {
         } else {
           setIsAuthenticated(true);
           loadDatabase();
+          
+          const currentUsername = localStorage.getItem("admin_username") || "admin";
+          getSetting("admin_users").then((savedUsers) => {
+            if (Array.isArray(savedUsers)) {
+              const match = savedUsers.find(
+                (u) =>
+                  u &&
+                  typeof u === "object" &&
+                  "username" in u &&
+                  String(u.username).trim().toLowerCase() === currentUsername.trim().toLowerCase()
+              );
+              if (match) {
+                setAdminName(String(match.username || currentUsername));
+              } else {
+                setAdminName(currentUsername === "admin" ? "M Amin" : currentUsername);
+              }
+            } else {
+              setAdminName(currentUsername === "admin" ? "M Amin" : currentUsername);
+            }
+          }).catch(() => {
+            setAdminName(currentUsername === "admin" ? "M Amin" : currentUsername);
+          });
         }
       }
     }, 0);
@@ -1641,7 +1652,7 @@ export default function AdminDashboardPage() {
               {/* Welcome Banner */}
               <div className="bg-linear-to-r from-[hsl(var(--sidebar-background))] to-[#81C9FE] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
                 <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
-                  {greeting}, Mehan Ahmed
+                  {greeting}, {adminName}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

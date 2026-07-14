@@ -3,6 +3,14 @@ import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "@/components/ui/table";
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -68,8 +76,9 @@ export default function PackageRequestsPage() {
     if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
     setAuth(true);
     getSetting("package_requests").then(saved => {
-      if (saved) { setRequests(saved as PackageRequest[]); }
-      else {
+      if (saved && Array.isArray(saved) && saved.length > 0) {
+        setRequests(saved as PackageRequest[]);
+      } else {
         setSetting("package_requests", defaultRequests as PackageRequest[]);
         setRequests(defaultRequests);
       }
@@ -115,45 +124,50 @@ export default function PackageRequestsPage() {
   if (!auth) return null;
 
   return (
-    <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 space-y-6">
-      {/* Status Filter Tabs */}
-      <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none mb-2">
-        {([
-          { id: "All", label: "All Requests" },
-          { id: "Pending", label: "Pending" },
-          { id: "Completed", label: "Completed" },
-          { id: "Cancelled", label: "Cancelled" }
-        ] as const).map((tab) => {
-          const isActive = statusFilter === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setStatusFilter(tab.id as typeof statusFilter)}
-              className={`flex items-center gap-2 pb-3 text-xs font-bold transition-all relative border-b-2 cursor-pointer ${
-                isActive
-                  ? "text-brand-blue border-brand-blue"
-                  : "text-slate-400 border-transparent hover:text-slate-600"
-              }`}
-            >
-              <span>{tab.label}</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                isActive ? "bg-brand-blue/10 text-brand-blue" : "bg-slate-100 text-slate-500"
-              }`}>
-                {tab.id === "All" ? requests.length : requests.filter(r => r.status === tab.id).length}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-        <div className="flex justify-end pt-2">
+    <div className="space-y-6">
+      {/* Filters and Add Button Row */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-px">
+        {/* Status Filter Tabs */}
+        <div className="flex gap-6 overflow-x-auto select-none">
+          {([
+            { id: "All", label: "All Requests" },
+            { id: "Pending", label: "Pending" },
+            { id: "Completed", label: "Completed" },
+            { id: "Cancelled", label: "Cancelled" }
+          ] as const).map((tab) => {
+            const isActive = statusFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setStatusFilter(tab.id as typeof statusFilter)}
+                className={`flex items-center gap-2 pb-3 text-xs font-bold transition-all relative border-b-2 cursor-pointer ${
+                  isActive
+                    ? "text-brand-blue border-brand-blue"
+                    : "text-slate-400 border-transparent hover:text-slate-600"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                  isActive ? "bg-brand-blue/10 text-brand-blue" : "bg-slate-100 text-slate-500"
+                }`}>
+                  {tab.id === "All" ? requests.length : requests.filter(r => r.status === tab.id).length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Add Manual Request Button */}
+        <div className="pb-3 sm:pb-2.5">
           <button
             onClick={() => setShowAddForm(!showAddForm)}
-            className="bg-brand-blue text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer"
+            className="bg-brand-blue text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-blue-700 transition-colors cursor-pointer whitespace-nowrap"
           >
             {showAddForm ? "Cancel" : "Add Manual Request"}
           </button>
         </div>
+      </div>
 
       {showAddForm && (
         <form onSubmit={handleAddRequest} className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-4 mb-4">
@@ -178,54 +192,58 @@ export default function PackageRequestsPage() {
         </form>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead>
-            <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
-              <th className="pb-3">Name</th>
-              <th className="pb-3">Phone</th>
-              <th className="pb-3">Email</th>
-              <th className="pb-3">Zone</th>
-              <th className="pb-3">Price</th>
-              <th className="pb-3">Refer / Promo</th>
-              <th className="pb-3">Address</th>
-              <th className="pb-3">Status</th>
-              <th className="pb-3 text-right">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+      <div className="overflow-x-auto border border-slate-200/60 rounded-xl bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Name</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Phone</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Email</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Zone</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Price</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Refer / Promo</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Address</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</TableHead>
+              <TableHead className="py-4 pr-4 text-xs font-bold text-slate-500 text-right uppercase tracking-wider">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filteredRequests.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="py-8 text-center text-slate-400">
+              <TableRow>
+                <TableCell colSpan={9} className="py-8 text-center text-slate-400">
                   No package requests found.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ) : (
               filteredRequests.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5">
-                    <span className="font-extrabold text-slate-800 block">{r.name}</span>
-                    <span className="text-[9px] text-brand-blue font-mono">{r.planName} ({r.speed})</span>
-                  </td>
-                  <td className="py-3.5 font-mono text-slate-600">{r.phone}</td>
-                  <td className="py-3.5 font-mono text-slate-550">{r.email}</td>
-                  <td className="py-3.5 font-semibold text-slate-700">{r.zone}</td>
-                  <td className="py-3.5 font-black text-emerald-600">৳{r.price} BDT</td>
-                  <td className="py-3.5 font-mono text-slate-600">{r.referralCode || "N/A"}</td>
-                  <td className="py-3.5 text-slate-650 max-w-xs truncate" title={r.address}>{r.address}</td>
-                  <td className="py-3.5">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase whitespace-nowrap ${
-                      r.status === "Completed" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" :
-                      r.status === "Cancelled" ? "bg-red-500/10 text-red-600 border border-red-500/20" :
-                      "bg-amber-400/10 text-amber-600 border border-amber-400/20 animate-pulse"
+                <TableRow key={r.id} className="hover:bg-slate-50/40 transition-colors border-b border-slate-100 last:border-0">
+                  <TableCell className="py-3.5 pl-4">
+                    <span className="font-extrabold text-slate-900 block leading-tight">{r.name}</span>
+                    <span className="text-[10px] text-brand-blue font-bold font-mono">{r.planName} ({r.speed})</span>
+                  </TableCell>
+                  <TableCell className="py-3.5 font-bold font-mono text-slate-600 text-[11px]">{r.phone}</TableCell>
+                  <TableCell className="py-3.5 font-mono text-slate-500 text-[11px]">{r.email}</TableCell>
+                  <TableCell className="py-3.5 font-bold text-slate-700">{r.zone}</TableCell>
+                  <TableCell className="py-3.5 font-black text-emerald-600 text-[11px]">৳{r.price.toLocaleString()} BDT</TableCell>
+                  <TableCell className="py-3.5 font-bold font-mono text-indigo-600 text-[10px]">{r.referralCode || "N/A"}</TableCell>
+                  <TableCell className="py-3.5 text-slate-500 text-xs max-w-xs truncate" title={r.address}>{r.address}</TableCell>
+                  <TableCell className="py-3.5">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border leading-none ${
+                      r.status === "Completed" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                      r.status === "Cancelled" ? "bg-rose-50 text-rose-700 border-rose-100" :
+                      "bg-amber-50 text-amber-700 border-amber-100 animate-pulse"
                     }`}>
-                      {r.status}
+                      <span className={`w-1 h-1 rounded-full shrink-0 ${
+                        r.status === "Completed" ? "bg-emerald-500" :
+                        r.status === "Cancelled" ? "bg-rose-500" : "bg-amber-500 animate-pulse"
+                      }`} />
+                      <span>{r.status}</span>
                     </span>
-                  </td>
-                  <td className="py-3.5 text-right">
+                  </TableCell>
+                  <TableCell className="py-3.5 pr-4 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
+                        <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100/70 active:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors cursor-pointer outline-none">
                           <MoreVertical className="w-4 h-4" />
                         </button>
                       </DropdownMenuTrigger>
@@ -242,7 +260,7 @@ export default function PackageRequestsPage() {
                         {r.status === "Pending" && (
                           <DropdownMenuItem
                             onClick={() => updateStatus(r.id, "Cancelled")}
-                            className="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer flex items-center gap-2"
+                            className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
                           >
                             <XCircle className="w-3.5 h-3.5" />
                             <span>Cancel</span>
@@ -257,12 +275,12 @@ export default function PackageRequestsPage() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

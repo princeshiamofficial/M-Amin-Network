@@ -4,6 +4,14 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "@/components/ui/table";
 
 interface Job {
   id: string; title: string; department: string;
@@ -245,7 +253,7 @@ export default function JobsPage() {
   if (!auth) return null;
 
   return (
-    <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center border-b border-slate-100 pb-4">
         <div>
           <h2 className="text-lg font-extrabold text-slate-900">Careers &amp; Active Openings</h2>
@@ -383,30 +391,34 @@ export default function JobsPage() {
           </div>
         </div>
       )}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead>
-            <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
-              <th className="pb-3">Job ID</th>
-              <th className="pb-3">Image</th>
-              <th className="pb-3">Position Title</th>
-              <th className="pb-3">Department</th>
-              <th className="pb-3">Job Type</th>
-              <th className="pb-3">Location</th>
-              <th className="pb-3">Vacancy</th>
-              <th className="pb-3">Publish Date</th>
-              <th className="pb-3">Status</th>
-              <th className="pb-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+      <div className="overflow-x-auto border border-slate-200/60 rounded-xl bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Job ID</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Image</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Position Title</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Department</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Job Type</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Location</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Vacancy</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Publish Date</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</TableHead>
+              <TableHead className="py-4 pr-4 text-xs font-bold text-slate-500 text-right uppercase tracking-wider">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {jobs.length === 0 ? (
-              <tr><td colSpan={10} className="py-8 text-center text-slate-400">No jobs listed.</td></tr>
+              <TableRow>
+                <TableCell colSpan={10} className="py-12 text-center text-slate-400">
+                  No jobs listed.
+                </TableCell>
+              </TableRow>
             ) : (
               jobs.map((j) => (
-                <tr key={j.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 font-bold font-mono text-brand-blue">{j.id}</td>
-                  <td className="py-3.5">
+                <TableRow key={j.id} className="hover:bg-slate-50/40 transition-colors border-b border-slate-100 last:border-0 text-slate-800">
+                  <TableCell className="py-3.5 pl-4 font-bold font-mono text-brand-blue text-[11px]">{j.id}</TableCell>
+                  <TableCell className="py-3.5">
                     <div className="relative h-10 w-14 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
                       {j.image ? (
                         <Image
@@ -418,24 +430,31 @@ export default function JobsPage() {
                         />
                       ) : null}
                     </div>
-                  </td>
-                  <td className="py-3.5 font-extrabold text-slate-800">{j.title}</td>
-                  <td className="py-3.5 text-slate-600">{j.department}</td>
-                  <td className="py-3.5 text-slate-600 font-semibold">{j.type}</td>
-                  <td className="py-3.5 text-slate-600">{j.location || "Not set"}</td>
-                  <td className="py-3.5 text-slate-600 font-semibold">{j.vacancy || "1"}</td>
-                  <td className="py-3.5 text-slate-500">{j.date}</td>
-                  <td className="py-3.5"><span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${j.status === "Open" ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-slate-500/10 text-slate-500 border border-slate-500/20"}`}>{j.status}</span></td>
-                  <td className="py-3.5 text-right space-x-2">
-                    <button onClick={() => handleEditJob(j)} className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-700 rounded-lg font-bold text-[10px] cursor-pointer">Edit</button>
-                    <button onClick={() => toggleStatus(j.id)} className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer">Toggle Status</button>
-                    <button onClick={() => deleteJob(j.id)} className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 rounded-lg font-bold text-[10px] cursor-pointer">Delete</button>
-                  </td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="py-3.5 font-extrabold text-slate-900">{j.title}</TableCell>
+                  <TableCell className="py-3.5 text-slate-600 text-xs">{j.department}</TableCell>
+                  <TableCell className="py-3.5 text-slate-700 font-semibold text-xs">{j.type}</TableCell>
+                  <TableCell className="py-3.5 text-slate-655 text-xs">{j.location || "Not set"}</TableCell>
+                  <TableCell className="py-3.5 text-slate-600 font-bold font-mono text-xs">{j.vacancy || "1"}</TableCell>
+                  <TableCell className="py-3.5 text-slate-500 font-mono text-[11px] whitespace-nowrap">{j.date}</TableCell>
+                  <TableCell className="py-3.5">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border leading-none ${
+                      j.status === "Open" ? "bg-emerald-50 text-emerald-700 border-emerald-100 animate-pulse" : "bg-slate-50 text-slate-600 border-slate-200"
+                    }`}>
+                      <span className={`w-1 h-1 rounded-full shrink-0 ${j.status === "Open" ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
+                      <span>{j.status}</span>
+                    </span>
+                  </TableCell>
+                  <TableCell className="py-3.5 pr-4 text-right space-x-2 whitespace-nowrap">
+                    <button onClick={() => handleEditJob(j)} className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-700 rounded-lg font-bold text-[10px] cursor-pointer transition-colors">Edit</button>
+                    <button onClick={() => toggleStatus(j.id)} className="px-2.5 py-1 bg-brand-blue/10 hover:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue rounded-lg font-bold text-[10px] cursor-pointer transition-colors">Toggle Status</button>
+                    <button onClick={() => deleteJob(j.id)} className="px-2.5 py-1 border border-slate-200 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/20 rounded-lg font-bold text-[10px] cursor-pointer transition-colors">Delete</button>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

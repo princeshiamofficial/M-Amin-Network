@@ -1,8 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { MagicCard } from "@/components/lightswind/magic-card";
+import { getSetting, setSetting } from "@/actions/content";
+import { useTranslation } from "@/hooks/useTranslation";
+import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface MediaPortal {
   name: string;
@@ -15,62 +18,102 @@ interface MediaPortal {
 }
 
 export default function Multimedia() {
-  const portals: MediaPortal[] = [
-    {
-      name: "M Amin FTP Movies",
-      category: "ftp",
-      url: "http://ftp.m-aminnetwork.com",
-      desc: "Stream and download thousands of Hollywood, Bollywood, and Bangla movies in full 1080p/4K resolution directly from our local SAN caches.",
-      speed: "Up to 100 Mbps",
-      status: "Online",
-      image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-    },
-    {
-      name: "BDIX Live TV Portal",
-      category: "tv",
-      url: "http://tv.m-aminnetwork.com",
-      desc: "Watch 120+ high-definition local and international satellite television channels live with zero buffer lag using our local TV gateway.",
-      speed: "Up to 100 Mbps",
-      status: "Online",
-      image: "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-    },
-    {
-      name: "Gaming Caches Server",
-      category: "gaming",
-      url: "http://games.m-aminnetwork.com",
-      desc: "Download PC game installation packages, Steam backup folders, patches, and console software updates from our high-speed cache storage.",
-      speed: "Up to 100 Mbps",
-      status: "Online",
-      image: "/933503ea823535235e8159f65709292f.jpg",
-    },
-    {
-      name: "BDIX Torrent Cache",
-      category: "torrent",
-      url: "http://torrent.m-aminnetwork.com",
-      desc: "High-speed torrent peer caching utilizing localized peering routing (AS150164). Replaces slow international seeds with local fast peers.",
-      speed: "Up to 100 Mbps",
-      status: "Online",
-      image: "/footer-bg.jpg",
-    },
-    {
-      name: "FTP Anime Archive",
-      category: "ftp",
-      url: "http://anime.m-aminnetwork.com",
-      desc: "Watch subbed and dubbed anime series in HD quality directly hosted on our local media servers.",
-      speed: "Up to 50 Mbps",
-      status: "Online",
-      image: "/Multimedia.jpg",
-    },
-    {
-      name: "BDIX Sports Live",
-      category: "tv",
-      url: "http://sports.m-aminnetwork.com",
-      desc: "Never miss a match. Stream live ICC cricket matches, football tournaments, and local leagues in HD quality.",
-      speed: "Up to 100 Mbps",
-      status: "Maintenance",
-      image: "/offer-card-banner.png",
-    },
-  ];
+  const lang = useTranslation();
+  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  const [headerData, setHeaderData] = useState<PageHeaderData>(defaultPageHeaders);
+  const [portals, setPortals] = useState<MediaPortal[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string }[]>([
+    { id: "all", label: "All" }
+  ]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getSetting("page_headers").then(saved => {
+        if (saved) setHeaderData(saved as PageHeaderData);
+      });
+
+      const defaultCats = [
+        { id: "ftp", label: "FTP Servers" },
+        { id: "tv", label: "Live TV" },
+        { id: "gaming", label: "Gaming Caches" },
+        { id: "torrent", label: "BDIX Torrents" }
+      ];
+
+      getSetting("multimedia_categories").then((savedCats) => {
+        if (savedCats && Array.isArray(savedCats) && savedCats.length > 0) {
+          setCategories([{ id: "all", label: "All" }, ...(savedCats as { id: string; label: string }[])]);
+        } else {
+          setSetting("multimedia_categories", defaultCats);
+          setCategories([{ id: "all", label: "All" }, ...defaultCats]);
+        }
+      });
+
+      getSetting("multimedia_list").then(saved => {
+        if (saved && Array.isArray(saved) && saved.length > 0) {
+          setPortals(saved as MediaPortal[]);
+        } else {
+          const defaultPortals: MediaPortal[] = [
+            {
+              name: "M Amin FTP Movies",
+              category: "ftp",
+              url: "http://ftp.m-aminnetwork.com",
+              desc: "Stream and download thousands of Hollywood, Bollywood, and Bangla movies in full 1080p/4K resolution directly from our local SAN caches.",
+              speed: "Up to 100 Mbps",
+              status: "Online",
+              image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
+            },
+            {
+              name: "BDIX Live TV Portal",
+              category: "tv",
+              url: "http://tv.m-aminnetwork.com",
+              desc: "Watch 120+ high-definition local and international satellite television channels live with zero buffer lag using our local TV gateway.",
+              speed: "Up to 100 Mbps",
+              status: "Online",
+              image: "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+            },
+            {
+              name: "Gaming Caches Server",
+              category: "gaming",
+              url: "http://games.m-aminnetwork.com",
+              desc: "Download PC game installation packages, Steam backup folders, patches, and console software updates from our high-speed cache storage.",
+              speed: "Up to 100 Mbps",
+              status: "Online",
+              image: "/933503ea823535235e8159f65709292f.jpg",
+            },
+            {
+              name: "BDIX Torrent Cache",
+              category: "torrent",
+              url: "http://torrent.m-aminnetwork.com",
+              desc: "High-speed torrent peer caching utilizing localized peering routing (AS150164). Replaces slow international seeds with local fast peers.",
+              speed: "Up to 100 Mbps",
+              status: "Online",
+              image: "/footer-bg.jpg",
+            },
+            {
+              name: "FTP Anime Archive",
+              category: "ftp",
+              url: "http://anime.m-aminnetwork.com",
+              desc: "Watch subbed and dubbed anime series in HD quality directly hosted on our local media servers.",
+              speed: "Up to 50 Mbps",
+              status: "Online",
+              image: "/Multimedia.jpg",
+            },
+            {
+              name: "BDIX Sports Live",
+              category: "tv",
+              url: "http://sports.m-aminnetwork.com",
+              desc: "Never miss a match. Stream live ICC cricket matches, football tournaments, and local leagues in HD quality.",
+              speed: "Up to 100 Mbps",
+              status: "Maintenance",
+              image: "/offer-card-banner.png",
+            },
+          ];
+          setSetting("multimedia_list", defaultPortals);
+          setPortals(defaultPortals);
+        }
+      });
+    }
+  }, []);
 
   const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
 
@@ -86,23 +129,38 @@ export default function Multimedia() {
       {/* Header Area Banner */}
       <div 
         className="relative w-full overflow-hidden bg-slate-950 py-3 sm:py-6 border-b border-white/5 bg-cover bg-center"
-        style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("/Multimedia.jpg")'
-        }}
       >
-        <div className="absolute inset-0 bg-brand-dark/20 mix-blend-multiply pointer-events-none" />
-        <div className="absolute inset-0 bg-linear-to-b from-transparent to-brand-dark/80 pointer-events-none" />
+        {/* Background video/image */}
+        <div className="absolute inset-0 z-0">
+          {headerData.multimedia_bg?.endsWith(".mp4") ? (
+            <video
+              autoPlay
+              loop
+              muted={true}
+              playsInline
+              className="w-full h-full object-cover opacity-50"
+            >
+              <source src={headerData.multimedia_bg} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              className="w-full h-full bg-cover bg-center opacity-50"
+              style={{ backgroundImage: `url('${headerData.multimedia_bg}')` }}
+            />
+          )}
+          <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/60" />
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-              Multimedia{" "}
+              {t(headerData.multimedia_title_en, headerData.multimedia_title_bn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                &amp; BDIX Portal
+                {t(headerData.multimedia_title_highlight_en, headerData.multimedia_title_highlight_bn)}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-              Access our high-speed local entertainment gateways to stream movies, play games, and watch live TV at speeds up to 100 Mbps.
+              {t(headerData.multimedia_subtitle_en, headerData.multimedia_subtitle_bn)}
             </p>
           </div>
         </div>
@@ -113,13 +171,7 @@ export default function Multimedia() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Category Filter Tabs */}
           <div className="flex flex-wrap justify-center gap-2.5 mb-12">
-            {[
-              { id: "all", label: "All Portals" },
-              { id: "ftp", label: "FTP Servers" },
-              { id: "tv", label: "Live TV" },
-              { id: "gaming", label: "Gaming Caches" },
-              { id: "torrent", label: "BDIX Torrents" }
-            ].map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 type="button"
@@ -135,7 +187,7 @@ export default function Multimedia() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 max-w-7xl mx-auto">
             {filteredPortals.map((portal, i) => (
               <a
                 key={i}

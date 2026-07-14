@@ -98,7 +98,7 @@ export default function ComplainPageAdmin() {
     }
     setAuth(true);
     getSetting("complain_page_content").then(s => {
-      if (s) setContent(s as any);
+      if (s) setContent({ ...defaultComplainPageContent, ...(s as ComplainPageContent) });
       else setSetting("complain_page_content", defaultComplainPageContent as any);
     });
   }, [router]);

@@ -18,18 +18,16 @@ import {
   UserCog,
   MessageSquare,
   HelpCircle,
-  Layers,
   Type,
   Globe,
   Info,
-  Tv2,
-  Star,
   Settings,
   Lock,
   BarChart3,
   LogOut,
   PanelTop,
-  Zap
+  Zap,
+  Film
 } from "lucide-react";
 
 interface AdminSidebarProps {
@@ -37,9 +35,64 @@ interface AdminSidebarProps {
   setActiveTab: (tab: string) => void;
   onSignOut: () => void;
   isCollapsed?: boolean;
+  userRole?: string;
+  rolePermissions?: any[];
 }
 
-export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCollapsed = false }: AdminSidebarProps) {
+export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCollapsed = false, userRole = "Super Administrator", rolePermissions = [] }: AdminSidebarProps) {
+  // Route lookup table
+  const tabUrls: Record<string, string> = {
+    "Overview": "/admin/dashboard",
+    "Packages": "/admin/packages",
+    "Offers": "/admin/offers",
+    "Multimedia": "/admin/multimedia",
+    "Coverage Areas": "/admin/coverage-areas",
+    "Applications": "/admin/applications",
+    "Customers": "/admin/customers",
+    "Bills": "/admin/bills",
+    "Tickets": "/admin/tickets",
+    "Package Requests": "/admin/package-requests",
+    "Contact Messages": "/admin/contact-messages",
+    "Complaints": "/admin/complaints",
+    "Jobs": "/admin/jobs",
+    "Job Applications": "/admin/job-applications",
+    "Testimonials": "/admin/testimonials",
+    "FAQs": "/admin/faqs",
+    "Hero Typography": "/admin/hero-typography",
+    "Packages Header": "/admin/page-headers/packages",
+    "Offers Header": "/admin/page-headers/offers",
+    "Coverage Header": "/admin/page-headers/coverage",
+    "Multimedia Header": "/admin/page-headers/multimedia",
+    "Careers Header": "/admin/page-headers/careers",
+    "SEO & Sharing": "/admin/seo-sharing",
+    "About Page": "/admin/about-page",
+    "Contact Page": "/admin/contact-page",
+    "Support Page": "/admin/support-page",
+    "Popup Offer Page": "/admin/popup-offer",
+    "Top Bar & Footer": "/admin/topbar-footer",
+    "Settings": "/admin/settings",
+    "Manage User": "/admin/manage-user",
+    "User Role": "/admin/user-role",
+    "Security": "/admin/security",
+    "SEO Audit": "/admin/seo-audit",
+  };
+
+  const isAllowed = (itemName: string) => {
+    if (userRole === "Super Administrator") return true;
+    const route = tabUrls[itemName];
+    if (!route) return true;
+    if (route === "/admin/dashboard") return true;
+
+    const matchingRole = rolePermissions.find((r) => r.name === userRole);
+    if (matchingRole && Array.isArray(matchingRole.pageAccess)) {
+      const access = matchingRole.pageAccess.find((p: any) => p.route === route);
+      if (access && access.permissions) {
+        return access.permissions.add || access.permissions.edit || access.permissions.delete;
+      }
+    }
+    return false;
+  };
+
   // Navigation groupings using Lucide React icons
   const menuGroups = [
     {
@@ -61,6 +114,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
         {
           name: "Offers",
           icon: <Tag className="w-4 h-4" />,
+        },
+        {
+          name: "Multimedia",
+          icon: <Film className="w-4 h-4" />,
         },
         {
           name: "Coverage Areas",
@@ -126,20 +183,28 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           icon: <HelpCircle className="w-4 h-4" />,
         },
         {
-          name: "Site Content",
-          icon: <FileText className="w-4 h-4" />,
-        },
-        {
-          name: "Home Sections",
-          icon: <Layers className="w-4 h-4" />,
-        },
-        {
           name: "Hero Typography",
           icon: <Type className="w-4 h-4" />,
         },
         {
-          name: "Network Features",
-          icon: <Zap className="w-4 h-4" />,
+          name: "Packages Header",
+          icon: <PanelTop className="w-4 h-4" />,
+        },
+        {
+          name: "Offers Header",
+          icon: <PanelTop className="w-4 h-4" />,
+        },
+        {
+          name: "Coverage Header",
+          icon: <PanelTop className="w-4 h-4" />,
+        },
+        {
+          name: "Multimedia Header",
+          icon: <PanelTop className="w-4 h-4" />,
+        },
+        {
+          name: "Careers Header",
+          icon: <PanelTop className="w-4 h-4" />,
         },
         {
           name: "SEO & Sharing",
@@ -154,44 +219,12 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           icon: <Mail className="w-4 h-4" />,
         },
         {
-          name: "Complaint Page",
-          icon: <AlertTriangle className="w-4 h-4" />,
-        },
-        {
-          name: "Support Page",
-          icon: <HelpCircle className="w-4 h-4" />,
-        },
-        {
-          name: "Careers Page",
-          icon: <Briefcase className="w-4 h-4" />,
-        },
-        {
-          name: "Coverage Areas Page",
-          icon: <MapPin className="w-4 h-4" />,
-        },
-        {
-          name: "Offers Page",
-          icon: <Tag className="w-4 h-4" />,
-        },
-        {
-          name: "Bill Payment Page",
-          icon: <Receipt className="w-4 h-4" />,
-        },
-        {
-          name: "Self-Care Portal Page",
-          icon: <Globe className="w-4 h-4" />,
+          name: "Popup Offer Page",
+          icon: <Zap className="w-4 h-4" />,
         },
         {
           name: "Top Bar & Footer",
           icon: <PanelTop className="w-4 h-4" />,
-        },
-        {
-          name: "Services Hub",
-          icon: <Tv2 className="w-4 h-4" />,
-        },
-        {
-          name: "Service Reviews",
-          icon: <Star className="w-4 h-4" />,
         },
         {
           name: "Settings",
@@ -203,7 +236,11 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
       title: "Access",
       items: [
         {
-          name: "Users & Roles",
+          name: "Manage User",
+          icon: <UserCog className="w-4 h-4" />,
+        },
+        {
+          name: "User Role",
           icon: <UserCog className="w-4 h-4" />,
         },
         {
@@ -244,39 +281,45 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
 
       {/* Navigation Group Items List */}
       <div className="flex-1 px-3 py-4 space-y-5 overflow-y-auto admin-sidebar-scroll">
-        {menuGroups.map((group) => (
-          <div key={group.title} className="space-y-1.5">
-            {!isCollapsed && (
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block px-3 mb-1">
-                {group.title}
-              </span>
-            )}
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const isActive = activeTab === item.name;
-                return (
-                  <button
-                    key={item.name}
-                    onClick={() => setActiveTab(item.name)}
-                    title={isCollapsed ? item.name : undefined}
-                    className={`w-full flex items-center gap-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide cursor-pointer ${
-                      isCollapsed ? "justify-center px-0" : "px-3.5 text-left"
-                    } ${
-                      isActive
-                        ? "bg-[#0c1e35] text-white border border-[#1e293b]/80 shadow-md shadow-black/10"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-[#0c1e35]/35"
-                    }`}
-                  >
-                    <span className={isActive ? "text-brand-cyan" : "text-slate-400"}>
-                      {item.icon}
-                    </span>
-                    {!isCollapsed && <span>{item.name}</span>}
-                  </button>
-                );
-              })}
+        {menuGroups.map((group) => {
+          // Filter items within this group
+          const visibleItems = group.items.filter((item) => isAllowed(item.name));
+          if (visibleItems.length === 0) return null;
+
+          return (
+            <div key={group.title} className="space-y-1.5">
+              {!isCollapsed && (
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block px-3 mb-1">
+                  {group.title}
+                </span>
+              )}
+              <div className="space-y-0.5">
+                {visibleItems.map((item) => {
+                  const isActive = activeTab === item.name;
+                  return (
+                    <button
+                      key={item.name}
+                      onClick={() => setActiveTab(item.name)}
+                      title={isCollapsed ? item.name : undefined}
+                      className={`w-full flex items-center gap-3 py-2.5 rounded-xl text-xs font-semibold tracking-wide cursor-pointer ${
+                        isCollapsed ? "justify-center px-0" : "px-3.5 text-left"
+                      } ${
+                        isActive
+                          ? "bg-[#0c1e35] text-white border border-[#1e293b]/80 shadow-md shadow-black/10"
+                          : "text-slate-400 hover:text-slate-200 hover:bg-[#0c1e35]/35"
+                      }`}
+                    >
+                      <span className={isActive ? "text-brand-cyan" : "text-slate-400"}>
+                        {item.icon}
+                      </span>
+                      {!isCollapsed && <span>{item.name}</span>}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Sidebar Footer Area */}

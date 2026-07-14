@@ -8,6 +8,7 @@ import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSetting } from "@/actions/content";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
 
 interface Plan {
   speed: number;
@@ -112,20 +113,97 @@ export default function Home() {
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonialData);
   const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState({
+    enabled: true,
+    image: "/popup.webp"
+  });
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   
+  useEffect(() => {
+    // 1. Initial fetch
+    getSetting("system_config").then((saved) => {
+      if (saved) {
+        const config = saved as Record<string, unknown>;
+        const enabled = config.popupEnabled !== false;
+        const image = (config.popupImage as string) || "/popup.webp";
+        setPopupConfig({ enabled, image });
+      }
+    });
 
+    // 2. Connect WebSocket for real-time updates
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isDestroyed = false;
+
+    function connectWS() {
+      if (isDestroyed) return;
+      try {
+        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const wsUrl = `${wsProtocol}//${window.location.hostname}:3015`;
+        socket = new WebSocket(wsUrl);
+
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data && typeof data.popupEnabled === "boolean") {
+              setPopupConfig({
+                enabled: data.popupEnabled,
+                image: data.popupImage || "/popup.webp"
+              });
+              
+              if (!data.popupEnabled) {
+                setShowPopup(false);
+              } else {
+                const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
+                if (!hasSeen) {
+                  setShowPopup(true);
+                }
+              }
+            }
+          } catch {
+            // Ignore error
+          }
+        };
+
+        socket.onerror = () => {
+          socket?.close();
+        };
+
+        socket.onclose = () => {
+          if (!isDestroyed) {
+            reconnectTimeout = setTimeout(connectWS, 5000);
+          }
+        };
+      } catch {
+        if (!isDestroyed) {
+          reconnectTimeout = setTimeout(connectWS, 5000);
+        }
+      }
+    }
+
+    connectWS();
+
+    return () => {
+      isDestroyed = true;
+      if (socket) {
+        try { socket.close(); } catch { /* ignore */ }
+      }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
-    if (!hasSeen) {
+    if (!hasSeen && popupConfig.enabled) {
       const timer = setTimeout(() => {
         setShowPopup(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [popupConfig.enabled]);
 
   useEffect(() => {
     getSetting("testimonials").then((saved) => {
@@ -748,9 +826,11 @@ export default function Home() {
 
             {/* Offer Banner Image */}
             <div className="overflow-hidden rounded-2xl border border-white/10 shadow-2xl w-full">
-              <img
-                src="/popup.webp"
+              <Image
+                src={popupConfig.image}
                 alt="Special Internet Offer"
+                width={550}
+                height={550}
                 className="w-full h-auto object-contain rounded-2xl block select-none"
               />
             </div>

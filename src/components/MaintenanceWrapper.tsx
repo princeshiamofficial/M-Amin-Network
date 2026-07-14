@@ -29,7 +29,7 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
 
       try {
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsUrl = `${wsProtocol}//${window.location.hostname}:3001`;
+        const wsUrl = `${wsProtocol}//${window.location.hostname}:3015`;
 
         socket = new WebSocket(wsUrl);
 

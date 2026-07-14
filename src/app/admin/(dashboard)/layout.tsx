@@ -12,12 +12,14 @@ import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
 import { getSetting, isAdminAuthenticated } from "@/actions/content";
 import { IconMap, defaultQuickActions, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
-
+import { AdminSecurityProvider, useAdminSecurity } from "@/hooks/useAdminSecurity";
+import { toast } from "sonner";
 
 const tabUrls: Record<string, string> = {
   "Overview": "/admin/dashboard",
   "Packages": "/admin/packages",
   "Offers": "/admin/offers",
+  "Multimedia": "/admin/multimedia",
   "Coverage Areas": "/admin/coverage-areas",
   "Applications": "/admin/applications",
   "Customers": "/admin/customers",
@@ -30,30 +32,35 @@ const tabUrls: Record<string, string> = {
   "Job Applications": "/admin/job-applications",
   "Testimonials": "/admin/testimonials",
   "FAQs": "/admin/faqs",
-  "Site Content": "/admin/site-content",
   "Hero Typography": "/admin/hero-typography",
-  "Network Features": "/admin/network-features",
+  "Packages Header": "/admin/page-headers/packages",
+  "Offers Header": "/admin/page-headers/offers",
+  "Coverage Header": "/admin/page-headers/coverage",
+  "Multimedia Header": "/admin/page-headers/multimedia",
+  "Careers Header": "/admin/page-headers/careers",
   "SEO & Sharing": "/admin/seo-sharing",
   "About Page": "/admin/about-page",
   "Contact Page": "/admin/contact-page",
-  "Complaint Page": "/admin/complaint-page",
   "Support Page": "/admin/support-page",
-  "Careers Page": "/admin/careers-page",
-  "Coverage Areas Page": "/admin/coverage-page",
-  "Offers Page": "/admin/offers-page",
-  "Bill Payment Page": "/admin/bill-payment-page",
-  "Self-Care Portal Page": "/admin/portal-page",
+  "Popup Offer Page": "/admin/popup-offer",
 
   "Top Bar & Footer": "/admin/topbar-footer",
-  "Services Hub": "/admin/services-hub",
-  "Service Reviews": "/admin/service-reviews",
   "Settings": "/admin/settings",
-  "Users & Roles": "/admin/users-roles",
+  "Manage User": "/admin/manage-user",
+  "User Role": "/admin/user-role",
   "Security": "/admin/security",
   "SEO Audit": "/admin/seo-audit",
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <AdminSecurityProvider>
+      <DashboardLayoutWrapper>{children}</DashboardLayoutWrapper>
+    </AdminSecurityProvider>
+  );
+}
+
+function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -61,6 +68,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [activeTab, setActiveTab] = useState("Overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
+  
+  const { userRole, rolePermissions, permissionsLoaded, hasAccess } = useAdminSecurity();
 
   // State for global custom confirmation popup
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -146,12 +155,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [pathname]);
 
+  // Route Permission Guard
+  useEffect(() => {
+    if (!isAuthenticated || !permissionsLoaded) return;
+
+    if (userRole === "Super Administrator") return;
+
+    if (pathname !== "/admin/dashboard" && pathname.startsWith("/admin")) {
+      const isAllowed = hasAccess(pathname);
+      if (!isAllowed) {
+        router.push("/admin/dashboard");
+        toast.error("Access denied: You do not have permission to view this page.");
+      }
+    }
+  }, [pathname, isAuthenticated, permissionsLoaded, userRole, hasAccess, router]);
+
   const handleLogout = () => {
     sessionStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_token");
     router.push("/admin");
   };
-
 
   if (!mounted || !isAuthenticated) {
     return (
@@ -178,6 +201,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           }}
           onSignOut={handleLogout}
           isCollapsed={isSidebarCollapsed}
+          userRole={userRole}
+          rolePermissions={rolePermissions}
         />
         
         <button

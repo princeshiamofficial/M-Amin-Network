@@ -7,13 +7,19 @@ interface ClientSocket {
   on: (event: string, callback: () => void) => void;
 }
 
-let clients: ClientSocket[] = [];
-let server: http.Server | null = null;
+const globalForWs = global as unknown as {
+  wsServer?: http.Server;
+  wsClients?: ClientSocket[];
+};
+
+if (!globalForWs.wsClients) {
+  globalForWs.wsClients = [];
+}
 
 export function initWebSocketServer() {
-  if (server) return;
+  if (globalForWs.wsServer) return;
 
-  server = http.createServer((req, res) => {
+  const server = http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("M-Amin WS Server\n");
   });
@@ -38,34 +44,46 @@ export function initWebSocketServer() {
     );
 
     const clientSocket = socket as unknown as ClientSocket;
-    clients.push(clientSocket);
+    if (globalForWs.wsClients) {
+      globalForWs.wsClients.push(clientSocket);
+    }
 
     socket.on("close", () => {
-      clients = clients.filter(c => c !== clientSocket);
+      if (globalForWs.wsClients) {
+        globalForWs.wsClients = globalForWs.wsClients.filter(c => c !== clientSocket);
+      }
     });
 
     socket.on("error", () => {
-      clients = clients.filter(c => c !== clientSocket);
+      if (globalForWs.wsClients) {
+        globalForWs.wsClients = globalForWs.wsClients.filter(c => c !== clientSocket);
+      }
     });
   });
 
   server.on("error", (err: unknown) => {
     const error = err as Error & { code?: string };
     if (error.code === "EADDRINUSE") {
-      console.log("WS Server: port 3001 is already in use, skipping creation.");
+      console.log("WS Server: port 3015 is already in use, skipping creation.");
     } else {
       console.error("WS Server error:", error);
     }
   });
 
-  const wsPort = 3001;
+  const wsPort = 3015;
   server.listen(wsPort, () => {
     console.log(`WebSocket server started on port ${wsPort}`);
   });
+
+  globalForWs.wsServer = server;
 }
 
-export function broadcastMaintenance(data: { isMaintenance: boolean; maintenanceMessage: string }) {
-  // Lazily start server if not already running
+export function broadcastMaintenance(data: { 
+  isMaintenance?: boolean; 
+  maintenanceMessage?: string;
+  popupEnabled?: boolean;
+  popupImage?: string;
+}) {
   try {
     initWebSocketServer();
   } catch (err) {
@@ -96,11 +114,14 @@ export function broadcastMaintenance(data: { isMaintenance: boolean; maintenance
     buf.copy(frame, 10);
   }
 
+  const clients = globalForWs.wsClients || [];
   clients.forEach(socket => {
     try {
       socket.write(frame);
     } catch {
-      clients = clients.filter(c => c !== socket);
+      if (globalForWs.wsClients) {
+        globalForWs.wsClients = globalForWs.wsClients.filter(c => c !== socket);
+      }
     }
   });
 }

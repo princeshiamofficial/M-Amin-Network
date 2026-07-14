@@ -5,6 +5,14 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import * as Lucide from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "@/components/ui/table";
 
 interface Testimonial {
   id: string;
@@ -311,69 +319,70 @@ export default function TestimonialsPage() {
         document.body
       )}
 
-      <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        <div className="overflow-visible min-h-[180px]">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                <th className="pb-3">Author Details</th>
-                <th className="pb-3">Rating</th>
-                <th className="pb-3">Review Feedback Text</th>
-                <th className="pb-3">Home Display</th>
-                <th className="pb-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {testimonials.map((t) => (
-                <tr key={t.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 pr-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center">
-                        {t.image ? (
-                          <Image
-                            src={t.image}
-                            alt={t.author}
-                            width={40}
-                            height={40}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100 text-xs">
-                            {t.author.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <span className="font-extrabold text-slate-800 block">{t.author}</span>
-                        <span className="text-[10px] text-slate-500 font-mono">{t.role}</span>
-                      </div>
+      <div className="overflow-x-auto border border-slate-200/60 rounded-xl bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Author Details</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Rating</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Review Feedback Text</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Home Display</TableHead>
+              <TableHead className="py-4 pr-4 text-xs font-bold text-slate-500 text-right uppercase tracking-wider">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {testimonials.map((t) => (
+              <TableRow key={t.id} className="hover:bg-slate-50/40 transition-colors border-b border-slate-100 last:border-0 text-slate-800">
+                <TableCell className="py-3.5 pl-4 pr-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                      {t.image ? (
+                        <Image
+                          src={t.image}
+                          alt={t.author}
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100 text-xs">
+                          {t.author.charAt(0)}
+                        </div>
+                      )}
                     </div>
-                  </td>
-                  <td className="py-3.5 pr-4 font-bold text-amber-500">{"★".repeat(t.rating)}</td>
-                  <td className="py-3.5 pr-4 text-slate-600 max-w-sm truncate">{t.text}</td>
-                  <td className="py-3.5 pr-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      t.isPublished ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-slate-100 text-slate-500 border border-slate-200"
-                    }`}>{t.isPublished ? "Published" : "Hidden"}</span>
-                  </td>
-                  <td className="py-3.5 text-right relative whitespace-nowrap">
-                    <ActionMenu 
-                      t={t} 
-                      onToggle={() => togglePublish(t.id)} 
-                      onEdit={() => editTestimonial(t)} 
-                      onDelete={() => deleteTestimonial(t.id)} 
-                    />
-                  </td>
-                </tr>
-              ))}
-              {testimonials.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-8 text-center text-slate-400 font-medium">No testimonials found.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    <div>
+                      <span className="font-extrabold text-slate-900 block leading-tight">{t.author}</span>
+                      <span className="text-[10px] text-slate-550 font-mono">{t.role}</span>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="py-3.5 pr-4 font-bold text-amber-500 text-sm">{"★".repeat(t.rating)}</TableCell>
+                <TableCell className="py-3.5 pr-4 text-slate-600 text-xs max-w-sm truncate" title={t.text}>{t.text}</TableCell>
+                <TableCell className="py-3.5 pr-4">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border leading-none ${
+                    t.isPublished ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${t.isPublished ? "bg-emerald-500" : "bg-slate-400"}`} />
+                    <span>{t.isPublished ? "Published" : "Hidden"}</span>
+                  </span>
+                </TableCell>
+                <TableCell className="py-3.5 pr-4 text-right relative whitespace-nowrap">
+                  <ActionMenu 
+                    t={t} 
+                    onToggle={() => togglePublish(t.id)} 
+                    onEdit={() => editTestimonial(t)} 
+                    onDelete={() => deleteTestimonial(t.id)} 
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+            {testimonials.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="py-12 text-center text-slate-400 font-semibold">No testimonials found.</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

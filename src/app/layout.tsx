@@ -157,9 +157,6 @@ export default async function RootLayout({
           }
           .lw-btn-ripple { animation: lw-btn-ripple 0.6s ease-out forwards; }
           
-          @keyframes rzp-rot{to{transform: rotate(360deg);}}
-          @-webkit-keyframes rzp-rot{to{-webkit-transform: rotate(360deg);}} 
-          .razorpay-container > iframe {min-height: 100%!important;}
           .force-active-tab {
               background-color: #0072ff !important;
               color: #ffffff !important;
@@ -169,10 +166,6 @@ export default async function RootLayout({
           }
         `}} />
 
-        {/* External Scripts */}
-        <script src="https://checkout.razorpay.com/v1/checkout.js" async />
-        <script src="https://cdn.razorpay.com/static/cx/razorpay-risk-detection/bundle.js" async />
-        <script src="https://apis.google.com/_/scs/abc-static/_/js/k=gapi.lb.en.9vdPKhB0RUg.O/m=gapi_iframes/rt=j/sv=1/d=1/ed=1/rs=AHpOoo97anj7zZ432JcN58tqJJp_A6WeOw/cb=gapi.loaded_0?le=scs" async />
       </head>
       <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
         <MaintenanceWrapper isMaintenance={isMaintenance} maintenanceMessage={maintenanceMessage}>

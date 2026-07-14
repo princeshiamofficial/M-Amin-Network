@@ -16,6 +16,20 @@ const defaultSEOSettings: SEOSettings = {
   keywords: "internet, broadband, fiber, keraniganj, isp, m-amin",
 };
 
+function normalizeSEOSettings(value: unknown): SEOSettings {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return defaultSEOSettings;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  return {
+    metaTitle: typeof record.metaTitle === "string" ? record.metaTitle : defaultSEOSettings.metaTitle,
+    metaDescription: typeof record.metaDescription === "string" ? record.metaDescription : defaultSEOSettings.metaDescription,
+    keywords: typeof record.keywords === "string" ? record.keywords : defaultSEOSettings.keywords,
+  };
+}
+
 export default function SEOSharingPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
@@ -29,9 +43,9 @@ export default function SEOSharingPage() {
     setAuth(true);
     getSetting("seo_settings").then(saved => {
       if (saved) {
-        setSeoSettings(saved as any);
+        setSeoSettings(normalizeSEOSettings(saved));
       } else {
-        setSetting("seo_settings", defaultSEOSettings as any);
+        setSetting("seo_settings", defaultSEOSettings);
         setSeoSettings(defaultSEOSettings);
       }
     });
@@ -39,7 +53,7 @@ export default function SEOSharingPage() {
 
   const saveSEOSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("seo_settings", seoSettings as any);
+    setSetting("seo_settings", seoSettings);
     toast("SEO details saved successfully!");
   };
 
@@ -58,7 +72,7 @@ export default function SEOSharingPage() {
             <label className="text-xs font-bold text-slate-700 block">Meta Page Title</label>
             <input
               type="text"
-              value={seoSettings.metaTitle}
+              value={seoSettings.metaTitle || ""}
               onChange={(e) => setSeoSettings({ ...seoSettings, metaTitle: e.target.value })}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
             />
@@ -67,7 +81,7 @@ export default function SEOSharingPage() {
             <label className="text-xs font-bold text-slate-700 block">Meta Description String</label>
             <textarea
               rows={4}
-              value={seoSettings.metaDescription}
+              value={seoSettings.metaDescription || ""}
               onChange={(e) => setSeoSettings({ ...seoSettings, metaDescription: e.target.value })}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
             />
@@ -76,7 +90,7 @@ export default function SEOSharingPage() {
             <label className="text-xs font-bold text-slate-700 block">Default Keywords (Comma Separated)</label>
             <input
               type="text"
-              value={seoSettings.keywords}
+              value={seoSettings.keywords || ""}
               onChange={(e) => setSeoSettings({ ...seoSettings, keywords: e.target.value })}
               className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
             />

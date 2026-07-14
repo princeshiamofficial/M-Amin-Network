@@ -4,6 +4,14 @@ import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from "@/components/ui/table";
 
 interface FAQ {
   id: string;
@@ -231,45 +239,46 @@ export default function FAQsPage() {
         document.body
       )}
 
-      <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        <div className="overflow-visible min-h-[180px]">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-200 text-slate-400 uppercase font-semibold">
-                <th className="pb-3">Question</th>
-                <th className="pb-3">Answer Detail</th>
-                <th className="pb-3">Home Display</th>
-                <th className="pb-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {faqs.map((f) => (
-                <tr key={f.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="py-3.5 pr-4 font-bold text-slate-800 max-w-xs">{f.question}</td>
-                  <td className="py-3.5 pr-4 text-slate-600 max-w-md">{f.answer}</td>
-                  <td className="py-3.5 pr-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      f.isPublished ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-slate-100 text-slate-500 border border-slate-200"
-                    }`}>{f.isPublished ? "Published" : "Hidden"}</span>
-                  </td>
-                  <td className="py-3.5 text-right relative whitespace-nowrap">
-                    <ActionMenu 
-                      faq={f} 
-                      onToggle={() => togglePublish(f.id)} 
-                      onEdit={() => editFaq(f)} 
-                      onDelete={() => deleteFAQ(f.id)} 
-                    />
-                  </td>
-                </tr>
-              ))}
-              {faqs.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-slate-400 font-medium">No FAQs found.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="overflow-x-auto border border-slate-200/60 rounded-xl bg-white shadow-sm">
+        <Table>
+          <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 pl-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Question</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Answer Detail</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Home Display</TableHead>
+              <TableHead className="py-4 pr-4 text-xs font-bold text-slate-500 text-right uppercase tracking-wider">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {faqs.map((f) => (
+              <TableRow key={f.id} className="hover:bg-slate-50/40 transition-colors border-b border-slate-100 last:border-0">
+                <TableCell className="py-3.5 pl-4 pr-4 font-bold text-slate-900 text-xs max-w-xs">{f.question}</TableCell>
+                <TableCell className="py-3.5 pr-4 text-slate-600 text-xs max-w-md">{f.answer}</TableCell>
+                <TableCell className="py-3.5 pr-4">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border leading-none ${
+                    f.isPublished ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${f.isPublished ? "bg-emerald-500" : "bg-slate-400"}`} />
+                    <span>{f.isPublished ? "Published" : "Hidden"}</span>
+                  </span>
+                </TableCell>
+                <TableCell className="py-3.5 pr-4 text-right relative whitespace-nowrap">
+                  <ActionMenu 
+                    faq={f} 
+                    onToggle={() => togglePublish(f.id)} 
+                    onEdit={() => editFaq(f)} 
+                    onDelete={() => deleteFAQ(f.id)} 
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+            {faqs.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="py-12 text-center text-slate-400 font-semibold">No FAQs found.</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

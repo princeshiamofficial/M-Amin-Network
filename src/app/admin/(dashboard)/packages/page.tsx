@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { confirmAction } from "@/lib/confirmHelper";
 import { useRouter } from "next/navigation";
+import { useAdminSecurity } from "@/hooks/useAdminSecurity";
 import {
   Table,
   TableHeader,
@@ -175,6 +176,11 @@ export default function AdminPackagesPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  const { canAdd, canEdit, canDelete } = useAdminSecurity();
+  const allowAdd = canAdd("/admin/packages");
+  const allowEdit = canEdit("/admin/packages");
+  const allowDelete = canDelete("/admin/packages");
 
   // Package state
   const [packages, setPackages] = useState<Plan[]>([]);
@@ -327,13 +333,15 @@ export default function AdminPackagesPage() {
               className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue focus:bg-white placeholder-slate-400 transition-all"
             />
           </div>
-          <button
-            onClick={handleOpenAddModal}
-            className="px-4 py-2.5 bg-brand-blue hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md inline-flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add New Package</span>
-          </button>
+          {allowAdd && (
+            <button
+              onClick={handleOpenAddModal}
+              className="px-4 py-2.5 bg-brand-blue hover:opacity-95 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md inline-flex items-center justify-center gap-1.5 active:scale-95 shrink-0"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add New Package</span>
+            </button>
+          )}
         </div>
 
         {/* Packages Table */}
@@ -402,29 +410,35 @@ export default function AdminPackagesPage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
-                              <MoreVertical className="w-4 h-4" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
-                            <DropdownMenuItem
-                              onClick={() => handleOpenEditModal(p)}
-                              className="px-3 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                              <span>Edit Plan</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(p.name)}
-                              className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              <span>Delete</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        {(allowEdit || allowDelete) && (
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
+                                <MoreVertical className="w-4 h-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
+                              {allowEdit && (
+                                <DropdownMenuItem
+                                  onClick={() => handleOpenEditModal(p)}
+                                  className="px-3 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                  <span>Edit Plan</span>
+                                </DropdownMenuItem>
+                              )}
+                              {allowDelete && (
+                                <DropdownMenuItem
+                                  onClick={() => handleDelete(p.name)}
+                                  className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span>Delete</span>
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
