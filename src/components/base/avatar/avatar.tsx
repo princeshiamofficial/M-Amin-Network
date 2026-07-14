@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { type FC, type ReactNode, useState } from "react";
 import { User01 } from "@untitledui/icons";

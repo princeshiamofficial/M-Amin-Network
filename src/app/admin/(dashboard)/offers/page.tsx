@@ -808,7 +808,7 @@ export default function OffersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-700 font-bold block flex items-center gap-1.5">
+                <label className="text-slate-700 font-bold flex items-center gap-1.5">
                   <span>Campaign Description</span>
                   <span className="text-[10px] font-normal text-slate-400">(Plain text preview for listing card - Optional)</span>
                 </label>
@@ -822,7 +822,7 @@ export default function OffersPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-700 font-bold block flex items-center justify-between gap-1.5">
+                <label className="text-slate-700 font-bold flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-1.5">
                     <span>HTML Description</span>
                     <span className="text-[10px] font-normal text-slate-400">(Custom HTML, CSS, JS layout for detail page - Optional)</span>

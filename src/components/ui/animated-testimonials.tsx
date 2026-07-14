@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { ArrowLeft, ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";

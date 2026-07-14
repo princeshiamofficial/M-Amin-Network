@@ -235,7 +235,7 @@ const TableRow = <T extends object>({ columns, children, className, highlightSel
                     highlightSelectedRow && "selected:bg-slate-50/50 dark:selected:bg-slate-800/40",
 
                     // Row border—using an "after" pseudo-element to avoid the border taking up space.
-                    "[&>td]:after:absolute [&>td]:after:inset-x-0 [&>td]:after:bottom-0 [&>td]:after:h-px [&>td]:after:w-full [&>td]:after:bg-slate-100 dark:[&>td]:after:bg-slate-800 last:[&>td]:after:hidden [&>td]:focus-visible:after:opacity-0 focus-visible:[&>td]:after:opacity-0",
+                    "[&>td]:after:absolute [&>td]:after:inset-x-0 [&>td]:after:bottom-0 [&>td]:after:h-px [&>td]:after:w-full [&>td]:after:bg-slate-100 dark:[&>td]:after:bg-slate-800 last:[&>td]:after:hidden [&>td]:focus-visible:after:opacity-0",
 
                     typeof className === "function" ? className(state) : className,
                 )

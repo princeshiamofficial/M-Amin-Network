@@ -4,7 +4,7 @@ import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { Table, TableCard } from "@/components/application/table/table";
 import { Avatar } from "@/components/base/avatar/avatar";
-import { Badge, BadgeWithDot } from "@/components/base/badges/badges";
+import { Badge } from "@/components/base/badges/badges";
 import type { SortDescriptor } from "react-aria-components";
 import { Dropdown } from "@/components/base/dropdown/dropdown";
 
@@ -78,21 +78,10 @@ export default function JobApplicationsPage() {
   const [auth, setAuth] = useState(false);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [selectedApp, setSelectedApp] = useState<JobApplication | null>(null);
-  const [activeMenuAppId, setActiveMenuAppId] = useState<string | null>(null);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
   });
-
-  useEffect(() => {
-    const handleOutsideClick = () => {
-      setActiveMenuAppId(null);
-    };
-    if (typeof window !== "undefined") {
-      window.addEventListener("click", handleOutsideClick);
-      return () => window.removeEventListener("click", handleOutsideClick);
-    }
-  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) { router.replace("/admin"); return; }
