@@ -79,8 +79,11 @@ export default function FAQsPage() {
   
   const [isEditing, setIsEditing] = useState(false);
   const [currentFaq, setCurrentFaq] = useState<Partial<FAQ>>({});
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
       return;
@@ -95,6 +98,12 @@ export default function FAQsPage() {
       }
     });
   }, [router]);
+
+  const openNewForm = () => {
+    setCurrentFaq({});
+    setIsEditing(false);
+    setIsFormOpen(true);
+  };
 
   const saveFaq = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,16 +129,19 @@ export default function FAQsPage() {
     setSetting("faqs", updated as FAQ[]);
     setCurrentFaq({});
     setIsEditing(false);
+    setIsFormOpen(false);
   };
 
   const editFaq = (f: FAQ) => {
     setCurrentFaq(f);
     setIsEditing(true);
+    setIsFormOpen(true);
   };
 
   const cancelEdit = () => {
     setCurrentFaq({});
     setIsEditing(false);
+    setIsFormOpen(false);
   };
 
   const togglePublish = (id: string) => {
@@ -156,53 +168,68 @@ export default function FAQsPage() {
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Manage Frequently Asked Questions</h2>
           <p className="text-sm text-slate-500 mt-0.5">Add, edit, review questions, toggle display status, or delete portal FAQs.</p>
         </div>
+        <button
+          onClick={openNewForm}
+          className="px-4 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
+        >
+          <Lucide.Plus className="w-4 h-4" /> Add FAQ
+        </button>
       </div>
 
-      <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        <h3 className="text-sm font-bold text-slate-800 mb-4">{isEditing ? "Edit FAQ" : "Add New FAQ"}</h3>
-        <form onSubmit={saveFaq} className="grid grid-cols-1 gap-4">
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 block">Question</label>
-            <input
-              type="text"
-              required
-              value={currentFaq.question || ""}
-              onChange={(e) => setCurrentFaq({ ...currentFaq, question: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-              placeholder="e.g. How long does installation take?"
-            />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 block">Answer</label>
-            <textarea
-              required
-              rows={3}
-              value={currentFaq.answer || ""}
-              onChange={(e) => setCurrentFaq({ ...currentFaq, answer: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
-              placeholder="Enter the answer..."
-            />
-          </div>
-          
-          <div className="flex items-center gap-3 mt-2">
-            <button
-              type="submit"
-              className="px-5 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95"
+      {mounted && isFormOpen && createPortal(
+        <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 shadow-2xl rounded-2xl p-6 max-w-xl w-full relative max-h-[90vh] overflow-y-auto">
+            <button 
+              onClick={cancelEdit} 
+              className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
             >
-              {isEditing ? "Update FAQ" : "Add FAQ"}
+              <Lucide.X className="w-4 h-4" />
             </button>
-            {isEditing && (
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active:scale-95"
-              >
-                Cancel
-              </button>
-            )}
+            <h3 className="text-sm font-extrabold text-slate-800 mb-4">{isEditing ? "Edit FAQ" : "Add New FAQ"}</h3>
+            <form onSubmit={saveFaq} className="grid grid-cols-1 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Question</label>
+                <input
+                  type="text"
+                  required
+                  value={currentFaq.question || ""}
+                  onChange={(e) => setCurrentFaq({ ...currentFaq, question: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                  placeholder="e.g. How long does installation take?"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Answer</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={currentFaq.answer || ""}
+                  onChange={(e) => setCurrentFaq({ ...currentFaq, answer: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
+                  placeholder="Enter the answer..."
+                />
+              </div>
+              
+              <div className="flex items-center justify-end gap-3 mt-2 border-t border-slate-100 pt-3">
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  {isEditing ? "Update FAQ" : "Add FAQ"}
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
+        </div>,
+        document.body
+      )}
 
       <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
         <div className="overflow-visible min-h-[180px]">
