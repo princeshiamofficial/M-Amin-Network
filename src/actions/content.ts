@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { cookies, headers } from "next/headers";
 import { createHash } from "crypto";
+import { broadcastMaintenance } from "@/lib/wsServer";
 
 const OBJECT_KEYS = [
   "system_config",
@@ -433,7 +434,19 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     }
   }
   
-  return setSettingInternal(key, data);
+  const success = await setSettingInternal(key, data);
+  if (success && key === "system_config") {
+    try {
+      const config = data as { maintenanceMode?: boolean | number; maintenanceMessage?: string };
+      broadcastMaintenance({
+        isMaintenance: !!config.maintenanceMode,
+        maintenanceMessage: config.maintenanceMessage || ""
+      });
+    } catch (e) {
+      console.warn("WebSocket broadcast failed:", e);
+    }
+  }
+  return success;
 }
 
 function hashPasswordServer(password: string): string {

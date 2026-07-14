@@ -6,9 +6,72 @@ import { usePathname } from "next/navigation";
 export default function MaintenanceWrapper({ children, isMaintenance, maintenanceMessage }: { children: React.ReactNode; isMaintenance: boolean; maintenanceMessage?: string }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const [isMaintenanceState, setIsMaintenanceState] = useState(isMaintenance);
+  const [maintenanceMessageState, setMaintenanceMessageState] = useState(maintenanceMessage || "");
+
+  useEffect(() => {
+    setIsMaintenanceState(isMaintenance);
+  }, [isMaintenance]);
+
+  useEffect(() => {
+    setMaintenanceMessageState(maintenanceMessage || "");
+  }, [maintenanceMessage]);
 
   useEffect(() => {
     setMounted(true);
+
+    let socket: WebSocket | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isDestroyed = false;
+
+    function connectWS() {
+      if (isDestroyed) return;
+
+      try {
+        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const wsUrl = `${wsProtocol}//${window.location.hostname}:3001`;
+
+        socket = new WebSocket(wsUrl);
+
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data && typeof data.isMaintenance === "boolean") {
+              setIsMaintenanceState(data.isMaintenance);
+              setMaintenanceMessageState(data.maintenanceMessage || "");
+            }
+          } catch {
+            // Ignore error
+          }
+        };
+
+        socket.onerror = () => {
+          socket?.close();
+        };
+
+        socket.onclose = () => {
+          if (!isDestroyed) {
+            reconnectTimeout = setTimeout(connectWS, 5000);
+          }
+        };
+      } catch {
+        if (!isDestroyed) {
+          reconnectTimeout = setTimeout(connectWS, 5000);
+        }
+      }
+    }
+
+    connectWS();
+
+    return () => {
+      isDestroyed = true;
+      if (socket) {
+        try { socket.close(); } catch { /* ignore */ }
+      }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+    };
   }, []);
 
   if (!mounted) {
@@ -16,7 +79,7 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
   }
 
   // Only show maintenance screen if enabled and we are not on an admin route
-  const showMaintenance = isMaintenance && !pathname.startsWith("/admin");
+  const showMaintenance = isMaintenanceState && !pathname.startsWith("/admin");
 
   if (showMaintenance) {
     return (
@@ -30,7 +93,7 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
             This site is under maintenance
           </h1>
           <p className="text-[#63a1cb] text-lg sm:text-xl md:text-2xl mt-5 font-normal tracking-wide text-center px-6 max-w-2xl leading-relaxed">
-            {maintenanceMessage || "We're preparing to serve you better."}
+            {maintenanceMessageState || "We're preparing to serve you better."}
           </p>
 
           {/* SVG Plugs Illustration */}
@@ -74,4 +137,3 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
 
   return <>{children}</>;
 }
-
