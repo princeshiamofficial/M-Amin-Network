@@ -29,9 +29,9 @@ export default function SEOSharingPage() {
     setAuth(true);
     getSetting("seo_settings").then(saved => {
       if (saved) {
-        setSeoSettings(saved as any);
+        setSeoSettings(saved as unknown as SEOSettings);
       } else {
-        setSetting("seo_settings", defaultSEOSettings as any);
+        setSetting("seo_settings", defaultSEOSettings as unknown as Record<string, unknown>);
         setSeoSettings(defaultSEOSettings);
       }
     });
@@ -39,7 +39,7 @@ export default function SEOSharingPage() {
 
   const saveSEOSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("seo_settings", seoSettings as any);
+    setSetting("seo_settings", seoSettings as unknown as Record<string, unknown>);
     toast("SEO details saved successfully!");
   };
 
