@@ -140,13 +140,13 @@ export default function PortalPageAdmin() {
     }
     setAuth(true);
     getSetting("portal_page_content").then(s => {
-      if (s) setContent(s as unknown as PortalPageContent);
-      else setSetting("portal_page_content", defaultPortalPageContent as unknown as Record<string, unknown>);
+      if (s) setContent(s as any);
+      else setSetting("portal_page_content", defaultPortalPageContent as any);
     });
   }, [router]);
 
   const save = async () => {
-    setSetting("portal_page_content", content as unknown as Record<string, unknown>);
+    setSetting("portal_page_content", content as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

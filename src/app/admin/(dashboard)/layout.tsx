@@ -31,7 +31,6 @@ const tabUrls: Record<string, string> = {
   "Testimonials": "/admin/testimonials",
   "FAQs": "/admin/faqs",
   "Site Content": "/admin/site-content",
-  "Home Sections": "/admin/home-sections",
   "Hero Typography": "/admin/hero-typography",
   "Network Features": "/admin/network-features",
   "SEO & Sharing": "/admin/seo-sharing",

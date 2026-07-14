@@ -30,9 +30,9 @@ export default function UsersRolesPage() {
     setAuth(true);
     getSetting("admin_users").then(saved => {
       if (saved) {
-        setAdminUsers(saved as unknown as AdminUser[]);
+        setAdminUsers(saved as any);
       } else {
-        setSetting("admin_users", defaultAdminUsers as unknown as Record<string, unknown>[]);
+        setSetting("admin_users", defaultAdminUsers as any);
         setAdminUsers(defaultAdminUsers);
       }
     });
@@ -46,7 +46,7 @@ export default function UsersRolesPage() {
     if (!confirm("Are you sure you want to revoke this admin user?")) return;
     const updated = adminUsers.filter((u) => u.id !== id);
     setAdminUsers(updated);
-    setSetting("admin_users", updated as unknown as Record<string, unknown>[]);
+    setSetting("admin_users", updated as any);
   };
 
   if (!auth) return null;

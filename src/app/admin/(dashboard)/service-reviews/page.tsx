@@ -27,9 +27,9 @@ export default function ServiceReviewsPage() {
     setAuth(true);
     getSetting("service_reviews").then(saved => {
       if (saved) {
-        setServiceReviews(saved as unknown as ServiceReview[]);
+        setServiceReviews(saved as any);
       } else {
-        setSetting("service_reviews", defaultReviews as unknown as Record<string, unknown>[]);
+        setSetting("service_reviews", defaultReviews as any);
         setServiceReviews(defaultReviews);
       }
     });
@@ -39,7 +39,7 @@ export default function ServiceReviewsPage() {
     if (!confirm("Are you sure you want to delete this review?")) return;
     const updated = serviceReviews.filter((r) => r.id !== id);
     setServiceReviews(updated);
-    setSetting("service_reviews", updated as unknown as Record<string, unknown>[]);
+    setSetting("service_reviews", updated as any);
   };
 
   if (!auth) return null;

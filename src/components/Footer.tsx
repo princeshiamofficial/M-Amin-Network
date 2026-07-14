@@ -136,7 +136,7 @@ export default function Footer() {
       const savedBadges = localStorage.getItem("footer_badges");
       if (savedBadges) {
         try {
-          const parsed = JSON.parse(savedBadges) as AffiliationBadge[];
+          const parsed = JSON.parse(savedBadges);
           // Auto-migrate badge configurations to add dynamic image paths for backward-compatibility
           const migrated = parsed.map((badge: AffiliationBadge) => {
             if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
@@ -153,7 +153,7 @@ export default function Footer() {
       const savedLicenses = localStorage.getItem("footer_licenses");
       if (savedLicenses) {
         try {
-          const parsed = JSON.parse(savedLicenses) as LicenseBadge[];
+          const parsed = JSON.parse(savedLicenses);
           // Auto-migrate license configurations to add dynamic image paths for backward-compatibility
           const migrated = parsed.map((lic: LicenseBadge) => {
             if (lic.textEn === "BTRC Licensed" && !lic.image) {

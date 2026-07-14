@@ -215,14 +215,14 @@ export default function NetworkFeaturesPage() {
     }
     setAuth(true);
     getSetting("network_features").then(s => {
-      if (s) setFeatures(s as unknown as NetworkFeature[]);
-      else setSetting("network_features", defaultFeatures as unknown as Record<string, unknown>[]);
+      if (s) setFeatures(s as any);
+      else setSetting("network_features", defaultFeatures as any);
     });
   }, [router]);
 
   const saveConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("network_features", features as unknown as Record<string, unknown>[]);
+    setSetting("network_features", features as any);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

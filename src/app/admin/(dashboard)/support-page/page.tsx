@@ -136,7 +136,7 @@ export default function SupportPageAdmin() {
     }
     setAuth(true);
     getSetting("support_page_content").then(s => {
-      if (s) setContent(s as unknown as SupportPageContent);
+      if (s) setContent(s as SupportPageContent);
       else setSetting("support_page_content", defaultSupportPageContent as unknown as Record<string, unknown>);
     });
   }, [router]);
