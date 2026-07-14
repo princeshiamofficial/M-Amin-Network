@@ -1,6 +1,6 @@
 "use server";
 
-import pool from "@/lib/db";
+import pool, { dbInitPromise } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 import { cookies, headers } from "next/headers";
@@ -102,6 +102,7 @@ function normalizePromoOfferItems(items: Record<string, unknown>[]): Record<stri
  * Internal function to fetch settings bypassing authentication checks.
  */
 async function getSettingInternal(key: string): Promise<unknown> {
+  await dbInitPromise;
   try {
     let tableName = key.startsWith("") ? key.replace("", "") : key;
     
@@ -197,6 +198,7 @@ export async function getSetting(key: string): Promise<unknown> {
  * Internal function to update or insert a setting bypassing authentication checks.
  */
 async function setSettingInternal(key: string, data: unknown): Promise<boolean> {
+  await dbInitPromise;
   try {
     let tableName = key.startsWith("") ? key.replace("", "") : key;
     

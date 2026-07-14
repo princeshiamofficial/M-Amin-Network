@@ -238,6 +238,57 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   ]
 };
 
+async function verifyAndMigrateTable(connection: mysql.PoolConnection, table: string, schema: string) {
+  // 1. Create table if not exists
+  await connection.query(`CREATE TABLE IF NOT EXISTS \`${table}\` (${schema})`);
+
+  // 2. Fetch current columns from MySQL database
+  const [columnsResult] = await connection.query<import('mysql2').RowDataPacket[]>(`SHOW COLUMNS FROM \`${table}\``);
+  const existingColumns = new Set(columnsResult.map(row => row.Field.toLowerCase()));
+
+  // 3. Parse schema definition to extract column definitions
+  const columnDefs: string[] = [];
+  let currentDef = "";
+  let parenDepth = 0;
+  for (let i = 0; i < schema.length; i++) {
+    const char = schema[i];
+    if (char === '(') parenDepth++;
+    else if (char === ')') parenDepth--;
+    
+    if (char === ',' && parenDepth === 0) {
+      columnDefs.push(currentDef.trim());
+      currentDef = "";
+    } else {
+      currentDef += char;
+    }
+  }
+  if (currentDef.trim()) {
+    columnDefs.push(currentDef.trim());
+  }
+
+  // 4. Check for missing columns and run ALTER TABLE statement if needed
+  for (const def of columnDefs) {
+    const match = def.match(/^`?([a-zA-Z0-9_-]+)`?\s/);
+    if (match) {
+      const colName = match[1];
+      if (!existingColumns.has(colName.toLowerCase())) {
+        console.log(`Table \`${table}\` is missing column \`${colName}\`. Running ALTER TABLE migration...`);
+        let alterDef = def;
+        if (def.toUpperCase().includes("PRIMARY KEY")) {
+          alterDef = def.replace(/PRIMARY\s+KEY/i, "");
+        }
+        try {
+          await connection.query(`ALTER TABLE \`${table}\` ADD COLUMN ${alterDef}`);
+          console.log(`Successfully added column \`${colName}\` to table \`${table}\`.`);
+        } catch (alterErr: unknown) {
+          const err = alterErr as Error;
+          console.error(`Failed to alter table \`${table}\` for column \`${colName}\`:`, err.message);
+        }
+      }
+    }
+  }
+}
+
 async function seedTableIfEmpty(connection: mysql.Connection, table: string, items: Record<string, unknown>[]) {
   const [rows] = await connection.query<import('mysql2').RowDataPacket[]>(`SELECT 1 FROM \`${table}\` LIMIT 1`);
   if (rows && rows.length === 0 && items.length > 0) {
@@ -260,13 +311,13 @@ async function seedTableIfEmpty(connection: mysql.Connection, table: string, ite
 }
 
 // Startup table schema auto-creation and seeding
-(async () => {
+export const dbInitPromise = (async () => {
   try {
     const connection = await pool.getConnection();
     
-    // Create all tables if not exist
+    // Create & migrate all tables if not exist
     for (const [table, schema] of Object.entries(TABLES_SCHEMAS)) {
-      await connection.query(`CREATE TABLE IF NOT EXISTS \`${table}\` (${schema})`);
+      await verifyAndMigrateTable(connection, table, schema);
     }
 
     // Seed empty tables
@@ -275,7 +326,7 @@ async function seedTableIfEmpty(connection: mysql.Connection, table: string, ite
     }
 
     connection.release();
-    console.log("All database tables verified, created and seeded successfully.");
+    console.log("All database tables verified, created, migrated and seeded successfully.");
   } catch (error) {
     console.error("Failed to verify/create/seed database tables on startup:", error);
   }
