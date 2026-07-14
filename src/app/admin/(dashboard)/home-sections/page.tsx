@@ -34,9 +34,9 @@ export default function HomeSectionsPage() {
     setAuth(true);
     getSetting("home_sections").then(saved => {
       if (saved) {
-        setHomeSections(saved as any);
+        setHomeSections(saved as unknown as HomeSections);
       } else {
-        setSetting("home_sections", defaultHomeSections as any);
+        setSetting("home_sections", defaultHomeSections as unknown as Record<string, unknown>);
         setHomeSections(defaultHomeSections);
       }
     });
@@ -45,7 +45,7 @@ export default function HomeSectionsPage() {
   const toggleSection = (key: keyof HomeSections) => {
     const updated = { ...homeSections, [key]: !homeSections[key] };
     setHomeSections(updated);
-    setSetting("home_sections", updated as any);
+    setSetting("home_sections", updated as unknown as Record<string, unknown>);
   };
 
   if (!auth) return null;
