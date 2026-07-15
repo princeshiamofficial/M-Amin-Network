@@ -60,6 +60,11 @@ interface NavLink {
   href: string;
 }
 
+interface TopbarContent {
+  hotline: string;
+  availabilityText: string;
+}
+
 interface AffiliationBadge {
   textEn: string;
   textBn: string;
@@ -125,6 +130,11 @@ const defaultNavLinks: NavLink[] = [
   { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
 ];
 
+const defaultTopbarContent: TopbarContent = {
+  hotline: "+880 1901-348400",
+  availabilityText: "24/7 — Call Any Time",
+};
+
 const defaultBadges: AffiliationBadge[] = [
   { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
   { textEn: "AS150164 BGP NETWORK", textBn: "AS150164 বিজিপি নেটওয়ার্ক", isCyan: true }
@@ -168,6 +178,7 @@ export default function TopbarFooterPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
   const [footerContent, setFooterContent] = useState<FooterContent>(defaultFooterContent);
+  const [topbarContent, setTopbarContent] = useState<TopbarContent>(defaultTopbarContent);
   const [navLinks, setNavLinks] = useState<NavLink[]>(defaultNavLinks);
   const [badges, setBadges] = useState<AffiliationBadge[]>(defaultBadges);
   const [licenses, setLicenses] = useState<LicenseBadge[]>(defaultLicenses);
@@ -186,6 +197,19 @@ export default function TopbarFooterPage() {
       return;
     }
     setAuth(true);
+
+    // Load topbar config
+    getSetting("topbar_content").then(saved => {
+      if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+        setTopbarContent(prev => ({
+          ...prev,
+          ...(saved as Record<string, unknown> as unknown as TopbarContent)
+        }));
+      } else {
+        setSetting("topbar_content", defaultTopbarContent);
+        setTopbarContent(defaultTopbarContent);
+      }
+    });
     
     // Load footer config
     getSetting("footer_content").then(saved => {
@@ -297,6 +321,7 @@ export default function TopbarFooterPage() {
     setPhones(normalizedPhones);
 
     const results = await Promise.all([
+      setSetting("topbar_content", topbarContent),
       setSetting("footer_content", footerContent),
       setSetting("nav_links", navLinks),
       setSetting("footer_badges", badges),
@@ -305,7 +330,7 @@ export default function TopbarFooterPage() {
     ]);
 
     if (results.every(Boolean)) {
-      toast("Topbar, Footer, and Header Menu configurations saved successfully!");
+      toast("Topbar, Footer, and Header configurations saved successfully!");
     } else {
       toast.error("Some settings could not be saved. Please log in again and retry.");
     }
@@ -330,7 +355,6 @@ export default function TopbarFooterPage() {
     setNavLinks(updated);
   };
 
-  // Edit in-place handler
   const handleLinkFieldChange = (index: number, field: keyof NavLink, value: string) => {
     const updated = [...navLinks];
     updated[index] = {
@@ -340,14 +364,12 @@ export default function TopbarFooterPage() {
     setNavLinks(updated);
   };
 
-  // Delete handler
   const deleteNavLink = (index: number) => {
     if (!confirm("Are you sure you want to delete this menu link?")) return;
     const updated = navLinks.filter((_, idx) => idx !== index);
     setNavLinks(updated);
   };
 
-  // Add handler
   const addNewNavLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLink.nameEn.trim() || !newLink.nameBn.trim() || !newLink.href.trim()) {
@@ -464,7 +486,7 @@ export default function TopbarFooterPage() {
       {/* Tabs list (Consolidated to only 2 tabs as requested) */}
       <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none">
         {[
-          { id: "menu", label: "Header Menu", icon: Menu },
+          { id: "menu", label: "Header", icon: Menu },
           { id: "footer", label: "Footer Section", icon: Building }
         ].map((tab) => {
           const Icon = tab.icon;
@@ -489,13 +511,44 @@ export default function TopbarFooterPage() {
 
       <form onSubmit={saveAllConfigurations} className="space-y-6 w-full">
         
-        {/* Tab 1: Header Menu Editor */}
+        {/* Tab 1: Header Topbar Editor */}
         {activeSection === "menu" && (
           <div className="space-y-6">
-            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs text-slate-500">
-              Manage the links displayed in the website header navigation menu. Changes are saved when you click &quot;Save Configurations&quot; at the bottom of the page.
+            <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-3">
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
+                <Menu className="w-4 h-4 text-brand-blue" /> Header Topbar
+              </span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase block">Hotline Number</label>
+                  <input
+                    type="text"
+                    value={topbarContent.hotline}
+                    onChange={(e) => setTopbarContent({ ...topbarContent, hotline: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                    placeholder="+880 1901-348400"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase block">Availability Text</label>
+                  <input
+                    type="text"
+                    value={topbarContent.availabilityText}
+                    onChange={(e) => setTopbarContent({ ...topbarContent, availabilityText: e.target.value })}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                    placeholder="24/7 — Call Any Time"
+                    required
+                  />
+                </div>
+              </div>
             </div>
+          </div>
+        )}
 
+        {/* Legacy Header Menu Editor */}
+        {activeSection === "legacy-menu" && (
+          <div className="space-y-6">
             {/* Menu Items Table */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs">
@@ -648,9 +701,9 @@ export default function TopbarFooterPage() {
             {/* Section A: Brand & Badges */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Info className="w-4 h-4 text-brand-blue" /> Section A: Brand &amp; Badges
+                <Info className="w-4 h-4 text-brand-blue" /> Brand License/Status Badges
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 block">About Text (English)</label>
                   <textarea
@@ -959,7 +1012,7 @@ export default function TopbarFooterPage() {
             </div>
 
             {/* Section B: Quick Links Column Header */}
-            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
+            <div className="hidden p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
                 <Menu className="w-4 h-4 text-brand-blue" /> Section B: Quick Links Header
               </h3>
@@ -990,7 +1043,7 @@ export default function TopbarFooterPage() {
             {/* Section C: Contacts & Location */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Mail className="w-4 h-4 text-brand-blue" /> Section C: Contact &amp; Location Info
+                <Mail className="w-4 h-4 text-brand-blue" /> Contact Info
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1098,7 +1151,7 @@ export default function TopbarFooterPage() {
             {/* Section D: Affiliations & Membership */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Building className="w-4 h-4 text-brand-blue" /> Section D: Affiliations &amp; Membership
+                <Building className="w-4 h-4 text-brand-blue" /> Our Affiliations
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1403,10 +1456,10 @@ export default function TopbarFooterPage() {
               </div>
             </div>
 
-            {/* Section E: Legal, Social & Copyright */}
+            {/* Section E: Social & BTRC */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Globe className="w-4 h-4 text-brand-blue" /> Section E: Legal, Social &amp; Copyright
+                <Globe className="w-4 h-4 text-brand-blue" /> Footer Social Links &amp; BTRC Approved Tariff
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1464,7 +1517,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-100">
+              <div className="hidden grid-cols-1 md:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-100">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 block">Privacy policy Label (English)</label>
@@ -1489,7 +1542,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 block">Terms of Service Label (English)</label>
                   <input
@@ -1512,7 +1565,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 block">Brand Link info (English)</label>
                   <input
@@ -1535,7 +1588,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 block">Copyright Bottom (English)</label>
                   <input

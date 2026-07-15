@@ -7,6 +7,24 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting } from "@/actions/content";
 
+type LogoVariant = "horizontal" | "square";
+
+const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
+  const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record[preferredKey] === "string") return record[preferredKey];
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -15,12 +33,14 @@ export default function AdminDashboard() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [siteLogo, setSiteLogo] = useState<string>("/logo.png");
+  const [squareLogo, setSquareLogo] = useState<string>("/xlogo.png");
 
   useEffect(() => {
     getSetting("site_logo").then(savedLogo => {
-      if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
-        setSiteLogo((savedLogo as { url: string }).url);
-      }
+      const logoUrl = getLogoUrl(savedLogo, "horizontal");
+      const compactLogoUrl = getLogoUrl(savedLogo, "square");
+      if (logoUrl) setSiteLogo(logoUrl);
+      if (compactLogoUrl) setSquareLogo(compactLogoUrl);
     });
   }, []);
   const [showPassword, setShowPassword] = useState(false);
@@ -167,7 +187,7 @@ export default function AdminDashboard() {
             alt="M-Amin Network"
             width={120}
             height={32}
-            className="h-8 w-auto object-contain"
+            className="h-8 w-[120px] object-contain"
             style={{ filter: "invert(1) hue-rotate(180deg)" }}
             priority
           />
@@ -188,11 +208,11 @@ export default function AdminDashboard() {
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
             <Image
-              src={siteLogo}
+              src={squareLogo}
               alt="M-Amin Network"
               width={56}
               height={56}
-              className="w-full h-full object-contain"
+              className="h-10 w-10 object-contain"
             />
           </div>
 

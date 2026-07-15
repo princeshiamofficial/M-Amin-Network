@@ -15,15 +15,15 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator
+  DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 import {
   Search,
   Check,
   X,
   Trash2,
-  MoreVertical
+  MessageSquare,
+  Send
 } from "lucide-react";
 
 interface Claim {
@@ -35,6 +35,7 @@ interface Claim {
   promoTitle: string;
   date: string;
   status: "Pending" | "Approved" | "Cancelled";
+  comments?: { text: string; author: string; timestamp: string; }[];
 }
 
 const defaultClaims: Claim[] = [
@@ -60,6 +61,23 @@ const defaultClaims: Claim[] = [
   },
 ];
 
+const formatClaimDate = (date: string) => {
+  if (!date) return "-";
+
+  const parsedDate = new Date(date);
+  if (!Number.isNaN(parsedDate.getTime())) {
+    return parsedDate.toLocaleString([], {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  return date.replace(/:(\d{2})(\s?(AM|PM))$/i, "$2");
+};
+
 export default function ApplicationsPage() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -68,6 +86,11 @@ export default function ApplicationsPage() {
   const [claims, setClaims] = useState<Claim[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "Pending" | "Approved" | "Cancelled">("all");
+
+  const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [activeClaimId, setActiveClaimId] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [adminName, setAdminName] = useState("Admin");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,26 +102,69 @@ export default function ApplicationsPage() {
         } else {
           setIsAuthenticated(true);
           getSetting("claims").then(saved => {
-      if (saved) setClaims(saved as any);
-      else setClaims(defaultClaims);
-    });
+            if (saved) setClaims(saved as Claim[]);
+            else setClaims(defaultClaims);
+          });
+          const adminUserStr = localStorage.getItem("admin_user");
+          if (adminUserStr) {
+            try {
+              const u = JSON.parse(adminUserStr);
+              if (u.username) setAdminName(u.username);
+            } catch {}
+          }
         }
       }
     }, 0);
     return () => clearTimeout(timer);
   }, [router]);
 
-  const updateStatus = (id: string, status: "Approved" | "Cancelled") => {
+  const updateStatus = (id: string, status: "Pending" | "Approved" | "Cancelled") => {
     const updated = claims.map(c => c.id === id ? { ...c, status } : c);
     setClaims(updated);
-    setSetting("claims", updated as any);
+    setSetting("claims", updated as unknown as Record<string, unknown>[]);
   };
 
   const deleteClaim = async (id: string) => {
     if (!confirm("Delete this application reservation?")) return;
     const updated = claims.filter(c => c.id !== id);
     setClaims(updated);
-    setSetting("claims", updated as any);
+    setSetting("claims", updated as unknown as Record<string, unknown>[]);
+  };
+
+  const openCommentModal = (id: string) => {
+    setActiveClaimId(id);
+    setCommentModalOpen(true);
+  };
+
+  const addComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeClaimId || !newComment.trim()) return;
+    const updated = claims.map(c => {
+      if (c.id === activeClaimId) {
+        const comments = c.comments || [];
+        return {
+          ...c,
+          comments: [...comments, { text: newComment.trim(), author: adminName, timestamp: new Date().toLocaleString() }]
+        };
+      }
+      return c;
+    });
+    setClaims(updated);
+    setSetting("claims", updated as unknown as Record<string, unknown>[]);
+    setNewComment("");
+  };
+
+  const deleteComment = (claimId: string, commentIndex: number) => {
+    if (!confirm("Delete this comment?")) return;
+    const updated = claims.map(c => {
+      if (c.id === claimId) {
+        const newComments = c.comments?.filter((_, i) => i !== commentIndex);
+        return { ...c, comments: newComments };
+      }
+      return c;
+    });
+    setClaims(updated);
+    setSetting("claims", updated as unknown as Record<string, unknown>[]);
   };
 
   if (!mounted || !isAuthenticated) return null;
@@ -156,14 +222,16 @@ export default function ApplicationsPage() {
               <TableHead>Address</TableHead>
               <TableHead>Package</TableHead>
               <TableHead>Promo</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Comment</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredClaims.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="py-8 text-center text-slate-400">No applications found.</TableCell>
+                <TableCell colSpan={10} className="py-8 text-center text-slate-400">No applications found.</TableCell>
               </TableRow>
             ) : (
               filteredClaims.map((c, idx) => (
@@ -182,56 +250,65 @@ export default function ApplicationsPage() {
                       <span className="text-slate-400">-</span>
                     )}
                   </TableCell>
+                  <TableCell className="font-mono text-slate-500 whitespace-nowrap">{formatClaimDate(c.date)}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                      c.status === "Approved" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                      c.status === "Cancelled" ? "bg-slate-50 text-slate-500 border-slate-100" :
-                      "bg-amber-50 text-amber-700 border-amber-200"
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${
-                        c.status === "Approved" ? "bg-emerald-500" :
-                        c.status === "Cancelled" ? "bg-slate-400" :
-                        "bg-amber-500"
-                      }`} />
-                      {c.status === "Pending" ? "Verifying Address" : c.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
-                          <MoreVertical className="w-4 h-4" />
+                        <button className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors hover:opacity-80 cursor-pointer outline-none ${
+                          c.status === "Approved" ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                          c.status === "Cancelled" ? "bg-slate-50 text-slate-500 border-slate-100" :
+                          "bg-amber-50 text-amber-700 border-amber-200"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${
+                            c.status === "Approved" ? "bg-emerald-500" :
+                            c.status === "Cancelled" ? "bg-slate-400" :
+                            "bg-amber-500"
+                          }`} />
+                          {c.status === "Pending" ? "Verifying Address" : c.status}
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
-                        {c.status === "Pending" && (
-                          <>
-                            <DropdownMenuItem
-                              onClick={() => updateStatus(c.id, "Approved")}
-                              className="px-3 py-2 text-xs font-bold text-emerald-600 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>Approve</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => updateStatus(c.id, "Cancelled")}
-                              className="px-3 py-2 text-xs font-bold text-slate-650 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                              <span>Cancel</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="bg-slate-100 my-1 h-px" />
-                          </>
-                        )}
+                      <DropdownMenuContent align="start" className="w-36 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50">
                         <DropdownMenuItem
-                          onClick={() => deleteClaim(c.id)}
-                          className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
+                          onClick={() => updateStatus(c.id, "Pending")}
+                          className="px-3 py-2 text-xs font-bold text-amber-700 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Delete</span>
+                          <span className="w-2 h-2 rounded-full bg-amber-500" />
+                          <span>Pending</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateStatus(c.id, "Approved")}
+                          className="px-3 py-2 text-xs font-bold text-emerald-600 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Approve</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => updateStatus(c.id, "Cancelled")}
+                          className="px-3 py-2 text-xs font-bold text-slate-650 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span>Cancel</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                  </TableCell>
+                  <TableCell>
+                    <button
+                      onClick={() => openCommentModal(c.id)}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 bg-blue-50/50 hover:bg-blue-50 rounded-lg text-xs text-brand-blue font-bold transition-colors border border-transparent hover:border-blue-100 cursor-pointer outline-none"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>{c.comments?.length || 0}</span>
+                    </button>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <button
+                      onClick={() => deleteClaim(c.id)}
+                      className="inline-flex items-center justify-center p-1.5 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500 transition-colors cursor-pointer outline-none"
+                      title="Delete Application"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))
@@ -239,6 +316,73 @@ export default function ApplicationsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Comments Modal */}
+      {commentModalOpen && activeClaimId && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh] border border-slate-200">
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/80">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2 text-sm">
+                <MessageSquare className="w-4 h-4 text-brand-blue" />
+                Application Comments
+              </h3>
+              <button
+                onClick={() => setCommentModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-md hover:bg-slate-200/50 cursor-pointer outline-none"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 flex-1 overflow-y-auto bg-white space-y-4">
+              {claims.find(c => c.id === activeClaimId)?.comments?.length ? (
+                claims.find(c => c.id === activeClaimId)?.comments?.map((comment, i) => (
+                  <div key={i} className="bg-slate-50/80 border border-slate-100 rounded-xl p-3.5 text-sm shadow-sm hover:shadow-md transition-shadow group">
+                    <div className="flex justify-between items-start mb-2 text-xs">
+                      <span className="font-bold text-slate-800">{comment.author}</span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-slate-400 font-mono text-[10px]">{comment.timestamp}</span>
+                        <button
+                          onClick={() => deleteComment(activeClaimId, i)}
+                          className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all cursor-pointer outline-none"
+                          title="Delete comment"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-slate-700 leading-relaxed text-xs">{comment.text}</p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-10 flex flex-col items-center justify-center gap-2">
+                  <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  <p className="text-slate-400 text-xs font-medium">No comments yet. Start the conversation!</p>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={addComment} className="p-4 border-t border-slate-100 bg-white flex gap-2">
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue/20 transition-all"
+              />
+              <button
+                type="submit"
+                disabled={!newComment.trim()}
+                className="bg-linear-to-r from-brand-blue to-brand-cyan text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer shadow-md"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

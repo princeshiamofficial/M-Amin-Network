@@ -12,6 +12,34 @@ interface NavLink {
   href: string;
 }
 
+interface TopbarContent {
+  hotline: string;
+  availabilityText: string;
+}
+
+type LogoVariant = "horizontal" | "square";
+
+const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
+  const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record[preferredKey] === "string") return record[preferredKey];
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
+const defaultTopbarContent: TopbarContent = {
+  hotline: "+880 1901-348400",
+  availabilityText: "24/7 — Call Any Time",
+};
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -38,6 +66,7 @@ export default function Navbar() {
 
   const [linksList, setLinksList] = useState<NavLink[]>(defaultNavLinks);
   const [siteLogo, setSiteLogo] = useState<string>("/logo.png");
+  const [topbarContent, setTopbarContent] = useState<TopbarContent>(defaultTopbarContent);
 
   const handleLangChange = (newLang: string) => {
     setLang(newLang);
@@ -95,14 +124,27 @@ export default function Navbar() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       getSetting("site_logo").then(saved => {
-        if (saved && typeof saved === 'object' && 'url' in saved) {
-          setSiteLogo((saved as { url: string }).url);
+        const logoUrl = getLogoUrl(saved, "horizontal");
+        if (logoUrl) setSiteLogo(logoUrl);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getSetting("topbar_content").then(saved => {
+        if (saved && typeof saved === "object" && !Array.isArray(saved)) {
+          setTopbarContent(prev => ({
+            ...prev,
+            ...(saved as Record<string, unknown> as unknown as TopbarContent)
+          }));
         }
       });
     }
   }, []);
 
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  const hotlineHref = topbarContent.hotline.replace(/[^\d+]/g, "");
 
   if (pathname?.startsWith("/admin")) return null;
 
@@ -132,8 +174,8 @@ export default function Navbar() {
               </svg>
               <span className="text-[10px] font-black tracking-wider uppercase">{t("Hotline", "হটলাইন")}</span>
             </div>
-            <a href="tel:+8801901348400" className="hover:text-brand-cyan transition-colors font-bold font-mono text-slate-200">
-              +880 1901-348400
+            <a href={`tel:${hotlineHref}`} className="hover:text-brand-cyan transition-colors font-bold font-mono text-slate-200">
+              {topbarContent.hotline}
             </a>
           </div>
           
@@ -142,7 +184,7 @@ export default function Navbar() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             </span>
-            <span>{t("24/7 — Call Any Time", "২৪/৭ — যেকোনো সময় কল")}</span>
+            <span>{topbarContent.availabilityText}</span>
           </div>
         </div>
       </div>
@@ -159,7 +201,7 @@ export default function Navbar() {
                 alt="M Amin Network"
                 width={160}
                 height={40}
-                className="h-10 w-auto object-contain"
+                className="h-10 w-40 object-contain"
                 priority
               />
             </Link>

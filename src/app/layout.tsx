@@ -20,6 +20,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const getLogoUrl = (value: unknown): string | null => {
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record.horizontalUrl === "string") return record.horizontalUrl;
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = (await getSetting("site_content")) as { siteTitle?: string } | null;
   return {
@@ -46,9 +61,7 @@ export default async function RootLayout({
 }>) {
   let siteLogo = "/logo.png";
   const savedLogo = await getSetting("site_logo");
-  if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
-    siteLogo = (savedLogo as { url: string }).url;
-  }
+  siteLogo = getLogoUrl(savedLogo) || siteLogo;
 
   const fullLogoUrl = siteLogo.startsWith("http") ? siteLogo : `https://m-aminnetwork.com${siteLogo}`;
 

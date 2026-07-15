@@ -24,6 +24,24 @@ const defaultSystemConfig: SystemConfig = {
   maintenanceMessage: "M-Amin Network is currently undergoing scheduled backend fiber infrastructure upgrades. We will be back online shortly.",
 };
 
+type LogoVariant = "horizontal" | "square";
+
+const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
+  const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record[preferredKey] === "string") return record[preferredKey];
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
 export default function SettingsPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
@@ -31,7 +49,9 @@ export default function SettingsPage() {
 
   const [isSavingMaintenance, setIsSavingMaintenance] = useState(false);
   const [siteLogo, setSiteLogo] = useState<string>("/logo.png");
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [squareLogo, setSquareLogo] = useState<string>("/xlogo.png");
+  const [isUploadingHorizontalLogo, setIsUploadingHorizontalLogo] = useState(false);
+  const [isUploadingSquareLogo, setIsUploadingSquareLogo] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -54,9 +74,10 @@ export default function SettingsPage() {
     });
 
     getSetting("site_logo").then(saved => {
-      if (saved && typeof saved === 'object' && 'url' in saved) {
-        setSiteLogo((saved as { url: string }).url);
-      }
+      const logoUrl = getLogoUrl(saved, "horizontal");
+      const compactLogoUrl = getLogoUrl(saved, "square");
+      if (logoUrl) setSiteLogo(logoUrl);
+      if (compactLogoUrl) setSquareLogo(compactLogoUrl);
     });
 
 
@@ -78,13 +99,14 @@ export default function SettingsPage() {
     }, 1000);
   };
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>, variant: LogoVariant) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
 
-    setIsUploadingLogo(true);
+    if (variant === "horizontal") setIsUploadingHorizontalLogo(true);
+    else setIsUploadingSquareLogo(true);
     try {
       const res = await fetch("/api/upload-site-logo", {
         method: "POST",
@@ -96,14 +118,22 @@ export default function SettingsPage() {
       }
 
       const data = await res.json();
-      setSiteLogo(data.url);
-      await setSetting("site_logo", { url: data.url });
+      const nextHorizontalLogo = variant === "horizontal" ? data.url : siteLogo;
+      const nextSquareLogo = variant === "square" ? data.url : squareLogo;
+      setSiteLogo(nextHorizontalLogo);
+      setSquareLogo(nextSquareLogo);
+      await setSetting("site_logo", {
+        url: nextHorizontalLogo,
+        horizontalUrl: nextHorizontalLogo,
+        squareUrl: nextSquareLogo
+      });
       toast.success("Brand logo updated successfully!");
     } catch (err) {
       console.error(err);
       toast.error("Failed to upload logo.");
     } finally {
-      setIsUploadingLogo(false);
+      if (variant === "horizontal") setIsUploadingHorizontalLogo(false);
+      else setIsUploadingSquareLogo(false);
       e.target.value = ""; // Reset input
     }
   };
@@ -125,37 +155,64 @@ export default function SettingsPage() {
                   <ImageIcon className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Brand Logo</h3>
+                  <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Brand Logos</h3>
                   <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
-                    Update the main logo used across the website navigation and footer.
+                    Update the horizontal website logo and compact square logo.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <div className="w-40 h-16 relative bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                <Image src={siteLogo} alt="Site Logo" fill className="object-contain p-2" />
-              </div>
-              <div className="flex-1 space-y-3 w-full">
-                <div className="flex items-center gap-3">
-                  <label className="relative cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center gap-2">
-                    {isUploadingLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                    {isUploadingLogo ? "Uploading..." : "Upload New Logo"}
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={handleLogoUpload} 
-                      disabled={isUploadingLogo}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-40 h-16 relative bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                  <Image src={siteLogo} alt="Horizontal Site Logo" fill className="object-contain p-2" />
+                </div>
+                <div className="flex-1 space-y-3 w-full">
+                  <div>
+                    <span className="text-xs font-extrabold text-slate-800 block">Horizontal Logo</span>
+                    <span className="text-[10px] text-slate-500">Used in website navbar, footer, and full-width admin branding.</span>
+                  </div>
+                  <label className="relative cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-extrabold transition-all shadow-md inline-flex items-center gap-2">
+                    {isUploadingHorizontalLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {isUploadingHorizontalLogo ? "Uploading..." : "Upload Horizontal Logo"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleLogoUpload(e, "horizontal")}
+                      disabled={isUploadingHorizontalLogo}
                     />
                   </label>
                 </div>
-                <p className="text-[10px] text-slate-500">
-                  Recommended size: 200x80px. Allowed formats: PNG, WEBP, JPG, SVG. Max size: 5MB.
-                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-16 h-16 relative bg-white border border-slate-200 rounded-lg flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                  <Image src={squareLogo} alt="Square Site Logo" fill className="object-contain p-2" />
+                </div>
+                <div className="flex-1 space-y-3 w-full">
+                  <div>
+                    <span className="text-xs font-extrabold text-slate-800 block">Square Logo</span>
+                    <span className="text-[10px] text-slate-500">Used in compact admin icon areas.</span>
+                  </div>
+                  <label className="relative cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-extrabold transition-all shadow-md inline-flex items-center gap-2">
+                    {isUploadingSquareLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    {isUploadingSquareLogo ? "Uploading..." : "Upload Square Logo"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => handleLogoUpload(e, "square")}
+                      disabled={isUploadingSquareLogo}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
+            <p className="text-[10px] text-slate-500">
+              Recommended: horizontal 200x80px, square 512x512px. Allowed formats: PNG, WEBP, JPG, SVG. Max size: 5MB.
+            </p>
           </div>
 
           {/* Section 2: Maintenance Mode Card */}

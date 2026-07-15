@@ -48,14 +48,34 @@ interface AdminSidebarProps {
   rolePermissions?: AdminSidebarRole[];
 }
 
+type LogoVariant = "horizontal" | "square";
+
+const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
+  const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record[preferredKey] === "string") return record[preferredKey];
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
 export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCollapsed = false, userRole = "Super Administrator", rolePermissions = [] }: AdminSidebarProps) {
   const [siteLogo, setSiteLogo] = React.useState<string>("/logo.png");
+  const [squareLogo, setSquareLogo] = React.useState<string>("/xlogo.png");
 
   React.useEffect(() => {
     getSetting("site_logo").then(savedLogo => {
-      if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
-        setSiteLogo((savedLogo as { url: string }).url);
-      }
+      const logoUrl = getLogoUrl(savedLogo, "horizontal");
+      const compactLogoUrl = getLogoUrl(savedLogo, "square");
+      if (logoUrl) setSiteLogo(logoUrl);
+      if (compactLogoUrl) setSquareLogo(compactLogoUrl);
     });
   }, []);
 
@@ -70,7 +90,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     "Customers": "/admin/customers",
     "Bills": "/admin/bills",
     "Tickets": "/admin/tickets",
-    "Package Requests": "/admin/package-requests",
     "Contact Messages": "/admin/contact-messages",
     "Complaints": "/admin/complaints",
     "Jobs": "/admin/jobs",
@@ -161,10 +180,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
         {
           name: "Tickets",
           icon: <LifeBuoy className="w-4 h-4" />,
-        },
-        {
-          name: "Package Requests",
-          icon: <FileText className="w-4 h-4" />,
         },
         {
           name: "Contact Messages",
@@ -267,7 +282,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
       }`}>
         {isCollapsed ? (
           <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1.5 shadow-md shrink-0">
-            <Image src="/xlogo.png" alt="M Amin Network" width={28} height={28} className="object-contain" style={{ width: "auto", height: "auto" }} />
+            <Image src={squareLogo} alt="M Amin Network" width={28} height={28} className="h-7 w-7 object-contain" />
           </div>
         ) : (
           <Image
@@ -275,8 +290,8 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
             alt="M-Amin Network"
             width={180}
             height={56}
-            className="h-14 w-auto object-contain"
-            style={{ filter: "invert(1) hue-rotate(180deg)", width: "auto", height: "auto" }}
+            className="h-14 w-[180px] object-contain"
+            style={{ filter: "invert(1) hue-rotate(180deg)" }}
             priority
           />
         )}

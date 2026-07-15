@@ -11,6 +11,7 @@ const OBJECT_KEYS = [
   "system_config",
   "admin_auth",
   "site_content",
+  "site_logo",
   "hero_typography",
   "offers_page_content",
   "footer_content",
@@ -20,9 +21,11 @@ const OBJECT_KEYS = [
   "about_content",
   "contact_content",
   "complaint_content_guidelines",
+  "topbar_content",
   "system_config",
   "admin_auth",
   "site_content",
+  "site_logo",
   "hero_typography",
   "offers_page_content",
   "footer_content",
@@ -32,6 +35,7 @@ const OBJECT_KEYS = [
   "about_content",
   "contact_content",
   "complaint_content_guidelines",
+  "topbar_content",
   "page_headers"
 ];
 
@@ -696,6 +700,26 @@ export async function submitPackageRequestAction(
 
     requestsArr.unshift(newRequest);
     const success = await setSettingInternal("package_requests", requestsArr);
+
+    // Also add to claims so it appears on /admin/applications
+    try {
+      const claimsRaw = await getSettingInternal("claims");
+      const claimsArr = Array.isArray(claimsRaw) ? (claimsRaw as Record<string, unknown>[]) : [];
+      claimsArr.unshift({
+        id: generatedId,
+        name: requestInfo.name,
+        phone: requestInfo.phone,
+        address: requestInfo.address,
+        promoCode: requestInfo.referralCode || "",
+        promoTitle: `${requestInfo.planName} (${requestInfo.speed})`,
+        date: new Date().toLocaleString(),
+        status: "Pending"
+      });
+      await setSettingInternal("claims", claimsArr);
+    } catch (e) {
+      console.error("Failed to sync package request to claims:", e);
+    }
+
     return { success, id: generatedId };
   } catch (error) {
     console.error("submitPackageRequestAction error:", error);

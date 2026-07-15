@@ -108,6 +108,24 @@ const defaultLicenses: LicenseBadge[] = [
 
 const defaultPhones = ["+880 1707-009267"];
 
+type LogoVariant = "horizontal" | "square";
+
+const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
+  const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
+  if (value && typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    if (typeof record[preferredKey] === "string") return record[preferredKey];
+    if (typeof record.url === "string") return record.url;
+  }
+  if (Array.isArray(value)) {
+    const firstLogo = value.find((item) => item && typeof item === "object" && "url" in item);
+    if (firstLogo && typeof firstLogo === "object" && "url" in firstLogo && typeof firstLogo.url === "string") {
+      return firstLogo.url;
+    }
+  }
+  return null;
+};
+
 function normalizePhoneList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
 
@@ -158,9 +176,8 @@ export default function Footer() {
 
       try {
         const savedLogo = await getSetting("site_logo");
-        if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
-          setSiteLogo((savedLogo as { url: string }).url);
-        }
+        const logoUrl = getLogoUrl(savedLogo, "horizontal");
+        if (logoUrl) setSiteLogo(logoUrl);
       } catch (e) {
         console.error("Error loading site logo:", e);
       }
@@ -227,7 +244,7 @@ export default function Footer() {
                 alt="M Amin Network"
                 width={200}
                 height={44}
-                className="h-11 w-auto object-contain brightness-0 invert"
+                className="h-11 w-[200px] object-contain brightness-0 invert"
               />
             </Link>
             <p className="text-sm text-slate-400 mt-2 leading-relaxed">
