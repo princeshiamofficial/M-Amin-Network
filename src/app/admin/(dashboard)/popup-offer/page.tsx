@@ -12,6 +12,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+function normalizePopupEnabled(value: unknown): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
+  return true;
+}
+
 export default function PopupOfferPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
@@ -29,7 +36,7 @@ export default function PopupOfferPage() {
         const config = saved as Record<string, unknown>;
         setSystemConfig({
           ...config,
-          popupEnabled: config.popupEnabled !== false,
+          popupEnabled: normalizePopupEnabled(config.popupEnabled),
           popupImage: (config.popupImage as string) || "/popup.webp",
         });
       } else {
@@ -52,7 +59,17 @@ export default function PopupOfferPage() {
 
     setTimeout(async () => {
       try {
-        await setSetting("system_config", systemConfig);
+        const payload = {
+          ...systemConfig,
+          popupEnabled: normalizePopupEnabled(systemConfig.popupEnabled),
+          popupImage: (systemConfig.popupImage as string) || "/popup.webp",
+        };
+        const saved = await setSetting("system_config", payload);
+        if (!saved) {
+          toast.error("Save failed. Please log in again and try once more.");
+          return;
+        }
+        setSystemConfig(payload);
         toast.success("Pop-up campaign configuration saved successfully!");
       } catch {
         toast.error("Failed to update pop-up configurations.");

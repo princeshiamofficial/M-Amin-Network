@@ -34,6 +34,17 @@ interface FAQ {
   isPublished: boolean;
 }
 
+function normalizePopupEnabled(value: unknown): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
+  return true;
+}
+
+function getPopupSessionKey(image: string): string {
+  return `hasSeenOfferPopup:${image}`;
+}
+
 interface CountUpProps {
   end: number;
   duration?: number;
@@ -125,7 +136,7 @@ export default function Home() {
     getSetting("system_config").then((saved) => {
       if (saved) {
         const config = saved as Record<string, unknown>;
-        const enabled = config.popupEnabled !== false;
+        const enabled = normalizePopupEnabled(config.popupEnabled);
         const image = (config.popupImage as string) || "/popup.webp";
         setPopupConfig({ enabled, image });
       }
@@ -146,16 +157,18 @@ export default function Home() {
         socket.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (data && typeof data.popupEnabled === "boolean") {
+            if (data && typeof data === "object" && "popupEnabled" in data) {
+              const popupEnabled = normalizePopupEnabled(data.popupEnabled);
+              const popupImage = (data.popupImage as string) || "/popup.webp";
               setPopupConfig({
-                enabled: data.popupEnabled,
-                image: data.popupImage || "/popup.webp"
+                enabled: popupEnabled,
+                image: popupImage
               });
               
-              if (!data.popupEnabled) {
+              if (!popupEnabled) {
                 setShowPopup(false);
               } else {
-                const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
+                const hasSeen = sessionStorage.getItem(getPopupSessionKey(popupImage));
                 if (!hasSeen) {
                   setShowPopup(true);
                 }
@@ -196,14 +209,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const hasSeen = sessionStorage.getItem("hasSeenOfferPopup");
+    const hasSeen = sessionStorage.getItem(getPopupSessionKey(popupConfig.image));
     if (!hasSeen && popupConfig.enabled) {
       const timer = setTimeout(() => {
         setShowPopup(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [popupConfig.enabled]);
+  }, [popupConfig.enabled, popupConfig.image]);
 
   useEffect(() => {
     getSetting("testimonials").then((saved) => {
@@ -237,7 +250,7 @@ export default function Home() {
 
   const handleClosePopup = () => {
     setShowPopup(false);
-    sessionStorage.setItem("hasSeenOfferPopup", "true");
+    sessionStorage.setItem(getPopupSessionKey(popupConfig.image), "true");
   };
 
   const coverageAreas = [

@@ -100,6 +100,23 @@ function normalizePromoOfferItems(items: Record<string, unknown>[]): Record<stri
   });
 }
 
+function normalizePrimitiveListItems(items: unknown[]): Record<string, unknown>[] {
+  return items.map((item) => {
+    if (item === null || typeof item !== "object") {
+      return { value: item };
+    }
+
+    return item as Record<string, unknown>;
+  });
+}
+
+function normalizeBooleanValue(value: unknown, fallback = false): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
+  return fallback;
+}
+
 /**
  * Internal function to fetch settings bypassing authentication checks.
  */
@@ -159,6 +176,13 @@ async function getSettingInternal(key: string): Promise<unknown> {
         }
         return newRow;
       });
+
+      if (isArray && parsedRows.every((row) => {
+        const keys = Object.keys(row);
+        return keys.length === 1 && keys[0] === "value";
+      })) {
+        return parsedRows.map((row) => row.value);
+      }
 
       return isArray ? parsedRows : (parsedRows[0] || null);
     } catch (error: unknown) {
@@ -246,7 +270,7 @@ async function setSettingInternal(key: string, data: unknown): Promise<boolean> 
     };
 
     if (isArray) {
-      processedData = (data as Record<string, unknown>[]).map(mapUserFields);
+      processedData = normalizePrimitiveListItems(data as unknown[]).map(mapUserFields);
     } else {
       processedData = mapUserFields(data);
     }
@@ -449,13 +473,13 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
       const config = data as { 
         maintenanceMode?: boolean | number; 
         maintenanceMessage?: string;
-        popupEnabled?: boolean;
+        popupEnabled?: boolean | number | string;
         popupImage?: string;
       };
       broadcastMaintenance({
-        isMaintenance: !!config.maintenanceMode,
+        isMaintenance: normalizeBooleanValue(config.maintenanceMode),
         maintenanceMessage: config.maintenanceMessage || "",
-        popupEnabled: config.popupEnabled !== false,
+        popupEnabled: normalizeBooleanValue(config.popupEnabled, true),
         popupImage: config.popupImage || "/popup.webp"
       });
     } catch (e) {
@@ -478,37 +502,47 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
 
     const cleanUser = usernameInput.trim().toLowerCase();
     const hashedInput = hashPasswordServer(passwordInput);
-    const isPasswordValid = hashedInput === savedAuth.password;
 
-    if (isPasswordValid) {
-      const validEmail = savedAuth.email.toLowerCase();
-      const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
+    let matchedUsername = "";
+    let matchedRole = "";
 
-      let matchedUsername = "";
-      let matchedRole = "";
+    const validEmail = savedAuth.email.toLowerCase();
+    const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
-      if (cleanUser === validUsername || cleanUser === validEmail) {
+    if (cleanUser === validUsername || cleanUser === validEmail) {
+      if (hashedInput === savedAuth.password) {
         matchedUsername = "admin";
         matchedRole = "Super Administrator";
       } else {
-        const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
-        const userList = Array.isArray(savedUsers) ? savedUsers : [];
-        const matchedUser = userList.find(u => {
-          const uName = String(u.username || "").trim().toLowerCase();
-          const uEmail = String(u.email || "").trim().toLowerCase();
-          return uName === cleanUser || uEmail === cleanUser;
-        });
+        return { success: false, error: "Invalid credentials." };
+      }
+    } else {
+      const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+      const userList = Array.isArray(savedUsers) ? savedUsers : [];
+      const matchedUser = userList.find(u => {
+        const uName = String(u.username || "").trim().toLowerCase();
+        const uEmail = String(u.email || "").trim().toLowerCase();
+        return uName === cleanUser || uEmail === cleanUser;
+      });
 
-        if (matchedUser) {
-          if (matchedUser.status === "Banned") {
-            return { success: false, error: "This administrative user account is banned." };
-          }
+      if (matchedUser) {
+        if (matchedUser.status === "Banned") {
+          return { success: false, error: "This administrative user account is banned." };
+        }
+        
+        const userPassword = String(matchedUser.password || "");
+        if (passwordInput === userPassword || hashedInput === userPassword) {
           matchedUsername = String(matchedUser.username || "");
           matchedRole = String(matchedUser.role || "Support Staff");
+        } else {
+          return { success: false, error: "Invalid credentials." };
         }
+      } else {
+        return { success: false, error: "Invalid credentials." };
       }
+    }
 
-      if (matchedUsername) {
+    if (matchedUsername) {
         // Update lastLogin in admin_users
         try {
           const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
@@ -542,7 +576,7 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
 
         return { success: true, username: matchedUsername, role: matchedRole };
       }
-    }
+
     return { success: false, error: "Invalid username or password." };
   } catch {
     return { success: false, error: "Server authentication error." };

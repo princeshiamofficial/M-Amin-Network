@@ -2,13 +2,20 @@ import mysql from 'mysql2/promise';
 
 // Prevent multiple database pool allocations during Next.js hot-reloading
 const globalForDb = global as unknown as { pool: mysql.Pool };
+const DB_NAME = process.env.DB_NAME || 'm_amin_network';
+const DB_HOST = process.env.DB_HOST || '127.0.0.1';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || '';
+const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
+const DB_CHARSET = 'utf8mb4';
 
 const pool = globalForDb.pool || mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'm_amin_network',
-  port: parseInt(process.env.DB_PORT || '3306'),
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  port: DB_PORT,
+  charset: DB_CHARSET,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -55,6 +62,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   hero_metrics: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `titleEn` VARCHAR(255), `titleBn` VARCHAR(255), `descEn` VARCHAR(255), `descBn` VARCHAR(255), `_sort_order` DOUBLE",
   offers_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
   footer_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `aboutText` TEXT, `hotline` VARCHAR(255), `email` VARCHAR(255), `address` TEXT, `facebook` VARCHAR(255), `youtube` VARCHAR(255), `_sort_order` DOUBLE",
+  footer_phones: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `value` VARCHAR(255), `_sort_order` DOUBLE",
   bill_payment_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `instructionTitle` VARCHAR(255), `instructionText` TEXT, `_sort_order` DOUBLE",
   support_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
   portal_page_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
@@ -133,6 +141,9 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "SC-1", label: "Grievances Queue", targetTab: "Complaints", _sort_order: 0 },
     { id: "SC-2", label: "Transactions Log", targetTab: "Bills", _sort_order: 1 },
     { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs", _sort_order: 2 }
+  ],
+  footer_phones: [
+    { value: "+880 1707-009267", _sort_order: 0 }
   ],
   quick_actions: [
     { id: "qa-1", label: "Packages", path: "/admin/packages", route: "/admin/packages", iconName: "Package", bg: "bg-blue-50", text: "text-blue-600", _sort_order: 0 },
@@ -214,7 +225,14 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "card-2", title: "Corporate Splice", description: "Dedicated redundant connectivity for critical systems.", icon: "Activity", _sort_order: 1 }
   ],
   system_config: [
-    { peeringBandwidthLimit: "10 Gbps", maintenanceMode: false, _sort_order: 0 }
+    {
+      peeringBandwidthLimit: "10 Gbps",
+      maintenanceMode: false,
+      maintenanceMessage: "M-Amin Network is currently undergoing scheduled backend fiber infrastructure upgrades. We will be back online shortly.",
+      popupEnabled: true,
+      popupImage: "/popup.webp",
+      _sort_order: 0
+    }
   ],
   site_content: [
     { siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
@@ -307,12 +325,38 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   ]
 };
 
+function quoteIdentifier(identifier: string): string {
+  return `\`${identifier.replace(/`/g, "``")}\``;
+}
+
+async function ensureDatabaseExists() {
+  const connection = await mysql.createConnection({
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    port: DB_PORT,
+    charset: DB_CHARSET,
+  });
+
+  try {
+    await connection.query(
+      `CREATE DATABASE IF NOT EXISTS ${quoteIdentifier(DB_NAME)} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+    );
+  } finally {
+    await connection.end();
+  }
+}
+
 async function verifyAndMigrateTable(connection: mysql.PoolConnection, table: string, schema: string) {
   // 1. Create table if not exists
-  await connection.query(`CREATE TABLE IF NOT EXISTS \`${table}\` (${schema})`);
+  await connection.query(
+    `CREATE TABLE IF NOT EXISTS ${quoteIdentifier(table)} (${schema}) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+  );
 
   // 2. Fetch current columns from MySQL database
-  const [columnsResult] = await connection.query<import('mysql2').RowDataPacket[]>(`SHOW COLUMNS FROM \`${table}\``);
+  const [columnsResult] = await connection.query<import('mysql2').RowDataPacket[]>(
+    `SHOW COLUMNS FROM ${quoteIdentifier(table)}`
+  );
   const existingColumns = new Set(columnsResult.map(row => row.Field.toLowerCase()));
 
   // 3. Parse schema definition to extract column definitions
@@ -347,7 +391,7 @@ async function verifyAndMigrateTable(connection: mysql.PoolConnection, table: st
           alterDef = def.replace(/PRIMARY\s+KEY/i, "");
         }
         try {
-          await connection.query(`ALTER TABLE \`${table}\` ADD COLUMN ${alterDef}`);
+          await connection.query(`ALTER TABLE ${quoteIdentifier(table)} ADD COLUMN ${alterDef}`);
           console.log(`Successfully added column \`${colName}\` to table \`${table}\`.`);
         } catch (alterErr: unknown) {
           const err = alterErr as Error;
@@ -358,8 +402,10 @@ async function verifyAndMigrateTable(connection: mysql.PoolConnection, table: st
   }
 }
 
-async function seedTableIfEmpty(connection: mysql.Connection, table: string, items: Record<string, unknown>[]) {
-  const [rows] = await connection.query<import('mysql2').RowDataPacket[]>(`SELECT 1 FROM \`${table}\` LIMIT 1`);
+async function seedTableIfEmpty(connection: mysql.PoolConnection, table: string, items: Record<string, unknown>[]) {
+  const [rows] = await connection.query<import('mysql2').RowDataPacket[]>(
+    `SELECT 1 FROM ${quoteIdentifier(table)} LIMIT 1`
+  );
   if (rows && rows.length === 0 && items.length > 0) {
     for (const item of items) {
       const keys = Object.keys(item);
@@ -371,7 +417,7 @@ async function seedTableIfEmpty(connection: mysql.Connection, table: string, ite
       });
       const placeholders = keys.map(() => '?').join(', ');
       await connection.query(
-        `INSERT INTO \`${table}\` (${keys.map(k => `\`${k}\``).join(', ')}) VALUES (${placeholders})`,
+        `INSERT INTO ${quoteIdentifier(table)} (${keys.map(quoteIdentifier).join(', ')}) VALUES (${placeholders})`,
         values
       );
     }
@@ -382,19 +428,23 @@ async function seedTableIfEmpty(connection: mysql.Connection, table: string, ite
 // Startup table schema auto-creation and seeding
 export const dbInitPromise = (async () => {
   try {
+    await ensureDatabaseExists();
     const connection = await pool.getConnection();
-    
-    // Create & migrate all tables if not exist
-    for (const [table, schema] of Object.entries(TABLES_SCHEMAS)) {
-      await verifyAndMigrateTable(connection, table, schema);
+
+    try {
+      // Create & migrate all tables if not exist. Existing rows are preserved.
+      for (const [table, schema] of Object.entries(TABLES_SCHEMAS)) {
+        await verifyAndMigrateTable(connection, table, schema);
+      }
+
+      // Seed only brand-new/empty tables. Existing production data is never replaced.
+      for (const [table, items] of Object.entries(SEED_DATA)) {
+        await seedTableIfEmpty(connection, table, items);
+      }
+    } finally {
+      connection.release();
     }
 
-    // Seed empty tables
-    for (const [table, items] of Object.entries(SEED_DATA)) {
-      await seedTableIfEmpty(connection, table, items);
-    }
-
-    connection.release();
     console.log("All database tables verified, created, migrated and seeded successfully.");
   } catch (error) {
     console.error("Failed to verify/create/seed database tables on startup:", error);

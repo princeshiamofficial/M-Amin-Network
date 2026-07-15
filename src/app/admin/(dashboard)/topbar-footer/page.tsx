@@ -137,6 +137,33 @@ const defaultLicenses: LicenseBadge[] = [
 
 const defaultPhones = ["+880 1707-009267"];
 
+function normalizePhoneList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      if (typeof item === "string" || typeof item === "number") {
+        return String(item);
+      }
+
+      if (item && typeof item === "object") {
+        const record = item as Record<string, unknown>;
+        const candidate = record.value ?? record.phone ?? record.number ?? record.text;
+        if (typeof candidate === "string" || typeof candidate === "number") {
+          return String(candidate);
+        }
+      }
+
+      return "";
+    })
+    .map((phone) => phone.trim())
+    .filter(Boolean);
+}
+
+function serializePhoneList(value: unknown): { value: string }[] {
+  return normalizePhoneList(value).map((phone) => ({ value: phone }));
+}
+
 export default function TopbarFooterPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
@@ -217,10 +244,11 @@ export default function TopbarFooterPage() {
 
     // Load phones
     getSetting("footer_phones").then(saved => {
-      if (saved && (saved as unknown[]).length > 0) {
-        setPhones(saved as typeof defaultPhones);
+      const normalizedPhones = normalizePhoneList(saved);
+      if (normalizedPhones.length > 0) {
+        setPhones(normalizedPhones);
       } else {
-        setSetting("footer_phones", defaultPhones);
+        setSetting("footer_phones", serializePhoneList(defaultPhones));
         setPhones(defaultPhones);
       }
     });
@@ -259,12 +287,28 @@ export default function TopbarFooterPage() {
 
   const saveAllConfigurations = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSetting("footer_content", footerContent);
-    setSetting("nav_links", navLinks);
-    setSetting("footer_badges", badges);
-    setSetting("footer_licenses", licenses);
-    setSetting("footer_phones", phones);
-    toast("Topbar, Footer, and Header Menu configurations saved successfully!");
+    const normalizedPhones = normalizePhoneList(phones);
+
+    if (normalizedPhones.length === 0) {
+      toast.error("At least one phone number is required.");
+      return;
+    }
+
+    setPhones(normalizedPhones);
+
+    const results = await Promise.all([
+      setSetting("footer_content", footerContent),
+      setSetting("nav_links", navLinks),
+      setSetting("footer_badges", badges),
+      setSetting("footer_licenses", licenses),
+      setSetting("footer_phones", serializePhoneList(normalizedPhones)),
+    ]);
+
+    if (results.every(Boolean)) {
+      toast("Topbar, Footer, and Header Menu configurations saved successfully!");
+    } else {
+      toast.error("Some settings could not be saved. Please log in again and retry.");
+    }
   };
 
   // Nav link order handlers

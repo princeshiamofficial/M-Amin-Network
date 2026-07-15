@@ -108,6 +108,29 @@ const defaultLicenses: LicenseBadge[] = [
 
 const defaultPhones = ["+880 1707-009267"];
 
+function normalizePhoneList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item) => {
+      if (typeof item === "string" || typeof item === "number") {
+        return String(item);
+      }
+
+      if (item && typeof item === "object") {
+        const record = item as Record<string, unknown>;
+        const candidate = record.value ?? record.phone ?? record.number ?? record.text;
+        if (typeof candidate === "string" || typeof candidate === "number") {
+          return String(candidate);
+        }
+      }
+
+      return "";
+    })
+    .map((phone) => phone.trim())
+    .filter(Boolean);
+}
+
 export default function Footer() {
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
@@ -174,8 +197,9 @@ export default function Footer() {
 
       try {
         const savedPhones = await getSetting("footer_phones");
-        if (savedPhones && Array.isArray(savedPhones) && savedPhones.length > 0) {
-          setPhones(savedPhones as string[]);
+        const normalizedPhones = normalizePhoneList(savedPhones);
+        if (normalizedPhones.length > 0) {
+          setPhones(normalizedPhones);
         }
       } catch (e) {
         console.error("Error loading phones configuration:", e);
@@ -411,9 +435,7 @@ export default function Footer() {
                   {t(footerData.addressEn, footerData.addressBn)}
                 </span>
               </li>
-              {phones.map((phone, idx) => {
-                const phoneStr = typeof phone === 'string' ? phone : (phone && typeof phone === 'object' ? (phone as any).phone || (phone as any).value || String(phone) : String(phone || ""));
-                return (
+              {phones.map((phone, idx) => (
                 <li key={idx} className="flex gap-2.5 items-center">
                   <svg
                     className="w-5 h-5 text-brand-cyan shrink-0"
@@ -428,11 +450,11 @@ export default function Footer() {
                       d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.47-5.114-3.758-6.583-6.583l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
                     />
                   </svg>
-                  <a href={`tel:${phoneStr.replace(/[^+\d]/g, "")}`} className="hover:text-brand-cyan transition-colors font-mono">
-                    {phoneStr}
+                  <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="hover:text-brand-cyan transition-colors font-mono">
+                    {phone}
                   </a>
                 </li>
-              )})}
+              ))}
               <li className="flex gap-2.5 items-center">
                 <svg
                   className="w-5 h-5 text-brand-cyan shrink-0"

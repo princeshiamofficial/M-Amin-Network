@@ -4,12 +4,28 @@ loadEnvConfig(process.cwd());
 
 const mysql = require('mysql2/promise');
 
+const dbName = process.env.DB_NAME || 'm_amin_network';
+const quoteIdentifier = (identifier) => `\`${identifier.replace(/`/g, '``')}\``;
+
 (async () => {
+  const serverConnection = await mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    port: parseInt(process.env.DB_PORT || '3306', 10),
+    charset: 'utf8mb4'
+  });
+
+  await serverConnection.query(
+    `CREATE DATABASE IF NOT EXISTS ${quoteIdentifier(dbName)} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+  );
+  await serverConnection.end();
+
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'm_amin_network',
+    database: dbName,
     port: parseInt(process.env.DB_PORT || '3306', 10),
     charset: 'utf8mb4'
   });
@@ -31,13 +47,38 @@ const mysql = require('mysql2/promise');
   // We remove it from dropping/recreating here to preserve custom production packages.
 
   // Promo offers table migration to fix schema key and field mismatches
-  console.log("Dropping old promo_offers table if exists...");
-  await connection.query('DROP TABLE IF EXISTS `promo_offers`');
-  console.log("Creating promo_offers table...");
+  console.log("Creating promo_offers table if missing...");
   await connection.query(
-    'CREATE TABLE `promo_offers` (`code` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `badge` VARCHAR(255), `badgeColor` VARCHAR(255), `details` TEXT, `validUntil` VARCHAR(255), `_sort_order` DOUBLE) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+    'CREATE TABLE IF NOT EXISTS `promo_offers` (`code` VARCHAR(255) PRIMARY KEY, `title` VARCHAR(255), `badge` VARCHAR(255), `badgeColor` VARCHAR(255), `details` TEXT, `validUntil` VARCHAR(255), `_sort_order` DOUBLE) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
   );
-  console.log("Seeding promo_offers table...");
+  const [columns] = await connection.query('SHOW COLUMNS FROM `promo_offers`');
+  const existingColumns = new Set(columns.map((column) => column.Field));
+  const requiredColumns = {
+    code: '`code` VARCHAR(255)',
+    title: '`title` VARCHAR(255)',
+    badge: '`badge` VARCHAR(255)',
+    badgeColor: '`badgeColor` VARCHAR(255)',
+    details: '`details` TEXT',
+    validUntil: '`validUntil` VARCHAR(255)',
+    imageUrl: '`imageUrl` VARCHAR(255)',
+    _sort_order: '`_sort_order` DOUBLE'
+  };
+
+  for (const [columnName, columnDefinition] of Object.entries(requiredColumns)) {
+    if (!existingColumns.has(columnName)) {
+      console.log(`Adding missing promo_offers column: ${columnName}`);
+      await connection.query(`ALTER TABLE \`promo_offers\` ADD COLUMN ${columnDefinition}`);
+    }
+  }
+
+  const [existingRows] = await connection.query('SELECT 1 FROM `promo_offers` LIMIT 1');
+  if (existingRows.length > 0) {
+    console.log("promo_offers already has data. Existing records preserved; seed skipped.");
+    await connection.end();
+    return;
+  }
+
+  console.log("Seeding empty promo_offers table...");
   const promoOffersSeed = [
     {
       title: "Zero Installation Fee",
