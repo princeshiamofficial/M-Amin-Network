@@ -955,6 +955,7 @@ export default function OffersPage() {
               </Dialog.Close>
             </div>
             <Dialog.Description className="sr-only">Detailed preview of the promotional campaign.</Dialog.Description>
+            {selectedOfferForPreview && (<>
             
             <div className="space-y-4">
               <div className="relative h-48 w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-100">
@@ -1032,6 +1033,7 @@ export default function OffersPage() {
                 Close Preview
               </button>
             </div>
+            </>)}
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
@@ -1054,7 +1056,7 @@ export default function OffersPage() {
             </Dialog.Close>
             <div className="relative w-full h-[70vh]">
               <Image
-                src={selectedImageForPreview}
+                src={selectedImageForPreview || ""}
                 alt="Campaign Full View"
                 fill
                 className="object-contain"
