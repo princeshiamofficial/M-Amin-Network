@@ -634,7 +634,7 @@ export default function MultimediaAdminPage() {
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Portal Status</label>
                 <select
                   value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value as "Online" | "Offline" | "Maintenance" })}
                   className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-blue-500 font-bold transition-all"
                 >
                   <option value="Online">Online</option>
@@ -674,7 +674,7 @@ export default function MultimediaAdminPage() {
               <h3 className="text-slate-900 font-extrabold text-base uppercase tracking-wider">Delete Category</h3>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Are you sure you want to delete the category <span className="font-extrabold text-slate-800">"{catToDelete.label}"</span>? All portals referencing this category will fall back to default settings.
+              Are you sure you want to delete the category <span className="font-extrabold text-slate-800">&quot;{catToDelete.label}&quot;</span>? All portals referencing this category will fall back to default settings.
             </p>
             <div className="flex justify-end gap-2.5 pt-2">
               <button
@@ -785,7 +785,7 @@ export default function MultimediaAdminPage() {
               <h3 className="text-slate-900 font-extrabold text-base uppercase tracking-wider">Delete Portal</h3>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Are you sure you want to permanently delete the multimedia portal <span className="font-extrabold text-slate-800">"{portals[portalToDeleteIdx].name}"</span>? This action cannot be undone.
+              Are you sure you want to permanently delete the multimedia portal <span className="font-extrabold text-slate-800">&quot;{portals[portalToDeleteIdx].name}&quot;</span>? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-2.5 pt-2">
               <button

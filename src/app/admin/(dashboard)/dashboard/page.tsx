@@ -344,6 +344,7 @@ export default function AdminDashboardPage() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState("Overview");
   const [greeting, setGreeting] = useState("Welcome");
   const [adminName, setAdminName] = useState("Mehan Ahmed");
@@ -814,19 +815,19 @@ export default function AdminDashboardPage() {
     { id: "SC-3", label: "Openings (Jobs)", targetTab: "Jobs" },
   ];
 
-  function loadDatabase() {
+  async function loadDatabase() {
     if (typeof window === "undefined") return;
-
-    getSetting("claims").then(savedClaims => {
+    setIsLoadingData(true);
+    await Promise.all([
+      getSetting("claims").then(savedClaims => {
       if (savedClaims) {
         setClaims(savedClaims as Claim[]);
       } else {
         setSetting("claims", defaultClaims);
         setClaims(defaultClaims);
       }
-    });
-
-    getSetting("complaints").then(savedComplaints => {
+    }),
+      getSetting("complaints").then(savedComplaints => {
       if (savedComplaints) {
         const list = savedComplaints as Complaint[];
         setComplaints(list);
@@ -840,9 +841,8 @@ export default function AdminDashboardPage() {
         setCountAllComplaints(defaultComplaints.length);
         setCountComplaintsToday(0);
       }
-    });
-
-    getSetting("tickets").then(savedTickets => {
+    }),
+      getSetting("tickets").then(savedTickets => {
       if (savedTickets) {
         const list = savedTickets as Ticket[];
         setTickets(list);
@@ -852,18 +852,16 @@ export default function AdminDashboardPage() {
         setTickets(defaultTickets);
         setCountTickets(defaultTickets.length);
       }
-    });
-
-    getSetting("payments").then(savedPayments => {
+    }),
+      getSetting("payments").then(savedPayments => {
       if (savedPayments) {
         setPayments(savedPayments as Payment[]);
       } else {
         setSetting("payments", defaultPayments);
         setPayments(defaultPayments);
       }
-    });
-
-    getSetting("contact_submissions").then(savedMessages => {
+    }),
+      getSetting("contact_submissions").then(savedMessages => {
       if (savedMessages) {
         const list = savedMessages as ContactMessage[];
         setMessages(list);
@@ -873,18 +871,16 @@ export default function AdminDashboardPage() {
         setMessages(defaultMessages);
         setCountContactInbox(defaultMessages.length);
       }
-    });
-
-    getSetting("jobs").then(savedJobs => {
+    }),
+      getSetting("jobs").then(savedJobs => {
       if (savedJobs) {
         setJobs(savedJobs as Job[]);
       } else {
         setSetting("jobs", defaultJobs);
         setJobs(defaultJobs);
       }
-    });
-
-    getSetting("job_applications").then(savedApps => {
+    }),
+      getSetting("job_applications").then(savedApps => {
       if (savedApps) {
         const list = savedApps as JobApplication[];
         setJobApplications(list);
@@ -894,77 +890,64 @@ export default function AdminDashboardPage() {
         setJobApplications(defaultJobApplications);
         setCountApplications(defaultJobApplications.length);
       }
-    });
-
-    getSetting("testimonials").then(savedTestimonials => {
+    }),
+      getSetting("testimonials").then(savedTestimonials => {
       if (savedTestimonials) {
         setTestimonials(savedTestimonials as Testimonial[]);
       } else {
         setSetting("testimonials", defaultTestimonials);
         setTestimonials(defaultTestimonials);
       }
-    });
-
-    getSetting("faqs").then(savedFAQs => {
+    }),
+      getSetting("faqs").then(savedFAQs => {
       if (savedFAQs) {
         setFaqs(savedFAQs as FAQ[]);
       } else {
         setSetting("faqs", defaultFAQs);
         setFaqs(defaultFAQs);
       }
-    });
-
-    getSetting("site_content").then(saved => {
+    }),
+      getSetting("site_content").then(saved => {
       if (saved) setSiteContent(saved as Record<string, unknown> as unknown as Parameters<typeof setSiteContent>[0]);
-    });
-
-    getSetting("home_sections").then(saved => {
+    }),
+      getSetting("home_sections").then(saved => {
       if (saved) setHomeSections(saved as Record<string, unknown>[] as unknown as Parameters<typeof setHomeSections>[0]);
-    });
-
-    getSetting("hero_typography").then(saved => {
+    }),
+      getSetting("hero_typography").then(saved => {
       if (saved) setHeroTypography(saved as Record<string, unknown> as unknown as Parameters<typeof setHeroTypography>[0]);
-    });
-
-    getSetting("seo_settings").then(saved => {
+    }),
+      getSetting("seo_settings").then(saved => {
       if (saved) setSeoSettings(saved as Record<string, unknown> as unknown as Parameters<typeof setSeoSettings>[0]);
-    });
-
-    getSetting("about_content").then(saved => {
+    }),
+      getSetting("about_content").then(saved => {
       if (saved) setAboutContent(saved as Record<string, unknown> as unknown as Parameters<typeof setAboutContent>[0]);
-    });
-
-    getSetting("contact_content").then(saved => {
+    }),
+      getSetting("contact_content").then(saved => {
       if (saved) setContactPageContent(saved as Record<string, unknown> as unknown as Parameters<typeof setContactPageContent>[0]);
-    });
-
-    getSetting("complaint_content_guidelines").then(saved => {
+    }),
+      getSetting("complaint_content_guidelines").then(saved => {
       if (saved) setComplaintPageContent(saved as Record<string, unknown> as unknown as Parameters<typeof setComplaintPageContent>[0]);
-    });
-
-    getSetting("footer_content").then(saved => {
+    }),
+      getSetting("footer_content").then(saved => {
       if (saved) setFooterContent(saved as Record<string, unknown> as unknown as Parameters<typeof setFooterContent>[0]);
-    });
-
-    getSetting("service_highlights").then(savedHighlights => {
+    }),
+      getSetting("service_highlights").then(savedHighlights => {
       if (savedHighlights && (savedHighlights as unknown[]).length > 0) {
         setServiceHighlights(savedHighlights as ServiceHighlight[]);
       } else {
         setSetting("service_highlights", defaultServiceHighlights);
         setServiceHighlights(defaultServiceHighlights);
       }
-    });
-
-    getSetting("service_reviews").then(savedReviews => {
+    }),
+      getSetting("service_reviews").then(savedReviews => {
       if (savedReviews && (savedReviews as unknown[]).length > 0) {
         setServiceReviews(savedReviews as ServiceReview[]);
       } else {
         setSetting("service_reviews", defaultServiceReviews);
         setServiceReviews(defaultServiceReviews);
       }
-    });
-
-    getSetting("system_config").then(saved => {
+    }),
+      getSetting("system_config").then(saved => {
       if (saved) {
         const config = saved as Record<string, unknown>;
         setSystemConfig({
@@ -972,84 +955,77 @@ export default function AdminDashboardPage() {
           maintenanceMode: !!config.maintenanceMode
         });
       }
-    });
-
-    getSetting("admin_users").then(savedUsers => {
+    }),
+      getSetting("admin_users").then(savedUsers => {
       if (savedUsers) {
         setAdminUsers(savedUsers as AdminUser[]);
       } else {
         setSetting("admin_users", defaultAdminUsers);
         setAdminUsers(defaultAdminUsers);
       }
-    });
-
-    getSetting("security_logs").then(savedLogs => {
+    }),
+      getSetting("security_logs").then(savedLogs => {
       if (savedLogs) {
         setSecurityLogs(savedLogs as SecurityLog[]);
       } else {
         setSetting("security_logs", defaultSecurityLogs);
         setSecurityLogs(defaultSecurityLogs);
       }
-    });
-
-    getSetting("seo_audits").then(savedSeoAudits => {
+    }),
+      getSetting("seo_audits").then(savedSeoAudits => {
       if (savedSeoAudits) {
         setSeoAuditReports(savedSeoAudits as SEOAuditReport[]);
       } else {
         setSetting("seo_audits", defaultSEOAuditReports);
         setSeoAuditReports(defaultSEOAuditReports);
       }
-    });
-
-    getSetting("dashboard_shortcuts").then(savedShortcuts => {
+    }),
+      getSetting("dashboard_shortcuts").then(savedShortcuts => {
       if (savedShortcuts) {
         setShortcuts(savedShortcuts as Shortcut[]);
       } else {
         setSetting("dashboard_shortcuts", defaultShortcuts);
         setShortcuts(defaultShortcuts);
       }
-    });
-
-    getSetting("quick_actions").then(savedActions => {
+    }),
+      getSetting("quick_actions").then(savedActions => {
       if (savedActions) {
         setQuickActionsList(savedActions as QuickAction[]);
       } else {
         setSetting("quick_actions", defaultQuickActions);
         setQuickActionsList(defaultQuickActions);
       }
-    });
-
-    getSetting("promo_offers").then(saved => {
+    }),
+      getSetting("promo_offers").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountOffers(saved.length);
       } else {
         setCountOffers(7);
       }
-    });
-
-    getSetting("coverage_zones").then(saved => {
+    }),
+      getSetting("coverage_zones").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountCoverageAreas(saved.length);
       } else {
         setCountCoverageAreas(11);
       }
-    });
-
-    getSetting("packages_list").then(saved => {
+    }),
+      getSetting("packages_list").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountPackages(saved.length);
       } else {
         setCountPackages(5);
       }
-    });
-
-    getSetting("subscribers").then(saved => {
+    }),
+      getSetting("subscribers").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountCustomers(saved.length);
       } else {
         setCountCustomers(3);
       }
-    });
+    })
+    ]);
+    setIsLoadingData(false);
   }
 
   useEffect(() => {
@@ -1527,7 +1503,7 @@ export default function AdminDashboardPage() {
 
 
 
-  if (!mounted || !isAuthenticated) {
+  if (!mounted || !isAuthenticated || isLoadingData) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-650">
         <div className="flex flex-col items-center gap-3">

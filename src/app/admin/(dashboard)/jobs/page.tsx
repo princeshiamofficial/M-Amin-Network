@@ -276,7 +276,7 @@ export default function JobsPage() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="job-dialog-title"
-            className="my-8 w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-2xl"
+            className="my-8 w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 sm:px-6">
@@ -300,8 +300,8 @@ export default function JobsPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSaveJob} className="max-h-[calc(100vh-9rem)] overflow-y-auto bg-slate-50 p-5 space-y-4 sm:p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <form onSubmit={handleSaveJob} className="max-h-[calc(100vh-9rem)] overflow-y-auto bg-slate-50 p-5 space-y-4 sm:p-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Position Title</label>
               <input required type="text" value={newJob.title} onChange={e => setNewJob({ ...newJob, title: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue" placeholder="e.g., Network Engineer" />
@@ -319,7 +319,7 @@ export default function JobsPage() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Location</label>
               <input required type="text" value={newJob.location} onChange={e => setNewJob({ ...newJob, location: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue" placeholder="e.g., Kadomtoli Office, Dhaka" />
@@ -346,26 +346,28 @@ export default function JobsPage() {
             <textarea rows={4} value={newJob.requirements} onChange={e => setNewJob({ ...newJob, requirements: e.target.value })} className="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue" placeholder={"Write one requirement per line"} />
           </div>
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-600">Job Image</label>
-            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-3 items-stretch">
-              <div className="relative h-32 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+            <label className="block text-xs font-semibold text-slate-600 mb-2">Job Image</label>
+            <div className="w-full">
+              <label className="relative block h-32 overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 cursor-pointer hover:border-brand-blue hover:bg-blue-50/40 transition-all group">
                 {jobImagePreview ? (
-                  <Image
-                    src={jobImagePreview}
-                    alt={newJob.title || "Job image preview"}
-                    fill
-                    sizes="180px"
-                    className="object-cover"
-                  />
+                  <>
+                    <Image
+                      src={jobImagePreview}
+                      alt={newJob.title || "Job image preview"}
+                      fill
+                      sizes="224px"
+                      className="object-cover transition-opacity group-hover:opacity-40"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider bg-white/90 px-3 py-1.5 rounded-md shadow-sm">Change Image</span>
+                    </div>
+                  </>
                 ) : (
-                  <div className="flex h-full items-center justify-center text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    No image selected
+                  <div className="flex flex-col h-full items-center justify-center text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-brand-blue transition-colors">
+                    <span className="text-[11px]">Upload Image</span>
+                    <span className="text-[9px] normal-case font-medium mt-1">Click to browse</span>
                   </div>
                 )}
-              </div>
-              <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white px-4 py-5 text-center transition-colors hover:border-brand-blue hover:bg-blue-50/40">
-                <span className="text-xs font-bold text-slate-700">Upload JPG, PNG, WEBP, or GIF</span>
-                <span className="mt-1 text-[11px] text-slate-400">Maximum file size 5 MB</span>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/webp,image/gif"

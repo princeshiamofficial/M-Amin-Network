@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction } from "@/actions/content";
+import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting } from "@/actions/content";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -14,6 +14,15 @@ export default function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
+  const [siteLogo, setSiteLogo] = useState<string>("/logo.png");
+
+  useEffect(() => {
+    getSetting("site_logo").then(savedLogo => {
+      if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
+        setSiteLogo((savedLogo as { url: string }).url);
+      }
+    });
+  }, []);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -154,7 +163,7 @@ export default function AdminDashboard() {
         {/* Top-left logo: M-Amin Network */}
         <div className="absolute top-6 left-6 flex items-center z-20">
           <Image
-            src="/logo.png"
+            src={siteLogo}
             alt="M-Amin Network"
             width={120}
             height={32}
@@ -179,8 +188,8 @@ export default function AdminDashboard() {
           {/* Top Login Icon Box */}
           <div className="w-14 h-14 bg-white border border-white/90 shadow-[0_8px_20px_-6px_rgba(0,0,0,0.05)] flex items-center justify-center mx-auto mb-4 rounded-2xl overflow-hidden p-2">
             <Image
-              src="/xlogo.png"
-              alt="Logo"
+              src={siteLogo}
+              alt="M-Amin Network"
               width={56}
               height={56}
               className="w-full h-full object-contain"

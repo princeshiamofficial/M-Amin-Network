@@ -2,6 +2,7 @@
 import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useAdminSecurity } from "@/hooks/useAdminSecurity";
 import { getSetting, setSetting } from "@/actions/content";
 import Image from "next/image";
@@ -780,22 +781,25 @@ export default function OffersPage() {
       )}
 
       {/* ── ADD/EDIT CAMPAIGN MODAL ── */}
-      {isPromoModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200/90 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 font-sans">
+      <Dialog.Root open={isPromoModalOpen} onOpenChange={setIsPromoModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content className="fixed left-[50%] top-[50%] z-[9999] max-w-2xl w-full translate-x-[-50%] translate-y-[-50%] bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] font-sans data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] duration-200">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h3 className="text-slate-900 font-extrabold text-base">
+              <Dialog.Title className="text-slate-900 font-extrabold text-base">
                 {promoFormIndex !== null ? "✏ Modify Promotional Campaign" : "➕ Add New Promotional Campaign"}
-              </h3>
-              <button
-                onClick={() => setIsPromoModalOpen(false)}
-                className="text-slate-400 hover:text-slate-950 p-1 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button
+                  className="text-slate-400 hover:text-slate-950 p-1 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer outline-none"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </Dialog.Close>
             </div>
+            <Dialog.Description className="sr-only">Form to add or edit a promotional campaign.</Dialog.Description>
             
             <form onSubmit={handleSavePromoOffer} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -874,28 +878,29 @@ export default function OffersPage() {
 
 
               <div className="space-y-2">
-                <label className="text-slate-700 font-bold block">Offer Image</label>
-                <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-3 items-stretch">
-                  <div className="relative h-32 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                <label className="text-slate-700 font-bold block mb-2">Offer Image</label>
+                <div className="w-full">
+                  <label className="relative block h-32 overflow-hidden rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 cursor-pointer hover:border-brand-blue hover:bg-blue-50/40 transition-all group">
                     {promoImagePreview ? (
-                      <Image
-                        src={promoImagePreview}
-                        alt={promoFormData.title || "Offer image preview"}
-                        fill
-                        sizes="180px"
-                        className="object-cover"
-                      />
+                      <>
+                        <Image
+                          src={promoImagePreview}
+                          alt={promoFormData.title || "Offer image preview"}
+                          fill
+                          sizes="224px"
+                          className="object-cover transition-opacity group-hover:opacity-40"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider bg-white/90 px-3 py-1.5 rounded-md shadow-sm">Change Image</span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-100/50">
-                        <ImageIcon className="w-5 h-5 opacity-40 mb-1" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">No Image</span>
+                      <div className="flex flex-col h-full items-center justify-center text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-brand-blue transition-colors">
+                        <ImageIcon className="w-5 h-5 opacity-40 mb-1 group-hover:opacity-100 transition-opacity" />
+                        <span className="text-[11px]">Upload Image</span>
+                        <span className="text-[9px] normal-case font-medium mt-1">Click to browse</span>
                       </div>
                     )}
-                  </div>
-                  <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-slate-300 bg-[#f8fafc] px-4 py-5 text-center transition-colors hover:border-brand-blue hover:bg-blue-50/40">
-                    <Upload className="h-5 w-5 text-brand-blue" />
-                    <span className="mt-2 text-xs font-bold text-slate-700">Upload JPG, PNG, WEBP, or GIF</span>
-                    <span className="mt-1 text-[11px] text-slate-400">Maximum file size 5 MB</span>
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/gif"
@@ -923,30 +928,33 @@ export default function OffersPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* ── VIEW DETAIL PREVIEW MODAL ── */}
-      {selectedOfferForPreview && (
-        <div className="fixed inset-0 bg-black/45 backdrop-blur-xs z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200/90 shadow-2xl rounded-2xl max-w-2xl w-full p-6 space-y-5 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 font-sans">
+      <Dialog.Root open={!!selectedOfferForPreview} onOpenChange={(open) => !open && setSelectedOfferForPreview(null)}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/45 backdrop-blur-xs z-[9999] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content className="fixed left-[50%] top-[50%] z-[9999] max-w-2xl w-full translate-x-[-50%] translate-y-[-50%] bg-white border border-slate-200/90 shadow-2xl rounded-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto font-sans data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] duration-200">
             <div className="flex justify-between items-start border-b border-slate-100 pb-3">
               <div>
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 bg-slate-50 border border-slate-150 px-2 py-0.5 rounded-md">
                   CAMPAIGN PREVIEW
                 </span>
-                <h3 className="text-slate-900 font-extrabold text-lg mt-1">{selectedOfferForPreview.title}</h3>
+                <Dialog.Title className="text-slate-900 font-extrabold text-lg mt-1">{selectedOfferForPreview?.title}</Dialog.Title>
               </div>
-              <button
-                onClick={() => setSelectedOfferForPreview(null)}
-                className="text-slate-400 hover:text-slate-950 p-1 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <Dialog.Close asChild>
+                <button
+                  className="text-slate-400 hover:text-slate-950 p-1 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer outline-none"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </Dialog.Close>
             </div>
+            <Dialog.Description className="sr-only">Detailed preview of the promotional campaign.</Dialog.Description>
             
             <div className="space-y-4">
               <div className="relative h-48 w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-100">
@@ -1024,22 +1032,26 @@ export default function OffersPage() {
                 Close Preview
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* ── IMAGE ZOOM MODAL ── */}
-      {selectedImageForPreview && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[9999] flex items-center justify-center p-4" onClick={() => setSelectedImageForPreview(null)}>
-          <div className="relative max-w-4xl w-full max-h-[85vh] overflow-hidden rounded-2xl bg-black border border-slate-800 shadow-2xl scale-in duration-200">
-            <button
-              onClick={() => setSelectedImageForPreview(null)}
-              className="absolute top-4 right-4 text-white bg-black/40 hover:bg-black/80 p-2 rounded-full transition-colors cursor-pointer z-10"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <Dialog.Root open={!!selectedImageForPreview} onOpenChange={(open) => !open && setSelectedImageForPreview(null)}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[9999] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content className="fixed left-[50%] top-[50%] z-[9999] max-w-4xl w-full translate-x-[-50%] translate-y-[-50%] max-h-[85vh] overflow-hidden rounded-2xl bg-black border border-slate-800 shadow-2xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] duration-200">
+            <Dialog.Title className="sr-only">Image Zoom Preview</Dialog.Title>
+            <Dialog.Description className="sr-only">Full view of the selected image.</Dialog.Description>
+            <Dialog.Close asChild>
+              <button
+                className="absolute top-4 right-4 text-white bg-black/40 hover:bg-black/80 p-2 rounded-full transition-colors cursor-pointer z-10 outline-none"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </Dialog.Close>
             <div className="relative w-full h-[70vh]">
               <Image
                 src={selectedImageForPreview}
@@ -1048,23 +1060,24 @@ export default function OffersPage() {
                 className="object-contain"
               />
             </div>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* ── INLINE CUSTOM DELETE CONFIRMATION MODAL ── */}
-      {deleteConfirmIndex !== null && (
-        <div className="fixed inset-0 bg-black/45 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 font-sans">
-          <div className="bg-white border border-slate-200/90 shadow-2xl rounded-3xl p-6 sm:p-7 max-w-sm w-full space-y-5 text-left animate-in fade-in zoom-in-95 duration-205">
+      <Dialog.Root open={deleteConfirmIndex !== null} onOpenChange={(open) => !open && setDeleteConfirmIndex(null)}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/45 backdrop-blur-xs z-[9999] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content className="fixed left-[50%] top-[50%] z-[9999] max-w-sm w-full translate-x-[-50%] translate-y-[-50%] bg-white border border-slate-200/90 shadow-2xl rounded-3xl p-6 sm:p-7 space-y-5 text-left font-sans data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] duration-205">
             <div className="flex gap-4 items-start">
               <div className="w-10 h-10 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-500 shrink-0">
                 <Trash2 className="w-5 h-5" />
               </div>
               <div className="space-y-1.5 grow">
-                <h4 className="text-slate-900 font-extrabold text-sm uppercase tracking-wider">Delete Campaign</h4>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                <Dialog.Title className="text-slate-900 font-extrabold text-sm uppercase tracking-wider">Delete Campaign</Dialog.Title>
+                <Dialog.Description className="text-xs text-slate-500 font-medium leading-relaxed">
                   Are you sure you want to delete this promotional campaign? This action is permanent and cannot be undone.
-                </p>
+                </Dialog.Description>
               </div>
             </div>
             <div className="flex justify-end gap-2.5 pt-1">
@@ -1094,9 +1107,9 @@ export default function OffersPage() {
                 Delete
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }

@@ -37,6 +37,7 @@ export default function Navbar() {
   ];
 
   const [linksList, setLinksList] = useState<NavLink[]>(defaultNavLinks);
+  const [siteLogo, setSiteLogo] = useState<string>("/logo.png");
 
   const handleLangChange = (newLang: string) => {
     setLang(newLang);
@@ -87,6 +88,16 @@ export default function Navbar() {
         }
       }).catch(() => {
         setOfferCount(4);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getSetting("site_logo").then(saved => {
+        if (saved && typeof saved === 'object' && 'url' in saved) {
+          setSiteLogo((saved as { url: string }).url);
+        }
       });
     }
   }, []);
@@ -144,7 +155,7 @@ export default function Navbar() {
           <div className="shrink-0">
             <Link href="/" className="flex items-center py-1">
               <Image
-                src="/logo.png"
+                src={siteLogo}
                 alt="M Amin Network"
                 width={160}
                 height={40}

@@ -1,11 +1,11 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
+import { getSetting } from "@/actions/content";
 
 interface FooterData {
   facebook: string;
@@ -117,65 +117,71 @@ export default function Footer() {
   const [badges, setBadges] = React.useState<AffiliationBadge[]>(defaultBadges);
   const [licenses, setLicenses] = React.useState<LicenseBadge[]>(defaultLicenses);
   const [phones, setPhones] = React.useState<string[]>(defaultPhones);
+  const [siteLogo, setSiteLogo] = React.useState<string>("/logo.png");
 
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("footer_content");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
+    async function loadFooterSettings() {
+      try {
+        const saved = await getSetting("footer_content");
+        if (saved) {
           setFooterData(prev => ({
             ...prev,
-            ...parsed
+            ...(saved as unknown as Partial<FooterData>)
           }));
-        } catch (e) {
-          console.error("Error parsing footer configuration:", e);
         }
+      } catch (e) {
+        console.error("Error loading footer configuration:", e);
       }
 
-      const savedBadges = localStorage.getItem("footer_badges");
-      if (savedBadges) {
-        try {
-          const parsed = JSON.parse(savedBadges);
-          // Auto-migrate badge configurations to add dynamic image paths for backward-compatibility
-          const migrated = parsed.map((badge: AffiliationBadge) => {
+      try {
+        const savedLogo = await getSetting("site_logo");
+        if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
+          setSiteLogo((savedLogo as { url: string }).url);
+        }
+      } catch (e) {
+        console.error("Error loading site logo:", e);
+      }
+
+      try {
+        const savedBadges = await getSetting("footer_badges");
+        if (savedBadges && Array.isArray(savedBadges) && savedBadges.length > 0) {
+          const migrated = (savedBadges as unknown as AffiliationBadge[]).map((badge) => {
             if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
               return { ...badge, image: "/ispab.jpeg" };
             }
             return badge;
           });
           setBadges(migrated);
-        } catch (e) {
-          console.error("Error parsing badges configuration:", e);
         }
+      } catch (e) {
+        console.error("Error loading badges configuration:", e);
       }
 
-      const savedLicenses = localStorage.getItem("footer_licenses");
-      if (savedLicenses) {
-        try {
-          const parsed = JSON.parse(savedLicenses);
-          // Auto-migrate license configurations to add dynamic image paths for backward-compatibility
-          const migrated = parsed.map((lic: LicenseBadge) => {
+      try {
+        const savedLicenses = await getSetting("footer_licenses");
+        if (savedLicenses && Array.isArray(savedLicenses) && savedLicenses.length > 0) {
+          const migrated = (savedLicenses as unknown as LicenseBadge[]).map((lic) => {
             if (lic.textEn === "BTRC Licensed" && !lic.image) {
               return { ...lic, image: "/btrc.png" };
             }
             return lic;
           });
           setLicenses(migrated);
-        } catch (e) {
-          console.error("Error parsing licenses configuration:", e);
         }
+      } catch (e) {
+        console.error("Error loading licenses configuration:", e);
       }
 
-      const savedPhones = localStorage.getItem("footer_phones");
-      if (savedPhones) {
-        try {
-          setPhones(JSON.parse(savedPhones));
-        } catch (e) {
-          console.error("Error parsing phones configuration:", e);
+      try {
+        const savedPhones = await getSetting("footer_phones");
+        if (savedPhones && Array.isArray(savedPhones) && savedPhones.length > 0) {
+          setPhones(savedPhones as string[]);
         }
+      } catch (e) {
+        console.error("Error loading phones configuration:", e);
       }
     }
+    loadFooterSettings();
   }, []);
 
   if (pathname?.startsWith("/admin")) return null;
@@ -191,10 +197,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
           {/* Logo and About */}
           <div className="flex flex-col gap-4 md:col-span-3">
-            <Link href="/" className="flex items-center py-1">
-              <img
-                src="/logo.png"
+            <Link href="/" className="inline-block relative z-10 w-[200px]">
+              <Image
+                src={siteLogo}
                 alt="M Amin Network"
+                width={200}
+                height={44}
                 className="h-11 w-auto object-contain brightness-0 invert"
               />
             </Link>
@@ -403,7 +411,9 @@ export default function Footer() {
                   {t(footerData.addressEn, footerData.addressBn)}
                 </span>
               </li>
-              {phones.map((phone, idx) => (
+              {phones.map((phone, idx) => {
+                const phoneStr = typeof phone === 'string' ? phone : (phone && typeof phone === 'object' ? (phone as any).phone || (phone as any).value || String(phone) : String(phone || ""));
+                return (
                 <li key={idx} className="flex gap-2.5 items-center">
                   <svg
                     className="w-5 h-5 text-brand-cyan shrink-0"
@@ -418,11 +428,11 @@ export default function Footer() {
                       d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.47-5.114-3.758-6.583-6.583l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
                     />
                   </svg>
-                  <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="hover:text-brand-cyan transition-colors font-mono">
-                    {phone}
+                  <a href={`tel:${phoneStr.replace(/[^+\d]/g, "")}`} className="hover:text-brand-cyan transition-colors font-mono">
+                    {phoneStr}
                   </a>
                 </li>
-              ))}
+              )})}
               <li className="flex gap-2.5 items-center">
                 <svg
                   className="w-5 h-5 text-brand-cyan shrink-0"

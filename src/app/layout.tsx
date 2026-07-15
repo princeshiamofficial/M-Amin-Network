@@ -44,6 +44,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let siteLogo = "/logo.png";
+  const savedLogo = await getSetting("site_logo");
+  if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
+    siteLogo = (savedLogo as { url: string }).url;
+  }
+
+  const fullLogoUrl = siteLogo.startsWith("http") ? siteLogo : `https://m-aminnetwork.com${siteLogo}`;
+
   const sysConfig = (await getSetting("system_config")) as { maintenanceMode?: boolean | number; maintenanceMessage?: string } | null;
   const isMaintenance = !!sysConfig?.maintenanceMode;
   const maintenanceMessage = sysConfig?.maintenanceMessage || "";
@@ -82,7 +90,7 @@ export default async function RootLayout({
                   "@id": "https://m-aminnetwork.com/#organization",
                   "name": "M Amin Network",
                   "url": "https://m-aminnetwork.com/",
-                  "logo": "https://m-aminnetwork.com/logo.png",
+                  "logo": fullLogoUrl,
                   "contactPoint": {
                     "@type": "ContactPoint",
                     "telephone": "+8801707009267",

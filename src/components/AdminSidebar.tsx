@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getSetting } from "@/actions/content";
 import {
   LayoutGrid,
   Package,
@@ -30,16 +31,34 @@ import {
   Film
 } from "lucide-react";
 
+interface AdminSidebarRole {
+  name: string;
+  pageAccess: {
+    route: string;
+    permissions?: { add?: boolean; edit?: boolean; delete?: boolean };
+  }[];
+}
+
 interface AdminSidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   onSignOut: () => void;
   isCollapsed?: boolean;
   userRole?: string;
-  rolePermissions?: any[];
+  rolePermissions?: AdminSidebarRole[];
 }
 
 export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCollapsed = false, userRole = "Super Administrator", rolePermissions = [] }: AdminSidebarProps) {
+  const [siteLogo, setSiteLogo] = React.useState<string>("/logo.png");
+
+  React.useEffect(() => {
+    getSetting("site_logo").then(savedLogo => {
+      if (savedLogo && typeof savedLogo === 'object' && 'url' in savedLogo) {
+        setSiteLogo((savedLogo as { url: string }).url);
+      }
+    });
+  }, []);
+
   // Route lookup table
   const tabUrls: Record<string, string> = {
     "Overview": "/admin/dashboard",
@@ -61,7 +80,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     "Hero Typography": "/admin/hero-typography",
     "Packages Header": "/admin/page-headers/packages",
     "Offers Header": "/admin/page-headers/offers",
-    "Coverage Header": "/admin/page-headers/coverage",
     "Multimedia Header": "/admin/page-headers/multimedia",
     "Careers Header": "/admin/page-headers/careers",
     "SEO & Sharing": "/admin/seo-sharing",
@@ -85,7 +103,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
 
     const matchingRole = rolePermissions.find((r) => r.name === userRole);
     if (matchingRole && Array.isArray(matchingRole.pageAccess)) {
-      const access = matchingRole.pageAccess.find((p: any) => p.route === route);
+      const access = matchingRole.pageAccess.find((p) => p.route === route);
       if (access && access.permissions) {
         return access.permissions.add || access.permissions.edit || access.permissions.delete;
       }
@@ -186,26 +204,11 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           name: "Hero Typography",
           icon: <Type className="w-4 h-4" />,
         },
-        {
-          name: "Packages Header",
-          icon: <PanelTop className="w-4 h-4" />,
-        },
-        {
-          name: "Offers Header",
-          icon: <PanelTop className="w-4 h-4" />,
-        },
-        {
-          name: "Coverage Header",
-          icon: <PanelTop className="w-4 h-4" />,
-        },
-        {
-          name: "Multimedia Header",
-          icon: <PanelTop className="w-4 h-4" />,
-        },
-        {
-          name: "Careers Header",
-          icon: <PanelTop className="w-4 h-4" />,
-        },
+      ],
+    },
+    {
+      title: "Pages",
+      items: [
         {
           name: "SEO & Sharing",
           icon: <Globe className="w-4 h-4" />,
@@ -268,8 +271,8 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
           </div>
         ) : (
           <Image
-            src="/logo.png"
-            alt="M Amin Network"
+            src={siteLogo}
+            alt="M-Amin Network"
             width={180}
             height={56}
             className="h-14 w-auto object-contain"
