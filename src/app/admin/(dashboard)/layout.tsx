@@ -11,7 +11,7 @@ import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
 import { getSetting, isAdminAuthenticated } from "@/actions/content";
-import { IconMap, defaultQuickActions, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
+import { IconMap, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
 import { AdminSecurityProvider, useAdminSecurity } from "@/hooks/useAdminSecurity";
 import { toast } from "sonner";
 
@@ -63,6 +63,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState("Overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
+  const [isLoadingQuickActions, setIsLoadingQuickActions] = useState(true);
   
   const { userRole, rolePermissions, permissionsLoaded, hasAccess } = useAdminSecurity();
 
@@ -105,13 +106,21 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
               router.push("/admin");
             } else {
               setIsAuthenticated(true);
-              getSetting("quick_actions").then((res) => {
-                if (res) {
-                  setQuickActions(res as QuickAction[]);
-                } else {
-                  setQuickActions(defaultQuickActions);
-                }
-              });
+              setIsLoadingQuickActions(true);
+              getSetting("quick_actions")
+                .then((res) => {
+                  if (Array.isArray(res)) {
+                    setQuickActions(res as QuickAction[]);
+                  } else {
+                    setQuickActions([]);
+                  }
+                })
+                .catch(() => {
+                  setQuickActions([]);
+                })
+                .finally(() => {
+                  setIsLoadingQuickActions(false);
+                });
             }
           });
         }
@@ -122,13 +131,21 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchQuickActions = () => {
-      getSetting("quick_actions").then((res) => {
-        if (res) {
-          setQuickActions(res as QuickAction[]);
-        } else {
-          setQuickActions(defaultQuickActions);
-        }
-      });
+      setIsLoadingQuickActions(true);
+      getSetting("quick_actions")
+        .then((res) => {
+          if (Array.isArray(res)) {
+            setQuickActions(res as QuickAction[]);
+          } else {
+            setQuickActions([]);
+          }
+        })
+        .catch(() => {
+          setQuickActions([]);
+        })
+        .finally(() => {
+          setIsLoadingQuickActions(false);
+        });
     };
     
     // Initial fetch if already authenticated
@@ -173,10 +190,31 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   if (!mounted || !isAuthenticated) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-650">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin" />
-          <span className="font-mono text-sm tracking-widest text-slate-500">LOADING SECURE ACCESS CONTROL...</span>
+      <div className="min-h-screen -mt-24 bg-slate-50 text-slate-800 flex overflow-hidden">
+        {/* Sidebar Skeleton */}
+        <div className="relative shrink-0 w-64 bg-white border-r border-slate-200 p-6 space-y-6 hidden md:block">
+          <div className="h-8 w-32 bg-slate-200 rounded animate-pulse mb-8" />
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="h-5 w-5 bg-slate-200 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+        {/* Content Skeleton */}
+        <div className="flex-1 min-w-0 flex flex-col relative h-[calc(100vh+6rem)]">
+          {/* Header Skeleton */}
+          <div className="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between">
+             <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
+             <div className="h-8 w-8 bg-slate-200 rounded-full animate-pulse" />
+          </div>
+          {/* Main Area Skeleton */}
+          <div className="p-8 space-y-6">
+             <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
+             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+               {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-slate-200 rounded-2xl animate-pulse" />)}
+             </div>
+          </div>
         </div>
       </div>
     );
@@ -229,7 +267,12 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
           <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-8 py-3 flex flex-wrap items-center gap-2">
             <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none">My shortcuts:</span>
             <div className="flex flex-wrap gap-2 items-center">
-              {quickActions.map((item) => {
+              {isLoadingQuickActions ? Array.from({ length: 8 }).map((_, index) => (
+                <div
+                  key={`shortcut-skeleton-${index}`}
+                  className="h-8 w-32 rounded-full border border-slate-200 bg-white shadow-sm animate-pulse"
+                />
+              )) : quickActions.map((item) => {
                 const isActive = pathname === item.route || (item.label === "Packages" && pathname === "/admin/packages");
                 const ActionIcon = IconMap[item.iconName] || IconMap["Link"];
                 return (

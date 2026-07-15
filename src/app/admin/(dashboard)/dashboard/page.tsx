@@ -347,11 +347,11 @@ export default function AdminDashboardPage() {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState("Overview");
   const [greeting, setGreeting] = useState("Welcome");
-  const [adminName, setAdminName] = useState("Mehan Ahmed");
+  const [adminName, setAdminName] = useState("");
 
 
 
-  const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>(defaultQuickActions);
+  const [quickActionsList, setQuickActionsList] = useState<QuickAction[]>([]);
   
   const quickActionsListRef = useRef<QuickAction[]>(quickActionsList);
   useEffect(() => {
@@ -487,15 +487,15 @@ export default function AdminDashboardPage() {
   const [activeActionMenu, setActiveActionMenu] = useState<string | null>(null);
 
   // Snapshot counts states
-  const [countCustomers, setCountCustomers] = useState(3);
-  const [countApplications, setCountApplications] = useState(1);
-  const [countTickets, setCountTickets] = useState(1);
+  const [countCustomers, setCountCustomers] = useState(0);
+  const [countApplications, setCountApplications] = useState(0);
+  const [countTickets, setCountTickets] = useState(0);
   const [countComplaintsToday, setCountComplaintsToday] = useState(0);
-  const [countAllComplaints, setCountAllComplaints] = useState(3);
+  const [countAllComplaints, setCountAllComplaints] = useState(0);
   const [countContactInbox, setCountContactInbox] = useState(0);
-  const [countPackages, setCountPackages] = useState(5);
-  const [countOffers, setCountOffers] = useState(7);
-  const [countCoverageAreas, setCountCoverageAreas] = useState(1);
+  const [countPackages, setCountPackages] = useState(0);
+  const [countOffers, setCountOffers] = useState(0);
+  const [countCoverageAreas, setCountCoverageAreas] = useState(0);
 
   // CMS Content States
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -605,10 +605,6 @@ export default function AdminDashboardPage() {
     toast("Connection claim reservation added successfully!");
   };
 
-
-  // System stats mockup states
-  const [activeClients, setActiveClients] = useState(1482);
-  const [totalBandwidthGbps, setTotalBandwidthGbps] = useState(4.2);
 
   const defaultClaims: Claim[] = [
     {
@@ -823,8 +819,7 @@ export default function AdminDashboardPage() {
       if (savedClaims) {
         setClaims(savedClaims as Claim[]);
       } else {
-        setSetting("claims", defaultClaims);
-        setClaims(defaultClaims);
+        setClaims([]);
       }
     }),
       getSetting("complaints").then(savedComplaints => {
@@ -836,9 +831,8 @@ export default function AdminDashboardPage() {
         const filedToday = list.filter((c: Complaint) => c.date && c.date.includes(todayStr));
         setCountComplaintsToday(filedToday.length);
       } else {
-        setSetting("complaints", defaultComplaints);
-        setComplaints(defaultComplaints);
-        setCountAllComplaints(defaultComplaints.length);
+        setComplaints([]);
+        setCountAllComplaints(0);
         setCountComplaintsToday(0);
       }
     }),
@@ -848,17 +842,15 @@ export default function AdminDashboardPage() {
         setTickets(list);
         setCountTickets(list.length);
       } else {
-        setSetting("tickets", defaultTickets);
-        setTickets(defaultTickets);
-        setCountTickets(defaultTickets.length);
+        setTickets([]);
+        setCountTickets(0);
       }
     }),
       getSetting("payments").then(savedPayments => {
       if (savedPayments) {
         setPayments(savedPayments as Payment[]);
       } else {
-        setSetting("payments", defaultPayments);
-        setPayments(defaultPayments);
+        setPayments([]);
       }
     }),
       getSetting("contact_submissions").then(savedMessages => {
@@ -867,17 +859,15 @@ export default function AdminDashboardPage() {
         setMessages(list);
         setCountContactInbox(list.length);
       } else {
-        setSetting("contact_submissions", defaultMessages);
-        setMessages(defaultMessages);
-        setCountContactInbox(defaultMessages.length);
+        setMessages([]);
+        setCountContactInbox(0);
       }
     }),
       getSetting("jobs").then(savedJobs => {
       if (savedJobs) {
         setJobs(savedJobs as Job[]);
       } else {
-        setSetting("jobs", defaultJobs);
-        setJobs(defaultJobs);
+        setJobs([]);
       }
     }),
       getSetting("job_applications").then(savedApps => {
@@ -886,25 +876,22 @@ export default function AdminDashboardPage() {
         setJobApplications(list);
         setCountApplications(list.length);
       } else {
-        setSetting("job_applications", defaultJobApplications);
-        setJobApplications(defaultJobApplications);
-        setCountApplications(defaultJobApplications.length);
+        setJobApplications([]);
+        setCountApplications(0);
       }
     }),
       getSetting("testimonials").then(savedTestimonials => {
       if (savedTestimonials) {
         setTestimonials(savedTestimonials as Testimonial[]);
       } else {
-        setSetting("testimonials", defaultTestimonials);
-        setTestimonials(defaultTestimonials);
+        setTestimonials([]);
       }
     }),
       getSetting("faqs").then(savedFAQs => {
       if (savedFAQs) {
         setFaqs(savedFAQs as FAQ[]);
       } else {
-        setSetting("faqs", defaultFAQs);
-        setFaqs(defaultFAQs);
+        setFaqs([]);
       }
     }),
       getSetting("site_content").then(saved => {
@@ -935,16 +922,14 @@ export default function AdminDashboardPage() {
       if (savedHighlights && (savedHighlights as unknown[]).length > 0) {
         setServiceHighlights(savedHighlights as ServiceHighlight[]);
       } else {
-        setSetting("service_highlights", defaultServiceHighlights);
-        setServiceHighlights(defaultServiceHighlights);
+        setServiceHighlights([]);
       }
     }),
       getSetting("service_reviews").then(savedReviews => {
       if (savedReviews && (savedReviews as unknown[]).length > 0) {
         setServiceReviews(savedReviews as ServiceReview[]);
       } else {
-        setSetting("service_reviews", defaultServiceReviews);
-        setServiceReviews(defaultServiceReviews);
+        setServiceReviews([]);
       }
     }),
       getSetting("system_config").then(saved => {
@@ -960,68 +945,63 @@ export default function AdminDashboardPage() {
       if (savedUsers) {
         setAdminUsers(savedUsers as AdminUser[]);
       } else {
-        setSetting("admin_users", defaultAdminUsers);
-        setAdminUsers(defaultAdminUsers);
+        setAdminUsers([]);
       }
     }),
       getSetting("security_logs").then(savedLogs => {
       if (savedLogs) {
         setSecurityLogs(savedLogs as SecurityLog[]);
       } else {
-        setSetting("security_logs", defaultSecurityLogs);
-        setSecurityLogs(defaultSecurityLogs);
+        setSecurityLogs([]);
       }
     }),
       getSetting("seo_audits").then(savedSeoAudits => {
       if (savedSeoAudits) {
         setSeoAuditReports(savedSeoAudits as SEOAuditReport[]);
       } else {
-        setSetting("seo_audits", defaultSEOAuditReports);
-        setSeoAuditReports(defaultSEOAuditReports);
+        setSeoAuditReports([]);
       }
     }),
       getSetting("dashboard_shortcuts").then(savedShortcuts => {
       if (savedShortcuts) {
         setShortcuts(savedShortcuts as Shortcut[]);
       } else {
-        setSetting("dashboard_shortcuts", defaultShortcuts);
-        setShortcuts(defaultShortcuts);
+        setShortcuts([]);
       }
     }),
       getSetting("quick_actions").then(savedActions => {
       if (savedActions) {
         setQuickActionsList(savedActions as QuickAction[]);
       } else {
-        setSetting("quick_actions", defaultQuickActions);
-        setQuickActionsList(defaultQuickActions);
+        setQuickActionsList([]);
       }
     }),
       getSetting("promo_offers").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountOffers(saved.length);
       } else {
-        setCountOffers(7);
+        setCountOffers(0);
       }
     }),
       getSetting("coverage_zones").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountCoverageAreas(saved.length);
       } else {
-        setCountCoverageAreas(11);
+        setCountCoverageAreas(0);
       }
     }),
       getSetting("packages_list").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountPackages(saved.length);
       } else {
-        setCountPackages(5);
+        setCountPackages(0);
       }
     }),
       getSetting("subscribers").then(saved => {
       if (saved && Array.isArray(saved)) {
         setCountCustomers(saved.length);
       } else {
-        setCountCustomers(3);
+        setCountCustomers(0);
       }
     })
     ]);
@@ -1074,12 +1054,8 @@ export default function AdminDashboardPage() {
       }
     }, 0);
 
-    const interval = setInterval(() => {
-      setTotalBandwidthGbps((prev) => +(prev + (Math.random() * 0.4 - 0.2)).toFixed(2));
-    }, 4000);
     return () => {
       clearTimeout(timer);
-      clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
@@ -1503,17 +1479,6 @@ export default function AdminDashboardPage() {
 
 
 
-  if (!mounted || !isAuthenticated || isLoadingData) {
-    return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-650">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin" />
-          <span className="font-mono text-sm tracking-widest text-slate-500">LOADING SECURE ACCESS CONTROL...</span>
-        </div>
-      </div>
-    );
-  }
-
   // Calculate totals
   const totalRevenue = payments.reduce((acc, curr) => acc + curr.amount, 0);
 
@@ -1628,31 +1593,51 @@ export default function AdminDashboardPage() {
               {/* Welcome Banner */}
               <div className="bg-linear-to-r from-[hsl(var(--sidebar-background))] to-[#81C9FE] text-primary-foreground p-5 sm:p-8 rounded-2xl sm:rounded-xl shadow-xl print:hidden">
                 <h1 className="text-3xl sm:text-4xl font-bold flex items-center text-white-force">
-                  {greeting}, {adminName}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-hand ml-2 h-8 w-8 transform rotate-20 text-yellow-300"
-                  >
-                    <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path>
-                    <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"></path>
-                    <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"></path>
-                    <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
-                  </svg>
+                  {greeting},{" "}
+                  {isLoadingData || !adminName ? (
+                    <span className="inline-block h-9 w-64 rounded-lg bg-white/25 animate-pulse align-middle" />
+                  ) : (
+                    <>
+                      {adminName}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-hand ml-2 h-8 w-8 transform rotate-20 text-yellow-300"
+                      >
+                        <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2"></path>
+                        <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2"></path>
+                        <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8"></path>
+                        <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path>
+                      </svg>
+                    </>
+                  )}
                 </h1>
                 <p className="text-md sm:text-lg mt-1 text-white-muted-force">Here&apos;s an overview of your broadband network operations and subscriber analytics.</p>
               </div>              {/* Today's Snapshot Section */}
               <div className="space-y-4 pt-4">
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {snapshotCards.map((card, idx) => (
+                  {isLoadingData ? Array.from({ length: 10 }).map((_, idx) => (
+                    <div
+                      key={`snapshot-skeleton-${idx}`}
+                      className="border text-card-foreground bg-white p-2.5 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-sm sm:shadow-md flex flex-col justify-center min-h-[84px]"
+                    >
+                      <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
+                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-full bg-slate-200 animate-pulse" />
+                        <div className="flex-1 min-w-0 w-full space-y-2">
+                          <div className="h-3 w-28 rounded bg-slate-200 animate-pulse" />
+                          <div className="h-6 w-16 rounded bg-slate-200 animate-pulse" />
+                        </div>
+                      </div>
+                    </div>
+                  )) : snapshotCards.map((card, idx) => (
                     <div
                       key={idx}
                       className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg bg-white p-2.5 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-sm sm:shadow-md flex flex-col justify-center min-h-[84px]"
@@ -1702,7 +1687,19 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {quickActionsList.map((action) => {
+                  {isLoadingData ? Array.from({ length: 8 }).map((_, idx) => (
+                    <div
+                      key={`quick-action-skeleton-${idx}`}
+                      className="bg-white border border-slate-100/90 rounded-2xl p-4 flex items-center shadow-sm"
+                    >
+                      <div className="h-4 w-4 rounded bg-slate-200 animate-pulse mr-2" />
+                      <div className="h-9 w-9 rounded-full bg-slate-200 animate-pulse mr-3" />
+                      <div className="space-y-2">
+                        <div className="h-3.5 w-28 rounded bg-slate-200 animate-pulse" />
+                        <div className="h-2.5 w-20 rounded bg-slate-200 animate-pulse" />
+                      </div>
+                    </div>
+                  )) : quickActionsList.map((action) => {
                     const ActionIcon = IconMap[action.iconName] || IconMap["Link"];
                     return (
                     <div
