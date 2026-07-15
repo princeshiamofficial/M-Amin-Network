@@ -62,7 +62,6 @@ export const adminRoutes = [
   { label: "Customers", route: "/admin/customers" },
   { label: "Bills", route: "/admin/bills" },
   { label: "Tickets", route: "/admin/tickets" },
-  { label: "Package Requests", route: "/admin/package-requests" },
   { label: "Contact Messages", route: "/admin/contact-messages" },
   { label: "Complaints", route: "/admin/complaints" },
   { label: "Jobs", route: "/admin/jobs" },
@@ -298,7 +297,6 @@ const tabUrls: Record<string, string> = {
   "Customers": "/admin/customers",
   "Bills": "/admin/bills",
   "Tickets": "/admin/tickets",
-  "Package Requests": "/admin/package-requests",
   "Contact Messages": "/admin/contact-messages",
   "Complaints": "/admin/complaints",
   "Jobs": "/admin/jobs",
@@ -1057,7 +1055,6 @@ export default function AdminDashboardPage() {
     return () => {
       clearTimeout(timer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   // Sync tab active selection dynamically with the pathname

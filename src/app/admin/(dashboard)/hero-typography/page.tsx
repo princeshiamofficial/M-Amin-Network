@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Trash2 } from "lucide-react";
+import { Trash2, Upload } from "lucide-react";
+import { useAdminSecurity } from "@/hooks/useAdminSecurity";
 
 interface HeroTypography {
+  badgeText: string;
   mainTitle: string;
   subtitle: string;
   slides: string[];
@@ -21,6 +23,7 @@ interface HeroMetric {
 }
 
 const defaultHeroTypography: HeroTypography = {
+  badgeText: "BTRC Licensed Broadband Provider",
   mainTitle: "Blazing Fast Fiber | Internet in Keraniganj",
   subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
   slides: [
@@ -31,6 +34,8 @@ const defaultHeroTypography: HeroTypography = {
   ]
 };
 
+const MAX_HERO_SLIDES = 6;
+
 const defaultHeroMetrics: HeroMetric[] = [
   { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ" },
   { value: "2,000+", titleEn: "Active Clients", titleBn: "সক্রিয় গ্রাহক", descEn: "Trusted by homes & businesses", descBn: "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার" },
@@ -38,12 +43,44 @@ const defaultHeroMetrics: HeroMetric[] = [
   { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট" },
 ];
 
+const defaultMetricSuffixes = ["%", "+", "+", "/7"];
+
+function getMetricNumber(value: string): string {
+  const match = value.match(/[0-9,]+(?:\.[0-9]+)?/);
+  return match ? match[0].replace(/,/g, "") : "";
+}
+
+function getMetricSuffix(value: string, index: number): string {
+  const match = value.match(/[0-9,]+(?:\.[0-9]+)?(.*)$/);
+  return match?.[1] || defaultMetricSuffixes[index] || "";
+}
+
+function normalizeHeroMetrics(saved: unknown): HeroMetric[] {
+  const savedItems = Array.isArray(saved) ? saved : [];
+
+  return defaultHeroMetrics.map((fallback, index) => {
+    const item = savedItems[index];
+    if (!item || typeof item !== "object") return fallback;
+
+    const metric = item as Record<string, unknown>;
+    return {
+      value: String(metric.value || fallback.value),
+      titleEn: String(metric.titleEn || fallback.titleEn),
+      titleBn: String(metric.titleBn || fallback.titleBn),
+      descEn: String(metric.descEn || fallback.descEn),
+      descBn: String(metric.descBn || fallback.descBn),
+    };
+  });
+}
+
 export default function HeroTypographyPage() {
   const router = useRouter();
+  const { canEdit } = useAdminSecurity();
+  const allowEdit = canEdit("/admin/hero-typography");
   const [auth, setAuth] = useState(false);
   const [heroTypography, setHeroTypography] = useState<HeroTypography>(defaultHeroTypography);
   const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(defaultHeroMetrics);
-  const [newSlideUrl, setNewSlideUrl] = useState("");
+  const [uploadingSlide, setUploadingSlide] = useState(false);
   
   // Preview states
   const [activePreviewSlide, setActivePreviewSlide] = useState(0);
@@ -59,10 +96,12 @@ export default function HeroTypographyPage() {
     getSetting("hero_typography").then(saved => {
       if (saved) {
         const parsed = saved as Record<string, unknown>;
+        const savedSlides = Array.isArray(parsed.slides) ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "") : [];
         setHeroTypography({
+          badgeText: (parsed.badgeText as string) || defaultHeroTypography.badgeText,
           mainTitle: (parsed.mainTitle as string) || defaultHeroTypography.mainTitle,
           subtitle: (parsed.subtitle as string) || defaultHeroTypography.subtitle,
-          slides: parsed.slides && Array.isArray(parsed.slides) && parsed.slides.length > 0 ? (parsed.slides as string[]) : defaultHeroTypography.slides
+          slides: savedSlides.length > 0 ? savedSlides.slice(0, MAX_HERO_SLIDES) : defaultHeroTypography.slides
         });
       } else {
         setSetting("hero_typography", defaultHeroTypography);
@@ -73,7 +112,7 @@ export default function HeroTypographyPage() {
     // Load hero metrics
     getSetting("hero_metrics").then(saved => {
       if (saved) {
-        setHeroMetrics(saved as Record<string, unknown>[] as unknown as Parameters<typeof setHeroMetrics>[0]);
+        setHeroMetrics(normalizeHeroMetrics(saved));
       } else {
         setSetting("hero_metrics", defaultHeroMetrics);
         setHeroMetrics(defaultHeroMetrics);
@@ -93,21 +132,20 @@ export default function HeroTypographyPage() {
 
   const saveHeroTypography = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!allowEdit) {
+      toast.error("You do not have permission to update hero settings.");
+      return;
+    }
     setSetting("hero_typography", heroTypography);
     setSetting("hero_metrics", heroMetrics);
     toast("Hero configurations and stats metrics saved successfully!");
   };
 
-  const addSlide = () => {
-    if (!newSlideUrl.trim()) return;
-    const updatedSlides = [...(heroTypography.slides || []), newSlideUrl.trim()];
-    const updated = { ...heroTypography, slides: updatedSlides };
-    setHeroTypography(updated);
-    setSetting("hero_typography", updated);
-    setNewSlideUrl("");
-  };
-
   const removeSlide = (index: number) => {
+    if (!allowEdit) {
+      toast.error("You do not have permission to remove hero slides.");
+      return;
+    }
     const updatedSlides = (heroTypography.slides || []).filter((_, i) => i !== index);
     const updated = { ...heroTypography, slides: updatedSlides };
     setHeroTypography(updated);
@@ -118,13 +156,57 @@ export default function HeroTypographyPage() {
     }
   };
 
-  const handleMetricChange = (index: number, field: keyof HeroMetric, value: string) => {
+  const uploadSlide = async (file: File | null) => {
+    if (!file) return;
+    if (!allowEdit) {
+      toast.error("You do not have permission to upload hero slides.");
+      return;
+    }
+    if ((heroTypography.slides || []).length >= MAX_HERO_SLIDES) {
+      toast.error(`Maximum ${MAX_HERO_SLIDES} hero slides allowed.`);
+      return;
+    }
+
+    setUploadingSlide(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("/api/upload-header-asset", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json() as { url?: string; error?: string };
+      if (!response.ok || !data.url) {
+        toast.error(data.error || "Slide upload failed.");
+        return;
+      }
+      const updated = {
+        ...heroTypography,
+        slides: [...(heroTypography.slides || []), data.url].slice(0, MAX_HERO_SLIDES)
+      };
+      setHeroTypography(updated);
+      await setSetting("hero_typography", updated);
+      toast.success("Hero slide uploaded successfully.");
+    } catch {
+      toast.error("Slide upload failed.");
+    } finally {
+      setUploadingSlide(false);
+    }
+  };
+
+  const updateMetricValue = (index: number, value: string) => {
     const updated = [...heroMetrics];
     updated[index] = {
       ...updated[index],
-      [field]: value
+      value
     };
     setHeroMetrics(updated);
+  };
+
+  const handleMetricNumberChange = (index: number, numberValue: string) => {
+    const currentValue = heroMetrics[index]?.value || "";
+    const suffix = getMetricSuffix(currentValue, index);
+    updateMetricValue(index, numberValue ? `${numberValue}${suffix}` : "");
   };
 
   if (!auth) return null;
@@ -145,13 +227,24 @@ export default function HeroTypographyPage() {
         {/* Left Column: Form Editor */}
         <form onSubmit={saveHeroTypography} className="lg:col-span-7 space-y-6">
           <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 block">Badge Text</label>
+            <input
+              type="text"
+              value={heroTypography.badgeText || ""}
+              onChange={(e) => setHeroTypography({ ...heroTypography, badgeText: e.target.value })}
+              disabled={!allowEdit}
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue disabled:bg-slate-50 disabled:text-slate-400"
+            />
+          </div>
+          <div className="space-y-1">
             <label className="text-xs font-bold text-slate-700 block">Main Advertising Title</label>
             <p className="text-[10px] text-slate-400 mb-1">Use the pipe symbol <code className="bg-slate-100 px-1 py-0.5 rounded font-bold text-slate-700">|</code> to separate the regular white text from the glowing cyan/blue text (e.g. <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-700">Blazing Fast Fiber | Internet in Keraniganj</code>).</p>
             <textarea
               rows={2}
               value={heroTypography.mainTitle || ""}
               onChange={(e) => setHeroTypography({ ...heroTypography, mainTitle: e.target.value })}
-              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-semibold resize-none"
+              disabled={!allowEdit}
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-semibold resize-none disabled:bg-slate-50 disabled:text-slate-400"
             />
           </div>
           <div className="space-y-1">
@@ -160,27 +253,31 @@ export default function HeroTypographyPage() {
               rows={3}
               value={heroTypography.subtitle || ""}
               onChange={(e) => setHeroTypography({ ...heroTypography, subtitle: e.target.value })}
-              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
+              disabled={!allowEdit}
+              className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none disabled:bg-slate-50 disabled:text-slate-400"
             />
           </div>
           
           <div className="space-y-3 pt-4 border-t border-slate-150">
-            <label className="text-xs font-bold text-slate-700 block">Hero Slide Images</label>
+            <div className="flex items-center justify-between gap-3">
+              <label className="text-xs font-bold text-slate-700 block">Hero Slide Images</label>
+              <span className="text-[10px] font-bold text-slate-400">{(heroTypography.slides || []).length}/{MAX_HERO_SLIDES}</span>
+            </div>
             <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="e.g. /my-hero-slide.jpg or absolute URL"
-                value={newSlideUrl}
-                onChange={(e) => setNewSlideUrl(e.target.value)}
-                className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-              />
-              <button
-                type="button"
-                onClick={addSlide}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-colors"
-              >
-                Add Slide
-              </button>
+              <label className={`px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-900 rounded-xl text-xs font-bold text-white transition-colors flex items-center gap-2 ${!allowEdit || uploadingSlide || (heroTypography.slides || []).length >= MAX_HERO_SLIDES ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}>
+                <Upload className="w-3.5 h-3.5" />
+                {uploadingSlide ? "Uploading" : "Upload"}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  disabled={!allowEdit || uploadingSlide || (heroTypography.slides || []).length >= MAX_HERO_SLIDES}
+                  onChange={(e) => {
+                    uploadSlide(e.target.files?.[0] || null);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-2">
@@ -200,7 +297,8 @@ export default function HeroTypographyPage() {
                   <button
                     type="button"
                     onClick={() => removeSlide(index)}
-                    className="absolute top-2 right-2 bg-red-600/90 text-white rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-700 shadow-md"
+                    disabled={!allowEdit}
+                    className="absolute top-2 right-2 bg-red-600/90 text-white rounded-lg p-1.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-700 shadow-md disabled:cursor-not-allowed disabled:opacity-0"
                     title="Remove Slide"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -222,62 +320,22 @@ export default function HeroTypographyPage() {
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Card {idx + 1} Settings</span>
                   <div className="space-y-2">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 block uppercase">Card Value / Stat</label>
-                      <input
-                        type="text"
-                        value={metric.value || ""}
-                        onChange={(e) => handleMetricChange(idx, "value", e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        placeholder="e.g. 99.9% or 2,000+"
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Title (English)</label>
+                      <label className="text-[10px] font-bold text-slate-500 block uppercase">{metric.titleEn || `Card ${idx + 1}`} Number</label>
+                      <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white focus-within:border-brand-blue">
                         <input
-                          type="text"
-                          value={metric.titleEn || ""}
-                          onChange={(e) => handleMetricChange(idx, "titleEn", e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          placeholder="e.g. Guaranteed Uptime"
+                          type="number"
+                          min="0"
+                          step={idx === 0 ? "0.1" : "1"}
+                          value={getMetricNumber(metric.value || "")}
+                          onChange={(e) => handleMetricNumberChange(idx, e.target.value)}
+                          disabled={!allowEdit}
+                          className="w-full border-0 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
+                          placeholder={idx === 0 ? "99.9" : idx === 1 ? "2000" : idx === 2 ? "10" : "24"}
                           required
                         />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Title (Bangla)</label>
-                        <input
-                          type="text"
-                          value={metric.titleBn || ""}
-                          onChange={(e) => handleMetricChange(idx, "titleBn", e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          placeholder="e.g. গ্যারান্টিড আপটাইম"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Description (English)</label>
-                        <input
-                          type="text"
-                          value={metric.descEn || ""}
-                          onChange={(e) => handleMetricChange(idx, "descEn", e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          placeholder="e.g. Redundant connections"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Description (Bangla)</label>
-                        <input
-                          type="text"
-                          value={metric.descBn || ""}
-                          onChange={(e) => handleMetricChange(idx, "descBn", e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                          placeholder="e.g. অতিরিক্ত আপস্ট্রিম সংযোগ"
-                          required
-                        />
+                        <span className="flex min-w-10 items-center justify-center border-l border-slate-200 bg-slate-50 px-2 text-xs font-bold text-slate-500">
+                          {getMetricSuffix(metric.value || "", idx)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -288,7 +346,8 @@ export default function HeroTypographyPage() {
 
           <button
             type="submit"
-            className="px-5 py-3 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md transition-all active:scale-[0.98]"
+            disabled={!allowEdit}
+            className="px-5 py-3 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Settings
           </button>
@@ -340,7 +399,7 @@ export default function HeroTypographyPage() {
             <div className="relative z-10 space-y-4 w-full">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[8px] font-bold tracking-wider uppercase select-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                BTRC Licensed Broadband Provider
+                {heroTypography.badgeText || defaultHeroTypography.badgeText}
               </div>
 
               <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-tight tracking-tight max-w-md">

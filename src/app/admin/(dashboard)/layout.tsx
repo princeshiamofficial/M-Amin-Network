@@ -25,7 +25,6 @@ const tabUrls: Record<string, string> = {
   "Customers": "/admin/customers",
   "Bills": "/admin/bills",
   "Tickets": "/admin/tickets",
-  "Package Requests": "/admin/package-requests",
   "Contact Messages": "/admin/contact-messages",
   "Complaints": "/admin/complaints",
   "Jobs": "/admin/jobs",

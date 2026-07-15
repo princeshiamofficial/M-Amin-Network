@@ -24,11 +24,6 @@ interface Testimonial {
   image?: string;
 }
 
-const defaultTestimonials: Testimonial[] = [
-  { id: "1", author: "Mehan Ahmed", role: "Local Freelance Web Developer", text: "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!", rating: 5, isPublished: true, image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg" },
-  { id: "2", author: "Kamrul Hasan", role: "Proprietor, Hasan Trading, Aganagar", text: "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.", rating: 5, isPublished: true, image: "/6c55d74de82b7eee7127c3e2d4939b1f.jpg" },
-];
-
 function ActionMenu({ t, onToggle, onEdit, onDelete }: { t: Testimonial, onToggle: () => void, onEdit: () => void, onDelete: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [style, setStyle] = useState<React.CSSProperties>({});
@@ -103,11 +98,10 @@ export default function TestimonialsPage() {
     }
     setAuth(true);
     getSetting("testimonials").then(saved => {
-      if (saved && (saved as Testimonial[]).length > 0) {
+      if (Array.isArray(saved)) {
         setTestimonials(saved as Testimonial[]);
       } else {
-        setSetting("testimonials", defaultTestimonials as Testimonial[]);
-        setTestimonials(defaultTestimonials);
+        setTestimonials([]);
       }
     });
   }, [router]);

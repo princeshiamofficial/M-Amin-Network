@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -34,6 +33,42 @@ interface FAQ {
   isPublished: boolean;
 }
 
+interface HeroTypography {
+  badgeText: string;
+  mainTitle: string;
+  subtitle: string;
+  slides: string[];
+}
+
+interface HeroMetric {
+  value: string;
+  titleEn: string;
+  titleBn: string;
+  descEn: string;
+  descBn: string;
+}
+
+const DEFAULT_HERO_SLIDES = [
+  "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+  "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
+  "/933503ea823535235e8159f65709292f.jpg",
+  "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
+];
+
+const DEFAULT_HERO_TYPOGRAPHY: HeroTypography = {
+  badgeText: "BTRC Licensed Broadband Provider",
+  mainTitle: "Blazing Fast Fiber | Internet in Keraniganj",
+  subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
+  slides: DEFAULT_HERO_SLIDES,
+};
+
+const DEFAULT_HERO_METRICS: HeroMetric[] = [
+  { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "Guaranteed Uptime", descEn: "Redundant upstream connections", descBn: "Redundant upstream connections" },
+  { value: "2,000+", titleEn: "Active Clients", titleBn: "Active Clients", descEn: "Trusted by homes & businesses", descBn: "Trusted by homes & businesses" },
+  { value: "10+", titleEn: "Cities Served", titleBn: "Cities Served", descEn: "Across South Keraniganj", descBn: "Across South Keraniganj" },
+  { value: "24/7", titleEn: "Support Response", titleBn: "Support Response", descEn: "Expert technical field support", descBn: "Expert technical field support" },
+];
+
 function normalizePopupEnabled(value: unknown): boolean {
   if (typeof value === "boolean") return value;
   if (typeof value === "number") return value !== 0;
@@ -43,6 +78,44 @@ function normalizePopupEnabled(value: unknown): boolean {
 
 function getPopupSessionKey(image: string): string {
   return `hasSeenOfferPopup:${image}`;
+}
+
+function parseHeroMetricValue(value: string): { end: number; decimals: number; suffix: string; prefix: string } {
+  const cleanValue = value.trim();
+  const match = cleanValue.match(/^([^0-9.-]*)([0-9,]+(?:\.[0-9]+)?)(.*)$/);
+
+  if (!match) {
+    return { end: 0, decimals: 0, suffix: cleanValue, prefix: "" };
+  }
+
+  const numericPart = match[2].replace(/,/g, "");
+  const end = Number(numericPart);
+  const decimals = numericPart.includes(".") ? numericPart.split(".")[1].length : 0;
+
+  return {
+    end: Number.isFinite(end) ? end : 0,
+    decimals,
+    prefix: match[1] || "",
+    suffix: match[3] || "",
+  };
+}
+
+function normalizeHeroMetrics(saved: unknown): HeroMetric[] {
+  const savedItems = Array.isArray(saved) ? saved : [];
+
+  return DEFAULT_HERO_METRICS.map((fallback, index) => {
+    const item = savedItems[index];
+    if (!item || typeof item !== "object") return fallback;
+
+    const metric = item as Record<string, unknown>;
+    return {
+      value: String(metric.value || fallback.value),
+      titleEn: String(metric.titleEn || fallback.titleEn),
+      titleBn: String(metric.titleBn || fallback.titleBn),
+      descEn: String(metric.descEn || fallback.descEn),
+      descBn: String(metric.descBn || fallback.descBn),
+    };
+  });
 }
 
 interface CountUpProps {
@@ -105,24 +178,7 @@ export default function Home() {
   const [coverageSearch, setCoverageSearch] = useState("");
   const [coverageResult, setCoverageResult] = useState<string | null>(null);
 
-  const defaultTestimonialData = [
-    {
-      name: "Mehan Ahmed",
-      role: "Local Freelance Web Developer",
-      comment: "As a developer, I need constant SSH connections and Git pushes. M Amin Network gives me rock-solid uptime. Their low-latency routing to GitHub and Vercel has boosted my workflow tremendously. Easily the best ISP in Kadomtoli!",
-      rating: 5,
-      isPublished: true,
-    },
-    {
-      name: "Kamrul Hasan",
-      role: "Proprietor, Hasan Trading, Aganagar",
-      comment: "We upgraded our shop's POS and billing terminals to M Amin Network's corporate dedicated plan. Uptime is outstanding and we haven't experienced a single transaction outage. Highly recommended for corporate connections.",
-      rating: 5,
-      isPublished: true,
-    }
-  ];
-
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(defaultTestimonialData);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupConfig, setPopupConfig] = useState({
     enabled: true,
@@ -130,6 +186,8 @@ export default function Home() {
   });
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [heroTypography, setHeroTypography] = useState<HeroTypography>(DEFAULT_HERO_TYPOGRAPHY);
+  const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(DEFAULT_HERO_METRICS);
   
   useEffect(() => {
     // 1. Initial fetch
@@ -220,16 +278,22 @@ export default function Home() {
 
   useEffect(() => {
     getSetting("testimonials").then((saved) => {
-      if (saved) {
+      if (Array.isArray(saved)) {
         const list = saved as Record<string, unknown>[];
-        setTestimonials(list.map((t) => ({
-          name: (t.author as string) || "Anonymous",
-          role: (t.role as string) || "Customer",
-          comment: (t.text as string) || "",
-          rating: (t.rating as number) || 5,
-          isPublished: t.isPublished !== false,
-          src: t.image as string | undefined
-        })));
+        setTestimonials(list.map((testimonial) => {
+          const image = testimonial.image || testimonial.avatar || testimonial.src;
+
+          return {
+            name: String(testimonial.author || testimonial.name || ""),
+            role: String(testimonial.role || testimonial.designation || ""),
+            comment: String(testimonial.text || testimonial.comment || ""),
+            rating: Number(testimonial.rating || 0),
+            isPublished: testimonial.isPublished !== false,
+            src: typeof image === "string" ? image : undefined
+          };
+        }));
+      } else {
+        setTestimonials([]);
       }
     });
   }, []);
@@ -245,6 +309,27 @@ export default function Home() {
           isPublished: f.isPublished !== false
         })));
       }
+    });
+  }, []);
+
+  useEffect(() => {
+    getSetting("hero_typography").then((saved) => {
+      if (!saved || typeof saved !== "object") return;
+      const parsed = saved as Record<string, unknown>;
+      const slides = Array.isArray(parsed.slides)
+        ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "").slice(0, 6)
+        : DEFAULT_HERO_SLIDES;
+
+      setHeroTypography({
+        badgeText: typeof parsed.badgeText === "string" && parsed.badgeText.trim() ? parsed.badgeText : DEFAULT_HERO_TYPOGRAPHY.badgeText,
+        mainTitle: typeof parsed.mainTitle === "string" && parsed.mainTitle.trim() ? parsed.mainTitle : DEFAULT_HERO_TYPOGRAPHY.mainTitle,
+        subtitle: typeof parsed.subtitle === "string" && parsed.subtitle.trim() ? parsed.subtitle : DEFAULT_HERO_TYPOGRAPHY.subtitle,
+        slides: slides.length > 0 ? slides : DEFAULT_HERO_SLIDES,
+      });
+    });
+
+    getSetting("hero_metrics").then((saved) => {
+      setHeroMetrics(normalizeHeroMetrics(saved));
     });
   }, []);
 
@@ -349,6 +434,19 @@ export default function Home() {
   };
 
   const selectedPlan = packages[speedSlider];
+  const heroSlides = DEFAULT_HERO_SLIDES;
+  const heroTitleParts = (heroTypography.mainTitle || DEFAULT_HERO_TYPOGRAPHY.mainTitle).split("|");
+  const heroTitleFirst = heroTitleParts[0]?.trim() || DEFAULT_HERO_TYPOGRAPHY.mainTitle;
+  const heroTitleSecond = heroTitleParts[1]?.trim() || "";
+  const publishedTestimonials = testimonials
+    .filter((test) => test.isPublished && test.name.trim() && test.comment.trim() && test.src?.trim())
+    .map((test) => ({
+      quote: t(test.comment, test.comment),
+      name: test.name,
+      designation: t(test.role, test.role),
+      src: test.src as string,
+      rating: test.rating > 0 ? test.rating : undefined,
+    }));
 
   return (
     <div className="flex flex-col gap-20 pb-20 overflow-x-hidden">
@@ -359,12 +457,7 @@ export default function Home() {
           {/* Morph Carousel Background Animation */}
           <div className="absolute inset-0 w-full h-full opacity-[0.8] transition-opacity duration-300">
             <MorphCarousel
-              images={[
-                "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-                "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-                "/933503ea823535235e8159f65709292f.jpg",
-                "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-              ]}
+              images={heroSlides}
             />
           </div>
           {/* Theme-aware overlay for text readability contrast */}
@@ -377,11 +470,23 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col gap-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
           <div className="lg:col-span-7 text-center lg:text-left flex flex-col gap-6 animate-fade-in-up">
+            <div className="hidden self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
+              <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
+              {t(heroTypography.badgeText, heroTypography.badgeText)}
+            </div>
             <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
               <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
               {t("BTRC Licensed Broadband Provider", "বিটিআরসি অনুমোদিত ব্রডব্যান্ড প্রোভাইডার")}
             </div>
             
+            <h1 className="hidden text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+              {t(heroTitleFirst, heroTitleFirst)} <br />
+              {heroTitleSecond && (
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+                  {t(heroTitleSecond, heroTitleSecond)}
+                </span>
+              )}
+            </h1>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               {t("Blazing Fast Fiber", "দ্রুতগতির ফাইবার")} <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
@@ -389,6 +494,9 @@ export default function Home() {
               </span>
             </h1>
 
+            <p className="hidden text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              {t(heroTypography.subtitle, heroTypography.subtitle)}
+            </p>
             <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               {t(
                 "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
@@ -520,6 +628,24 @@ export default function Home() {
         </div>
 
         {/* Trust Stats Metrics (moved into hero) */}
+        <div className="hidden grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
+          {heroMetrics.map((stat, i) => {
+            const parsedValue = parseHeroMetricValue(stat.value);
+
+            return (
+              <div
+                key={i}
+                className="p-3 sm:p-4 rounded-xl bg-brand-card/40 border border-brand-border/40 text-center glass-panel"
+              >
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
+                  <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
+                </h3>
+                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.titleEn, stat.titleBn || stat.titleEn)}</h4>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.descEn, stat.descBn || stat.descEn)}</p>
+              </div>
+            );
+          })}
+        </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
           {[
             { end: 99.9, decimals: 1, suffix: "%", title: "Guaranteed Uptime", desc: "Redundant upstream connections", glow: "text-glow" },
@@ -736,31 +862,19 @@ export default function Home() {
 
 
       {/* Customer Review Section */}
-      <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      {publishedTestimonials.length > 0 && (
+        <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
 
-          <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
+            <AnimatedTestimonials
+              testimonials={publishedTestimonials}
+              autoplay={true}
+            />
+          </div>
+        </section>
+      )}
 
-          <AnimatedTestimonials 
-            testimonials={testimonials.filter(test => test.isPublished).map((test, idx) => {
-              const localImages = [
-                "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-                "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-                "/933503ea823535235e8159f65709292f.jpg",
-                "/ea82d2834f062ee8d73d8b99aebe0d31.jpg"
-              ];
-              return {
-                quote: t(test.comment, test.comment.startsWith("As a developer") ? "ডেভেলপার হিসেবে আমার সার্বক্ষণিক এসএসএইচ কানেকশন এবং গিট পুশ প্রয়োজন। এম আমিন নেটওয়ার্ক আমাকে দুর্দান্ত আপটাইম দেয়। গিটহাব ও ভার্সেলে তাদের লো-লেটেন্সি রাউটিং আমার কাজের গতি বহুগুণ বাড়িয়ে দিয়েছে। কদমতলীর সেরা আইএসপি!" : test.comment.startsWith("We upgraded") ? "আমরা আমাদের দোকানের পিওএস এবং বিলিং টার্মিনালগুলো এম আমিন নেটওয়ার্কের কর্পোরেট ডেডিকেটেড প্ল্যানে আপগ্রেড করেছি। আপটাইম চমৎকার এবং ট্রানজেকশনে কোনো সমস্যা হয়নি।" : test.comment),
-                name: test.name,
-                designation: t(test.role, test.role === "Local Freelance Web Developer" ? "লোকাল ফ্রিল্যান্স ওয়েব ডেভেলপার" : test.role === "Proprietor, Hasan Trading, Aganagar" ? "মালিক, হাসান ট্রেডিং, আগানগর" : test.role),
-                src: test.src || localImages[idx % localImages.length],
-                rating: test.rating
-              };
-            })} 
-            autoplay={true} 
-          />
-        </div>
-      </section>
 
 
       {/* FAQ Section */}

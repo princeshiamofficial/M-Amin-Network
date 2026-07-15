@@ -114,10 +114,6 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   job_applications: [
     { id: "APP-4829", jobTitle: "Network Support Engineer", applicantName: "Mehedi Hasan", applicantEmail: "mehedi@gmail.com", applicantPhone: "01728394012", cvUrl: "/resumes/mehedi.pdf", status: "Reviewing", date: "7/2/2026, 11:34 AM", _sort_order: 0 }
   ],
-  testimonials: [
-    { id: "TEST-001", author: "Adil Chowdhury", designation: "Freelance Designer", rating: 5, comment: "The internet speeds are super stable. Bufferless 4K streaming and low latency during night peering works perfectly.", avatar: "/avatars/avatar1.png", _sort_order: 0 },
-    { id: "TEST-002", author: "Farhana Yasmin", designation: "Work From Home Mom", rating: 4, comment: "Good customer service. Line issues are resolved within hours after reporting to the support team.", avatar: "/avatars/avatar2.png", _sort_order: 1 }
-  ],
   faqs: [
     { id: "FAQ-001", question: "How long does it take to get a new optical fiber connection?", answer: "Address checks and fiber connection setup generally take 24 to 48 working hours depending on location availability.", isPublished: true, _sort_order: 0 },
     { id: "FAQ-002", question: "Do you provide dedicated IPs for home connections?", answer: "Yes, we offer fully redundant peering connections for businesses and corporations in Southern Keraniganj.", isPublished: true, _sort_order: 1 }

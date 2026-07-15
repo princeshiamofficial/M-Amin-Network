@@ -960,8 +960,8 @@ export default function OffersPage() {
             <div className="space-y-4">
               <div className="relative h-48 w-full overflow-hidden rounded-xl bg-slate-50 border border-slate-100">
                 <Image
-                  src={selectedOfferForPreview.imageUrl || "/offer-card-banner.png"}
-                  alt={selectedOfferForPreview.title}
+                  src={selectedOfferForPreview?.imageUrl || "/offer-card-banner.png"}
+                  alt={selectedOfferForPreview?.title || "Campaign Preview"}
                   fill
                   className="object-cover"
                 />
@@ -970,21 +970,21 @@ export default function OffersPage() {
               <div className="grid grid-cols-2 gap-3 text-xs border-b border-slate-100 pb-4">
                 <div>
                   <span className="text-slate-400 block font-bold uppercase tracking-wider text-[10px]">Campaign ID</span>
-                  <span className="text-slate-800 font-semibold">{selectedOfferForPreview.id}</span>
+                  <span className="text-slate-800 font-semibold">{selectedOfferForPreview?.id}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block font-bold uppercase tracking-wider text-[10px]">Status</span>
-                  <span className="mt-0.5 inline-block">{getStatusBadge(selectedOfferForPreview.status)}</span>
+                  <span className="mt-0.5 inline-block">{selectedOfferForPreview ? getStatusBadge(selectedOfferForPreview.status) : null}</span>
                 </div>
               </div>
 
-              {selectedOfferForPreview.htmlDetails && selectedOfferForPreview.htmlDetails.trim() && isDefaultButtonsOnly(selectedOfferForPreview.htmlDetails) && selectedOfferForPreview.details && selectedOfferForPreview.details.trim() && (
+              {selectedOfferForPreview?.htmlDetails && selectedOfferForPreview.htmlDetails.trim() && isDefaultButtonsOnly(selectedOfferForPreview.htmlDetails) && selectedOfferForPreview.details && selectedOfferForPreview.details.trim() && (
                 <div className="text-xs text-slate-650 leading-relaxed max-w-none font-sans font-medium">
                   {selectedOfferForPreview.details}
                 </div>
               )}
 
-              {selectedOfferForPreview.htmlDetails && selectedOfferForPreview.htmlDetails.trim() ? (
+              {selectedOfferForPreview?.htmlDetails && selectedOfferForPreview.htmlDetails.trim() ? (
                 <div className="w-full">
                   <iframe
                     title="Campaign Preview HTML Content"

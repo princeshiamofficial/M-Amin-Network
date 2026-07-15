@@ -74,7 +74,6 @@ const modulePages = [
   {
     module: "Sales & Billing",
     pages: [
-      { page: "Package Requests", route: "/admin/package-requests" },
       { page: "Customers", route: "/admin/customers" },
       { page: "Bills", route: "/admin/bills" },
     ],
