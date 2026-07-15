@@ -434,7 +434,7 @@ export default function Home() {
   };
 
   const selectedPlan = packages[speedSlider];
-  const heroSlides = DEFAULT_HERO_SLIDES;
+  const heroSlides = heroTypography.slides;
   const heroTitleParts = (heroTypography.mainTitle || DEFAULT_HERO_TYPOGRAPHY.mainTitle).split("|");
   const heroTitleFirst = heroTitleParts[0]?.trim() || DEFAULT_HERO_TYPOGRAPHY.mainTitle;
   const heroTitleSecond = heroTitleParts[1]?.trim() || "";
@@ -627,8 +627,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Trust Stats Metrics (moved into hero) */}
-        <div className="hidden grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
+        {/* Trust Stats Metrics (database-driven from admin hero-typography) */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
           {heroMetrics.map((stat, i) => {
             const parsedValue = parseHeroMetricValue(stat.value);
 
@@ -645,25 +645,6 @@ export default function Home() {
               </div>
             );
           })}
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
-          {[
-            { end: 99.9, decimals: 1, suffix: "%", title: "Guaranteed Uptime", desc: "Redundant upstream connections", glow: "text-glow" },
-            { end: 2000, decimals: 0, suffix: "+", title: "Active Clients", desc: "Trusted by homes & businesses", glow: "text-glow" },
-            { end: 10, decimals: 0, suffix: "+", title: "Cities Served", desc: "Across South Keraniganj", glow: "text-glow" },
-            { end: 24, decimals: 0, suffix: "/7", title: "Support Response", desc: "Expert technical field support", glow: "text-glow" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="p-3 sm:p-4 rounded-xl bg-brand-card/40 border border-brand-border/40 text-center glass-panel"
-            >
-              <h3 className={`text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 ${stat.glow}`}>
-                <CountUp end={stat.end} decimals={stat.decimals} suffix={stat.suffix} />
-              </h3>
-              <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.title, stat.title === "Guaranteed Uptime" ? "গ্যারান্টিড আপটাইম" : stat.title === "Active Clients" ? "সক্রিয় গ্রাহক" : stat.title === "Cities Served" ? "পরিষেবা এলাকা" : "সহায়তা প্রতিক্রিয়া")}</h4>
-              <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.desc, stat.desc === "Redundant upstream connections" ? "অতিরিক্ত আপস্ট্রিম সংযোগ" : stat.desc === "Trusted by homes & businesses" ? "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার" : stat.desc === "Across South Keraniganj" ? "দক্ষিণ কেরানীগঞ্জ জুড়ে" : "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট")}</p>
-            </div>
-          ))}
         </div>
       </div>
     </section>

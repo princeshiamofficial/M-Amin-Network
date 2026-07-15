@@ -561,24 +561,38 @@ export default function MultimediaAdminPage() {
             <form onSubmit={handleSave} className="space-y-4 pt-2">
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Portal Image Logo</label>
-                <div className="flex gap-2">
-                  <div className="relative flex-grow">
-                    <input
-                      type="text"
-                      required
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-855 focus:outline-none focus:border-blue-500 transition-all font-medium"
-                      placeholder="e.g. /uploads/headers/portal-logo.jpg"
-                    />
-                  </div>
-                  <label className="flex items-center justify-center gap-1.5 px-4 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-655 cursor-pointer transition-all active:scale-95 shadow-sm">
+                <div className="flex items-center gap-4">
+                  {formData.image ? (
+                    <div className="relative w-16 h-16 rounded-xl border border-slate-200 overflow-hidden flex-shrink-0 bg-slate-50">
+                      <Image
+                        src={formData.image}
+                        alt="Preview"
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, image: "" })}
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity text-white"
+                        title="Remove image"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-xl border border-dashed border-slate-250 flex items-center justify-center flex-shrink-0 bg-slate-50 text-[10px] text-slate-450 font-bold uppercase tracking-wide">
+                      No Image
+                    </div>
+                  )}
+
+                  <label className="flex items-center justify-center gap-1.5 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-655 cursor-pointer transition-all active:scale-95 shadow-sm">
                     {isUploading ? (
                       <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <Upload className="w-4 h-4" />
                     )}
-                    <span>{isUploading ? "Uploading..." : "Upload"}</span>
+                    <span>{isUploading ? "Uploading..." : "Upload Image"}</span>
                     <input
                       type="file"
                       accept="image/*"
