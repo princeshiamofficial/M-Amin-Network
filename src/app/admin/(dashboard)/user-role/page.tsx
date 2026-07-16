@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { useAdminSecurity } from "@/hooks/useAdminSecurity";
+import { expandAdminRoute, normalizeAdminPermissions, normalizeAdminRoute } from "@/lib/admin-permissions";
 import {
   Copy,
   Lock,
@@ -254,16 +255,7 @@ function statusValue(value: unknown): RoleStatus {
 }
 
 function normalizePermissionRecord(value: unknown): PermissionRecord {
-  const record = isRecord(value) ? value : {};
-  return {
-    view: record.view === true || record.add === true || record.edit === true || record.delete === true,
-    add: record.add === true,
-    edit: record.edit === true,
-    delete: record.delete === true,
-    approve: record.approve === true,
-    export: record.export === true,
-    manage: record.manage === true,
-  };
+  return normalizeAdminPermissions(value);
 }
 
 function normalizePageAccess(value: unknown, roleName: string): PageAccess[] {
@@ -271,7 +263,10 @@ function normalizePageAccess(value: unknown, roleName: string): PageAccess[] {
 
   const savedAccess = Array.isArray(value) ? value : [];
   return createAccess(false).map((page) => {
-    const saved = savedAccess.find((item): item is Record<string, unknown> => isRecord(item) && item.route === page.route);
+    const saved = savedAccess.find((item): item is Record<string, unknown> => (
+      isRecord(item) &&
+      expandAdminRoute(textValue(item.route)).some((route) => normalizeAdminRoute(route) === page.route)
+    ));
     return saved ? { ...page, permissions: normalizePermissionRecord(saved.permissions) } : page;
   });
 }

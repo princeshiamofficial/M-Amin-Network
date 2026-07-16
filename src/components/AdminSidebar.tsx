@@ -5,6 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSetting } from "@/actions/content";
 import {
+  AdminPermissionFlags,
+  expandAdminRoute,
+  hasAnyAdminPermission,
+  isSuperAdminRole,
+  normalizeAdminPermissions,
+  normalizeAdminRoute,
+} from "@/lib/admin-permissions";
+import {
   LayoutGrid,
   Package,
   Tag,
@@ -32,10 +40,12 @@ import {
 } from "lucide-react";
 
 interface AdminSidebarRole {
+  id?: string;
   name: string;
+  status?: string;
   pageAccess: {
     route: string;
-    permissions?: { add?: boolean; edit?: boolean; delete?: boolean };
+    permissions?: Partial<AdminPermissionFlags>;
   }[];
 }
 
@@ -115,16 +125,26 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
   };
 
   const isAllowed = (itemName: string) => {
-    if (userRole === "Super Administrator") return true;
+    if (isSuperAdminRole(userRole)) return true;
     const route = tabUrls[itemName];
     if (!route) return true;
     if (route === "/admin/dashboard") return true;
 
-    const matchingRole = rolePermissions.find((r) => r.name === userRole);
+    const roleKey = userRole.trim().toLowerCase();
+    const matchingRole = rolePermissions.find((role) => (
+      role.name.trim().toLowerCase() === roleKey ||
+      String(role.id || "").trim().toLowerCase() === roleKey
+    ));
+
     if (matchingRole && Array.isArray(matchingRole.pageAccess)) {
-      const access = matchingRole.pageAccess.find((p) => p.route === route);
+      if (matchingRole.status?.trim().toLowerCase() === "inactive") return false;
+
+      const targetRoute = normalizeAdminRoute(route);
+      const access = matchingRole.pageAccess.find((pageAccess) => (
+        expandAdminRoute(pageAccess.route).some((candidateRoute) => normalizeAdminRoute(candidateRoute) === targetRoute)
+      ));
       if (access && access.permissions) {
-        return access.permissions.add || access.permissions.edit || access.permissions.delete;
+        return hasAnyAdminPermission(normalizeAdminPermissions(access.permissions));
       }
     }
     return false;

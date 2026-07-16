@@ -2,25 +2,30 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getSetting } from "@/actions/content";
+import { usePathname } from "next/navigation";
+import {
+  EMPTY_ADMIN_PERMISSIONS,
+  FULL_ADMIN_PERMISSIONS,
+  AdminPermissionFlags,
+  expandAdminRoute,
+  hasAnyAdminPermission,
+  isSuperAdminRole,
+  mergeAdminPermissions,
+  normalizeAdminPermissions,
+  normalizeAdminRoute,
+} from "@/lib/admin-permissions";
 
 export interface PageAccess {
   page: string;
   route: string;
-  permissions: {
-    view?: boolean;
-    add: boolean;
-    edit: boolean;
-    delete: boolean;
-    approve?: boolean;
-    export?: boolean;
-    manage?: boolean;
-  };
+  permissions: AdminPermissionFlags;
 }
 
 export interface AdminRole {
   id: string;
   name: string;
   description: string;
+  status?: string;
   pageAccess: PageAccess[];
 }
 
@@ -29,15 +34,16 @@ interface AdminSecurityContextType {
   username: string;
   rolePermissions: AdminRole[];
   permissionsLoaded: boolean;
-  canAdd: (route: string) => boolean;
-  canEdit: (route: string) => boolean;
-  canDelete: (route: string) => boolean;
-  hasAccess: (route: string) => boolean;
+  canAdd: (route?: string) => boolean;
+  canEdit: (route?: string) => boolean;
+  canDelete: (route?: string) => boolean;
+  hasAccess: (route?: string) => boolean;
 }
 
 const AdminSecurityContext = createContext<AdminSecurityContextType | null>(null);
 
 export function AdminSecurityProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [userRole, setUserRole] = useState<string>("Super Administrator");
   const [username, setUsername] = useState<string>("admin");
   const [rolePermissions, setRolePermissions] = useState<AdminRole[]>([]);
@@ -54,33 +60,35 @@ export function AdminSecurityProvider({ children }: { children: React.ReactNode 
     getSetting("admin_roles")
       .then((res) => {
         if (Array.isArray(res)) {
-          // Map properties explicitly to satisfy TypeScript compiler
           const mappedRoles: AdminRole[] = res.map((roleItem) => {
             const r = roleItem as Record<string, unknown>;
             const rawAccess = Array.isArray(r.pageAccess) ? r.pageAccess : [];
-            const pageAccess: PageAccess[] = rawAccess.map((accessItem) => {
+            const accessByRoute = new Map<string, PageAccess>();
+
+            rawAccess.forEach((accessItem) => {
               const a = accessItem as Record<string, unknown>;
-              const p = (a.permissions && typeof a.permissions === "object" ? a.permissions : {}) as Record<string, unknown>;
-              return {
-                page: String(a.page || ""),
-                route: String(a.route || ""),
-                permissions: {
-                  view: p.view === true,
-                  add: p.add === true,
-                  edit: p.edit === true,
-                  delete: p.delete === true,
-                  approve: p.approve === true,
-                  export: p.export === true,
-                  manage: p.manage === true,
-                },
-              };
+              const permissions = normalizeAdminPermissions(a.permissions);
+              expandAdminRoute(String(a.route || "")).forEach((route) => {
+                if (!route) return;
+
+                const normalizedRoute = normalizeAdminRoute(route);
+                const previous = accessByRoute.get(normalizedRoute);
+                accessByRoute.set(normalizedRoute, {
+                  page: previous?.page || String(a.page || ""),
+                  route: normalizedRoute,
+                  permissions: previous
+                    ? mergeAdminPermissions(previous.permissions, permissions)
+                    : permissions,
+                });
+              });
             });
 
             return {
               id: String(r.id || ""),
               name: String(r.name || ""),
               description: String(r.description || ""),
-              pageAccess,
+              status: String(r.status || "Active"),
+              pageAccess: Array.from(accessByRoute.values()),
             };
           });
           setRolePermissions(mappedRoles);
@@ -92,32 +100,43 @@ export function AdminSecurityProvider({ children }: { children: React.ReactNode 
       });
   }, []);
 
-  const getPermissionsForRoute = (route: string) => {
-    if (userRole === "Super Administrator") {
-      return { view: true, add: true, edit: true, delete: true, approve: true, export: true, manage: true };
+  const getMatchingRole = () => {
+    const roleKey = userRole.trim().toLowerCase();
+    return rolePermissions.find((role) => (
+      role.name.trim().toLowerCase() === roleKey ||
+      role.id.trim().toLowerCase() === roleKey
+    ));
+  };
+
+  const getPermissionsForRoute = (route?: string): AdminPermissionFlags => {
+    if (isSuperAdminRole(userRole)) {
+      return FULL_ADMIN_PERMISSIONS;
     }
-    const matchingRole = rolePermissions.find((r) => r.name === userRole);
+
+    const targetRoute = normalizeAdminRoute(route || pathname || "/admin/dashboard");
+    const matchingRole = getMatchingRole();
     if (matchingRole) {
-      let pageAccess = matchingRole.pageAccess.find((p) => p.route === route);
-      if (!pageAccess && route.startsWith("/admin/page-headers/")) {
-        pageAccess = matchingRole.pageAccess.find((p) => p.route === "/admin/page-headers");
+      if (matchingRole.status?.trim().toLowerCase() === "inactive") {
+        return EMPTY_ADMIN_PERMISSIONS;
       }
+
+      const pageAccess = matchingRole.pageAccess.find((access) => normalizeAdminRoute(access.route) === targetRoute);
       if (pageAccess) {
         return pageAccess.permissions;
       }
     }
-    // Default to no permissions for other roles if not explicitly defined
-    return { view: false, add: false, edit: false, delete: false, approve: false, export: false, manage: false };
+
+    return EMPTY_ADMIN_PERMISSIONS;
   };
 
-  const canAdd = (route: string) => getPermissionsForRoute(route).add;
-  const canEdit = (route: string) => getPermissionsForRoute(route).edit;
-  const canDelete = (route: string) => getPermissionsForRoute(route).delete;
+  const canAdd = (route?: string) => getPermissionsForRoute(route).add;
+  const canEdit = (route?: string) => getPermissionsForRoute(route).edit;
+  const canDelete = (route?: string) => getPermissionsForRoute(route).delete;
   
-  const hasAccess = (route: string) => {
-    if (userRole === "Super Administrator") return true;
+  const hasAccess = (route?: string) => {
+    if (isSuperAdminRole(userRole)) return true;
     const perms = getPermissionsForRoute(route);
-    return !!(perms.view || perms.add || perms.edit || perms.delete || perms.approve || perms.export || perms.manage);
+    return hasAnyAdminPermission(perms);
   };
 
   return (
