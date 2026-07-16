@@ -77,10 +77,14 @@ export default function AdminDashboard() {
           return;
         }
 
-        const auth = sessionStorage.getItem("admin_authenticated");
-        if (auth === "true") {
+        const hasClientAuth =
+          sessionStorage.getItem("admin_authenticated") === "true" ||
+          localStorage.getItem("admin_token") === "admin_logged_in_token";
+
+        if (hasClientAuth) {
           const isServerAuth = await isAdminAuthenticated();
           if (isServerAuth) {
+            sessionStorage.setItem("admin_authenticated", "true");
             localStorage.setItem("admin_token", "admin_logged_in_token");
             setIsAuthenticated(true);
             setMounted(true);

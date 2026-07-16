@@ -102,35 +102,33 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
     const timer = setTimeout(() => {
       setMounted(true);
       if (typeof window !== "undefined") {
-        const auth = sessionStorage.getItem("admin_authenticated");
-        if (auth !== "true") {
-          router.push("/admin");
-        } else {
-          isAdminAuthenticated().then((isServerAuth) => {
-            if (!isServerAuth) {
-              clearClientAdminSession();
-              setIsAuthenticated(false);
-              router.push("/admin");
-            } else {
-              setIsAuthenticated(true);
-              setIsLoadingQuickActions(true);
-              getSetting("quick_actions")
-                .then((res) => {
-                  if (Array.isArray(res)) {
-                    setQuickActions(res as QuickAction[]);
-                  } else {
-                    setQuickActions([]);
-                  }
-                })
-                .catch(() => {
-                  setQuickActions([]);
-                })
-                .finally(() => {
-                  setIsLoadingQuickActions(false);
-                });
-            }
-          });
-        }
+        isAdminAuthenticated().then((isServerAuth) => {
+          if (!isServerAuth) {
+            clearClientAdminSession();
+            setIsAuthenticated(false);
+            router.push("/admin");
+            return;
+          }
+
+          sessionStorage.setItem("admin_authenticated", "true");
+          localStorage.setItem("admin_token", "admin_logged_in_token");
+          setIsAuthenticated(true);
+          setIsLoadingQuickActions(true);
+          getSetting("quick_actions")
+            .then((res) => {
+              if (Array.isArray(res)) {
+                setQuickActions(res as QuickAction[]);
+              } else {
+                setQuickActions([]);
+              }
+            })
+            .catch(() => {
+              setQuickActions([]);
+            })
+            .finally(() => {
+              setIsLoadingQuickActions(false);
+            });
+        });
       }
     }, 0);
     return () => clearTimeout(timer);
@@ -159,6 +157,21 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
       window.removeEventListener("focus", verifyActiveSession);
     };
   }, [clearClientAdminSession, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key !== "admin_token" || event.newValue === "admin_logged_in_token") return;
+
+      sessionStorage.removeItem("admin_authenticated");
+      setIsAuthenticated(false);
+      router.push("/admin");
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     const fetchQuickActions = () => {
