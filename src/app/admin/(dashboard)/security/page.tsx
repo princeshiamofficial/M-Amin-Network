@@ -65,6 +65,18 @@ export default function SecurityPage() {
   };
 
   const strength = getPasswordStrength(newPassword);
+  const normalizedNewPassword = newPassword.trim();
+  const normalizedConfirmPassword = confirmPassword.trim();
+  const isPasswordMismatch = Boolean(
+    normalizedNewPassword &&
+    normalizedConfirmPassword &&
+    normalizedNewPassword !== normalizedConfirmPassword
+  );
+  const isPasswordMatch = Boolean(
+    normalizedNewPassword &&
+    normalizedConfirmPassword &&
+    normalizedNewPassword === normalizedConfirmPassword
+  );
 
   const saveAdminAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,13 +84,18 @@ export default function SecurityPage() {
 
     try {
       const trimmedNewPassword = newPassword.trim();
+      const trimmedConfirmPassword = confirmPassword.trim();
 
-      if (trimmedNewPassword) {
+      if (trimmedNewPassword || trimmedConfirmPassword) {
         if (!currentPassword) {
           toast.error("Please enter your current password to proceed.");
           return;
         }
-        if (trimmedNewPassword !== confirmPassword) {
+        if (!trimmedNewPassword || !trimmedConfirmPassword) {
+          toast.error("Please enter and confirm the new password.");
+          return;
+        }
+        if (trimmedNewPassword !== trimmedConfirmPassword) {
           toast.error("New passwords do not match.");
           return;
         }
@@ -259,8 +276,15 @@ export default function SecurityPage() {
                     value={confirmPassword}
                     maxLength={PASSWORD_MAX_LENGTH}
                     onChange={(e) => setConfirmPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
-                    className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold transition-all"
+                    className={`w-full bg-white border rounded-xl pl-10 pr-10 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 font-semibold transition-all ${
+                      isPasswordMismatch
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                        : isPasswordMatch
+                          ? "border-emerald-300 focus:border-emerald-500 focus:ring-emerald-100"
+                          : "border-slate-200 focus:border-indigo-500 focus:ring-indigo-100"
+                    }`}
                     placeholder="Re-type new password"
+                    aria-invalid={isPasswordMismatch}
                   />
                   <button
                     type="button"
@@ -270,6 +294,12 @@ export default function SecurityPage() {
                     {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                {isPasswordMismatch && (
+                  <p className="text-[10px] font-bold text-red-500 px-0.5">Passwords do not match.</p>
+                )}
+                {isPasswordMatch && (
+                  <p className="text-[10px] font-bold text-emerald-600 px-0.5">Passwords match.</p>
+                )}
               </div>
             </div>
           </div>

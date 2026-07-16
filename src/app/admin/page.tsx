@@ -56,6 +56,18 @@ export default function AdminDashboard() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const normalizedNewPassword = newPassword.trim();
+  const normalizedConfirmPassword = confirmPassword.trim();
+  const isResetPasswordMismatch = Boolean(
+    normalizedNewPassword &&
+    normalizedConfirmPassword &&
+    normalizedNewPassword !== normalizedConfirmPassword
+  );
+  const isResetPasswordMatch = Boolean(
+    normalizedNewPassword &&
+    normalizedConfirmPassword &&
+    normalizedNewPassword === normalizedConfirmPassword
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -145,24 +157,33 @@ export default function AdminDashboard() {
       return;
     }
 
-    if (newPassword !== confirmPassword) {
+    const trimmedNewPassword = newPassword.trim();
+    const trimmedConfirmPassword = confirmPassword.trim();
+
+    if (!trimmedNewPassword || !trimmedConfirmPassword) {
+      setLoginError("Please enter and confirm the new password.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (trimmedNewPassword !== trimmedConfirmPassword) {
       setLoginError("Passwords do not match. Please verify.");
       setIsSubmitting(false);
       return;
     }
-    if (newPassword.length < PASSWORD_MIN_LENGTH) {
+    if (trimmedNewPassword.length < PASSWORD_MIN_LENGTH) {
       setLoginError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`);
       setIsSubmitting(false);
       return;
     }
-    if (newPassword.length > PASSWORD_MAX_LENGTH) {
+    if (trimmedNewPassword.length > PASSWORD_MAX_LENGTH) {
       setLoginError(`Password cannot be more than ${PASSWORD_MAX_LENGTH} characters long.`);
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const res = await resetPasswordAction(forgotEmail, newPassword);
+      const res = await resetPasswordAction(forgotEmail, trimmedNewPassword);
       if (res.success) {
         toast.success("Password reset successfully! You can now log in.");
         setAuthView("login");
@@ -469,9 +490,22 @@ export default function AdminDashboard() {
                     maxLength={PASSWORD_MAX_LENGTH}
                     onChange={(e) => setConfirmPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
                     placeholder="Confirm New Password"
-                    className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
+                    className={`w-full bg-[#f3f4f6]/50 border rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:ring-1 transition-all font-medium ${
+                      isResetPasswordMismatch
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                        : isResetPasswordMatch
+                          ? "border-emerald-300 focus:border-emerald-500 focus:ring-emerald-100"
+                          : "border-[#e5e7eb]/45 focus:border-slate-350 focus:ring-slate-200"
+                    }`}
+                    aria-invalid={isResetPasswordMismatch}
                   />
                 </div>
+                {isResetPasswordMismatch && (
+                  <p className="-mt-2 text-[11px] font-bold text-red-600">Passwords do not match.</p>
+                )}
+                {isResetPasswordMatch && (
+                  <p className="-mt-2 text-[11px] font-bold text-emerald-600">Passwords match.</p>
+                )}
 
                 <button
                   type="submit"
