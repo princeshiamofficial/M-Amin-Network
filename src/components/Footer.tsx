@@ -426,7 +426,7 @@ export default function Footer() {
           {/* Contact Details */}
           <div className="md:col-span-3">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t(footerData.contactTitleEn, footerData.contactTitleBn)}
+              {t("Contact Info", "যোগাযোগ")}
             </h3>
             <ul className="space-y-4 text-sm text-slate-400">
               <li className="flex gap-2.5 items-start">
@@ -449,7 +449,7 @@ export default function Footer() {
                   />
                 </svg>
                 <span>
-                  {t(footerData.addressEn, footerData.addressBn)}
+                  {t("House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.", "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।")}
                 </span>
               </li>
               {phones.map((phone, idx) => (
@@ -499,10 +499,10 @@ export default function Footer() {
           {/* Affiliation and Badges */}
           <div className="md:col-span-2">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t(footerData.affiliationTitleEn, footerData.affiliationTitleBn)}
+              {t("Our Affiliations", "আমাদের অধিভুক্তি")}
             </h3>
-            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-              {t(footerData.affiliationDescEn, footerData.affiliationDescBn)}
+            <p className="text-sm text-slate-400 mt-2 mb-4 leading-relaxed max-w-[280px]">
+              {t("We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).", "আমরা ইন্টারনেট সার্ভিস প্রোভাইডার অ্যাসোসিয়েশন অব বাংলাদেশ (ISPAB)-এর একজন গর্বিত ও সক্রিয় সদস্য।")}
             </p>
             <div className="flex flex-col gap-3">
               {badges.map((badge, idx) => {
