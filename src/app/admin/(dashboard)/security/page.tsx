@@ -17,13 +17,15 @@ export default function SecurityPage() {
 
   // Account Settings States
   const [adminAuth, setAdminAuth] = useState({ email: "", username: "", lastPasswordChanged: "", lastLogin: "" });
+  const [emailDraft, setEmailDraft] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSavingAccount, setIsSavingAccount] = useState(false);
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -37,12 +39,14 @@ export default function SecurityPage() {
     getSetting("admin_auth").then(savedAuth => {
       if (savedAuth) {
         const parsed = savedAuth as Record<string, string>;
-        setAdminAuth({
+        const nextAuth = {
           email: parsed.email || "",
           username: parsed.username || "",
           lastPasswordChanged: parsed.lastPasswordChanged || "7/13/2026, 12:45 PM",
           lastLogin: parsed.lastLogin || new Date().toLocaleString()
-        });
+        };
+        setAdminAuth(nextAuth);
+        setEmailDraft(nextAuth.email);
       }
     });
   }, [router]);
@@ -78,45 +82,77 @@ export default function SecurityPage() {
     normalizedNewPassword === normalizedConfirmPassword
   );
 
-  const saveAdminAuth = async (e: React.FormEvent) => {
+  const saveEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSavingAccount(true);
+    setIsSavingEmail(true);
+
+    try {
+      const result = await updateAdminAccountAction({
+        email: emailDraft.trim(),
+      });
+
+      if (!result.success) {
+        toast.error(result.error || "An error occurred while updating account email.");
+        return;
+      }
+
+      if (result.auth) {
+        setAdminAuth((current) => ({
+          ...current,
+          ...result.auth,
+        }));
+        setEmailDraft(result.auth.email);
+      }
+
+      toast.success(
+        result.sessionsRotated
+          ? "Email updated. Other devices have been signed out."
+          : "Email updated successfully!"
+      );
+    } catch {
+      toast.error("An error occurred while updating account email.");
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
+
+  const savePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingPassword(true);
 
     try {
       const trimmedNewPassword = newPassword.trim();
       const trimmedConfirmPassword = confirmPassword.trim();
 
-      if (trimmedNewPassword || trimmedConfirmPassword) {
-        if (!currentPassword) {
-          toast.error("Please enter your current password to proceed.");
-          return;
-        }
-        if (!trimmedNewPassword || !trimmedConfirmPassword) {
-          toast.error("Please enter and confirm the new password.");
-          return;
-        }
-        if (trimmedNewPassword !== trimmedConfirmPassword) {
-          toast.error("New passwords do not match.");
-          return;
-        }
-        if (trimmedNewPassword.length < PASSWORD_MIN_LENGTH) {
-          toast.error(`New password must be at least ${PASSWORD_MIN_LENGTH} characters long.`);
-          return;
-        }
-        if (trimmedNewPassword.length > PASSWORD_MAX_LENGTH) {
-          toast.error(`New password cannot be more than ${PASSWORD_MAX_LENGTH} characters long.`);
-          return;
-        }
+      if (!currentPassword) {
+        toast.error("Please enter your current password to proceed.");
+        return;
+      }
+      if (!trimmedNewPassword || !trimmedConfirmPassword) {
+        toast.error("Please enter and confirm the new password.");
+        return;
+      }
+      if (trimmedNewPassword !== trimmedConfirmPassword) {
+        toast.error("New passwords do not match.");
+        return;
+      }
+      if (trimmedNewPassword.length < PASSWORD_MIN_LENGTH) {
+        toast.error(`New password must be at least ${PASSWORD_MIN_LENGTH} characters long.`);
+        return;
+      }
+      if (trimmedNewPassword.length > PASSWORD_MAX_LENGTH) {
+        toast.error(`New password cannot be more than ${PASSWORD_MAX_LENGTH} characters long.`);
+        return;
       }
 
       const result = await updateAdminAccountAction({
-        email: adminAuth.email,
+        email: adminAuth.email || emailDraft,
         currentPassword,
         newPassword: trimmedNewPassword,
       });
 
       if (!result.success) {
-        toast.error(result.error || "An error occurred while updating account credentials.");
+        toast.error(result.error || "An error occurred while updating account password.");
         return;
       }
 
@@ -132,13 +168,13 @@ export default function SecurityPage() {
       setConfirmPassword("");
       toast.success(
         result.sessionsRotated
-          ? "Account updated. Other devices have been signed out."
-          : "Account settings updated successfully!"
+          ? "Password updated. Other devices have been signed out."
+          : "Password updated successfully!"
       );
     } catch {
-      toast.error("An error occurred while updating account credentials.");
+      toast.error("An error occurred while updating account password.");
     } finally {
-      setIsSavingAccount(false);
+      setIsSavingPassword(false);
     }
   };
 
@@ -146,61 +182,93 @@ export default function SecurityPage() {
 
   return (
     <div className="space-y-6 w-full text-left pb-16 font-sans">
-      
-      {/* Section 1: Account Settings Card */}
-      <div className="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 sm:p-8 space-y-6">
-        <div className="flex gap-4 items-start pb-4 border-b border-slate-100">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-            <Key className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Account Settings</h3>
-            <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
-              Update your admin login username, email identifier, and account access password securely.
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={saveAdminAuth} className="space-y-5">
-          {/* Username field (Read-only/Disabled for safety) */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Profile Username</label>
-            <div className="relative flex items-center">
-              <span className="absolute left-3.5 text-slate-400">
-                <UserCheck className="w-4 h-4" />
-              </span>
-              <input
-                type="text"
-                disabled
-                value={adminAuth.username || "admin"}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-500 font-semibold cursor-not-allowed"
-              />
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+        <section className="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="flex gap-4 items-start pb-4 border-b border-slate-100">
+            <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600 shrink-0">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Email Change</h3>
+              <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
+                Update the admin login email identifier without changing the password.
+              </p>
             </div>
           </div>
 
-          {/* Email field */}
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Email Address</label>
-            <div className="relative flex items-center">
-              <span className="absolute left-3.5 text-slate-400">
-                <Mail className="w-4 h-4" />
-              </span>
-              <input
-                type="email"
-                required
-                value={adminAuth.email}
-                onChange={(e) => setAdminAuth({ ...adminAuth, email: e.target.value })}
-                className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold transition-all"
-                placeholder="admin@m-amin.net"
-              />
+          <form onSubmit={saveEmail} className="space-y-5">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Profile Username</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3.5 text-slate-400">
+                  <UserCheck className="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  disabled
+                  value={adminAuth.username || "admin"}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-500 font-semibold cursor-not-allowed"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Email Address</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-3.5 text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </span>
+                <input
+                  type="email"
+                  required
+                  value={emailDraft}
+                  onChange={(e) => setEmailDraft(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 font-semibold transition-all"
+                  placeholder="admin@m-amin.net"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setEmailDraft(adminAuth.email)}
+                className="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-extrabold text-slate-700 cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSavingEmail}
+                className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all shadow-md shadow-sky-600/10 flex items-center gap-1.5 disabled:opacity-80"
+              >
+                {isSavingEmail ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Email"
+                )}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section className="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 sm:p-8 space-y-6">
+          <div className="flex gap-4 items-start pb-4 border-b border-slate-100">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+              <Key className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Password Change</h3>
+              <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
+                Verify the current password and set a new 8-16 character password.
+              </p>
             </div>
           </div>
 
-          {/* Password update section */}
-          <div className="pt-4 border-t border-slate-100 space-y-4">
-            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">Change Password</h4>
-            
-            {/* Current Password */}
+          <form onSubmit={savePassword} className="space-y-5">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Current Password</label>
               <div className="relative flex items-center">
@@ -212,7 +280,7 @@ export default function SecurityPage() {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold transition-all"
-                  placeholder="Required only to set a new password"
+                  placeholder="Enter current password"
                 />
                 <button
                   type="button"
@@ -224,9 +292,7 @@ export default function SecurityPage() {
               </div>
             </div>
 
-            {/* Grid for New & Confirm Passwords */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* New Password */}
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">New Password</label>
                 <div className="relative flex items-center">
@@ -250,7 +316,6 @@ export default function SecurityPage() {
                   </button>
                 </div>
 
-                {/* Password Strength Indicator */}
                 {newPassword && (
                   <div className="space-y-1.5 pt-1.5 px-0.5">
                     <div className="flex justify-between items-center text-[9px] font-bold">
@@ -264,7 +329,6 @@ export default function SecurityPage() {
                 )}
               </div>
 
-              {/* Confirm Password */}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block">Confirm New Password</label>
                 <div className="relative flex items-center">
@@ -302,40 +366,37 @@ export default function SecurityPage() {
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Form Controls */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => {
-                setCurrentPassword("");
-                setNewPassword("");
-                setConfirmPassword("");
-              }}
-              className="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-extrabold text-slate-700 cursor-pointer transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSavingAccount}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all shadow-md shadow-indigo-600/10 flex items-center gap-1.5 disabled:opacity-80"
-            >
-              {isSavingAccount ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmPassword("");
+                }}
+                className="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-extrabold text-slate-700 cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSavingPassword}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-extrabold cursor-pointer transition-all shadow-md shadow-indigo-600/10 flex items-center gap-1.5 disabled:opacity-80"
+              >
+                {isSavingPassword ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Password"
+                )}
+              </button>
+            </div>
+          </form>
+        </section>
       </div>
-
-
     </div>
   );
 }

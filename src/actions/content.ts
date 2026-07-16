@@ -48,6 +48,22 @@ async function setAdminSessionCookie(sessionVersion: string): Promise<void> {
   });
 }
 
+async function setLegacyAdminSessionCookie(): Promise<void> {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
+  const secure = process.env.NODE_ENV === "production" && !isLocalhost;
+
+  cookieStore.set(ADMIN_SESSION_COOKIE, LEGACY_ADMIN_SESSION_TOKEN, {
+    httpOnly: true,
+    secure,
+    sameSite: "strict",
+    maxAge: ADMIN_SESSION_MAX_AGE,
+    path: "/",
+  });
+}
+
 /**
  * Fetch a setting with strict access control based on key and authorization.
  */
@@ -134,13 +150,39 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
 
     const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
     const userList = Array.isArray(savedUsers) ? savedUsers : [];
+    const primaryAdminUser = userList.find(u => {
+      const id = String(u.id || "");
+      const uName = String(u.username || u.name || "").trim().toLowerCase();
+      return id === "USR-1" || uName === "admin";
+    });
+    const validEmail = String(savedAuth.email || "").trim().toLowerCase();
+    const validUsername = savedAuth.username ? savedAuth.username.trim().toLowerCase() : validEmail;
+    const primaryAliases = new Set(
+      [
+        validEmail,
+        validUsername,
+        String(primaryAdminUser?.username || primaryAdminUser?.name || "").trim().toLowerCase(),
+        String(primaryAdminUser?.email || "").trim().toLowerCase(),
+      ].filter(Boolean)
+    );
+
+    if (primaryAliases.has(cleanUser)) {
+      if (!passwordMatchesInput(savedAuth.password, passwordInput, hashedInput)) {
+        return { success: false, error: "Invalid credentials." };
+      }
+
+      matchedUsername = savedAuth.username || "admin";
+      matchedRole = "Super Administrator";
+      matchedUserId = String(primaryAdminUser?.id || "USR-1");
+    }
+
     const matchedUser = userList.find(u => {
       const uName = String(u.username || "").trim().toLowerCase();
       const uEmail = String(u.email || "").trim().toLowerCase();
       return uName === cleanUser || uEmail === cleanUser;
     });
 
-    if (matchedUser && passwordMatchesInput(matchedUser.password, passwordInput, hashedInput)) {
+    if (!matchedUsername && matchedUser && passwordMatchesInput(matchedUser.password, passwordInput, hashedInput)) {
       if (matchedUser.status === "Banned") {
         return { success: false, error: "This administrative user account is banned." };
       }
@@ -149,9 +191,6 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
       matchedRole = String(matchedUser.role || "Support Staff");
       matchedUserId = String(matchedUser.id || "");
     }
-
-    const validEmail = savedAuth.email.toLowerCase();
-    const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
     if (!matchedUsername && (cleanUser === validUsername || cleanUser === validEmail)) {
       if (passwordMatchesInput(savedAuth.password, passwordInput, hashedInput)) {
@@ -180,6 +219,16 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
           });
           if (matchedUser) {
             matchedUser.lastLogin = new Date().toLocaleString("en-US", { hour12: true });
+            const isPrimaryAdminUser = String(matchedUser.id || "") === "USR-1"
+              || String(matchedUser.username || matchedUser.name || "").trim().toLowerCase() === "admin";
+            if (isPrimaryAdminUser && matchedRole === "Super Administrator") {
+              matchedUser.username = savedAuth.username || "admin";
+              matchedUser.name = savedAuth.username || "admin";
+              matchedUser.email = savedAuth.email;
+              matchedUser.role = "Super Administrator";
+              matchedUser.password = savedAuth.password;
+              matchedUser.status = matchedUser.status || "Active";
+            }
             await setSettingInternal("admin_users", userList);
           }
         } catch (e) {
@@ -189,13 +238,20 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
         let sessionVersion = getAdminSessionVersion(savedAuth);
         if (!sessionVersion) {
           sessionVersion = createAdminSessionVersion();
-          await setSettingInternal("admin_auth", {
+          const sessionSaved = await setSettingInternal("admin_auth", {
             ...savedAuth,
             sessionVersion,
           });
+          if (!sessionSaved) {
+            sessionVersion = "";
+          }
         }
 
-        await setAdminSessionCookie(sessionVersion);
+        if (sessionVersion) {
+          await setAdminSessionCookie(sessionVersion);
+        } else {
+          await setLegacyAdminSessionCookie();
+        }
 
         return { success: true, username: matchedUsername, role: matchedRole };
       }
