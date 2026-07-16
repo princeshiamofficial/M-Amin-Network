@@ -703,30 +703,8 @@ export default function TopbarFooterPage() {
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
                 <Info className="w-4 h-4 text-brand-blue" /> Brand License/Status Badges
               </h3>
-              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">About Text (English)</label>
-                  <textarea
-                    value={footerContent.aboutTextEn}
-                    onChange={(e) => setFooterContent({ ...footerContent, aboutTextEn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue min-h-[90px] leading-relaxed"
-                    placeholder="Enter English description"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">About Text (Bangla)</label>
-                  <textarea
-                    value={footerContent.aboutTextBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, aboutTextBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue min-h-[90px] leading-relaxed"
-                    placeholder="Enter Bangla description"
-                    required
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-4 pt-4 border-t border-slate-100">
+              <div className="space-y-4 pt-4">
                 <span className="text-xs font-black uppercase tracking-wider text-slate-800 block">Brand License/Status Badges List</span>
                 
                 {/* Licenses Editor Table */}
@@ -1007,35 +985,6 @@ export default function TopbarFooterPage() {
                   >
                     <Plus className="w-3.5 h-3.5" /> Append Badge
                   </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Section B: Quick Links Column Header */}
-            <div className="hidden p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Menu className="w-4 h-4 text-brand-blue" /> Section B: Quick Links Header
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Quick Links Header (English)</label>
-                  <input
-                    type="text"
-                    value={footerContent.quickLinksTitleEn}
-                    onChange={(e) => setFooterContent({ ...footerContent, quickLinksTitleEn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Quick Links Header (Bangla)</label>
-                  <input
-                    type="text"
-                    value={footerContent.quickLinksTitleBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, quickLinksTitleBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
                 </div>
               </div>
             </div>
@@ -1513,100 +1462,6 @@ export default function TopbarFooterPage() {
                     onChange={(e) => setFooterContent({ ...footerContent, linkedin: e.target.value })}
                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-mono"
                     placeholder="https://linkedin.com/company/profile"
-                  />
-                </div>
-              </div>
-
-              <div className="hidden grid-cols-1 md:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-100">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">Privacy policy Label (English)</label>
-                    <input
-                      type="text"
-                      value={footerContent.privacyTextEn}
-                      onChange={(e) => setFooterContent({ ...footerContent, privacyTextEn: e.target.value })}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 block">Privacy policy Label (Bangla)</label>
-                    <input
-                      type="text"
-                      value={footerContent.privacyTextBn}
-                      onChange={(e) => setFooterContent({ ...footerContent, privacyTextBn: e.target.value })}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Terms of Service Label (English)</label>
-                  <input
-                    type="text"
-                    value={footerContent.termsTextEn}
-                    onChange={(e) => setFooterContent({ ...footerContent, termsTextEn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Terms of Service Label (Bangla)</label>
-                  <input
-                    type="text"
-                    value={footerContent.termsTextBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, termsTextBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Brand Link info (English)</label>
-                  <input
-                    type="text"
-                    value={footerContent.brandTextEn}
-                    onChange={(e) => setFooterContent({ ...footerContent, brandTextEn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Brand Link info (Bangla)</label>
-                  <input
-                    type="text"
-                    value={footerContent.brandTextBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, brandTextBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="hidden grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Copyright Bottom (English)</label>
-                  <input
-                    type="text"
-                    value={footerContent.copyrightText}
-                    onChange={(e) => setFooterContent({ ...footerContent, copyrightText: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Copyright Bottom (Bangla)</label>
-                  <input
-                    type="text"
-                    value={footerContent.copyrightTextBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, copyrightTextBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    required
                   />
                 </div>
               </div>

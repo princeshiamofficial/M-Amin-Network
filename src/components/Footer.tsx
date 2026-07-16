@@ -248,7 +248,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-              {t(footerData.aboutTextEn, footerData.aboutTextBn)}
+              {t("Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.", "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।")}
             </p>
             <div className="flex items-center gap-3 mt-2 text-xs flex-wrap">
               {licenses.map((lic, idx) => {
@@ -356,7 +356,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="md:col-span-4">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t(footerData.quickLinksTitleEn, footerData.quickLinksTitleBn)}
+              {t("Quick Links", "কুইক লিংক")}
             </h3>
             <div className="grid grid-cols-3 gap-2 text-sm">
               <ul className="space-y-3">
@@ -548,18 +548,18 @@ export default function Footer() {
         {/* Bottom copyright */}
         <div className="pt-2 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500">
-            {t(footerData.copyrightText, footerData.copyrightTextBn)}
+            {t("© 2026 M Amin Network. All Rights Reserved.", "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।")}
           </p>
           <div className="flex gap-4 text-xs text-slate-500">
             <Link href="/" className="hover:text-brand-cyan transition-colors">
-              {t(footerData.privacyTextEn, footerData.privacyTextBn)}
+              {t("Privacy Policy", "গোপনীয়তা নীতি")}
             </Link>
             <span>&bull;</span>
             <Link href="/" className="hover:text-brand-cyan transition-colors">
-              {t(footerData.termsTextEn, footerData.termsTextBn)}
+              {t("Terms of Service", "ব্যবহারের শর্তাবলী")}
             </Link>
             <span>&bull;</span>
-            <span className="text-slate-400">{t(footerData.brandTextEn, footerData.brandTextBn)}</span>
+            <span className="text-slate-400">{t("Keraniganj ISP", "কেরানীগঞ্জ আইএসপি")}</span>
           </div>
         </div>
       </div>

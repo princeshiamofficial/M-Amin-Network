@@ -640,8 +640,8 @@ export default function Home() {
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
                   <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
                 </h3>
-                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.titleEn, stat.titleBn || stat.titleEn)}</h4>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.descEn, stat.descBn || stat.descEn)}</p>
+                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(DEFAULT_HERO_METRICS[i].titleEn, DEFAULT_HERO_METRICS[i].titleBn)}</h4>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(DEFAULT_HERO_METRICS[i].descEn, DEFAULT_HERO_METRICS[i].descBn)}</p>
               </div>
             );
           })}

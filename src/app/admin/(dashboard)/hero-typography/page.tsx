@@ -320,7 +320,7 @@ export default function HeroTypographyPage() {
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Card {idx + 1} Settings</span>
                   <div className="space-y-2">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 block uppercase">{metric.titleEn || `Card ${idx + 1}`} Number</label>
+                      <label className="text-[10px] font-bold text-slate-500 block uppercase">{defaultHeroMetrics[idx].titleEn} Number</label>
                       <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white focus-within:border-brand-blue">
                         <input
                           type="number"
@@ -429,8 +429,8 @@ export default function HeroTypographyPage() {
                 {heroMetrics.map((stat, idx) => (
                   <div key={idx} className="p-2 rounded-lg bg-slate-950/40 border border-slate-800/80 text-center backdrop-blur-xs flex flex-col justify-center min-h-[58px]">
                     <div className="text-[11px] font-black text-cyan-400 text-glow leading-none">{stat.value}</div>
-                    <div className="text-[7.5px] font-bold text-white leading-tight mt-1">{stat.titleEn}</div>
-                    <div className="text-[6.5px] text-slate-400 leading-tight mt-0.5">{stat.descEn}</div>
+                    <div className="text-[7.5px] font-bold text-white leading-tight mt-1">{defaultHeroMetrics[idx].titleEn}</div>
+                    <div className="text-[6.5px] text-slate-400 leading-tight mt-0.5">{defaultHeroMetrics[idx].descEn}</div>
                   </div>
                 ))}
               </div>
