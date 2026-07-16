@@ -1137,7 +1137,7 @@ export default function ManageUserPage() {
               <h3 className="text-lg font-semibold text-slate-900">Are you sure?</h3>
             </div>
             <p className="text-xs font-semibold text-slate-500">
-              You are about to delete the user "<span className="font-semibold text-slate-700">{deleteTarget.username}</span>". They will no longer be able to log in.
+              You are about to delete the user &quot;<span className="font-semibold text-slate-700">{deleteTarget.username}</span>&quot;. They will no longer be able to log in.
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <button

@@ -1,209 +1,15 @@
 "use server";
 
-import pool, { dbInitPromise } from "@/lib/db";
-import fs from "fs";
-import path from "path";
 import { cookies, headers } from "next/headers";
-import { createHash } from "crypto";
 import { broadcastMaintenance } from "@/lib/wsServer";
-
-const OBJECT_KEYS = [
-  "system_config",
-  "admin_auth",
-  "site_content",
-  "site_logo",
-  "hero_typography",
-  "offers_page_content",
-  "footer_content",
-  "bill_payment_page_content",
-  "support_page_content",
-  "portal_page_content",
-  "about_content",
-  "contact_content",
-  "complaint_content_guidelines",
-  "topbar_content",
-  "system_config",
-  "admin_auth",
-  "site_content",
-  "site_logo",
-  "hero_typography",
-  "offers_page_content",
-  "footer_content",
-  "bill_payment_page_content",
-  "support_page_content",
-  "portal_page_content",
-  "about_content",
-  "contact_content",
-  "complaint_content_guidelines",
-  "topbar_content",
-  "page_headers"
-];
-
-function isObjectKey(key: string): boolean {
-  return OBJECT_KEYS.includes(key);
-}
-
-function logDbError(action: string, key: string, error: unknown) {
-  const err = error as Error & { code?: string };
-  const logMsg = `[${new Date().toISOString()}] Action: ${action}, Key: ${key}\nError: ${err?.message || err}\nStack: ${err?.stack}\n\n`;
-  try {
-    fs.appendFileSync(path.join(process.cwd(), "db_error.log"), logMsg);
-  } catch {
-    console.error("Failed to write to db_error.log");
-  }
-}
-
-function getTextValue(item: Record<string, unknown>, keys: string[], fallback = ""): string {
-  for (const key of keys) {
-    const value = item[key];
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
-  }
-
-  return fallback;
-}
-
-function createPromoCodeFallback(item: Record<string, unknown>, index: number): string {
-  const title = getTextValue(item, ["title", "campaignTitle", "campaign_title", "name"], `Offer ${index + 1}`);
-  const slug = title
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  return `${slug || "OFFER"}-${index + 1}`;
-}
-
-function ensureUniqueCode(code: string, usedCodes: Set<string>): string {
-  let uniqueCode = code;
-  let counter = 2;
-
-  while (usedCodes.has(uniqueCode)) {
-    uniqueCode = `${code}-${counter}`;
-    counter += 1;
-  }
-
-  usedCodes.add(uniqueCode);
-  return uniqueCode;
-}
-
-function normalizePromoOfferItems(items: Record<string, unknown>[]): Record<string, unknown>[] {
-  const usedCodes = new Set<string>();
-
-  return items.map((item, index) => {
-    const rawCode = getTextValue(
-      item,
-      ["code", "promoCode", "promo_code", "couponCode", "coupon_code", "coupon"]
-    ).toUpperCase();
-    const code = ensureUniqueCode(rawCode || createPromoCodeFallback(item, index), usedCodes);
-
-    return {
-      ...item,
-      code,
-    };
-  });
-}
-
-function normalizePrimitiveListItems(items: unknown[]): Record<string, unknown>[] {
-  return items.map((item) => {
-    if (item === null || typeof item !== "object") {
-      return { value: item };
-    }
-
-    return item as Record<string, unknown>;
-  });
-}
-
-function normalizeBooleanValue(value: unknown, fallback = false): boolean {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "number") return value !== 0;
-  if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
-  return fallback;
-}
-
-/**
- * Internal function to fetch settings bypassing authentication checks.
- */
-async function getSettingInternal(key: string): Promise<unknown> {
-  await dbInitPromise;
-  try {
-    let tableName = key.startsWith("") ? key.replace("", "") : key;
-    
-    // Map specific custom tables
-    if (tableName === "admin_users" || tableName === "admin_user") {
-      tableName = "users";
-    }
-    if (tableName === "admin_auth") {
-      tableName = "user";
-    }
-
-    const isArray = !isObjectKey(key);
-
-    try {
-      let rows: import('mysql2').RowDataPacket[];
-      if (isArray) {
-        try {
-          const [orderedRows] = await pool.query<import('mysql2').RowDataPacket[]>(
-            `SELECT * FROM \`${tableName}\` ORDER BY \`_sort_order\` ASC`
-          );
-          rows = orderedRows;
-        } catch {
-          const [unorderedRows] = await pool.query<import('mysql2').RowDataPacket[]>(
-            `SELECT * FROM \`${tableName}\``
-          );
-          rows = unorderedRows;
-        }
-      } else {
-        const [objRows] = await pool.query<import('mysql2').RowDataPacket[]>(
-          `SELECT * FROM \`${tableName}\` LIMIT 1`
-        );
-        rows = objRows;
-      }
-
-      const parsedRows = rows.map(row => {
-        const newRow: Record<string, unknown> = {};
-        for (const [k, v] of Object.entries(row)) {
-          // Exclude our internal auto-generated keys
-          if (k === '_auto_id' || k === '_sort_order') continue;
-          
-          let keyName = k;
-          // Map password_hash back to password property for JS compatibility
-          if (tableName === "user" && k === "password_hash") {
-            keyName = "password";
-          }
-
-          if (typeof v === 'string' && (v.startsWith('{') || v.startsWith('['))) {
-            try { newRow[keyName] = JSON.parse(v); } catch { newRow[keyName] = v; }
-          } else {
-            newRow[keyName] = v;
-          }
-        }
-        return newRow;
-      });
-
-      if (isArray && parsedRows.every((row) => {
-        const keys = Object.keys(row);
-        return keys.length === 1 && keys[0] === "value";
-      })) {
-        return parsedRows.map((row) => row.value);
-      }
-
-      return isArray ? parsedRows : (parsedRows[0] || null);
-    } catch (error: unknown) {
-      const e = error as { code?: string };
-      if (e.code === 'ER_NO_SUCH_TABLE') {
-        return isArray ? [] : null;
-      }
-      logDbError("getSetting SELECT", key, error);
-      throw error;
-    }
-  } catch (error) {
-    // Use console.warn instead of console.error to prevent Next.js RSC Error Overlay
-    console.warn("Database error fetching setting:", key, (error as Error).message);
-    logDbError("getSetting", key, error);
-    return null;
-  }
-}
+import {
+  getSettingInternal,
+  getSettingTableRowCount,
+  hashPasswordServer,
+  normalizeBooleanValue,
+  passwordMatchesInput,
+  setSettingInternal,
+} from "@/lib/content-service";
 
 /**
  * Fetch a setting with strict access control based on key and authorization.
@@ -222,216 +28,6 @@ export async function getSetting(key: string): Promise<unknown> {
     }
   }
   return getSettingInternal(key);
-}
-
-/**
- * Internal function to update or insert a setting bypassing authentication checks.
- */
-async function setSettingInternal(key: string, data: unknown): Promise<boolean> {
-  await dbInitPromise;
-  try {
-    let tableName = key.startsWith("") ? key.replace("", "") : key;
-    
-    // Map specific custom tables
-    if (tableName === "admin_users" || tableName === "admin_user") {
-      tableName = "users";
-    }
-    if (tableName === "admin_auth") {
-      tableName = "user";
-    }
-
-    if (data === null || typeof data !== 'object') {
-      try {
-        await pool.query(`CREATE TABLE IF NOT EXISTS \`${tableName}\` (\`value\` TEXT)`);
-        await pool.query(`DELETE FROM \`${tableName}\``);
-        await pool.query(`INSERT INTO \`${tableName}\` (\`value\`) VALUES (?)`, [data]);
-      } catch (e) {
-        logDbError("setSetting primitive", key, e);
-        return false;
-      }
-      return true;
-    }
-
-    const isArray = Array.isArray(data);
-    
-    // Process input data for user/users structure mappings
-    let processedData: unknown = data;
-    const mapUserFields = (item: unknown): Record<string, unknown> => {
-      if (!item || typeof item !== 'object') return {} as Record<string, unknown>;
-      const newItem = { ...(item as Record<string, unknown>) };
-      
-      // If saving to user login table, enforce password_hash & role columns
-      if (tableName === "user") {
-        if (newItem.password !== undefined) {
-          newItem.password_hash = newItem.password;
-          delete newItem.password;
-        }
-        if (newItem.role === undefined) {
-          newItem.role = "Super Administrator";
-        }
-      }
-      return newItem;
-    };
-
-    if (isArray) {
-      processedData = normalizePrimitiveListItems(data as unknown[]).map(mapUserFields);
-    } else {
-      processedData = mapUserFields(data);
-    }
-
-    const rawItems = isArray ? (processedData as Record<string, unknown>[]) : [processedData as Record<string, unknown>];
-    const normalizedRawItems = tableName === "promo_offers" ? normalizePromoOfferItems(rawItems) : rawItems;
-    
-    // Inject sort order to preserve insertion sequence in DB queries
-    const items: Record<string, unknown>[] = normalizedRawItems.map((item, index) => {
-      if (item && typeof item === 'object') {
-        return { ...item, _sort_order: index } as Record<string, unknown>;
-      }
-      return item as Record<string, unknown>;
-    });
-
-    console.log("SERVER content.ts: setSetting key =", key, "tableName =", tableName, "items count =", items.length);
-    if (tableName === "quick_actions") {
-      console.log("SERVER quick_actions first 3 items:", items.slice(0, 3).map(i => ({ id: i.id, label: i.label, _sort_order: i._sort_order })));
-    }
-
-    if (items.length > 0 && items[0] && typeof items[0] === 'object') {
-      const sample: Record<string, unknown> = {};
-      for (const item of items) {
-        if (item && typeof item === 'object') {
-          for (const [k, v] of Object.entries(item)) {
-            if (sample[k] === undefined || (sample[k] === null && v !== null)) {
-              sample[k] = v;
-            }
-          }
-        }
-      }
-      let existingCols: string[] = [];
-      let colTypes: Record<string, string> = {};
-      
-      try {
-        await pool.query(`SELECT 1 FROM \`${tableName}\` LIMIT 1`);
-        // Check columns
-        const [cols] = await pool.query<import('mysql2').RowDataPacket[]>(`SHOW COLUMNS FROM \`${tableName}\``);
-        existingCols = cols.map((c) => c.Field as string);
-        colTypes = Object.fromEntries(cols.map((c) => [c.Field as string, (c.Type as string).toLowerCase()]));
-        
-        for (const k of Object.keys(sample)) {
-          if (!existingCols.includes(k)) {
-            let type = 'TEXT';
-            const val = sample[k];
-            if (typeof val === 'number') type = 'DOUBLE';
-            else if (typeof val === 'boolean') type = 'BOOLEAN';
-            else if (k === 'id') type = 'VARCHAR(255)';
-            else if (typeof val === 'string' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) type = 'LONGTEXT';
-            await pool.query(`ALTER TABLE \`${tableName}\` ADD COLUMN \`${k}\` ${type}`);
-            existingCols.push(k);
-            colTypes[k] = type.toLowerCase();
-          }
-        }
-      } catch (e: unknown) {
-        const err = e as { code?: string };
-        if (err.code === 'ER_NO_SUCH_TABLE') {
-          const colDefs = Object.keys(sample).map(k => {
-             let type = 'TEXT';
-             const val = sample[k];
-             if (typeof val === 'number') type = 'DOUBLE';
-             else if (typeof val === 'boolean') type = 'BOOLEAN';
-             if (k === 'id') type = 'VARCHAR(255) PRIMARY KEY';
-             else if (typeof val === 'string' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) type = 'LONGTEXT';
-             return `\`${k}\` ${type}`;
-          });
-          
-          if (!Object.keys(sample).includes('id')) {
-            colDefs.unshift('`_auto_id` INT AUTO_INCREMENT PRIMARY KEY');
-          }
-          
-          await pool.query(`CREATE TABLE \`${tableName}\` (${colDefs.join(', ')})`);
-          
-          // Re-populate cols info after table creation
-          const [cols] = await pool.query<import('mysql2').RowDataPacket[]>(`SHOW COLUMNS FROM \`${tableName}\``);
-          existingCols = cols.map((c) => c.Field as string);
-          colTypes = Object.fromEntries(cols.map((c) => [c.Field as string, (c.Type as string).toLowerCase()]));
-        } else {
-          logDbError("setSetting CREATE/ALTER", key, e);
-          throw e;
-        }
-      }
-      
-      // Perform dynamic upgrades (VARCHAR -> TEXT) and missing ID injection
-      for (const item of items) {
-        if (!item || typeof item !== 'object') continue;
-        
-        // 1. If table has an 'id' column but item does not have a non-empty 'id' key
-        if (existingCols.includes('id') && (item.id === undefined || item.id === null || item.id === '')) {
-          const generatedId = `id_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-          item.id = generatedId;
-        }
-
-        // 2. Upgrade VARCHAR/TEXT columns dynamically if value exceeds 255 or 60000 characters
-        for (const [k, val] of Object.entries(item)) {
-          if (existingCols.includes(k)) {
-            const currentType = colTypes[k];
-            if (typeof val === 'string') {
-              if (currentType && currentType.includes('varchar') && val.length > 255) {
-                const targetType = (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64")) ? 'LONGTEXT' : 'TEXT';
-                await pool.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${k}\` ${targetType}`);
-                colTypes[k] = targetType.toLowerCase();
-              } else if (currentType && currentType === 'text' && (val.length > 60000 || k.toLowerCase().includes("image") || k.toLowerCase().includes("logo") || k.toLowerCase().includes("base64"))) {
-                await pool.query(`ALTER TABLE \`${tableName}\` MODIFY COLUMN \`${k}\` LONGTEXT`);
-                colTypes[k] = 'longtext';
-              }
-            }
-          }
-        }
-      }
-      
-      const connection = await pool.getConnection();
-      try {
-        await connection.beginTransaction();
-        await connection.query(`DELETE FROM \`${tableName}\``);
-        
-        for (const item of items) {
-          if (!item || typeof item !== 'object') continue;
-          const keys = Object.keys(item);
-          if (keys.length === 0) continue;
-          
-          const values = keys.map(k => {
-            const val = item[k];
-            if (val === undefined) return null;
-            if (typeof val === 'object' && val !== null) return JSON.stringify(val);
-            if (typeof val === 'boolean') return val ? 1 : 0;
-            return val;
-          });
-          const placeholders = keys.map(() => '?').join(', ');
-          await connection.query(
-            `INSERT INTO \`${tableName}\` (${keys.map(k => `\`${k}\``).join(', ')}) VALUES (${placeholders})`,
-            values
-          );
-        }
-
-        await connection.commit();
-      } catch (error) {
-        await connection.rollback();
-        throw error;
-      } finally {
-        connection.release();
-      }
-    } else if (items.length === 0) {
-      try {
-        await pool.query(`DELETE FROM \`${tableName}\``);
-      } catch {
-        // Ignore if table doesn't exist
-      }
-    }
-    
-    return true;
-  } catch (error) {
-    // Use console.warn instead of console.error to prevent Next.js RSC Error Overlay
-    console.warn("Database error updating setting:", key, (error as Error).message);
-    logDbError("setSetting", key, error);
-    return false;
-  }
 }
 
 /**
@@ -455,18 +51,10 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
     }
   } else {
     if (!authenticated) {
-      const tableName = key.startsWith("") ? key.replace("", "") : key;
-      try {
-        const [rows] = await pool.query<import('mysql2').RowDataPacket[]>(
-          `SELECT COUNT(*) as count FROM \`${tableName}\``
-        );
-        const count = rows[0]?.count || 0;
-        if (count > 0) {
-          console.warn(`[setSetting] Blocked unauthorized edit on key: ${key} (table contains ${count} rows)`);
-          return false;
-        }
-      } catch {
-        // Table doesn't exist yet, allow creation
+      const count = await getSettingTableRowCount(key);
+      if (count !== null && count > 0) {
+        console.warn(`[setSetting] Blocked unauthorized edit on key: ${key} (table contains ${count} rows)`);
+        return false;
       }
     }
   }
@@ -493,10 +81,6 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
   return success;
 }
 
-function hashPasswordServer(password: string): string {
-  return createHash("sha256").update(password).digest("hex");
-}
-
 export async function verifyAdminLoginAction(usernameInput: string, passwordInput: string): Promise<{ success: boolean; error?: string; username?: string; role?: string }> {
   try {
     const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
@@ -509,41 +93,41 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
 
     let matchedUsername = "";
     let matchedRole = "";
+    let matchedUserId = "";
+
+    const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+    const userList = Array.isArray(savedUsers) ? savedUsers : [];
+    const matchedUser = userList.find(u => {
+      const uName = String(u.username || "").trim().toLowerCase();
+      const uEmail = String(u.email || "").trim().toLowerCase();
+      return uName === cleanUser || uEmail === cleanUser;
+    });
+
+    if (matchedUser && passwordMatchesInput(matchedUser.password, passwordInput, hashedInput)) {
+      if (matchedUser.status === "Banned") {
+        return { success: false, error: "This administrative user account is banned." };
+      }
+
+      matchedUsername = String(matchedUser.username || "");
+      matchedRole = String(matchedUser.role || "Support Staff");
+      matchedUserId = String(matchedUser.id || "");
+    }
 
     const validEmail = savedAuth.email.toLowerCase();
     const validUsername = savedAuth.username ? savedAuth.username.toLowerCase() : validEmail;
 
-    if (cleanUser === validUsername || cleanUser === validEmail) {
-      if (hashedInput === savedAuth.password) {
+    if (!matchedUsername && (cleanUser === validUsername || cleanUser === validEmail)) {
+      if (passwordMatchesInput(savedAuth.password, passwordInput, hashedInput)) {
         matchedUsername = "admin";
         matchedRole = "Super Administrator";
       } else {
         return { success: false, error: "Invalid credentials." };
       }
-    } else {
-      const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
-      const userList = Array.isArray(savedUsers) ? savedUsers : [];
-      const matchedUser = userList.find(u => {
-        const uName = String(u.username || "").trim().toLowerCase();
-        const uEmail = String(u.email || "").trim().toLowerCase();
-        return uName === cleanUser || uEmail === cleanUser;
-      });
-
+    } else if (!matchedUsername) {
       if (matchedUser) {
-        if (matchedUser.status === "Banned") {
-          return { success: false, error: "This administrative user account is banned." };
-        }
-        
-        const userPassword = String(matchedUser.password || "");
-        if (passwordInput === userPassword || hashedInput === userPassword) {
-          matchedUsername = String(matchedUser.username || "");
-          matchedRole = String(matchedUser.role || "Support Staff");
-        } else {
-          return { success: false, error: "Invalid credentials." };
-        }
-      } else {
         return { success: false, error: "Invalid credentials." };
       }
+      return { success: false, error: "Invalid credentials." };
     }
 
     if (matchedUsername) {
@@ -552,6 +136,7 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
           const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
           const userList = Array.isArray(savedUsers) ? savedUsers : [];
           const matchedUser = userList.find(u => {
+            if (matchedUserId && String(u.id || "") === matchedUserId) return true;
             const uName = String(u.username || "").trim().toLowerCase();
             const uEmail = String(u.email || "").trim().toLowerCase();
             return uName === matchedUsername.toLowerCase() || uEmail === matchedUsername.toLowerCase();
@@ -602,7 +187,6 @@ export async function logoutAdminAction(): Promise<boolean> {
 
 export async function verifyPortalLoginAction(clientIdInput: string, passwordInput: string): Promise<{ success: boolean; error?: string; subscriber?: Record<string, unknown> }> {
   try {
-    await dbInitPromise;
     const raw = await getSettingInternal("subscribers");
     const subscribersArr = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
     
@@ -855,7 +439,7 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
     const updatedUsers = userList.map(u => {
       if (String(u.email || "").trim().toLowerCase() === cleanEmail) {
         updated = true;
-        return { ...u, password: newPasswordInput };
+        return { ...u, password: hashed };
       }
       return u;
     });

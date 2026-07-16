@@ -23,41 +23,9 @@ interface FooterContent {
   instagram: string;
   twitter: string;
   linkedin: string;
-  copyrightText: string;
-  copyrightTextBn: string;
-  aboutTextEn: string;
-  aboutTextBn: string;
-  asnText: string;
-  btrcTextEn: string;
-  btrcTextBn: string;
   addressEn: string;
   addressBn: string;
-  phone: string;
   email: string;
-  aff1En: string;
-  aff1Bn: string;
-  aff2En: string;
-  aff2Bn: string;
-  quickLinksTitleEn: string;
-  quickLinksTitleBn: string;
-  contactTitleEn: string;
-  contactTitleBn: string;
-  affiliationTitleEn: string;
-  affiliationTitleBn: string;
-  affiliationDescEn: string;
-  affiliationDescBn: string;
-  privacyTextEn: string;
-  privacyTextBn: string;
-  termsTextEn: string;
-  termsTextBn: string;
-  brandTextEn: string;
-  brandTextBn: string;
-}
-
-interface NavLink {
-  nameEn: string;
-  nameBn: string;
-  href: string;
 }
 
 interface TopbarContent {
@@ -80,44 +48,38 @@ interface LicenseBadge {
   image?: string;
 }
 
+type SectionId = "topbar" | "brand-license" | "contact-info" | "affiliations" | "social-link" | "btrc-tariff";
+
+const sectionSaveLabels: Record<SectionId, string> = {
+  topbar: "Save Topbar",
+  "brand-license": "Save Brand License",
+  "contact-info": "Save Contact Info",
+  affiliations: "Save Affiliations",
+  "social-link": "Save Social Links",
+  "btrc-tariff": "Save BTRC Tariff",
+};
+
+const sectionSuccessMessages: Record<SectionId, string> = {
+  topbar: "Topbar saved successfully!",
+  "brand-license": "Brand license badges saved successfully!",
+  "contact-info": "Contact info saved successfully!",
+  affiliations: "Affiliations saved successfully!",
+  "social-link": "Social links saved successfully!",
+  "btrc-tariff": "BTRC tariff upload is saved automatically after successful upload.",
+};
+
 const defaultFooterContent: FooterContent = {
   facebook: "https://facebook.com/maminnetwork",
   youtube: "https://youtube.com/maminnetwork",
   instagram: "https://instagram.com/maminnetwork",
   twitter: "https://x.com/maminnetwork",
   linkedin: "https://linkedin.com/company/maminnetwork",
-  copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
-  copyrightTextBn: "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।",
-  aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
-  aboutTextBn: "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।",
-  asnText: "AS150164",
-  btrcTextEn: "BTRC Licensed",
-  btrcTextBn: "বিটিআরসি অনুমোদিত",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
   addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
-  phone: "+880 1707-009267",
   email: "info@m-aminnetwork.com",
-  aff1En: "ISPAB MEMBER",
-  aff1Bn: "আইএসপিএবি সদস্য",
-  aff2En: "AS150164 BGP NETWORK",
-  aff2Bn: "AS150164 বিজিপি নেটওয়ার্ক",
-  quickLinksTitleEn: "Quick Links",
-  quickLinksTitleBn: "কুইক লিংক",
-  contactTitleEn: "Contact Info",
-  contactTitleBn: "যোগাযোগ",
-  affiliationTitleEn: "Our Affiliations",
-  affiliationTitleBn: "আমাদের অধিভুক্তি",
-  affiliationDescEn: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
-  affiliationDescBn: "আমরা ইন্টারনেট সার্ভিস প্রোভাইডার অ্যাসোসিয়েশন অব বাংলাদেশ (ISPAB)-এর একজন গর্বিত ও সক্রিয় সদস্য।",
-  privacyTextEn: "Privacy Policy",
-  privacyTextBn: "গোপনীয়তা নীতি",
-  termsTextEn: "Terms of Service",
-  termsTextBn: "ব্যবহারের শর্তাবলী",
-  brandTextEn: "Keraniganj ISP",
-  brandTextBn: "কেরানীগঞ্জ আইএসপি"
 };
 
-const defaultNavLinks: NavLink[] = [
+const defaultNavLinks: { nameEn: string; nameBn: string; href: string }[] = [
   { nameEn: "Home", nameBn: "হোম", href: "/" },
   { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
   { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
@@ -146,6 +108,7 @@ const defaultLicenses: LicenseBadge[] = [
 ];
 
 const defaultPhones = ["+880 1707-009267"];
+const imageBadgeFallbackText = "Image Badge";
 
 function normalizePhoneList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -174,20 +137,57 @@ function serializePhoneList(value: unknown): { value: string }[] {
   return normalizePhoneList(value).map((phone) => ({ value: phone }));
 }
 
+function textValue(value: unknown, fallback: string): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function normalizeFooterContent(value: unknown): FooterContent {
+  const record = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+
+  return {
+    facebook: textValue(record.facebook, defaultFooterContent.facebook),
+    youtube: textValue(record.youtube, defaultFooterContent.youtube),
+    instagram: textValue(record.instagram, defaultFooterContent.instagram),
+    twitter: textValue(record.twitter, defaultFooterContent.twitter),
+    linkedin: textValue(record.linkedin, defaultFooterContent.linkedin),
+    addressEn: textValue(record.addressEn, defaultFooterContent.addressEn),
+    addressBn: textValue(record.addressBn, defaultFooterContent.addressBn),
+    email: textValue(record.email, defaultFooterContent.email),
+  };
+}
+
+function normalizeAffiliationBadge(value: unknown): AffiliationBadge {
+  const record = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const textEn = textValue(record.textEn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
+  const textBn = textValue(record.textBn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
+  const savedImage = textValue(record.image, "").trim();
+  const shouldUseDefaultIspabImage = textEn.toUpperCase().includes("ISPAB") && !savedImage;
+
+  return {
+    textEn,
+    textBn,
+    isCyan: record.isCyan === true,
+    image: savedImage || (shouldUseDefaultIspabImage ? "/ispab.jpeg" : undefined),
+  };
+}
+
 export default function TopbarFooterPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
   const [footerContent, setFooterContent] = useState<FooterContent>(defaultFooterContent);
   const [topbarContent, setTopbarContent] = useState<TopbarContent>(defaultTopbarContent);
-  const [navLinks, setNavLinks] = useState<NavLink[]>(defaultNavLinks);
   const [badges, setBadges] = useState<AffiliationBadge[]>(defaultBadges);
   const [licenses, setLicenses] = useState<LicenseBadge[]>(defaultLicenses);
   const [phones, setPhones] = useState<string[]>(defaultPhones);
-  const [activeSection, setActiveSection] = useState("topbar");
+  const [activeSection, setActiveSection] = useState<SectionId>("topbar");
+  const [savingSection, setSavingSection] = useState<SectionId | null>(null);
   const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   // New item form states
-  const [newLink, setNewLink] = useState<NavLink>({ nameEn: "", nameBn: "", href: "" });
   const [newBadge, setNewBadge] = useState<AffiliationBadge>({ textEn: "", textBn: "", isCyan: false, image: "" });
   const [newLicense, setNewLicense] = useState<LicenseBadge>({ textEn: "", textBn: "", isMono: false, colorStyle: "cyan", image: "" });
 
@@ -214,10 +214,7 @@ export default function TopbarFooterPage() {
     // Load footer config
     getSetting("footer_content").then(saved => {
       if (saved) {
-        setFooterContent(prev => ({
-          ...prev,
-          ...(saved as Record<string, unknown> as unknown as typeof defaultFooterContent)
-        }));
+        setFooterContent(normalizeFooterContent(saved));
       } else {
         setSetting("footer_content", defaultFooterContent);
         setFooterContent(defaultFooterContent);
@@ -226,24 +223,19 @@ export default function TopbarFooterPage() {
 
     // Load nav links
     getSetting("nav_links").then(saved => {
-      if (saved && (saved as unknown[]).length > 0) {
-        setNavLinks(saved as typeof defaultNavLinks);
-      } else {
+      if (!saved || (saved as unknown[]).length === 0) {
         setSetting("nav_links", defaultNavLinks);
-        setNavLinks(defaultNavLinks);
       }
     });
 
     // Load badges
     getSetting("footer_badges").then(saved => {
       if (saved && (saved as unknown[]).length > 0) {
-        const migrated = (saved as Record<string, unknown>[]).map((badge) => {
-          if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
-            return { ...badge, image: "/ispab.jpeg" } as unknown as AffiliationBadge;
-          }
-          return badge as unknown as AffiliationBadge;
-        });
+        const migrated = (saved as unknown[]).map(normalizeAffiliationBadge);
         setBadges(migrated);
+        if (JSON.stringify(saved) !== JSON.stringify(migrated)) {
+          setSetting("footer_badges", migrated);
+        }
       } else {
         setSetting("footer_badges", defaultBadges);
         setBadges(defaultBadges);
@@ -309,76 +301,117 @@ export default function TopbarFooterPage() {
     }
   };
 
-  const saveAllConfigurations = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const normalizedPhones = normalizePhoneList(phones);
+  const getSavedFooterContent = async (): Promise<FooterContent> => {
+    const saved = await getSetting("footer_content");
+    return normalizeFooterContent(saved);
+  };
 
-    if (normalizedPhones.length === 0) {
+  const saveFooterContentPatch = async (patch: Partial<FooterContent>) => {
+    const saved = await getSavedFooterContent();
+    return setSetting("footer_content", {
+      ...saved,
+      ...patch,
+    });
+  };
+
+  const saveCurrentSection = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await saveSection(activeSection);
+  };
+
+  const saveSection = async (section: SectionId) => {
+    if (savingSection) return;
+
+    const normalizedPhones = normalizePhoneList(phones);
+    if (section === "contact-info" && normalizedPhones.length === 0) {
       toast.error("At least one phone number is required.");
       return;
     }
 
-    setPhones(normalizedPhones);
+    setSavingSection(section);
 
-    const results = await Promise.all([
-      setSetting("topbar_content", topbarContent),
-      setSetting("footer_content", footerContent),
-      setSetting("nav_links", navLinks),
-      setSetting("footer_badges", badges),
-      setSetting("footer_licenses", licenses),
-      setSetting("footer_phones", serializePhoneList(normalizedPhones)),
-    ]);
+    try {
+      let results: boolean[];
 
-    if (results.every(Boolean)) {
-      toast("Topbar, Footer, and Header configurations saved successfully!");
-    } else {
-      toast.error("Some settings could not be saved. Please log in again and retry.");
+      switch (section) {
+        case "topbar":
+          results = await Promise.all([
+            setSetting("topbar_content", topbarContent),
+          ]);
+          break;
+        case "brand-license":
+          results = await Promise.all([
+            setSetting("footer_licenses", licenses),
+          ]);
+          break;
+        case "contact-info":
+          setPhones(normalizedPhones);
+          results = await Promise.all([
+            saveFooterContentPatch({
+              email: footerContent.email,
+              addressEn: footerContent.addressEn,
+              addressBn: footerContent.addressBn,
+            }),
+            setSetting("footer_phones", serializePhoneList(normalizedPhones)),
+          ]);
+          break;
+        case "affiliations":
+          results = await Promise.all([
+            setSetting("footer_badges", badges.map(normalizeAffiliationBadge)),
+          ]);
+          break;
+        case "social-link":
+          results = await Promise.all([
+            saveFooterContentPatch({
+              facebook: footerContent.facebook,
+              youtube: footerContent.youtube,
+              instagram: footerContent.instagram,
+              twitter: footerContent.twitter,
+              linkedin: footerContent.linkedin,
+            }),
+          ]);
+          break;
+        case "btrc-tariff":
+          results = [true];
+          break;
+      }
+
+      if (results.every(Boolean)) {
+        toast(sectionSuccessMessages[section]);
+      } else {
+        toast.error("Some settings could not be saved. Please log in again and retry.");
+      }
+    } catch {
+      toast.error("Settings could not be saved. Please log in again and retry.");
+    } finally {
+      setSavingSection(null);
     }
   };
 
-  // Nav link order handlers
-  const moveLinkUp = (index: number) => {
-    if (index === 0) return;
-    const updated = [...navLinks];
-    const temp = updated[index];
-    updated[index] = updated[index - 1];
-    updated[index - 1] = temp;
-    setNavLinks(updated);
+  const renderSectionSaveButton = (section: SectionId) => {
+    const isSaving = savingSection === section;
+
+    return (
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          disabled={savingSection !== null}
+          className="px-5 py-3 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isSaving ? "Saving..." : sectionSaveLabels[section]}
+        </button>
+      </div>
+    );
   };
 
-  const moveLinkDown = (index: number) => {
-    if (index === navLinks.length - 1) return;
-    const updated = [...navLinks];
-    const temp = updated[index];
-    updated[index] = updated[index + 1];
-    updated[index + 1] = temp;
-    setNavLinks(updated);
-  };
-
-  const handleLinkFieldChange = (index: number, field: keyof NavLink, value: string) => {
-    const updated = [...navLinks];
-    updated[index] = {
-      ...updated[index],
-      [field]: value
-    };
-    setNavLinks(updated);
-  };
-
-  const deleteNavLink = (index: number) => {
-    if (!confirm("Are you sure you want to delete this menu link?")) return;
-    const updated = navLinks.filter((_, idx) => idx !== index);
-    setNavLinks(updated);
-  };
-
-  const addNewNavLink = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newLink.nameEn.trim() || !newLink.nameBn.trim() || !newLink.href.trim()) {
-      toast("Please fill in all menu item fields.");
-      return;
-    }
-    setNavLinks([...navLinks, newLink]);
-    setNewLink({ nameEn: "", nameBn: "", href: "" });
-  };
+  const tabs: { id: SectionId; label: string; icon: typeof Menu }[] = [
+    { id: "topbar", label: "Topbar", icon: Menu },
+    { id: "brand-license", label: "Brand License", icon: Info },
+    { id: "contact-info", label: "Contact Info", icon: Mail },
+    { id: "affiliations", label: "Affiliations", icon: Building },
+    { id: "social-link", label: "Social Link", icon: Globe },
+    { id: "btrc-tariff", label: "BTRC Approved Tariff", icon: Upload },
+  ];
 
   // Badge order handlers
   const moveBadgeUp = (index: number) => {
@@ -401,10 +434,15 @@ export default function TopbarFooterPage() {
 
   const handleBadgeFieldChange = (index: number, field: keyof AffiliationBadge, value: string | boolean) => {
     const updated = [...badges];
-    updated[index] = {
+    const nextBadge = {
       ...updated[index],
       [field]: value
     } as AffiliationBadge;
+    if (field === "image" && typeof value === "string" && value.trim()) {
+      nextBadge.textEn = nextBadge.textEn.trim() || imageBadgeFallbackText;
+      nextBadge.textBn = nextBadge.textBn.trim() || imageBadgeFallbackText;
+    }
+    updated[index] = nextBadge;
     setBadges(updated);
   };
 
@@ -416,15 +454,16 @@ export default function TopbarFooterPage() {
 
   const addNewBadge = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBadge.textEn.trim() || !newBadge.textBn.trim()) {
+    const image = newBadge.image?.trim() ? newBadge.image.trim() : undefined;
+    if (!image && (!newBadge.textEn.trim() || !newBadge.textBn.trim())) {
       toast("Please fill in both English and Bangla text fields.");
       return;
     }
     const badgeToAppend: AffiliationBadge = {
-      textEn: newBadge.textEn,
-      textBn: newBadge.textBn,
+      textEn: newBadge.textEn.trim() || imageBadgeFallbackText,
+      textBn: newBadge.textBn.trim() || imageBadgeFallbackText,
       isCyan: newBadge.isCyan,
-      image: newBadge.image?.trim() ? newBadge.image.trim() : undefined
+      image
     };
     setBadges([...badges, badgeToAppend]);
     setNewBadge({ textEn: "", textBn: "", isCyan: false, image: "" });
@@ -451,10 +490,15 @@ export default function TopbarFooterPage() {
 
   const handleLicenseFieldChange = (index: number, field: keyof LicenseBadge, value: string | boolean) => {
     const updated = [...licenses];
-    updated[index] = {
+    const nextLicense = {
       ...updated[index],
       [field]: value
     } as LicenseBadge;
+    if (field === "image" && typeof value === "string" && value.trim()) {
+      nextLicense.textEn = nextLicense.textEn.trim() || imageBadgeFallbackText;
+      nextLicense.textBn = nextLicense.textBn.trim() || imageBadgeFallbackText;
+    }
+    updated[index] = nextLicense;
     setLicenses(updated);
   };
 
@@ -466,11 +510,21 @@ export default function TopbarFooterPage() {
 
   const addNewLicense = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newLicense.textEn.trim() || !newLicense.textBn.trim()) {
+    const image = newLicense.image?.trim() ? newLicense.image.trim() : undefined;
+    if (!image && (!newLicense.textEn.trim() || !newLicense.textBn.trim())) {
       toast("Please fill in both English and Bangla text fields.");
       return;
     }
-    setLicenses([...licenses, newLicense]);
+    setLicenses([
+      ...licenses,
+      {
+        textEn: newLicense.textEn.trim() || imageBadgeFallbackText,
+        textBn: newLicense.textBn.trim() || imageBadgeFallbackText,
+        isMono: newLicense.isMono,
+        colorStyle: newLicense.colorStyle,
+        image,
+      },
+    ]);
     setNewLicense({ textEn: "", textBn: "", isMono: false, colorStyle: "cyan", image: "" });
   };
 
@@ -485,14 +539,7 @@ export default function TopbarFooterPage() {
 
       {/* Tabs list (Consolidated to only 6 tabs as requested) */}
       <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none">
-        {[
-          { id: "topbar", label: "Topbar", icon: Menu },
-          { id: "brand-license", label: "Brand License", icon: Info },
-          { id: "contact-info", label: "Contact Info", icon: Mail },
-          { id: "affiliations", label: "Affiliations", icon: Building },
-          { id: "social-link", label: "Social Link", icon: Globe },
-          { id: "btrc-tariff", label: "BTRC Approved Tariff", icon: Upload }
-        ].map((tab) => {
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeSection === tab.id;
           return (
@@ -513,7 +560,7 @@ export default function TopbarFooterPage() {
         })}
       </div>
 
-      <form onSubmit={saveAllConfigurations} className="space-y-6 w-full">
+      <form onSubmit={saveCurrentSection} className="space-y-6 w-full">
         
         {/* Tab 1: Header Topbar Editor */}
         {activeSection === "topbar" && (
@@ -547,154 +594,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Legacy Header Menu Editor */}
-        {activeSection === "topbar" && (
-          <div className="space-y-6">
-            {/* Menu Items Table */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
-                    <th className="px-4 py-3 w-16 text-center">Order</th>
-                    <th className="px-4 py-3">English Label</th>
-                    <th className="px-4 py-3">Bangla Label</th>
-                    <th className="px-4 py-3 w-48">Target URL path (href)</th>
-                    <th className="px-4 py-3 w-20 text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-150">
-                  {navLinks.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="py-8 text-center text-slate-400 font-semibold">No menu links configured. Add one below.</td>
-                    </tr>
-                  ) : (
-                    navLinks.map((link, idx) => (
-                      <tr key={idx} className="hover:bg-slate-50/50">
-                        {/* Order buttons */}
-                        <td className="px-4 py-2.5 text-center flex items-center justify-center gap-1.5 mt-0.5">
-                          <button
-                            type="button"
-                            onClick={() => moveLinkUp(idx)}
-                            disabled={idx === 0}
-                            className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                              idx === 0 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                            }`}
-                            title="Move Up"
-                          >
-                            <ArrowUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => moveLinkDown(idx)}
-                            disabled={idx === navLinks.length - 1}
-                            className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                              idx === navLinks.length - 1 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                            }`}
-                            title="Move Down"
-                          >
-                            <ArrowDown className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-
-                        {/* English Label Input */}
-                        <td className="px-4 py-2.5">
-                          <input
-                            type="text"
-                            value={link.nameEn}
-                            onChange={(e) => handleLinkFieldChange(idx, "nameEn", e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                            required
-                          />
-                        </td>
-
-                        {/* Bangla Label Input */}
-                        <td className="px-4 py-2.5">
-                          <input
-                            type="text"
-                            value={link.nameBn}
-                            onChange={(e) => handleLinkFieldChange(idx, "nameBn", e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                            required
-                          />
-                        </td>
-
-                        {/* Target URL Input */}
-                        <td className="px-4 py-2.5">
-                          <input
-                            type="text"
-                            value={link.href}
-                            onChange={(e) => handleLinkFieldChange(idx, "href", e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-mono text-[11px]"
-                            required
-                          />
-                        </td>
-
-                        {/* Delete Action */}
-                        <td className="px-4 py-2.5 text-center">
-                          <button
-                            type="button"
-                            onClick={() => deleteNavLink(idx)}
-                            className="p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg cursor-pointer"
-                            title="Delete Item"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Quick Add Menu Item Form */}
-            <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-3">
-              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
-                <Plus className="w-4 h-4 text-brand-blue" /> Add Menu Item
-              </span>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block">English Label</label>
-                  <input
-                    type="text"
-                    value={newLink.nameEn}
-                    onChange={(e) => setNewLink({ ...newLink, nameEn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    placeholder="e.g. Services"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block">Bangla Label</label>
-                  <input
-                    type="text"
-                    value={newLink.nameBn}
-                    onChange={(e) => setNewLink({ ...newLink, nameBn: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                    placeholder="e.g. সেবাসমূহ"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block">Target URL (href)</label>
-                  <input
-                    type="text"
-                    value={newLink.href}
-                    onChange={(e) => setNewLink({ ...newLink, href: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue font-mono"
-                    placeholder="e.g. /services"
-                  />
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={addNewNavLink}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-[10px] uppercase tracking-wider transition-all cursor-pointer select-none active:scale-[0.97] shadow-xs"
-              >
-                <Plus className="w-3.5 h-3.5" /> Append Item
-              </button>
-            </div>
+            {renderSectionSaveButton("topbar")}
           </div>
         )}
 
@@ -761,24 +661,36 @@ export default function TopbarFooterPage() {
 
                             {/* English Label */}
                             <td className="px-4 py-2">
-                              <input
-                                type="text"
-                                value={lic.textEn}
-                                onChange={(e) => handleLicenseFieldChange(idx, "textEn", e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                required
-                              />
+                              {lic.image ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                  Image badge
+                                </span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={lic.textEn}
+                                  onChange={(e) => handleLicenseFieldChange(idx, "textEn", e.target.value)}
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                                  required
+                                />
+                              )}
                             </td>
 
                             {/* Bangla Label */}
                             <td className="px-4 py-2">
-                              <input
-                                type="text"
-                                value={lic.textBn}
-                                onChange={(e) => handleLicenseFieldChange(idx, "textBn", e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                required
-                              />
+                              {lic.image ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                  Image badge
+                                </span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={lic.textBn}
+                                  onChange={(e) => handleLicenseFieldChange(idx, "textBn", e.target.value)}
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                                  required
+                                />
+                              )}
                             </td>
 
                             {/* Badge Image Upload & Preview */}
@@ -883,7 +795,9 @@ export default function TopbarFooterPage() {
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
                     <Plus className="w-4 h-4 text-brand-blue" /> Add License/Status Badge
                   </span>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                  <div className={newLicense.image ? "grid grid-cols-1 md:grid-cols-3 gap-4 items-center" : "grid grid-cols-1 md:grid-cols-5 gap-4 items-center"}>
+                    {!newLicense.image && (
+                      <>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500 uppercase block">English Text</label>
                       <input
@@ -904,6 +818,8 @@ export default function TopbarFooterPage() {
                         placeholder="e.g. বিটিআরসি অনুমোদিত"
                       />
                     </div>
+                      </>
+                    )}
                     
                     {/* Badge Image Upload & Preview */}
                     <div className="space-y-1">
@@ -992,6 +908,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+            {renderSectionSaveButton("brand-license")}
           </div>
         )}
 
@@ -1060,7 +977,31 @@ export default function TopbarFooterPage() {
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Address (English)</label>
+                  <textarea
+                    value={footerContent.addressEn}
+                    onChange={(e) => setFooterContent({ ...footerContent, addressEn: e.target.value })}
+                    className="min-h-24 w-full resize-y bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-brand-blue leading-relaxed"
+                    placeholder="e.g. House No. 68, Kadomtoli, Aganagar..."
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Address (Bangla)</label>
+                  <textarea
+                    value={footerContent.addressBn}
+                    onChange={(e) => setFooterContent({ ...footerContent, addressBn: e.target.value })}
+                    className="min-h-24 w-full resize-y bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-brand-blue leading-relaxed"
+                    placeholder="যেমন: বাসা নং ৬৮, কদমতলী, আগানগর..."
+                    required
+                  />
+                </div>
+              </div>
             </div>
+            {renderSectionSaveButton("contact-info")}
           </div>
         )}
 
@@ -1126,24 +1067,36 @@ export default function TopbarFooterPage() {
 
                             {/* English Label */}
                             <td className="px-4 py-2">
-                              <input
-                                type="text"
-                                value={badge.textEn}
-                                onChange={(e) => handleBadgeFieldChange(idx, "textEn", e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                required
-                              />
+                              {badge.image ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                  Image badge
+                                </span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={badge.textEn}
+                                  onChange={(e) => handleBadgeFieldChange(idx, "textEn", e.target.value)}
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                                  required
+                                />
+                              )}
                             </td>
 
                             {/* Bangla Label */}
                             <td className="px-4 py-2">
-                              <input
-                                type="text"
-                                value={badge.textBn}
-                                onChange={(e) => handleBadgeFieldChange(idx, "textBn", e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                required
-                              />
+                              {badge.image ? (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                  Image badge
+                                </span>
+                              ) : (
+                                <input
+                                  type="text"
+                                  value={badge.textBn}
+                                  onChange={(e) => handleBadgeFieldChange(idx, "textBn", e.target.value)}
+                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                                  required
+                                />
+                              )}
                             </td>
 
                             {/* Image Preview & Upload (No raw text input box) */}
@@ -1235,7 +1188,9 @@ export default function TopbarFooterPage() {
                   <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
                     <Plus className="w-4 h-4 text-brand-blue" /> Add Affiliation Badge
                   </span>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                  <div className={newBadge.image ? "grid grid-cols-1 md:grid-cols-2 gap-4 items-center" : "grid grid-cols-1 md:grid-cols-4 gap-4 items-center"}>
+                    {!newBadge.image && (
+                      <>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500 uppercase block">English Fallback</label>
                       <input
@@ -1256,6 +1211,8 @@ export default function TopbarFooterPage() {
                         placeholder="e.g. আইএসপিএবি সদস্য"
                       />
                     </div>
+                      </>
+                    )}
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500 uppercase block">Badge Image</label>
                       <div className="flex items-center gap-3 mt-1.5">
@@ -1332,6 +1289,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+            {renderSectionSaveButton("affiliations")}
           </div>
         )}
 
@@ -1399,6 +1357,7 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+            {renderSectionSaveButton("social-link")}
           </div>
         )}
 
@@ -1433,15 +1392,9 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+            {renderSectionSaveButton("btrc-tariff")}
           </div>
         )}
-
-        <button
-          type="submit"
-          className="px-5 py-3 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md transition-all active:scale-[0.98]"
-        >
-          Save Configurations
-        </button>
       </form>
     </div>
   );

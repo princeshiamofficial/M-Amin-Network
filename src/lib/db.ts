@@ -1,29 +1,8 @@
 import mysql from 'mysql2/promise';
+import { createHash } from 'crypto';
+import pool, { DB_CHARSET, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, query } from './mysql';
 
-// Prevent multiple database pool allocations during Next.js hot-reloading
-const globalForDb = global as unknown as { pool: mysql.Pool };
-const DB_NAME = process.env.DB_NAME || 'm_amin_network';
-const DB_HOST = process.env.DB_HOST || '127.0.0.1';
-const DB_USER = process.env.DB_USER || 'root';
-const DB_PASSWORD = process.env.DB_PASSWORD || '';
-const DB_PORT = parseInt(process.env.DB_PORT || '3306', 10);
-const DB_CHARSET = 'utf8mb4';
-
-const pool = globalForDb.pool || mysql.createPool({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-  port: DB_PORT,
-  charset: DB_CHARSET,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForDb.pool = pool;
-}
+export { query };
 
 import { initWebSocketServer } from './wsServer';
 try {
@@ -33,9 +12,10 @@ try {
 }
 
 const TABLES_SCHEMAS: Record<string, string> = {
-  user: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `email` VARCHAR(255), `role` VARCHAR(255), `password_hash` VARCHAR(255), `_sort_order` DOUBLE",
-  users: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `role` VARCHAR(255), `email` VARCHAR(255), `lastLogin` VARCHAR(255), `_sort_order` DOUBLE",
-  admin_roles: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `description` TEXT, `pageAccess` LONGTEXT, `_sort_order` DOUBLE",
+  user: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `email` VARCHAR(255), `role` VARCHAR(255), `password_hash` VARCHAR(255), `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
+  user_roles: "`id` VARCHAR(50) PRIMARY KEY, `name` VARCHAR(100) NOT NULL, `color` VARCHAR(20) DEFAULT '#6b7280', `is_default` BOOLEAN DEFAULT FALSE, `priority` INT DEFAULT 0, `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
+  users: "`id` VARCHAR(255) PRIMARY KEY, `username` VARCHAR(255), `name` VARCHAR(255), `role` VARCHAR(255), `role_id` VARCHAR(255), `email` VARCHAR(255), `lastLogin` VARCHAR(255), `status` VARCHAR(255), `avatarUrl` TEXT, `avatar_url` TEXT, `password` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `companyName` VARCHAR(255), `company_name` VARCHAR(255), `is_banned` BOOLEAN DEFAULT FALSE, `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
+  admin_roles: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `description` TEXT, `pageAccess` LONGTEXT, `color` VARCHAR(20), `is_default` BOOLEAN DEFAULT FALSE, `priority` INT DEFAULT 0, `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
   claims: "`id` VARCHAR(255) PRIMARY KEY, `name` VARCHAR(255), `phone` VARCHAR(255), `address` TEXT, `promoCode` VARCHAR(255), `promoTitle` VARCHAR(255), `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
   complaints: "`id` VARCHAR(255) PRIMARY KEY, `clientId` VARCHAR(255), `name` VARCHAR(255), `phone` VARCHAR(255), `category` VARCHAR(255), `desc` TEXT, `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
   tickets: "`id` VARCHAR(255) PRIMARY KEY, `clientId` VARCHAR(255), `name` VARCHAR(255), `phone` VARCHAR(255), `category` VARCHAR(255), `desc` TEXT, `date` VARCHAR(255), `status` VARCHAR(255), `_sort_order` DOUBLE",
@@ -69,6 +49,7 @@ const TABLES_SCHEMAS: Record<string, string> = {
   about_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `storyTitle` VARCHAR(255), `storyBody` TEXT, `_sort_order` DOUBLE",
   contact_content: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `subtitle` TEXT, `_sort_order` DOUBLE",
   complaint_content_guidelines: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `body` TEXT, `_sort_order` DOUBLE",
+  global_settings: "`id` VARCHAR(50) PRIMARY KEY, `settings_json` JSON NOT NULL, `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
   network_features: "`id` VARCHAR(255) PRIMARY KEY, `titleEn` VARCHAR(255), `titleBn` VARCHAR(500), `descEn` TEXT, `descBn` TEXT, `iconName` VARCHAR(255), `_sort_order` DOUBLE",
   page_headers: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `packages_bg` VARCHAR(500), `packages_title_en` VARCHAR(255), `packages_title_bn` VARCHAR(255), `packages_title_highlight_en` VARCHAR(255), `packages_title_highlight_bn` VARCHAR(255), `packages_subtitle_en` TEXT, `packages_subtitle_bn` TEXT, `offers_bg` VARCHAR(500), `offers_title_en` VARCHAR(255), `offers_title_bn` VARCHAR(255), `offers_title_highlight_en` VARCHAR(255), `offers_title_highlight_bn` VARCHAR(255), `offers_subtitle_en` TEXT, `offers_subtitle_bn` TEXT, `coverage_bg` VARCHAR(500), `coverage_title_en` VARCHAR(255), `coverage_title_bn` VARCHAR(255), `coverage_title_highlight_en` VARCHAR(255), `coverage_title_highlight_bn` VARCHAR(255), `coverage_subtitle_en` TEXT, `coverage_subtitle_bn` TEXT, `multimedia_bg` VARCHAR(500), `multimedia_title_en` VARCHAR(255), `multimedia_title_bn` VARCHAR(255), `multimedia_title_highlight_en` VARCHAR(255), `multimedia_title_highlight_bn` VARCHAR(255), `multimedia_subtitle_en` TEXT, `multimedia_subtitle_bn` TEXT, `careers_bg` VARCHAR(500), `careers_title_en` VARCHAR(255), `careers_title_bn` VARCHAR(255), `careers_title_highlight_en` VARCHAR(255), `careers_title_highlight_bn` VARCHAR(255), `careers_subtitle_en` TEXT, `careers_subtitle_bn` TEXT, `_sort_order` DOUBLE"
 };
@@ -77,9 +58,13 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   user: [
     { id: "USR-1", username: "admin", email: "admin@mamin.net", role: "Super Administrator", password_hash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", _sort_order: 0 }
   ],
+  user_roles: [
+    { id: "ROLE-1", name: "Super Administrator", color: "#3b82f6", is_default: true, priority: 0, _sort_order: 0 },
+    { id: "ROLE-2", name: "Support Staff", color: "#10b981", is_default: true, priority: 1, _sort_order: 1 }
+  ],
   users: [
-    { id: "USR-1", username: "admin", role: "Super Administrator", email: "admin@maminnetwork.test", lastLogin: "7/3/2026, 10:30 AM", _sort_order: 0 },
-    { id: "USR-2", username: "moderator_support", role: "Support Staff", email: "support@maminnetwork.test", lastLogin: "7/2/2026, 04:15 PM", _sort_order: 1 }
+    { id: "USR-1", username: "admin", name: "admin", role: "Super Administrator", role_id: "ROLE-1", email: "admin@maminnetwork.test", lastLogin: "7/3/2026, 10:30 AM", status: "Active", avatarUrl: "", avatar_url: "", password: "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8", phone: "", address: "", companyName: "Color Hut", company_name: "Color Hut", is_banned: false, _sort_order: 0 },
+    { id: "USR-2", username: "moderator_support", name: "moderator_support", role: "Support Staff", role_id: "ROLE-2", email: "support@maminnetwork.test", lastLogin: "7/2/2026, 04:15 PM", status: "Active", avatarUrl: "", avatar_url: "", password: "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8", phone: "", address: "", companyName: "Color Hut", company_name: "Color Hut", is_banned: false, _sort_order: 1 }
   ],
   admin_roles: [
     { id: "ROLE-1", name: "Super Administrator", description: "Full dashboard access with all management permissions.", pageAccess: "[]", _sort_order: 0 },
@@ -266,6 +251,9 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
   complaint_content_guidelines: [
     { title: "BTRC Internet Complaint Desk", body: "Under BTRC guidelines, you can report direct splicing issues or SLA dispute reports to our NOC team for instant resolving.", _sort_order: 0 }
   ],
+  global_settings: [
+    { id: "main", settings_json: { appName: "M-Amin Network" }, _sort_order: 0 }
+  ],
   network_features: [
     { id: "nf-1", titleEn: "100% Fiber Optic (FTTH)", titleBn: "১০০% ফাইবার অপটিক (FTTH)", descEn: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.", descBn: "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।", iconName: "Zap", _sort_order: 0 },
     { id: "nf-2", titleEn: "Dedicated BGP Routing", titleBn: "ডেডিকেটেড বিজিপি রাউটিং", descEn: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.", descBn: "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।", iconName: "Wifi", _sort_order: 1 },
@@ -323,6 +311,14 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
 
 function quoteIdentifier(identifier: string): string {
   return `\`${identifier.replace(/`/g, "``")}\``;
+}
+
+function isSha256Hash(value: string): boolean {
+  return /^[a-f0-9]{64}$/i.test(value);
+}
+
+function hashPassword(password: string): string {
+  return createHash("sha256").update(password).digest("hex");
 }
 
 async function ensureDatabaseExists() {
@@ -421,6 +417,84 @@ async function seedTableIfEmpty(connection: mysql.PoolConnection, table: string,
   }
 }
 
+async function migrateManagedUserPasswords(connection: mysql.PoolConnection) {
+  const [columnsResult] = await connection.query<import('mysql2').RowDataPacket[]>(
+    `SHOW COLUMNS FROM ${quoteIdentifier("users")}`
+  );
+  const hasPasswordColumn = columnsResult.some(row => row.Field === "password");
+
+  if (!hasPasswordColumn) return;
+
+  const [rows] = await connection.query<import('mysql2').RowDataPacket[]>(
+    `SELECT ${quoteIdentifier("id")}, ${quoteIdentifier("password")} FROM ${quoteIdentifier("users")}`
+  );
+
+  for (const row of rows) {
+    const id = String(row.id || "");
+    const password = String(row.password || "");
+    if (!id || isSha256Hash(password)) continue;
+    if (!password && !["USR-1", "USR-2"].includes(id)) continue;
+
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("password")} = ? WHERE ${quoteIdentifier("id")} = ?`,
+      [hashPassword(password || "password"), id]
+    );
+  }
+}
+
+async function migrateManagedUserCompatibilityColumns(connection: mysql.PoolConnection) {
+  const [columnsResult] = await connection.query<import('mysql2').RowDataPacket[]>(
+    `SHOW COLUMNS FROM ${quoteIdentifier("users")}`
+  );
+  const columns = new Set(columnsResult.map(row => String(row.Field)));
+  const has = (column: string) => columns.has(column);
+
+  if (has("username") && has("name")) {
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("name")} = ${quoteIdentifier("username")} WHERE (${quoteIdentifier("name")} IS NULL OR ${quoteIdentifier("name")} = '') AND ${quoteIdentifier("username")} IS NOT NULL AND ${quoteIdentifier("username")} <> ''`
+    );
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("username")} = ${quoteIdentifier("name")} WHERE (${quoteIdentifier("username")} IS NULL OR ${quoteIdentifier("username")} = '') AND ${quoteIdentifier("name")} IS NOT NULL AND ${quoteIdentifier("name")} <> ''`
+    );
+  }
+
+  if (has("role") && has("role_id")) {
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("role_id")} = ${quoteIdentifier("role")} WHERE (${quoteIdentifier("role_id")} IS NULL OR ${quoteIdentifier("role_id")} = '') AND ${quoteIdentifier("role")} IS NOT NULL AND ${quoteIdentifier("role")} <> ''`
+    );
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("role")} = ${quoteIdentifier("role_id")} WHERE (${quoteIdentifier("role")} IS NULL OR ${quoteIdentifier("role")} = '') AND ${quoteIdentifier("role_id")} IS NOT NULL AND ${quoteIdentifier("role_id")} <> ''`
+    );
+  }
+
+  if (has("companyName") && has("company_name")) {
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("company_name")} = ${quoteIdentifier("companyName")} WHERE (${quoteIdentifier("company_name")} IS NULL OR ${quoteIdentifier("company_name")} = '') AND ${quoteIdentifier("companyName")} IS NOT NULL AND ${quoteIdentifier("companyName")} <> ''`
+    );
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("companyName")} = ${quoteIdentifier("company_name")} WHERE (${quoteIdentifier("companyName")} IS NULL OR ${quoteIdentifier("companyName")} = '') AND ${quoteIdentifier("company_name")} IS NOT NULL AND ${quoteIdentifier("company_name")} <> ''`
+    );
+  }
+
+  if (has("avatarUrl") && has("avatar_url")) {
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("avatar_url")} = ${quoteIdentifier("avatarUrl")} WHERE (${quoteIdentifier("avatar_url")} IS NULL OR ${quoteIdentifier("avatar_url")} = '') AND ${quoteIdentifier("avatarUrl")} IS NOT NULL AND ${quoteIdentifier("avatarUrl")} <> ''`
+    );
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("avatarUrl")} = ${quoteIdentifier("avatar_url")} WHERE (${quoteIdentifier("avatarUrl")} IS NULL OR ${quoteIdentifier("avatarUrl")} = '') AND ${quoteIdentifier("avatar_url")} IS NOT NULL AND ${quoteIdentifier("avatar_url")} <> ''`
+    );
+  }
+
+  if (has("status") && has("is_banned")) {
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("status")} = CASE WHEN ${quoteIdentifier("is_banned")} = TRUE THEN 'Banned' ELSE 'Active' END WHERE ${quoteIdentifier("status")} IS NULL OR ${quoteIdentifier("status")} = ''`
+    );
+    await connection.query(
+      `UPDATE ${quoteIdentifier("users")} SET ${quoteIdentifier("is_banned")} = CASE WHEN ${quoteIdentifier("status")} = 'Banned' THEN TRUE ELSE FALSE END WHERE ${quoteIdentifier("status")} IS NOT NULL AND ${quoteIdentifier("status")} <> ''`
+    );
+  }
+}
+
 // Startup table schema auto-creation and seeding
 export const dbInitPromise = (async () => {
   try {
@@ -437,6 +511,9 @@ export const dbInitPromise = (async () => {
       for (const [table, items] of Object.entries(SEED_DATA)) {
         await seedTableIfEmpty(connection, table, items);
       }
+
+      await migrateManagedUserPasswords(connection);
+      await migrateManagedUserCompatibilityColumns(connection);
     } finally {
       connection.release();
     }

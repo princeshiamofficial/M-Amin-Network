@@ -13,35 +13,9 @@ interface FooterData {
   instagram: string;
   twitter: string;
   linkedin: string;
-  copyrightText: string;
-  copyrightTextBn: string;
-  aboutTextEn: string;
-  aboutTextBn: string;
-  asnText: string;
-  btrcTextEn: string;
-  btrcTextBn: string;
   addressEn: string;
   addressBn: string;
-  phone: string;
   email: string;
-  aff1En: string;
-  aff1Bn: string;
-  aff2En: string;
-  aff2Bn: string;
-  quickLinksTitleEn: string;
-  quickLinksTitleBn: string;
-  contactTitleEn: string;
-  contactTitleBn: string;
-  affiliationTitleEn: string;
-  affiliationTitleBn: string;
-  affiliationDescEn: string;
-  affiliationDescBn: string;
-  privacyTextEn: string;
-  privacyTextBn: string;
-  termsTextEn: string;
-  termsTextBn: string;
-  brandTextEn: string;
-  brandTextBn: string;
 }
 
 interface AffiliationBadge {
@@ -59,42 +33,35 @@ interface LicenseBadge {
   image?: string;
 }
 
+interface NavLink {
+  nameEn: string;
+  nameBn: string;
+  href: string;
+}
+
 const defaultFooterData: FooterData = {
   facebook: "https://facebook.com/maminnetwork",
   youtube: "https://youtube.com/maminnetwork",
   instagram: "https://instagram.com/maminnetwork",
   twitter: "https://x.com/maminnetwork",
   linkedin: "https://linkedin.com/company/maminnetwork",
-  copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
-  copyrightTextBn: "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।",
-  aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
-  aboutTextBn: "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।",
-  asnText: "AS150164",
-  btrcTextEn: "BTRC Licensed",
-  btrcTextBn: "বিটিআরসি অনুমোদিত",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
   addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
-  phone: "+880 1707-009267",
   email: "info@m-aminnetwork.com",
-  aff1En: "ISPAB MEMBER",
-  aff1Bn: "আইএসপিএবি সদস্য",
-  aff2En: "AS150164 BGP NETWORK",
-  aff2Bn: "AS150164 বিজিপি নেটওয়ার্ক",
-  quickLinksTitleEn: "Quick Links",
-  quickLinksTitleBn: "কুইক লিংক",
-  contactTitleEn: "Contact Info",
-  contactTitleBn: "যোগাযোগ",
-  affiliationTitleEn: "Our Affiliations",
-  affiliationTitleBn: "আমাদের অধিভুক্তি",
-  affiliationDescEn: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
-  affiliationDescBn: "আমরা ইন্টারনেট সার্ভিস প্রোভাইডার অ্যাসোসিয়েশন অব বাংলাদেশ (ISPAB)-এর একজন গর্বিত ও সক্রিয় সদস্য।",
-  privacyTextEn: "Privacy Policy",
-  privacyTextBn: "গোপনীয়তা নীতি",
-  termsTextEn: "Terms of Service",
-  termsTextBn: "ব্যবহারের শর্তাবলী",
-  brandTextEn: "Keraniganj ISP",
-  brandTextBn: "কেরানীগঞ্জ আইএসপি"
 };
+
+const defaultNavLinks: NavLink[] = [
+  { nameEn: "Home", nameBn: "হোম", href: "/" },
+  { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
+  { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
+  { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
+  { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
+  { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
+  { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
+  { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
+  { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
+  { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+];
 
 const defaultBadges: AffiliationBadge[] = [
   { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
@@ -107,6 +74,45 @@ const defaultLicenses: LicenseBadge[] = [
 ];
 
 const defaultPhones = ["+880 1707-009267"];
+const imageBadgeFallbackText = "Image Badge";
+
+function textValue(value: unknown, fallback: string): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function normalizeFooterData(value: unknown): FooterData {
+  const record = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+
+  return {
+    facebook: textValue(record.facebook, defaultFooterData.facebook),
+    youtube: textValue(record.youtube, defaultFooterData.youtube),
+    instagram: textValue(record.instagram, defaultFooterData.instagram),
+    twitter: textValue(record.twitter, defaultFooterData.twitter),
+    linkedin: textValue(record.linkedin, defaultFooterData.linkedin),
+    addressEn: textValue(record.addressEn, defaultFooterData.addressEn),
+    addressBn: textValue(record.addressBn, defaultFooterData.addressBn),
+    email: textValue(record.email, defaultFooterData.email),
+  };
+}
+
+function normalizeAffiliationBadge(value: unknown): AffiliationBadge {
+  const record = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const textEn = textValue(record.textEn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
+  const textBn = textValue(record.textBn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
+  const savedImage = textValue(record.image, "").trim();
+  const shouldUseDefaultIspabImage = textEn.toUpperCase().includes("ISPAB") && !savedImage;
+
+  return {
+    textEn,
+    textBn,
+    isCyan: record.isCyan === true,
+    image: savedImage || (shouldUseDefaultIspabImage ? "/ispab.jpeg" : undefined),
+  };
+}
 
 type LogoVariant = "horizontal" | "square";
 
@@ -159,16 +165,14 @@ export default function Footer() {
   const [licenses, setLicenses] = React.useState<LicenseBadge[]>(defaultLicenses);
   const [phones, setPhones] = React.useState<string[]>(defaultPhones);
   const [siteLogo, setSiteLogo] = React.useState<string>("/logo.png");
+  const [linksList, setLinksList] = React.useState<NavLink[]>(defaultNavLinks);
 
   React.useEffect(() => {
     async function loadFooterSettings() {
       try {
         const saved = await getSetting("footer_content");
         if (saved) {
-          setFooterData(prev => ({
-            ...prev,
-            ...(saved as unknown as Partial<FooterData>)
-          }));
+          setFooterData(normalizeFooterData(saved));
         }
       } catch (e) {
         console.error("Error loading footer configuration:", e);
@@ -185,13 +189,7 @@ export default function Footer() {
       try {
         const savedBadges = await getSetting("footer_badges");
         if (savedBadges && Array.isArray(savedBadges) && savedBadges.length > 0) {
-          const migrated = (savedBadges as unknown as AffiliationBadge[]).map((badge) => {
-            if (badge.textEn === "ISPAB MEMBER" && !badge.image) {
-              return { ...badge, image: "/ispab.jpeg" };
-            }
-            return badge;
-          });
-          setBadges(migrated);
+          setBadges(savedBadges.map(normalizeAffiliationBadge));
         }
       } catch (e) {
         console.error("Error loading badges configuration:", e);
@@ -221,11 +219,26 @@ export default function Footer() {
       } catch (e) {
         console.error("Error loading phones configuration:", e);
       }
+
+      try {
+        const savedLinks = await getSetting("nav_links");
+        if (savedLinks && Array.isArray(savedLinks) && savedLinks.length > 0) {
+          setLinksList(savedLinks as NavLink[]);
+        }
+      } catch {
+        // Fallback to defaultNavLinks
+      }
     }
     loadFooterSettings();
   }, []);
 
   if (pathname?.startsWith("/admin")) return null;
+
+  const totalLinks = linksList.length;
+  const itemsPerCol = Math.ceil(totalLinks / 3);
+  const col1 = linksList.slice(0, itemsPerCol);
+  const col2 = linksList.slice(itemsPerCol, itemsPerCol * 2);
+  const col3 = linksList.slice(itemsPerCol * 2);
 
   return (
     <footer
@@ -360,43 +373,22 @@ export default function Footer() {
             </h3>
             <div className="grid grid-cols-3 gap-2 text-sm">
               <ul className="space-y-3">
-                <li>
-                  <Link href="/" className="hover:text-brand-cyan transition-colors">
-                    {t("Home", "হোম")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/packages" className="hover:text-brand-cyan transition-colors">
-                    {t("Packages", "প্যাকেজ")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="hover:text-brand-cyan transition-colors">
-                    {t("About", "আমাদের সম্পর্কে")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/offers" className="hover:text-brand-cyan transition-colors">
-                    {t("Offers", "অফার")}
-                  </Link>
-                </li>
+                {col1.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                      {t(link.nameEn, link.nameBn)}
+                    </Link>
+                  </li>
+                ))}
               </ul>
               <ul className="space-y-3">
-                <li>
-                  <Link href="/coverage" className="hover:text-brand-cyan transition-colors">
-                    {t("Coverage", "কাভারেজ")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/multimedia" className="hover:text-brand-cyan transition-colors">
-                    {t("Multimedia", "মাল্টিমিডিয়া")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/bill-payment" className="hover:text-brand-cyan transition-colors">
-                    {t("Pay Bill", "বিল পরিশোধ")}
-                  </Link>
-                </li>
+                {col2.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                      {t(link.nameEn, link.nameBn)}
+                    </Link>
+                  </li>
+                ))}
                 <li>
                   <a href="/btrc-tariff.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors whitespace-nowrap">
                     {t("BTRC Approved Tariff", "বিটিআরসি অনুমোদিত ট্যারিফ")}
@@ -404,21 +396,13 @@ export default function Footer() {
                 </li>
               </ul>
               <ul className="space-y-3">
-                <li>
-                  <Link href="/contact" className="hover:text-brand-cyan transition-colors">
-                    {t("Contact", "যোগাযোগ")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/complain" className="hover:text-brand-cyan transition-colors">
-                    {t("Complain", "অভিযোগ")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/careers" className="hover:text-brand-cyan transition-colors">
-                    {t("Careers", "ক্যারিয়ার")}
-                  </Link>
-                </li>
+                {col3.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                      {t(link.nameEn, link.nameBn)}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -449,7 +433,7 @@ export default function Footer() {
                   />
                 </svg>
                 <span>
-                  {t("House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.", "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।")}
+                  {t(footerData.addressEn, footerData.addressBn)}
                 </span>
               </li>
               {phones.map((phone, idx) => (
@@ -508,14 +492,13 @@ export default function Footer() {
               {badges.map((badge, idx) => {
                 if (badge.image) {
                   return (
-                    <div key={idx} className="flex justify-center md:justify-start items-center">
+                    <div key={idx} className="p-2.5 rounded-lg bg-white/95 border border-brand-border text-center flex items-center justify-center min-h-[50px] w-full max-w-[180px] overflow-hidden">
                       <Image
                         src={badge.image}
                         alt={badge.textEn}
-                        width={140}
-                        height={45}
-                        style={{ width: "auto", height: "auto" }}
-                        className="max-h-[45px] object-contain brightness-95 hover:brightness-100 transition-all duration-200"
+                        width={160}
+                        height={50}
+                        className="max-h-10 w-full object-contain"
                       />
                     </div>
                   );
