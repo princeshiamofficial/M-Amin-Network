@@ -183,7 +183,7 @@ export default function TopbarFooterPage() {
   const [badges, setBadges] = useState<AffiliationBadge[]>(defaultBadges);
   const [licenses, setLicenses] = useState<LicenseBadge[]>(defaultLicenses);
   const [phones, setPhones] = useState<string[]>(defaultPhones);
-  const [activeSection, setActiveSection] = useState("menu");
+  const [activeSection, setActiveSection] = useState("topbar");
   const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   // New item form states
@@ -483,11 +483,15 @@ export default function TopbarFooterPage() {
         <p className="text-xs text-slate-500 mt-1">Configure layout badges, contacts, social presence, header navigation, and copyright variables dynamically.</p>
       </div>
 
-      {/* Tabs list (Consolidated to only 2 tabs as requested) */}
+      {/* Tabs list (Consolidated to only 6 tabs as requested) */}
       <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none">
         {[
-          { id: "menu", label: "Header", icon: Menu },
-          { id: "footer", label: "Footer Section", icon: Building }
+          { id: "topbar", label: "Topbar", icon: Menu },
+          { id: "brand-license", label: "Brand License", icon: Info },
+          { id: "contact-info", label: "Contact Info", icon: Mail },
+          { id: "affiliations", label: "Affiliations", icon: Building },
+          { id: "social-link", label: "Social Link", icon: Globe },
+          { id: "btrc-tariff", label: "BTRC Approved Tariff", icon: Upload }
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeSection === tab.id;
@@ -512,7 +516,7 @@ export default function TopbarFooterPage() {
       <form onSubmit={saveAllConfigurations} className="space-y-6 w-full">
         
         {/* Tab 1: Header Topbar Editor */}
-        {activeSection === "menu" && (
+        {activeSection === "topbar" && (
           <div className="space-y-6">
             <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-3">
               <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
@@ -547,7 +551,7 @@ export default function TopbarFooterPage() {
         )}
 
         {/* Legacy Header Menu Editor */}
-        {activeSection === "legacy-menu" && (
+        {activeSection === "topbar" && (
           <div className="space-y-6">
             {/* Menu Items Table */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
@@ -694,8 +698,8 @@ export default function TopbarFooterPage() {
           </div>
         )}
 
-        {/* Tab 2: Footer Section */}
-        {activeSection === "footer" && (
+        {/* Tab 2: Brand License */}
+        {activeSection === "brand-license" && (
           <div className="space-y-6 w-full animate-fade-in">
             
             {/* Section A: Brand & Badges */}
@@ -988,6 +992,12 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Tab 3: Contact Info */}
+        {activeSection === "contact-info" && (
+          <div className="space-y-6 w-full animate-fade-in">
 
             {/* Section C: Contacts & Location */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
@@ -1051,6 +1061,12 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Tab 4: Affiliations */}
+        {activeSection === "affiliations" && (
+          <div className="space-y-6 w-full animate-fade-in">
 
             {/* Section D: Affiliations & Membership */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
@@ -1316,11 +1332,16 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
 
+        {/* Tab 5: Social Link */}
+        {activeSection === "social-link" && (
+          <div className="space-y-6 w-full animate-fade-in">
             {/* Section E: Social & BTRC */}
             <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Globe className="w-4 h-4 text-brand-blue" /> Footer Social Links &amp; BTRC Approved Tariff
+                <Globe className="w-4 h-4 text-brand-blue" /> Footer Social Links
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
@@ -1377,31 +1398,38 @@ export default function TopbarFooterPage() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        )}
 
-              <div className="space-y-4 pt-4 border-t border-slate-100 animate-fade-in">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-800 block">BTRC Regulatory Documents</span>
-                <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                      <span className="text-xs font-bold text-slate-800 block">BTRC Approved Tariff Plan PDF</span>
-                      <span className="text-[10px] text-slate-400 block font-medium">Upload the official regulatory PDF document to serve on the website footer link.</span>
-                    </div>
-                    <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-655 cursor-pointer transition-all active:scale-95 shadow-sm">
-                      {isUploadingPdf ? (
-                        <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <Upload className="w-4 h-4" />
-                      )}
-                      <span>{isUploadingPdf ? "Uploading PDF..." : "Upload Tariff PDF"}</span>
-                      <input
-                        type="file"
-                        accept="application/pdf"
-                        className="hidden"
-                        onChange={handlePdfUpload}
-                        disabled={isUploadingPdf}
-                      />
-                    </label>
+        {/* Tab 6: BTRC Approved Tariff */}
+        {activeSection === "btrc-tariff" && (
+          <div className="space-y-6 w-full animate-fade-in">
+            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
+                <Upload className="w-4 h-4 text-brand-blue" /> BTRC Regulatory Documents
+              </h3>
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div>
+                    <span className="text-xs font-bold text-slate-800 block">BTRC Approved Tariff Plan PDF</span>
+                    <span className="text-[10px] text-slate-400 block font-medium">Upload the official regulatory PDF document to serve on the website footer link.</span>
                   </div>
+                  <label className="flex items-center justify-center gap-1.5 px-4 py-2 border border-slate-200 rounded-xl bg-slate-50 hover:bg-slate-100 text-xs font-bold text-slate-655 cursor-pointer transition-all active:scale-95 shadow-sm">
+                    {isUploadingPdf ? (
+                      <div className="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Upload className="w-4 h-4" />
+                    )}
+                    <span>{isUploadingPdf ? "Uploading PDF..." : "Upload Tariff PDF"}</span>
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={handlePdfUpload}
+                      disabled={isUploadingPdf}
+                    />
+                  </label>
                 </div>
               </div>
             </div>
