@@ -8,6 +8,8 @@ import Image from "next/image";
 import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting, isAdminAuthenticated } from "@/actions/content";
 
 type LogoVariant = "horizontal" | "square";
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 16;
 
 const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string | null => {
   const preferredKey = variant === "square" ? "squareUrl" : "horizontalUrl";
@@ -145,6 +147,16 @@ export default function AdminDashboard() {
 
     if (newPassword !== confirmPassword) {
       setLoginError("Passwords do not match. Please verify.");
+      setIsSubmitting(false);
+      return;
+    }
+    if (newPassword.length < PASSWORD_MIN_LENGTH) {
+      setLoginError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`);
+      setIsSubmitting(false);
+      return;
+    }
+    if (newPassword.length > PASSWORD_MAX_LENGTH) {
+      setLoginError(`Password cannot be more than ${PASSWORD_MAX_LENGTH} characters long.`);
       setIsSubmitting(false);
       return;
     }
@@ -437,8 +449,9 @@ export default function AdminDashboard() {
                     type="password"
                     required
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New Password"
+                    maxLength={PASSWORD_MAX_LENGTH}
+                    onChange={(e) => setNewPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
+                    placeholder="New Password (8-16 chars)"
                     className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
                   />
                 </div>
@@ -453,7 +466,8 @@ export default function AdminDashboard() {
                     type="password"
                     required
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    maxLength={PASSWORD_MAX_LENGTH}
+                    onChange={(e) => setConfirmPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
                     placeholder="Confirm New Password"
                     className="w-full bg-[#f3f4f6]/50 border border-[#e5e7eb]/45 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-[#8c94a0] focus:outline-none focus:bg-white focus:border-slate-350 focus:ring-1 focus:ring-slate-200 transition-all font-medium"
                   />

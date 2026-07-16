@@ -15,6 +15,8 @@ import {
 const ADMIN_SESSION_COOKIE = "admin_session";
 const LEGACY_ADMIN_SESSION_TOKEN = "secure_admin_logged_in_token_713";
 const ADMIN_SESSION_MAX_AGE = 60 * 60 * 2;
+const ADMIN_PASSWORD_MIN_LENGTH = 8;
+const ADMIN_PASSWORD_MAX_LENGTH = 16;
 
 function createAdminSessionVersion(): string {
   return randomUUID();
@@ -268,8 +270,11 @@ export async function updateAdminAccountAction(input: {
       if (!passwordMatchesInput(savedAuth.password, currentPassword, currentHashed)) {
         return { success: false, error: "The current password you entered is incorrect." };
       }
-      if (newPassword.length < 8) {
-        return { success: false, error: "New password must be at least 8 characters long." };
+      if (newPassword.length < ADMIN_PASSWORD_MIN_LENGTH) {
+        return { success: false, error: `New password must be at least ${ADMIN_PASSWORD_MIN_LENGTH} characters long.` };
+      }
+      if (newPassword.length > ADMIN_PASSWORD_MAX_LENGTH) {
+        return { success: false, error: `New password cannot be more than ${ADMIN_PASSWORD_MAX_LENGTH} characters long.` };
       }
       updatedAuth.password = hashPasswordServer(newPassword);
       updatedAuth.lastPasswordChanged = new Date().toLocaleString();
@@ -581,7 +586,15 @@ export async function requestPasswordResetAction(emailInput: string): Promise<{ 
 export async function resetPasswordAction(emailInput: string, newPasswordInput: string): Promise<{ success: boolean; error?: string }> {
   try {
     const cleanEmail = emailInput.trim().toLowerCase();
-    const hashed = hashPasswordServer(newPasswordInput);
+    const newPassword = newPasswordInput.trim();
+    if (newPassword.length < ADMIN_PASSWORD_MIN_LENGTH) {
+      return { success: false, error: `Password must be at least ${ADMIN_PASSWORD_MIN_LENGTH} characters long.` };
+    }
+    if (newPassword.length > ADMIN_PASSWORD_MAX_LENGTH) {
+      return { success: false, error: `Password cannot be more than ${ADMIN_PASSWORD_MAX_LENGTH} characters long.` };
+    }
+
+    const hashed = hashPasswordServer(newPassword);
     
     // Check primary admin
     const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;

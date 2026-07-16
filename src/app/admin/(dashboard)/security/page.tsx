@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 16;
 
 export default function SecurityPage() {
   const router = useRouter();
@@ -48,16 +50,18 @@ export default function SecurityPage() {
 
 
   const getPasswordStrength = (pass: string) => {
-    if (!pass) return { score: 0, label: "Empty", color: "bg-slate-200", textColor: "text-slate-400" };
+    if (!pass) return { score: 0, label: "Empty", color: "bg-slate-200 w-0", textColor: "text-slate-400" };
     let score = 0;
-    if (pass.length >= 8) score++;
-    if (/[A-Z]/.test(pass)) score++;
+    if (pass.length >= PASSWORD_MIN_LENGTH) score++;
+    if (pass.length >= 12) score++;
+    if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score++;
     if (/[0-9]/.test(pass)) score++;
     if (/[^A-Za-z0-9]/.test(pass)) score++;
     
-    if (score <= 1) return { score, label: "Weak", color: "bg-red-500 w-1/3", textColor: "text-red-500" };
-    if (score <= 3) return { score, label: "Medium", color: "bg-amber-500 w-2/3", textColor: "text-amber-500" };
-    return { score, label: "Strong", color: "bg-emerald-500 w-full", textColor: "text-emerald-500" };
+    if (pass.length < PASSWORD_MIN_LENGTH || score <= 1) return { score, label: "Weak", color: "bg-red-500 w-1/4", textColor: "text-red-500" };
+    if (score <= 2) return { score, label: "Medium", color: "bg-amber-500 w-1/2", textColor: "text-amber-500" };
+    if (score <= 4) return { score, label: "Strong", color: "bg-emerald-500 w-3/4", textColor: "text-emerald-500" };
+    return { score, label: "Very Strong", color: "bg-emerald-600 w-full", textColor: "text-emerald-600" };
   };
 
   const strength = getPasswordStrength(newPassword);
@@ -78,8 +82,12 @@ export default function SecurityPage() {
           toast.error("New passwords do not match.");
           return;
         }
-        if (trimmedNewPassword.length < 8) {
-          toast.error("New password must be at least 8 characters long.");
+        if (trimmedNewPassword.length < PASSWORD_MIN_LENGTH) {
+          toast.error(`New password must be at least ${PASSWORD_MIN_LENGTH} characters long.`);
+          return;
+        }
+        if (trimmedNewPassword.length > PASSWORD_MAX_LENGTH) {
+          toast.error(`New password cannot be more than ${PASSWORD_MAX_LENGTH} characters long.`);
           return;
         }
       }
@@ -211,9 +219,10 @@ export default function SecurityPage() {
                   <input
                     type={showNewPassword ? "text" : "password"}
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    maxLength={PASSWORD_MAX_LENGTH}
+                    onChange={(e) => setNewPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
                     className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold transition-all"
-                    placeholder="At least 8 characters"
+                    placeholder="8-16 characters"
                   />
                   <button
                     type="button"
@@ -248,7 +257,8 @@ export default function SecurityPage() {
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    maxLength={PASSWORD_MAX_LENGTH}
+                    onChange={(e) => setConfirmPassword(e.target.value.slice(0, PASSWORD_MAX_LENGTH))}
                     className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-semibold transition-all"
                     placeholder="Re-type new password"
                   />
