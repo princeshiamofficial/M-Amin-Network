@@ -9,7 +9,7 @@ import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page
 
 interface MediaPortal {
   name: string;
-  category: "ftp" | "tv" | "torrent" | "gaming";
+  category: string;
   url: string;
   desc: string;
   speed: string;
@@ -22,9 +22,8 @@ export default function Multimedia() {
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
   const [headerData, setHeaderData] = useState<PageHeaderData>(defaultPageHeaders);
   const [portals, setPortals] = useState<MediaPortal[]>([]);
-  const [categories, setCategories] = useState<{ id: string; label: string }[]>([
-    { id: "all", label: "All" }
-  ]);
+  const [categories, setCategories] = useState<{ id: string; label: string }[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -41,11 +40,17 @@ export default function Multimedia() {
 
       getSetting("multimedia_categories").then((savedCats) => {
         if (savedCats && Array.isArray(savedCats) && savedCats.length > 0) {
-          setCategories([{ id: "all", label: "All" }, ...(savedCats as { id: string; label: string }[])]);
-        } else {
-          setSetting("multimedia_categories", defaultCats);
-          setCategories([{ id: "all", label: "All" }, ...defaultCats]);
+          const savedCategories = (savedCats as { id: string; label: string }[]).filter((cat) => cat.id && cat.id !== "all");
+          if (savedCategories.length > 0) {
+            setCategories(savedCategories);
+            setSelectedCategory(savedCategories[0].id);
+            return;
+          }
         }
+
+        setSetting("multimedia_categories", defaultCats);
+        setCategories(defaultCats);
+        setSelectedCategory(defaultCats[0].id);
       });
 
       getSetting("multimedia_list").then(saved => {
@@ -115,10 +120,8 @@ export default function Multimedia() {
     }
   }, []);
 
-  const [selectedCategory, setSelectedCategory] = React.useState<string>("all");
-
   const filteredPortals = portals.filter(
-    (portal) => selectedCategory === "all" || portal.category === selectedCategory
+    (portal) => selectedCategory && portal.category === selectedCategory
   );
 
   return (

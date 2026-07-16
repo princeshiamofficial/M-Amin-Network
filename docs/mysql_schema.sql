@@ -40,6 +40,7 @@ CREATE TABLE user (
     email VARCHAR(255),
     role VARCHAR(255),
     password_hash VARCHAR(255),
+    sessionVersion VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     _sort_order DOUBLE

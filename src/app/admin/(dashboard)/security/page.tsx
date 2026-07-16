@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { getSetting, setSetting } from "@/actions/content";
+import { getSetting, updateAdminAccountAction } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { 
   Key, UserCheck, Mail, Lock, Eye, EyeOff, Loader2 
@@ -14,7 +14,7 @@ export default function SecurityPage() {
 
 
   // Account Settings States
-  const [adminAuth, setAdminAuth] = useState({ email: "", password: "", username: "", lastPasswordChanged: "", lastLogin: "" });
+  const [adminAuth, setAdminAuth] = useState({ email: "", username: "", lastPasswordChanged: "", lastLogin: "" });
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,7 +37,6 @@ export default function SecurityPage() {
         const parsed = savedAuth as Record<string, string>;
         setAdminAuth({
           email: parsed.email || "",
-          password: parsed.password || "",
           username: parsed.username || "",
           lastPasswordChanged: parsed.lastPasswordChanged || "7/13/2026, 12:45 PM",
           lastLogin: parsed.lastLogin || new Date().toLocaleString()
@@ -47,13 +46,6 @@ export default function SecurityPage() {
   }, [router]);
 
 
-
-  async function hashPassword(msg: string) {
-    const msgBuffer = new TextEncoder().encode(msg);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-  }
 
   const getPasswordStrength = (pass: string) => {
     if (!pass) return { score: 0, label: "Empty", color: "bg-slate-200", textColor: "text-slate-400" };
@@ -74,48 +66,55 @@ export default function SecurityPage() {
     e.preventDefault();
     setIsSavingAccount(true);
 
-    setTimeout(async () => {
-      try {
-        const updatedAuth = { ...adminAuth };
-        
-        if (newPassword.trim() !== "") {
-          if (!currentPassword) {
-            toast.error("Please enter your current password to proceed.");
-            setIsSavingAccount(false);
-            return;
-          }
-          const currentHashed = await hashPassword(currentPassword);
-          if (currentHashed !== adminAuth.password) {
-            toast.error("The current password you entered is incorrect.");
-            setIsSavingAccount(false);
-            return;
-          }
-          if (newPassword !== confirmPassword) {
-            toast.error("New passwords do not match.");
-            setIsSavingAccount(false);
-            return;
-          }
-          if (newPassword.length < 8) {
-            toast.error("New password must be at least 8 characters long.");
-            setIsSavingAccount(false);
-            return;
-          }
-          const hashed = await hashPassword(newPassword);
-          updatedAuth.password = hashed;
-          updatedAuth.lastPasswordChanged = new Date().toLocaleString();
-        }
+    try {
+      const trimmedNewPassword = newPassword.trim();
 
-        setSetting("admin_auth", updatedAuth);
-        setAdminAuth(updatedAuth);
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        toast.success("Account settings updated successfully!");
-      } catch {
-        toast.error("An error occurred while updating account credentials.");
+      if (trimmedNewPassword) {
+        if (!currentPassword) {
+          toast.error("Please enter your current password to proceed.");
+          return;
+        }
+        if (trimmedNewPassword !== confirmPassword) {
+          toast.error("New passwords do not match.");
+          return;
+        }
+        if (trimmedNewPassword.length < 8) {
+          toast.error("New password must be at least 8 characters long.");
+          return;
+        }
       }
+
+      const result = await updateAdminAccountAction({
+        email: adminAuth.email,
+        currentPassword,
+        newPassword: trimmedNewPassword,
+      });
+
+      if (!result.success) {
+        toast.error(result.error || "An error occurred while updating account credentials.");
+        return;
+      }
+
+      if (result.auth) {
+        setAdminAuth((current) => ({
+          ...current,
+          ...result.auth,
+        }));
+      }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      toast.success(
+        result.sessionsRotated
+          ? "Account updated. Other devices have been signed out."
+          : "Account settings updated successfully!"
+      );
+    } catch {
+      toast.error("An error occurred while updating account credentials.");
+    } finally {
       setIsSavingAccount(false);
-    }, 1000);
+    }
   };
 
   if (!auth) return null;

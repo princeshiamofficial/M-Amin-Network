@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies, headers } from "next/headers";
+import { randomUUID } from "crypto";
 import { broadcastMaintenance } from "@/lib/wsServer";
 import {
   getSettingInternal,
@@ -10,6 +11,40 @@ import {
   passwordMatchesInput,
   setSettingInternal,
 } from "@/lib/content-service";
+
+const ADMIN_SESSION_COOKIE = "admin_session";
+const LEGACY_ADMIN_SESSION_TOKEN = "secure_admin_logged_in_token_713";
+const ADMIN_SESSION_MAX_AGE = 60 * 60 * 2;
+
+function createAdminSessionVersion(): string {
+  return randomUUID();
+}
+
+function getAdminSessionVersion(auth: Record<string, unknown> | null): string {
+  if (!auth) return "";
+  const version = auth.sessionVersion ?? auth.session_version;
+  return typeof version === "string" ? version.trim() : "";
+}
+
+function createAdminSessionCookieValue(sessionVersion: string): string {
+  return `${LEGACY_ADMIN_SESSION_TOKEN}:${sessionVersion}`;
+}
+
+async function setAdminSessionCookie(sessionVersion: string): Promise<void> {
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const host = headersList.get("host") || "";
+  const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
+  const secure = process.env.NODE_ENV === "production" && !isLocalhost;
+
+  cookieStore.set(ADMIN_SESSION_COOKIE, createAdminSessionCookieValue(sessionVersion), {
+    httpOnly: true,
+    secure,
+    sameSite: "strict",
+    maxAge: ADMIN_SESSION_MAX_AGE,
+    path: "/",
+  });
+}
 
 /**
  * Fetch a setting with strict access control based on key and authorization.
@@ -149,19 +184,16 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
           console.warn("Failed to update admin user lastLogin:", e);
         }
 
-        const cookieStore = await cookies();
-        const headersList = await headers();
-        const host = headersList.get("host") || "";
-        const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
-        const secure = process.env.NODE_ENV === "production" && !isLocalhost;
+        let sessionVersion = getAdminSessionVersion(savedAuth);
+        if (!sessionVersion) {
+          sessionVersion = createAdminSessionVersion();
+          await setSettingInternal("admin_auth", {
+            ...savedAuth,
+            sessionVersion,
+          });
+        }
 
-        cookieStore.set("admin_session", "secure_admin_logged_in_token_713", {
-          httpOnly: true,
-          secure,
-          sameSite: "strict",
-          maxAge: 60 * 60 * 2, // 2 hours
-          path: "/",
-        });
+        await setAdminSessionCookie(sessionVersion);
 
         return { success: true, username: matchedUsername, role: matchedRole };
       }
@@ -175,13 +207,131 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
 export async function logoutAdminAction(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
-    cookieStore.set("admin_session", "", {
+    cookieStore.set(ADMIN_SESSION_COOKIE, "", {
       maxAge: 0,
       path: "/",
     });
     return true;
   } catch {
     return false;
+  }
+}
+
+export async function updateAdminAccountAction(input: {
+  email: string;
+  currentPassword?: string;
+  newPassword?: string;
+}): Promise<{
+  success: boolean;
+  error?: string;
+  sessionsRotated?: boolean;
+  auth?: {
+    email: string;
+    username: string;
+    lastPasswordChanged: string;
+    lastLogin: string;
+  };
+}> {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) {
+      return { success: false, error: "Your admin session expired. Please log in again." };
+    }
+
+    const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
+    if (!savedAuth) {
+      return { success: false, error: "System credentials not found." };
+    }
+
+    const cleanEmail = input.email.trim().toLowerCase();
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return { success: false, error: "Please enter a valid email address." };
+    }
+
+    const currentPassword = input.currentPassword || "";
+    const newPassword = (input.newPassword || "").trim();
+    const previousEmail = String(savedAuth.email || "").trim().toLowerCase();
+    const credentialsChanged = previousEmail !== cleanEmail || Boolean(newPassword);
+    const updatedAuth: Record<string, string> = {
+      ...savedAuth,
+      username: savedAuth.username || "admin",
+      email: cleanEmail,
+      lastLogin: savedAuth.lastLogin || new Date().toLocaleString(),
+      lastPasswordChanged: savedAuth.lastPasswordChanged || "",
+    };
+
+    if (newPassword) {
+      if (!currentPassword) {
+        return { success: false, error: "Please enter your current password to proceed." };
+      }
+      const currentHashed = hashPasswordServer(currentPassword);
+      if (!passwordMatchesInput(savedAuth.password, currentPassword, currentHashed)) {
+        return { success: false, error: "The current password you entered is incorrect." };
+      }
+      if (newPassword.length < 8) {
+        return { success: false, error: "New password must be at least 8 characters long." };
+      }
+      updatedAuth.password = hashPasswordServer(newPassword);
+      updatedAuth.lastPasswordChanged = new Date().toLocaleString();
+    } else {
+      updatedAuth.password = savedAuth.password;
+    }
+
+    if (credentialsChanged) {
+      updatedAuth.sessionVersion = createAdminSessionVersion();
+    }
+
+    const authSaved = await setSettingInternal("admin_auth", updatedAuth);
+    if (!authSaved) {
+      return { success: false, error: "Unable to save primary admin credentials." };
+    }
+
+    if (credentialsChanged) {
+      await setAdminSessionCookie(updatedAuth.sessionVersion);
+    }
+
+    try {
+      const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
+      const userList = Array.isArray(savedUsers) ? savedUsers : [];
+      const oldEmail = String(savedAuth.email || "").trim().toLowerCase();
+      let matched = false;
+      const updatedUsers = userList.map((user) => {
+        const username = String(user.username || user.name || "").trim().toLowerCase();
+        const email = String(user.email || "").trim().toLowerCase();
+        const id = String(user.id || "");
+        const isPrimaryAdmin = id === "USR-1" || username === "admin" || email === oldEmail;
+
+        if (!isPrimaryAdmin) return user;
+        matched = true;
+        return {
+          ...user,
+          username: user.username || "admin",
+          name: user.name || "admin",
+          email: cleanEmail,
+          password: newPassword ? updatedAuth.password : user.password,
+        };
+      });
+
+      if (matched) {
+        await setSettingInternal("admin_users", updatedUsers);
+      }
+    } catch (error) {
+      console.warn("Failed to sync managed admin credentials:", error);
+    }
+
+    return {
+      success: true,
+      sessionsRotated: credentialsChanged,
+      auth: {
+        email: updatedAuth.email,
+        username: updatedAuth.username,
+        lastPasswordChanged: updatedAuth.lastPasswordChanged,
+        lastLogin: updatedAuth.lastLogin,
+      },
+    };
+  } catch (error) {
+    console.error("updateAdminAccountAction error:", error);
+    return { success: false, error: "An error occurred while updating account credentials." };
   }
 }
 
@@ -212,7 +362,16 @@ export async function verifyPortalLoginAction(clientIdInput: string, passwordInp
 export async function isAdminAuthenticated(): Promise<boolean> {
   try {
     const cookieStore = await cookies();
-    return cookieStore.get("admin_session")?.value === "secure_admin_logged_in_token_713";
+    const cookieValue = cookieStore.get(ADMIN_SESSION_COOKIE)?.value || "";
+    if (!cookieValue) return false;
+
+    const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, unknown> | null;
+    const sessionVersion = getAdminSessionVersion(savedAuth);
+    if (!sessionVersion) {
+      return cookieValue === LEGACY_ADMIN_SESSION_TOKEN;
+    }
+
+    return cookieValue === createAdminSessionCookieValue(sessionVersion);
   } catch {
     return false;
   }
@@ -428,6 +587,7 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
     const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
     if (savedAuth && savedAuth.email && savedAuth.email.toLowerCase() === cleanEmail) {
       savedAuth.password = hashed;
+      savedAuth.sessionVersion = createAdminSessionVersion();
       await setSettingInternal("admin_auth", savedAuth);
       return { success: true };
     }
@@ -448,6 +608,7 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
       // Also update primary credentials just in case since sub-admins share auth checks
       if (savedAuth) {
         savedAuth.password = hashed;
+        savedAuth.sessionVersion = createAdminSessionVersion();
         await setSettingInternal("admin_auth", savedAuth);
       }
       await setSettingInternal("admin_users", updatedUsers);

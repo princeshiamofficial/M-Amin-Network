@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting } from "@/actions/content";
+import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting, isAdminAuthenticated } from "@/actions/content";
 
 type LogoVariant = "horizontal" | "square";
 
@@ -57,15 +57,33 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setMounted(true);
-      if (typeof window !== "undefined") {
+      const resumeSession = async () => {
+        if (typeof window === "undefined") {
+          setMounted(true);
+          return;
+        }
+
         const auth = sessionStorage.getItem("admin_authenticated");
         if (auth === "true") {
-          localStorage.setItem("admin_token", "admin_logged_in_token");
-          setIsAuthenticated(true);
-          router.push("/admin/dashboard");
+          const isServerAuth = await isAdminAuthenticated();
+          if (isServerAuth) {
+            localStorage.setItem("admin_token", "admin_logged_in_token");
+            setIsAuthenticated(true);
+            setMounted(true);
+            router.push("/admin/dashboard");
+            return;
+          }
+
+          sessionStorage.removeItem("admin_authenticated");
+          localStorage.removeItem("admin_token");
+          localStorage.removeItem("admin_username");
+          localStorage.removeItem("admin_user_role");
         }
-      }
+
+        setMounted(true);
+      };
+
+      void resumeSession();
     }, 0);
     return () => clearTimeout(timer);
   }, [router]);

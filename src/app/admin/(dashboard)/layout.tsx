@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 declare global {
   interface Window {
@@ -10,7 +10,7 @@ declare global {
 import { useRouter, usePathname } from "next/navigation";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
-import { getSetting, isAdminAuthenticated } from "@/actions/content";
+import { getSetting, isAdminAuthenticated, logoutAdminAction } from "@/actions/content";
 import { IconMap, QuickAction } from "@/app/admin/(dashboard)/dashboard/page";
 import { AdminSecurityProvider, useAdminSecurity } from "@/hooks/useAdminSecurity";
 import { toast } from "sonner";
@@ -66,6 +66,14 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
   
   const { userRole, rolePermissions, permissionsLoaded, hasAccess } = useAdminSecurity();
 
+  const clearClientAdminSession = useCallback(() => {
+    if (typeof window === "undefined") return;
+    sessionStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_username");
+    localStorage.removeItem("admin_user_role");
+  }, []);
+
   // State for global custom confirmation popup
   const [confirmDialog, setConfirmDialog] = useState<{
     message: string;
@@ -100,8 +108,8 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
         } else {
           isAdminAuthenticated().then((isServerAuth) => {
             if (!isServerAuth) {
-              sessionStorage.removeItem("admin_authenticated");
-              localStorage.removeItem("admin_token");
+              clearClientAdminSession();
+              setIsAuthenticated(false);
               router.push("/admin");
             } else {
               setIsAuthenticated(true);
@@ -126,7 +134,31 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [clearClientAdminSession, router]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    let cancelled = false;
+    const verifyActiveSession = async () => {
+      const isServerAuth = await isAdminAuthenticated();
+      if (cancelled || isServerAuth) return;
+
+      clearClientAdminSession();
+      setIsAuthenticated(false);
+      toast.error("Your admin session changed. Please sign in again.");
+      router.push("/admin");
+    };
+
+    const intervalId = window.setInterval(verifyActiveSession, 30000);
+    window.addEventListener("focus", verifyActiveSession);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", verifyActiveSession);
+    };
+  }, [clearClientAdminSession, isAuthenticated, router]);
 
   useEffect(() => {
     const fetchQuickActions = () => {
@@ -181,9 +213,10 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, isAuthenticated, permissionsLoaded, userRole, hasAccess, router]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("admin_authenticated");
-    localStorage.removeItem("admin_token");
+  const handleLogout = async () => {
+    await logoutAdminAction();
+    clearClientAdminSession();
+    setIsAuthenticated(false);
     router.push("/admin");
   };
 
