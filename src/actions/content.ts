@@ -157,22 +157,44 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
     });
     const validEmail = String(savedAuth.email || "").trim().toLowerCase();
     const validUsername = savedAuth.username ? savedAuth.username.trim().toLowerCase() : validEmail;
-    const primaryAliases = new Set(
+    const primaryAuthAliases = new Set(
       [
         validEmail,
         validUsername,
+      ].filter(Boolean)
+    );
+    const primaryManagedAliases = new Set(
+      [
         String(primaryAdminUser?.username || primaryAdminUser?.name || "").trim().toLowerCase(),
         String(primaryAdminUser?.email || "").trim().toLowerCase(),
       ].filter(Boolean)
     );
+    const primaryAliases = new Set(
+      [
+        ...primaryAuthAliases,
+        ...primaryManagedAliases,
+      ].filter(Boolean)
+    );
 
     if (primaryAliases.has(cleanUser)) {
-      if (!passwordMatchesInput(savedAuth.password, passwordInput, hashedInput)) {
+      const primaryAuthMatches = primaryAuthAliases.has(cleanUser)
+        && passwordMatchesInput(savedAuth.password, passwordInput, hashedInput);
+      const primaryManagedMatches = Boolean(
+        primaryManagedAliases.has(cleanUser)
+        && primaryAdminUser
+        && passwordMatchesInput(primaryAdminUser.password, passwordInput, hashedInput)
+      );
+
+      if (!primaryAuthMatches && !primaryManagedMatches) {
         return { success: false, error: "Invalid credentials." };
       }
 
-      matchedUsername = savedAuth.username || "admin";
-      matchedRole = "Super Administrator";
+      matchedUsername = primaryManagedMatches && primaryAdminUser
+        ? String(primaryAdminUser.username || primaryAdminUser.name || "admin")
+        : savedAuth.username || "admin";
+      matchedRole = primaryManagedMatches && primaryAdminUser
+        ? String(primaryAdminUser.role || "Super Administrator")
+        : "Super Administrator";
       matchedUserId = String(primaryAdminUser?.id || "USR-1");
     }
 
@@ -219,16 +241,6 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
           });
           if (matchedUser) {
             matchedUser.lastLogin = new Date().toLocaleString("en-US", { hour12: true });
-            const isPrimaryAdminUser = String(matchedUser.id || "") === "USR-1"
-              || String(matchedUser.username || matchedUser.name || "").trim().toLowerCase() === "admin";
-            if (isPrimaryAdminUser && matchedRole === "Super Administrator") {
-              matchedUser.username = savedAuth.username || "admin";
-              matchedUser.name = savedAuth.username || "admin";
-              matchedUser.email = savedAuth.email;
-              matchedUser.role = "Super Administrator";
-              matchedUser.password = savedAuth.password;
-              matchedUser.status = matchedUser.status || "Active";
-            }
             await setSettingInternal("admin_users", userList);
           }
         } catch (e) {
