@@ -20,7 +20,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Trash2, Search, CheckCircle, AlertOctagon } from "lucide-react";
+import { MoreVertical, Trash2, Search, CheckCircle, AlertOctagon, MessageSquare, X } from "lucide-react";
+
+interface Comment {
+  id: string;
+  text: string;
+  date: string;
+  author: string;
+}
 
 interface Complaint {
   id: string;
@@ -31,6 +38,7 @@ interface Complaint {
   desc: string;
   date: string;
   status: "Pending" | "Investigating" | "Resolved";
+  comments?: Comment[];
 }
 
 type ComplaintStatus = Complaint["status"];
@@ -44,6 +52,8 @@ export default function ComplaintsPage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
+  const [newComment, setNewComment] = useState("");
   const { canEdit } = useAdminSecurity();
   const allowEdit = canEdit("/admin/complaints");
 
@@ -82,6 +92,29 @@ export default function ComplaintsPage() {
     toast.success("Complaint record deleted successfully.");
   };
 
+  const addComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim() || !selectedComplaintId) return;
+
+    const updated = complaints.map(c => {
+      if (c.id === selectedComplaintId) {
+        const comment: Comment = {
+          id: Math.random().toString(36).substr(2, 9),
+          text: newComment,
+          date: new Date().toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+          author: "Admin"
+        };
+        return { ...c, comments: [...(c.comments || []), comment] };
+      }
+      return c;
+    });
+
+    setComplaints(updated);
+    setSetting("complaints", updated as Complaint[]);
+    setNewComment("");
+    toast.success("Comment added successfully.");
+  };
+
   if (!auth) return null;
 
   return (
@@ -96,13 +129,14 @@ export default function ComplaintsPage() {
               <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Description Details</TableHead>
               <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date Filed</TableHead>
               <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</TableHead>
+              <TableHead className="py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Comments</TableHead>
               <TableHead className="py-4 pr-4 text-xs font-bold text-slate-500 text-right uppercase tracking-wider">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {complaints.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-12 text-center text-slate-400">
+                <TableCell colSpan={8} className="py-12 text-center text-slate-400">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <AlertOctagon className="w-8 h-8 text-slate-300" />
                     <span className="text-xs font-semibold">No active complaints found.</span>
@@ -179,6 +213,15 @@ export default function ComplaintsPage() {
                       </span>
                     )}
                   </TableCell>
+                  <TableCell className="py-3.5 text-center">
+                    <button 
+                      onClick={() => setSelectedComplaintId(c.id)}
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-indigo-600 rounded-lg text-xs font-bold transition-all outline-none cursor-pointer shadow-sm"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>{c.comments?.length || 0}</span>
+                    </button>
+                  </TableCell>
                   <TableCell className="py-3.5 pr-4 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -187,6 +230,13 @@ export default function ComplaintsPage() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-36 bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50">
+                        <DropdownMenuItem
+                          onClick={() => setSelectedComplaintId(c.id)}
+                          className="px-3 py-2 text-xs font-bold text-slate-650 hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Comments</span>
+                        </DropdownMenuItem>
                         {allowEdit && c.status === "Pending" && (
                           <DropdownMenuItem
                             onClick={() => updateStatus(c.id, "Investigating")}
@@ -221,6 +271,66 @@ export default function ComplaintsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Comments Modal */}
+      {selectedComplaintId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800">Complaint Comments</h2>
+              <button 
+                onClick={() => setSelectedComplaintId(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-5 overflow-y-auto space-y-4 flex-1 bg-slate-50 min-h-[150px]">
+              {complaints.find(c => c.id === selectedComplaintId)?.comments?.length ? (
+                <div className="space-y-3">
+                  {complaints.find(c => c.id === selectedComplaintId)?.comments?.map(comment => (
+                    <div key={comment.id} className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-xs font-bold text-slate-700">{comment.author}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{comment.date}</span>
+                      </div>
+                      <p className="text-sm text-slate-600">{comment.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-400 text-sm font-semibold">
+                  No comments yet.
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={addComment} className="p-4 border-t border-slate-100 bg-white">
+              {allowEdit ? (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Write a comment..."
+                    value={newComment}
+                    onChange={e => setNewComment(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm"
+                  >
+                    Post
+                  </button>
+                </div>
+              ) : (
+                <p className="text-xs text-center text-slate-400 font-semibold">You do not have permission to add comments.</p>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

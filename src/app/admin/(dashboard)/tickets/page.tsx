@@ -18,7 +18,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Trash2, UserCheck, CheckCircle, HelpCircle } from "lucide-react";
+import { MoreVertical, Trash2, UserCheck, CheckCircle, HelpCircle, Plus, X } from "lucide-react";
 
 interface Ticket {
   id: string;
@@ -41,6 +41,8 @@ export default function TicketsPage() {
   const [auth, setAuth] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [statusFilter, setStatusFilter] = useState<"All" | "Open" | "Assigned" | "Resolved">("All");
+  const [showAddTicket, setShowAddTicket] = useState(false);
+  const [newTicket, setNewTicket] = useState({ clientId: "", name: "", phone: "", category: "Hardware", desc: "" });
 
   const filteredTickets = tickets.filter(t => statusFilter === "All" || t.status === statusFilter);
 
@@ -77,39 +79,74 @@ export default function TicketsPage() {
     toast.success("Support ticket deleted successfully.");
   };
 
+  const handleAddTicket = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTicket.name || !newTicket.phone || !newTicket.desc) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    const ticket: Ticket = {
+      id: `TCK-${Math.floor(10000 + Math.random() * 90000)}-${Math.floor(1000 + Math.random() * 9000)}`,
+      clientId: newTicket.clientId || "N/A",
+      name: newTicket.name,
+      phone: newTicket.phone,
+      category: newTicket.category,
+      desc: newTicket.desc,
+      date: new Date().toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+      status: "Open"
+    };
+
+    const updated = [ticket, ...tickets];
+    setTickets(updated);
+    setSetting("tickets", updated as any);
+    setShowAddTicket(false);
+    setNewTicket({ clientId: "", name: "", phone: "", category: "Hardware", desc: "" });
+    toast.success("Ticket added successfully.");
+  };
+
   if (!auth) return null;
 
   return (
     <div className="space-y-6">
-      {/* Status Filter Tabs */}
-      <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none">
-        {([
-          { id: "All", label: "All Tickets" },
-          { id: "Open", label: "Open" },
-          { id: "Assigned", label: "Assigned" },
-          { id: "Resolved", label: "Resolved" }
-        ] as const).map((tab) => {
-          const isActive = statusFilter === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setStatusFilter(tab.id)}
-              className={`flex items-center gap-2 pb-3 text-xs font-bold transition-all relative border-b-2 cursor-pointer ${
-                isActive
-                  ? "text-brand-blue border-brand-blue"
-                  : "text-slate-400 border-transparent hover:text-slate-600"
-              }`}
-            >
-              <span>{tab.label}</span>
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                isActive ? "bg-brand-blue/10 text-brand-blue" : "bg-slate-100 text-slate-500"
-              }`}>
-                {tab.id === "All" ? tickets.length : tickets.filter(t => t.status === tab.id).length}
-              </span>
-            </button>
-          );
-        })}
+      {/* Header & Tabs */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-slate-100 pb-px gap-4 select-none">
+        <div className="flex gap-6 overflow-x-auto select-none">
+          {([
+            { id: "All", label: "All Tickets" },
+            { id: "Open", label: "Open" },
+            { id: "Assigned", label: "Assigned" },
+            { id: "Resolved", label: "Resolved" }
+          ] as const).map((tab) => {
+            const isActive = statusFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setStatusFilter(tab.id)}
+                className={`flex items-center gap-2 pb-3 text-xs font-bold transition-all relative border-b-2 cursor-pointer ${
+                  isActive
+                    ? "text-brand-blue border-brand-blue"
+                    : "text-slate-400 border-transparent hover:text-slate-600"
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                  isActive ? "bg-brand-blue/10 text-brand-blue" : "bg-slate-100 text-slate-500"
+                }`}>
+                  {tab.id === "All" ? tickets.length : tickets.filter(t => t.status === tab.id).length}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => setShowAddTicket(true)}
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition-all mb-3 sm:mb-0"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Ticket</span>
+        </button>
       </div>
 
       <div className="overflow-x-auto border border-slate-200/60 rounded-xl bg-white shadow-sm">
@@ -204,6 +241,103 @@ export default function TicketsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Add Ticket Modal */}
+      {showAddTicket && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800">Add New Ticket</h2>
+              <button 
+                onClick={() => setShowAddTicket(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddTicket} className="p-5 overflow-y-auto space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase">Client ID (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. SUB-12345"
+                  value={newTicket.clientId}
+                  onChange={e => setNewTicket({...newTicket, clientId: e.target.value})}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase">Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Client Name"
+                  value={newTicket.name}
+                  onChange={e => setNewTicket({...newTicket, name: e.target.value})}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase">Phone <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Phone Number"
+                  value={newTicket.phone}
+                  onChange={e => setNewTicket({...newTicket, phone: e.target.value})}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase">Topic / Category</label>
+                <select
+                  value={newTicket.category}
+                  onChange={e => setNewTicket({...newTicket, category: e.target.value})}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all bg-white"
+                >
+                  <option value="Hardware">Hardware</option>
+                  <option value="Speed Issue">Speed Issue</option>
+                  <option value="Billing">Billing</option>
+                  <option value="Connection Drop">Connection Drop</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-500 uppercase">Details <span className="text-red-500">*</span></label>
+                <textarea
+                  required
+                  placeholder="Describe the issue..."
+                  value={newTicket.desc}
+                  onChange={e => setNewTicket({...newTicket, desc: e.target.value})}
+                  rows={4}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddTicket(false)}
+                  className="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-colors shadow-sm"
+                >
+                  Create Ticket
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
