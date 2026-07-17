@@ -94,14 +94,15 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("nav_links");
-      if (saved) {
-        try {
-          setLinksList(JSON.parse(saved));
-        } catch (e) {
-          console.error("Error parsing nav links config:", e);
-        }
-      }
+      getSetting("nav_links")
+        .then((saved) => {
+          if (saved && Array.isArray(saved) && saved.length > 0) {
+            setLinksList(saved as NavLink[]);
+          }
+        })
+        .catch(() => {
+          // Fallback to defaultNavLinks on error
+        });
     }
   }, []);
 

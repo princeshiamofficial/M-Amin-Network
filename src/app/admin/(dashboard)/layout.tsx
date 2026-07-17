@@ -43,6 +43,7 @@ const tabUrls: Record<string, string> = {
   "Manage User": "/admin/manage-user",
   "User Role": "/admin/user-role",
   "Security": "/admin/security",
+  "Why Choose": "/admin/why-choose",
   "SEO Audit": "/admin/seo-audit",
 };
 

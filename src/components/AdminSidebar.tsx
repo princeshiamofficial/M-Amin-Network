@@ -36,7 +36,8 @@ import {
   LogOut,
   PanelTop,
   Zap,
-  Film
+  Film,
+  Star
 } from "lucide-react";
 
 interface AdminSidebarRole {
@@ -106,6 +107,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     "Job Applications": "/admin/job-applications",
     "Testimonials": "/admin/testimonials",
     "FAQs": "/admin/faqs",
+    "Why Choose": "/admin/why-choose",
     "Hero Typography": "/admin/hero-typography",
     "Packages Header": "/admin/page-headers/packages",
     "Offers Header": "/admin/page-headers/offers",
@@ -234,6 +236,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
         {
           name: "FAQs",
           icon: <HelpCircle className="w-4 h-4" />,
+        },
+        {
+          name: "Why Choose",
+          icon: <Star className="w-4 h-4" />,
         },
         {
           name: "Hero Typography",

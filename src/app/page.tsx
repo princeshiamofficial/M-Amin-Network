@@ -6,7 +6,7 @@ import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSetting } from "@/actions/content";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Zap, Wifi, Gamepad2, LifeBuoy, Cloud, Building2, Server, Shield, Globe, Headphones, Monitor, Router, Network, Signal, Activity, Lock, Cpu, Database, Mail, Phone, MessageSquare, Users, Clock, CheckCircle, AlertCircle, Info, HelpCircle, Star, Heart, ThumbsUp, Award, TrendingUp, BarChart3 } from "lucide-react";
 import Image from "next/image";
 
 interface Plan {
@@ -31,6 +31,16 @@ interface FAQ {
   question: string;
   answer: string;
   isPublished: boolean;
+}
+
+interface NetworkFeature {
+  id: string;
+  titleEn: string;
+  titleBn: string;
+  descEn: string;
+  descBn: string;
+  iconName: string;
+  _sort_order: number;
 }
 
 interface HeroTypography {
@@ -118,6 +128,19 @@ function normalizeHeroMetrics(saved: unknown): HeroMetric[] {
   });
 }
 
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Zap, Wifi, Gamepad2, LifeBuoy, Cloud, Building2,
+  Server, Shield, Globe, Headphones, Monitor, Router,
+  Network, Signal, Activity, Lock, Cpu, Database,
+  Mail, Phone, MessageSquare, Users, Clock, CheckCircle,
+  AlertCircle, Info, HelpCircle, Star, Heart, ThumbsUp,
+  Award, TrendingUp, BarChart3
+};
+
+function getIconComponent(iconName: string): React.ComponentType<{ className?: string }> {
+  return ICON_MAP[iconName] || Zap;
+}
+
 interface CountUpProps {
   end: number;
   duration?: number;
@@ -188,6 +211,17 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [heroTypography, setHeroTypography] = useState<HeroTypography>(DEFAULT_HERO_TYPOGRAPHY);
   const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(DEFAULT_HERO_METRICS);
+  const [networkFeatures, setNetworkFeatures] = useState<NetworkFeature[]>([]);
+
+  useEffect(() => {
+    getSetting("network_features").then((saved) => {
+      if (Array.isArray(saved)) {
+        setNetworkFeatures(saved as NetworkFeature[]);
+      } else {
+        setNetworkFeatures([]);
+      }
+    });
+  }, []);
   
   useEffect(() => {
     // 1. Initial fetch
@@ -765,80 +799,34 @@ export default function Home() {
             </p>
           </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: "100% Fiber Optic (FTTH)",
-              desc: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              ),
-            },
-            {
-              title: "Dedicated BGP Routing",
-              desc: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10.5 10.5 0 0114.14 0M1.414 7.05a16.5 16.5 0 0121.172 0" />
-                </svg>
-              ),
-            },
-            {
-              title: "Low-Ping Gamer Optimizations",
-              desc: "Specialized low-latency paths to Southeast Asia and European servers (PUBG, Free Fire, CS2, Valorant). Zero packet loss, steady pings, and jitter control.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              ),
-            },
-            {
-              title: "24/7 Priority SLA Support",
-              desc: "No waiting for hours. Our localized support hub in South Keraniganj ensures our field technicians are dispatched to your home or office in record time.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              ),
-            },
-            {
-              title: "BDIX & Local FTP Access",
-              desc: "Get unlimited speeds of up to 100 Mbps to localized Bangladesh Internet Exchange (BDIX) resources, local FTP server movies, live TV, and games caches.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              ),
-            },
-            {
-              title: "Corporate Dedicated Backup",
-              desc: "Dual backbones with auto-failover, ensuring continuous SLA-backed business operations. Static IPs, multi-router protocols, and direct client portal support.",
-              icon: (
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              ),
-            },
-          ].map((feat, i) => (
-            <div
-              key={i}
-              className="p-8 rounded-3xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left glass-panel"
-            >
-              <div className="w-12 h-12 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center border border-brand-cyan/15">
-                {feat.icon}
-              </div>
-              <h4 className="text-lg font-bold text-white tracking-wide">
-                {t(feat.title, feat.title === "100% Fiber Optic (FTTH)" ? "১০০% ফাইবার অপটিক (FTTH)" : feat.title === "Dedicated BGP Routing" ? "ডেডিকেটেড বিজিপি রাউটিং" : feat.title === "Low-Ping Gamer Optimizations" ? "লো-পিং গেমার অপ্টিমাইজেশান" : feat.title === "24/7 Priority SLA Support" ? "২৪/৭ অগ্রাধিকার SLA সাপোর্ট" : feat.title === "BDIX & Local FTP Access" ? "BDIX ও লোকাল এফটিপি অ্যাক্সেস" : "কর্পোরেট ডেডিকেটেড ব্যাকআপ")}
-              </h4>
-              <p className="text-sm text-slate-400 leading-relaxed">
-                {t(feat.desc, feat.desc.startsWith("Pure") ? "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।" : feat.desc.startsWith("Operating") ? "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।" : feat.desc.startsWith("Specialized") ? "দক্ষিণ-পূর্ব এশিয়া ও ইউরোপীয় সার্ভারে বিশেষায়িত লো-লেটেন্সি পাথ (PUBG, Free Fire, CS2, Valorant)। শূন্য প্যাকেট লস, স্থির পিং এবং জিটার কন্ট্রোল।" : feat.desc.startsWith("No waiting") ? "ঘণ্টার পর ঘণ্টা অপেক্ষা করতে হবে না। দক্ষিণ কেরানীগঞ্জে আমাদের লোকাল সাপোর্ট হাব নিশ্চিত করে যে আমাদের টেকনিশিয়ানরা রেকর্ড সময়ে আপনার বাসা বা অফিসে পৌঁছে যাবে।" : feat.desc.startsWith("Get unlimited") ? "বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) রিসোর্স, লোকাল এফটিপি মুভি, লাইভ টিভি এবং গেম ক্যাশে ১০০ এমবিপিএস পর্যন্ত আনলিমিটেড স্পিড পান।" : "অটো-ফেইলওভার সহ ডুয়াল ব্যাকবোন, যা অব্যাহত SLA-সমর্থিত ব্যবসায়িক কার্যক্রম নিশ্চিত করে। স্ট্যাটিক আইপি এবং ডিরেক্ট ক্লায়েন্ট সাপোর্ট।")}
-              </p>
+          {networkFeatures.length === 0 ? (
+            <div className="text-center py-12 text-slate-500 text-sm">
+              No features configured yet. Admins can add them from the panel.
             </div>
-          ))}
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {networkFeatures.map((feat, i) => {
+                const IconComponent = getIconComponent(feat.iconName);
+                return (
+                  <div
+                    key={feat.id || i}
+                    className="p-8 rounded-3xl bg-brand-card/40 border border-brand-border/40 hover:border-brand-cyan/30 hover:scale-[1.01] transition-all flex flex-col gap-4 text-left glass-panel"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-brand-cyan/10 text-brand-cyan flex items-center justify-center border border-brand-cyan/15">
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-lg font-bold text-white tracking-wide">
+                      {t(feat.titleEn, feat.titleBn)}
+                    </h4>
+                    <p className="text-sm text-slate-400 leading-relaxed">
+                      {t(feat.descEn, feat.descBn)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-      </div>
       </section>
 
 
