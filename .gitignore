@@ -49,3 +49,6 @@ next-env.d.ts
 
 # local log files
 db_error.log
+
+# user uploads (never track - safe from git reset)
+/public/uploads
