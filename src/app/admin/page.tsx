@@ -208,7 +208,7 @@ export default function AdminDashboard() {
 
   if (!mounted) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-brand-dark text-slate-400">
+      <div className="w-full min-h-screen flex items-center justify-center bg-brand-dark text-slate-400 notranslate">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-4 border-brand-cyan border-t-transparent rounded-full animate-spin" />
           <span className="font-mono text-sm tracking-widest">LOADING SECURE ACCESS CONTROL...</span>
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
   if (!isAuthenticated) {
     return (
       <div
-        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans"
+        className="min-h-screen -mt-24 w-full flex flex-col justify-center items-center p-4 relative overflow-hidden bg-cover bg-center bg-no-repeat font-sans notranslate"
         style={{
           backgroundImage: "linear-gradient(to bottom, rgba(10, 11, 16, 0.82), rgba(20, 24, 33, 0.95)), url('/sky_cloud_bg.png')"
         }}

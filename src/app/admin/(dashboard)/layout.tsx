@@ -32,6 +32,7 @@ const tabUrls: Record<string, string> = {
   "Testimonials": "/admin/testimonials",
   "FAQs": "/admin/faqs",
   "Hero Typography": "/admin/hero-typography",
+  "Header Content": "/admin/page-headers",
   "SEO & Sharing": "/admin/seo-sharing",
   "About Page": "/admin/about-page",
   "Contact Page": "/admin/contact-page",
@@ -236,7 +237,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   if (!mounted || !isAuthenticated) {
     return (
-      <div className="min-h-screen -mt-24 bg-slate-50 text-slate-800 flex overflow-hidden">
+      <div className="min-h-screen -mt-24 bg-slate-50 text-slate-800 flex overflow-hidden notranslate">
         {/* Sidebar Skeleton */}
         <div className="relative shrink-0 w-64 bg-white border-r border-slate-200 p-6 space-y-6 hidden md:block">
           <div className="h-8 w-32 bg-slate-200 rounded animate-pulse mb-8" />
@@ -267,7 +268,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden">
+    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden notranslate">
       <div className="relative shrink-0">
         <AdminSidebar
           activeTab={activeTab}

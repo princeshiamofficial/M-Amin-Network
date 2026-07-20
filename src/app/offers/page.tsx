@@ -6,50 +6,50 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "@/hooks/useTranslation";
 const defaultOffersPageContent = {
-  str1En: "New Connection", str1Bn: "নতুন সংযোগ",
-  str2En: "Best Value", str2Bn: "সেরা মূল্য",
-  str3En: "Gamer Special", str3Bn: "গেমার স্পেশাল",
-  str4En: "Community Deal", str4Bn: "কমিউনিটি ডিল",
-  str5En: "Zero Installation Fee", str5Bn: "বিনামূল্যে ইনস্টলেশন",
-  str6En: "Pay 10 Months, Get 12", str6Bn: "১০ মাস দিন, ১২ মাস পান",
-  str7En: "Free Public IP for Gamers", str7Bn: "গেমারদের জন্য বিনামূল্যে পাবলিক আইপি",
-  str8En: "Refer a Friend", str8Bn: "বন্ধুকে রেফার করুন",
-  str9En: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).", str9Bn: "যেকোনো ২০ এমবিপিএস বা তার বেশি হোম ইন্টারনেট প্যাকেজে ন্যূনতম ৬ মাসের চুক্তিতে সাবস্ক্রাইব করুন এবং স্ট্যান্ডার্ড ইনস্টলেশন ও অপটিক্যাল ফাইবার লাইন সংযোগ সম্পূর্ণ বিনামূল্যে পান (৳১,০০০ BDT সাশ্রয়)।",
-  str10En: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).", str10Bn: "যেকোনো হোম ব্রডব্যান্ড বা গেমার প্যাক প্ল্যানে ১০ মাসের অগ্রিম পেমেন্ট করুন এবং অতিরিক্ত ২ মাস সম্পূর্ণ বিনামূল্যে পান (৳৩,০০০ BDT পর্যন্ত সাশ্রয়)।",
-  str11En: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).", str11Bn: "৩০ এমবিপিএস গেমার প্যাক বা তার বেশিতে সাবস্ক্রাইব করুন এবং লবি হোস্টিং ও সর্বনিম্ন পিং পাওয়ার জন্য বিনামূল্যে একটি ডেডিকেটেড স্ট্যাটিক পাবলিক আইপি পান (মাসে ৳১৫০ সাশ্রয়)।",
-  str12En: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.", str12Bn: "দক্ষিণ কেরানীগঞ্জে একজন প্রতিবেশী বা বন্ধুকে রেফার করুন। তাদের সংযোগ সক্রিয় হলে আপনি এবং আপনার রেফার করা বন্ধু উভয়ই পরবর্তী মাসের ইন্টারনেট বিলে ৫০% ছাড় পাবেন।",
-  str13En: "Valid Until", str13Bn: "মেয়াদ শেষ",
-  str14En: "Ongoing Promotion", str14Bn: "চলমান অফার",
-  str15En: "Claim Offer", str15Bn: "অফার দাবি করুন",
-  str16En: "Learn More", str16Bn: "আরও জানুন",
-  str17En: "Active Campaigns", str17Bn: "সক্রিয় অফার",
-  str18En: "& Promotions", str18Bn: "ও প্রমোশন",
-  str19En: "Available offers for home and corporate subscribers.", str19Bn: "হোম ও কর্পোরেট গ্রাহকদের জন্য উপলব্ধ অফার।",
-  str20En: "Monsoon Campaigns", str20Bn: "বর্ষা মৌসুমী ক্যাম্পেইন",
-  str21En: "& Discounts", str21Bn: "ও ছাড়",
-  str22En: "Unlock high-speed splicing broadband peering plans at zero installation fees.", str22Bn: "শূন্য ইনস্টলেশন ফি-তে হাই-স্পিড ব্রডব্যান্ড পিয়ারিং প্ল্যান আনলক করুন।",
-  str23En: "All Offers", str23Bn: "সকল অফার",
-  str24En: "Home Packages", str24Bn: "হোম প্যাকেজ",
-  str25En: "Gamer Packs", str25Bn: "গেমার প্যাক",
-  str26En: "Corporate Plans", str26Bn: "কর্পোরেট প্ল্যান",
-  str27En: "New Connections", str27Bn: "নতুন সংযোগ",
-  str28En: "Referral Deals", str28Bn: "রেফারেল ডিল",
-  str29En: "No active offers at this time.", str29Bn: "এই মুহূর্তে কোনো সক্রিয় অফার নেই।",
-  str30En: "Check back soon for new campaigns.", str30Bn: "নতুন ক্যাম্পেইনের জন্য শীঘ্রই দেখুন।",
-  str31En: "Code", str31Bn: "কোড",
-  str32En: "Copy Code", str32Bn: "কোড কপি করুন",
-  str33En: "Claim This Offer", str33Bn: "এই অফার দাবি করুন",
-  str34En: "You are claiming promo code", str34Bn: "আপনি প্রমো কোড দাবি করছেন",
-  str35En: "Full Name", str35Bn: "পূর্ণ নাম",
-  str36En: "Phone Number", str36Bn: "মোবাইল নম্বর",
-  str37En: "Your Address", str37Bn: "আপনার ঠিকানা",
-  str38En: "Submitting...", str38Bn: "জমা দেওয়া হচ্ছে...",
-  str39En: "Submit Claim", str39Bn: "দাবি জমা দিন",
-  str40En: "Claim Submitted!", str40Bn: "দাবি জমা হয়েছে!",
-  str41En: "Your claim for", str41Bn: "আপনার দাবি",
-  str42En: "has been registered. Our team will contact you shortly.", str42Bn: "নিবন্ধিত হয়েছে। আমাদের দল শীঘ্রই আপনার সাথে যোগাযোগ করবে।",
-  str43En: "A coordinator will verify your subscription eligibility and activate the promotional benefit within 24 hours.", str43Bn: "একজন সমন্বয়কারী আপনার সাবস্ক্রিপশন যোগ্যতা যাচাই করবেন এবং ২৪ ঘণ্টার মধ্যে প্রচারমূলক সুবিধা সক্রিয় করবেন।",
-  str44En: "Close", str44Bn: "বন্ধ করুন",
+  str1En: "New Connection",
+  str2En: "Best Value",
+  str3En: "Gamer Special",
+  str4En: "Community Deal",
+  str5En: "Zero Installation Fee",
+  str6En: "Pay 10 Months, Get 12",
+  str7En: "Free Public IP for Gamers",
+  str8En: "Refer a Friend",
+  str9En: "",
+  str10En: "",
+  str11En: "",
+  str12En: "Refer a neighbor or friend in South Keraniganj. Once their connection is activated, both you and your referred friend get a 50% discount on your next month's internet bill.",
+  str13En: "Valid Until",
+  str14En: "Ongoing Promotion",
+  str15En: "Claim Offer",
+  str16En: "Learn More",
+  str17En: "Active Campaigns",
+  str18En: "& Promotions",
+  str19En: "Available offers for home and corporate subscribers.",
+  str20En: "Monsoon Campaigns",
+  str21En: "& Discounts",
+  str22En: "Unlock high-speed splicing broadband peering plans at zero installation fees.",
+  str23En: "All Offers",
+  str24En: "Home Packages",
+  str25En: "Gamer Packs",
+  str26En: "Corporate Plans",
+  str27En: "New Connections",
+  str28En: "Referral Deals",
+  str29En: "No active offers at this time.",
+  str30En: "Check back soon for new campaigns.",
+  str31En: "Code",
+  str32En: "Copy Code",
+  str33En: "Claim This Offer",
+  str34En: "You are claiming promo code",
+  str35En: "Full Name",
+  str36En: "Phone Number",
+  str37En: "Your Address",
+  str38En: "Submitting...",
+  str39En: "Submit Claim",
+  str40En: "Claim Submitted!",
+  str41En: "Your claim for",
+  str42En: "has been registered. Our team will contact you shortly.",
+  str43En: "A coordinator will verify your subscription eligibility and activate the promotional benefit within 24 hours.",
+  str44En: "Close",
 };
 import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
@@ -116,19 +116,19 @@ export default function Offers() {
 
   const translateOfferTitle = (title: string) => {
     if (!title || typeof title !== "string") return "";
-    if (title === "Zero Installation Fee") return t(pageContent.str5En, pageContent.str5Bn);
-    if (title === "Pay 10 Months, Get 12") return t(pageContent.str6En, pageContent.str6Bn);
-    if (title === "Free Public IP for Gamers") return t(pageContent.str7En, pageContent.str7Bn);
-    if (title === "Refer a Friend") return t(pageContent.str8En, pageContent.str8Bn);
+    if (title === "Zero Installation Fee") return t(pageContent.str5En, pageContent.str5En);
+    if (title === "Pay 10 Months, Get 12") return t(pageContent.str6En, pageContent.str6En);
+    if (title === "Free Public IP for Gamers") return t(pageContent.str7En, pageContent.str7En);
+    if (title === "Refer a Friend") return t(pageContent.str8En, pageContent.str8En);
     return title;
   };
 
   const translateOfferDetails = (det: string) => {
     if (!det || typeof det !== "string") return "";
-    if (det.startsWith("Subscribe to any 20 Mbps")) return t(pageContent.str9En, pageContent.str9Bn);
-    if (det.startsWith("Pay for 10 months")) return t(pageContent.str10En, pageContent.str10Bn);
-    if (det.startsWith("Subscribe to the 30 Mbps")) return t(pageContent.str11En, pageContent.str11Bn);
-    if (det.startsWith("Refer a neighbor")) return t(pageContent.str12En, pageContent.str12Bn);
+    if (det.startsWith("Subscribe to any 20 Mbps")) return t(pageContent.str9En, pageContent.str9En);
+    if (det.startsWith("Pay for 10 months")) return t(pageContent.str10En, pageContent.str10En);
+    if (det.startsWith("Subscribe to the 30 Mbps")) return t(pageContent.str11En, pageContent.str11En);
+    if (det.startsWith("Refer a neighbor")) return t(pageContent.str12En, pageContent.str12En);
     return det;
   };
 
@@ -152,7 +152,7 @@ export default function Offers() {
         title: "Zero Installation Fee",
         badge: "New Connection",
         badgeColor: "bg-brand-cyan/15 border-brand-cyan/30 text-brand-cyan",
-        details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
+        details: "",
         code: "FREEINSTALL2026",
         validUntil: "31 Dec 2026",
         imageUrl: "/offer-card-banner.png",
@@ -161,7 +161,7 @@ export default function Offers() {
         title: "Pay 10 Months, Get 12",
         badge: "Best Value",
         badgeColor: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 animate-pulse",
-        details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
+        details: "",
         code: "ANNUAL10",
         validUntil: "Ongoing Promotion",
         imageUrl: "/offer-card-banner.png",
@@ -170,7 +170,7 @@ export default function Offers() {
         title: "Free Public IP for Gamers",
         badge: "Gamer Special",
         badgeColor: "bg-brand-blue/15 border-brand-blue/30 text-brand-blue",
-        details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
+        details: "",
         code: "GAMERIP",
         validUntil: "31 Oct 2026",
         imageUrl: "/offer-card-banner.png",
@@ -265,13 +265,13 @@ export default function Offers() {
         
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-4xl font-extrabold text-white tracking-tight mt-0 text-center w-full block drop-shadow-md">
-            {t(headerData.offers_title_en, headerData.offers_title_bn)}{" "}
+            {t(headerData.offers_title_en, headerData.offers_title_bn ?? "")}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-              {t(headerData.offers_title_highlight_en, headerData.offers_title_highlight_bn)}
+              {t(headerData.offers_title_highlight_en, headerData.offers_title_highlight_bn ?? "")}
             </span>
           </h1>
           <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-            {t(headerData.offers_subtitle_en, headerData.offers_subtitle_bn)}
+            {t(headerData.offers_subtitle_en, headerData.offers_subtitle_bn ?? "")}
           </p>
         </div>
       </div> {/* Close Top Section Wrapper */}
@@ -355,9 +355,9 @@ export default function Offers() {
             {!claimSuccess ? (
               <form onSubmit={handleClaimSubmit} className="space-y-5 text-left">
                 <div>
-                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str33En, pageContent.str33Bn)}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str33En, pageContent.str33En)}</h3>
                   <p className="text-xs text-slate-500 mt-1">
-                    {t(pageContent.str34En, pageContent.str34Bn)}{" "}
+                    {t(pageContent.str34En, pageContent.str34En)}{" "}
                     <span className="text-brand-blue font-bold font-mono uppercase">{selectedPromo.code}</span>
                   </p>
                 </div>
@@ -369,7 +369,7 @@ export default function Offers() {
 
                 <div className="space-y-4 text-left">
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str35En, pageContent.str35Bn)}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str35En, pageContent.str35En)}</label>
                     <input
                       type="text"
                       required
@@ -381,7 +381,7 @@ export default function Offers() {
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str36En, pageContent.str36Bn)}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str36En, pageContent.str36En)}</label>
                     <input
                       type="tel"
                       required
@@ -393,7 +393,7 @@ export default function Offers() {
                   </div>
 
                   <div className="flex flex-col gap-1.5 text-left">
-                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str37En, pageContent.str37Bn)}</label>
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t(pageContent.str37En, pageContent.str37En)}</label>
                     <textarea
                       required
                       rows={2}
@@ -413,10 +413,10 @@ export default function Offers() {
                   {submittingClaim ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t(pageContent.str38En, pageContent.str38Bn)}
+                      {t(pageContent.str38En, pageContent.str38En)}
                     </>
                   ) : (
-                    t(pageContent.str39En, pageContent.str39Bn)
+                    t(pageContent.str39En, pageContent.str39En)
                   )}
                 </button>
               </form>
@@ -429,21 +429,21 @@ export default function Offers() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str40En, pageContent.str40Bn)}</h3>
+                  <h3 className="text-slate-900 font-bold text-xl">{t(pageContent.str40En, pageContent.str40En)}</h3>
                   <p className="text-sm text-slate-600">
-                    {t(pageContent.str41En, pageContent.str41Bn)} <span className="text-brand-blue font-bold">{translateOfferTitle(selectedPromo.title)}</span> {t(pageContent.str42En, pageContent.str42Bn)}
+                    {t(pageContent.str41En, pageContent.str41En)} <span className="text-brand-blue font-bold">{translateOfferTitle(selectedPromo.title)}</span> {t(pageContent.str42En, pageContent.str42En)}
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  {t(pageContent.str43En, pageContent.str43Bn)}
+                  {t(pageContent.str43En, pageContent.str43En)}
                 </p>
 
                 <button
                   onClick={resetClaimForm}
                   className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t(pageContent.str44En, pageContent.str44Bn)}
+                  {t(pageContent.str44En, pageContent.str44En)}
                 </button>
               </div>
             )}

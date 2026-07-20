@@ -5,36 +5,36 @@ import { getSetting, setSetting } from "@/actions/content";
 import { MeteorsBeam } from "@/components/lightswind-pro/meteors-beam";
 import { useTranslation } from "@/hooks/useTranslation";
 const defaultCoveragePageContent = {
-  str1En: "Fiber Network", str1Bn: "ফাইবার নেটওয়ার্ক",
-  str2En: "Coverage Area", str2Bn: "কাভারেজ এলাকা",
-  str3En: "M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.", str3Bn: "এম আমিন নেটওয়ার্ক দক্ষিণ কেরানীগঞ্জ জুড়ে একটি বিস্তৃত ফাইবার অপটিক নেটওয়ার্ক পরিচালনা করে। আমাদের সক্রিয় কাভারেজ এলাকা দেখুন অথবা নতুন সংযোগের সম্ভাব্যতা অনুরোধ জানান।",
-  str4En: "South Keraniganj Grid", str4Bn: "দক্ষিণ কেরানীগঞ্জ গ্রিড",
-  str5En: "Digital Fiber Backbone Topology (AS150164)", str5Bn: "ডিজিটাল ফাইবার ব্যাকবোন টপোলজি (AS150164)",
-  str6En: "Network Online", str6Bn: "নেটওয়ার্ক অনলাইন",
-  str7En: "Active Fiber Coverage", str7Bn: "সক্রিয় ফাইবার কাভারেজ",
-  str8En: "Expanding Fiber Lines", str8Bn: "সম্প্রসারণাধীন ফাইবার লাইন",
-  str9En: "Planned Coverage", str9Bn: "পরিকল্পিত কাভারেজ",
-  str10En: "Request Coverage", str10Bn: "কাভারেজের অনুরোধ",
-  str11En: "Don't see your area on the list? Submit a request so our engineers can perform a fiber routing survey.", str11Bn: "তালিকায় আপনার এলাকাটি দেখছেন না? একটি অনুরোধ জমা দিন যাতে আমাদের প্রকৌশলীরা ফাইবার রাউটিং সমীক্ষা করতে পারেন।",
-  str12En: "Your Name", str12Bn: "আপনার নাম",
-  str13En: "Phone Number", str13Bn: "মোবাইল নম্বর",
-  str14En: "Target Area", str14Bn: "কাঙ্ক্ষিত এলাকা",
-  str15En: "Descriptive Address", str15Bn: "বিস্তারিত ঠিকানা",
-  str16En: "Specify landmarks, mosque, or school names near your premises", str16Bn: "আপনার বাড়ির নিকটবর্তী ল্যান্ডমার্ক, মসজিদ বা স্কুলের নাম উল্লেখ করুন",
-  str17En: "Saving Request...", str17Bn: "অনুরোধ সংরক্ষণ করা হচ্ছে...",
-  str18En: "Submit Feasibility Request", str18Bn: "সম্ভাব্যতা যাচাইয়ের আবেদন জমা দিন",
-  str19En: "Survey Registered!", str19Bn: "সমীক্ষা নিবন্ধিত হয়েছে!",
-  str20En: "We have saved your request for", str20Bn: "আমরা আপনার অনুরোধটি সংরক্ষণ করেছি: ",
-  str21En: "Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.", str21Bn: "আমাদের নেটওয়ার্ক পরিকল্পনা ইউনিট নতুন সংযোগ প্রদানের জন্য নিয়মিত অনুরোধগুলো মূল্যায়ন করে। আপনার এলাকায় ফাইবার লাইন সম্প্রসারিত হলে আমাদের প্রতিনিধি আপনার সাথে যোগাযোগ করবেন।",
-  str22En: "Submit Another Area", str22Bn: "অন্য কোনো এলাকার অনুরোধ দিন",
-  str23En: "Filter by area...", str23Bn: "এলাকা দিয়ে ফিল্টার করুন...",
-  str24En: "Show All", str24Bn: "সবগুলো দেখুন",
-  str25En: "Active Only", str25Bn: "শুধুমাত্র সক্রিয়",
-  str26En: "Expanding", str26Bn: "সম্প্রসারণাধীন",
-  str27En: "Planned", str27Bn: "পরিকল্পিত",
-  str28En: "Active Fiber", str28Bn: "সক্রিয় ফাইবার",
-  str29En: "Active Sub-areas / Road Peering:", str29Bn: "সক্রিয় উপ-এলাকা / সড়কসমূহ:",
-  str30En: "No coverage zones match your search query.", str30Bn: "আপনার অনুসন্ধানের সাথে মেলে এমন কোনো এলাকা পাওয়া যায়নি।",
+  str1En: "Fiber Network",
+  str2En: "Coverage Area",
+  str3En: "M Amin Network operates a extensive optical fiber ring throughout South Keraniganj. Browse our active deployment zones or submit a feasibility request for new areas.",
+  str4En: "South Keraniganj Grid",
+  str5En: "Digital Fiber Backbone Topology (AS150164)",
+  str6En: "Network Online",
+  str7En: "Active Fiber Coverage",
+  str8En: "Expanding Fiber Lines",
+  str9En: "Planned Coverage",
+  str10En: "Request Coverage",
+  str11En: "Don't see your area on the list? Submit a request so our engineers can perform a fiber routing survey.",
+  str12En: "Your Name",
+  str13En: "Phone Number",
+  str14En: "Target Area",
+  str15En: "Descriptive Address",
+  str16En: "Specify landmarks, mosque, or school names near your premises",
+  str17En: "Saving Request...",
+  str18En: "Submit Feasibility Request",
+  str19En: "Survey Registered!",
+  str20En: "We have saved your request for",
+  str21En: "Our network planning unit regularly assesses survey requests to plot new distribution boxes. Our representative will contact you in case we expand near your line within the current quarter.",
+  str22En: "Submit Another Area",
+  str23En: "Filter by area...",
+  str24En: "Show All",
+  str25En: "Active Only",
+  str26En: "Expanding",
+  str27En: "Planned",
+  str28En: "Active Fiber",
+  str29En: "Active Sub-areas / Road Peering:",
+  str30En: "No coverage zones match your search query.",
 };
 import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
@@ -210,13 +210,13 @@ export default function Coverage() {
           </svg>
         </div>
         <h1 className="text-4xl font-extrabold text-white tracking-tight">
-          {t(pageContent.str1En, pageContent.str1Bn)}{" "}
+          {t(pageContent.str1En, pageContent.str1En)}{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-            {t(pageContent.str2En, pageContent.str2Bn)}
+            {t(pageContent.str2En, pageContent.str2En)}
           </span>
         </h1>
         <p className="text-slate-400 mt-4 text-sm sm:text-base">
-          {t(pageContent.str3En, pageContent.str3Bn)}
+          {t(pageContent.str3En, pageContent.str3En)}
         </p>
       </div>
 
@@ -229,12 +229,12 @@ export default function Coverage() {
             
             <div className="flex justify-between items-center mb-6 z-10">
               <div>
-                <h3 className="text-white font-bold text-base">{t(pageContent.str4En, pageContent.str4Bn)}</h3>
-                <p className="text-xs text-slate-400">{t(pageContent.str5En, pageContent.str5Bn)}</p>
+                <h3 className="text-white font-bold text-base">{t(pageContent.str4En, pageContent.str4En)}</h3>
+                <p className="text-xs text-slate-400">{t(pageContent.str5En, pageContent.str5En)}</p>
               </div>
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                {t(pageContent.str6En, pageContent.str6Bn)}
+                {t(pageContent.str6En, pageContent.str6En)}
               </span>
             </div>
             {/* Connection Beams (Lightswind Pro) */}
@@ -339,15 +339,15 @@ export default function Coverage() {
             <div className="flex flex-wrap gap-4 text-xs border-t border-brand-border/40 pt-4 z-10">
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-cyan shadow-[0_0_8px_rgba(0,240,255,0.6)]" />
-                {t(pageContent.str7En, pageContent.str7Bn)}
+                {t(pageContent.str7En, pageContent.str7En)}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-blue shadow-[0_0_8px_rgba(0,114,255,0.6)]" />
-                {t(pageContent.str8En, pageContent.str8Bn)}
+                {t(pageContent.str8En, pageContent.str8En)}
               </span>
               <span className="flex items-center gap-1.5 text-slate-300">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-500" />
-                {t(pageContent.str9En, pageContent.str9Bn)}
+                {t(pageContent.str9En, pageContent.str9En)}
               </span>
             </div>
           </div>
@@ -359,15 +359,15 @@ export default function Coverage() {
             {!submitted ? (
               <form onSubmit={handleRequestSubmit} className="space-y-5">
                 <div>
-                  <h3 className="text-white font-bold text-lg">{t(pageContent.str10En, pageContent.str10Bn)}</h3>
+                  <h3 className="text-white font-bold text-lg">{t(pageContent.str10En, pageContent.str10En)}</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    {t(pageContent.str11En, pageContent.str11Bn)}
+                    {t(pageContent.str11En, pageContent.str11En)}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-4 text-left">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str12En, pageContent.str12Bn)}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str12En, pageContent.str12En)}</label>
                     <input
                       type="text"
                       name="name"
@@ -380,7 +380,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str13En, pageContent.str13Bn)}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str13En, pageContent.str13En)}</label>
                     <input
                       type="tel"
                       name="phone"
@@ -393,7 +393,7 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str14En, pageContent.str14Bn)}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str14En, pageContent.str14En)}</label>
                     <div className="relative">
                       <input
                         type="text"
@@ -412,14 +412,14 @@ export default function Coverage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str15En, pageContent.str15Bn)}</label>
+                    <label className="text-xs text-slate-300 font-bold uppercase tracking-wider">{t(pageContent.str15En, pageContent.str15En)}</label>
                     <textarea
                       name="address"
                       required
                       rows={3}
                       value={requestData.address}
                       onChange={handleRequestChange}
-                      placeholder={t(pageContent.str16En, pageContent.str16Bn)}
+                      placeholder={t(pageContent.str16En, pageContent.str16En)}
                       className="bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan resize-none"
                     />
                   </div>
@@ -433,10 +433,10 @@ export default function Coverage() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                      {t(pageContent.str17En, pageContent.str17Bn)}
+                      {t(pageContent.str17En, pageContent.str17En)}
                     </>
                   ) : (
-                    t(pageContent.str18En, pageContent.str18Bn)
+                    t(pageContent.str18En, pageContent.str18En)
                   )}
                 </button>
               </form>
@@ -449,21 +449,21 @@ export default function Coverage() {
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-white font-bold text-xl">{t(pageContent.str19En, pageContent.str19Bn)}</h3>
+                  <h3 className="text-white font-bold text-xl">{t(pageContent.str19En, pageContent.str19En)}</h3>
                   <p className="text-sm text-slate-400">
-                    {t(pageContent.str20En, pageContent.str20Bn)} <span className="text-slate-200 font-bold">{requestData.area}</span>.
+                    {t(pageContent.str20En, pageContent.str20En)} <span className="text-slate-200 font-bold">{requestData.area}</span>.
                   </p>
                 </div>
 
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  {t(pageContent.str21En, pageContent.str21Bn)}
+                  {t(pageContent.str21En, pageContent.str21En)}
                 </p>
 
                 <button
                   onClick={resetRequestForm}
                   className="px-6 py-2 rounded-xl bg-brand-border hover:bg-brand-border/80 text-white text-xs font-bold transition-colors cursor-pointer"
                 >
-                  {t(pageContent.str22En, pageContent.str22Bn)}
+                  {t(pageContent.str22En, pageContent.str22En)}
                 </button>
               </div>
             )}
@@ -499,13 +499,13 @@ export default function Coverage() {
       
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-6 drop-shadow-md">
-          {t(headerData.coverage_title_en, headerData.coverage_title_bn)}{" "}
+          {t(headerData.coverage_title_en, headerData.coverage_title_bn ?? "")}{" "}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-            {t(headerData.coverage_title_highlight_en, headerData.coverage_title_highlight_bn)}
+            {t(headerData.coverage_title_highlight_en, headerData.coverage_title_highlight_bn ?? "")}
           </span>
         </h1>
         <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed font-medium drop-shadow-sm">
-          {t(headerData.coverage_subtitle_en, headerData.coverage_subtitle_bn)}
+          {t(headerData.coverage_subtitle_en, headerData.coverage_subtitle_bn ?? "")}
         </p>
       </div>
     </div>
@@ -518,7 +518,7 @@ export default function Coverage() {
             <div className="relative w-full sm:max-w-xs">
               <input
                 type="text"
-                placeholder={t(pageContent.str23En, pageContent.str23Bn)}
+                placeholder={t(pageContent.str23En, pageContent.str23En)}
                 value={search}
                 onChange={handleSearchChange}
                 className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brand-blue"
@@ -536,10 +536,10 @@ export default function Coverage() {
             {/* Status Filters */}
             <div className="flex gap-2 flex-wrap">
               {[
-                { id: "all", label: t(pageContent.str24En, pageContent.str24Bn) },
-                { id: "active", label: t(pageContent.str25En, pageContent.str25Bn) },
-                { id: "expanding", label: t(pageContent.str26En, pageContent.str26Bn) },
-                { id: "planned", label: t(pageContent.str27En, pageContent.str27Bn) },
+                { id: "all", label: t(pageContent.str24En, pageContent.str24En) },
+                { id: "active", label: t(pageContent.str25En, pageContent.str25En) },
+                { id: "expanding", label: t(pageContent.str26En, pageContent.str26En) },
+                { id: "planned", label: t(pageContent.str27En, pageContent.str27En) },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -588,16 +588,16 @@ export default function Coverage() {
                       }`}
                     >
                       {zone.status === "active"
-                        ? t(pageContent.str28En, pageContent.str28Bn)
+                        ? t(pageContent.str28En, pageContent.str28En)
                         : zone.status === "expanding"
-                        ? t(pageContent.str26En, pageContent.str26Bn)
-                        : t(pageContent.str27En, pageContent.str27Bn)}
+                        ? t(pageContent.str26En, pageContent.str26En)
+                        : t(pageContent.str27En, pageContent.str27En)}
                     </span>
                   </div>
 
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">
-                      {t(pageContent.str29En, pageContent.str29Bn)}
+                      {t(pageContent.str29En, pageContent.str29En)}
                     </p>
                     <ul className="space-y-1.5">
                       {zone.subAreas.map((sub, subIdx) => (
@@ -615,7 +615,7 @@ export default function Coverage() {
               ))
             ) : (
               <div className="col-span-4 text-center py-12 bg-slate-50 rounded-2xl border border-slate-200">
-                <p className="text-slate-500">{t(pageContent.str30En, pageContent.str30Bn)}</p>
+                <p className="text-slate-500">{t(pageContent.str30En, pageContent.str30En)}</p>
               </div>
             )}
           </div>

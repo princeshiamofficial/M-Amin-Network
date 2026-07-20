@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Toaster } from 'sonner';
 import MaintenanceWrapper from "@/components/MaintenanceWrapper";
 import { getSetting } from "@/actions/content";
+import Script from "next/script";
 
 export const dynamic = 'force-dynamic';
 
@@ -73,8 +74,30 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full w-full overflow-x-hidden antialiased`}
+      suppressHydrationWarning
     >
       <head>
+        {/* Anti-translation script for admin panel */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (window.location.pathname.startsWith('/admin')) {
+                  document.documentElement.classList.add('notranslate');
+                  document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+                  document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=' + window.location.hostname;
+                  if (window.location.hostname.includes('.')) {
+                    var parts = window.location.hostname.split('.');
+                    if (parts.length >= 2) {
+                      var rootDomain = '.' + parts.slice(-2).join('.');
+                      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=' + rootDomain;
+                    }
+                  }
+                }
+              })();
+            `
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -185,10 +208,125 @@ export default async function RootLayout({
           .force-active-link {
               color: #0072ff !important;
           }
+          /* Hide Google Translate native top banner & dynamic layout shifting */
+          iframe.goog-te-banner-frame {
+              display: none !important;
+          }
+          .goog-te-banner-frame {
+              display: none !important;
+          }
+          body {
+              top: 0px !important;
+          }
+          .skiptranslate {
+              display: none !important;
+          }
+          #google_translate_element {
+              display: none !important;
+          }
         `}} />
+
+        {/* Google Translate API Widget integration */}
+        <Script
+          id="google-translate-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                if (window.location.pathname.startsWith('/admin')) {
+                  return;
+                }
+                new google.translate.TranslateElement({
+                  pageLanguage: 'en',
+                  layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                  autoDisplay: false
+                }, 'google_translate_element');
+              }
+            `
+          }}
+        />
+        <Script
+          id="google-translate-element"
+          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          strategy="afterInteractive"
+        />
+        {/* Custom translation override script to replace "শূন্য" (Sunno) with "জিরো" (Zero) for technical accuracy */}
+        <Script
+          id="translate-zero-override"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (window.location.pathname.startsWith('/admin')) return;
+                function replaceText(node) {
+                  if (node.nodeType === Node.TEXT_NODE) {
+                    if (node.nodeValue && node.nodeValue.includes('শূন্য')) {
+                      node.nodeValue = node.nodeValue.replace(/শূন্য/g, 'জিরো');
+                    }
+                  } else {
+                    for (let child of node.childNodes) {
+                      replaceText(child);
+                    }
+                  }
+                }
+
+                function runReplace() {
+                  if (document.documentElement.lang === 'bn') {
+                    replaceText(document.body);
+                  }
+                }
+
+                if (typeof window !== 'undefined') {
+                  var observer = new MutationObserver(function(mutations) {
+                    if (document.documentElement.lang === 'bn') {
+                      observer.disconnect();
+                      runReplace();
+                      observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        characterData: true
+                      });
+                    }
+                  });
+
+                  var htmlObserver = new MutationObserver(function(mutations) {
+                    if (document.documentElement.lang === 'bn') {
+                      observer.disconnect();
+                      runReplace();
+                      observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        characterData: true
+                      });
+                    }
+                  });
+
+                  var startObservers = function() {
+                    if (document.body) {
+                      observer.observe(document.body, {
+                        childList: true,
+                        subtree: true,
+                        characterData: true
+                      });
+                      htmlObserver.observe(document.documentElement, {
+                        attributes: true,
+                        attributeFilter: ['lang']
+                      });
+                      runReplace();
+                    } else {
+                      setTimeout(startObservers, 50);
+                    }
+                  };
+                  startObservers();
+                }
+              })();
+            `
+          }}
+        />
 
       </head>
       <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
+        <div id="google_translate_element" style={{ display: "none" }} />
         <MaintenanceWrapper isMaintenance={isMaintenance} maintenanceMessage={maintenanceMessage}>
           <Navbar />
           <main className="grow pt-24 flex flex-col overflow-x-hidden">{children}</main>

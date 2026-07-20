@@ -37,7 +37,8 @@ import {
   PanelTop,
   Zap,
   Film,
-  Star
+  Star,
+  Layers
 } from "lucide-react";
 
 interface AdminSidebarRole {
@@ -109,10 +110,7 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     "FAQs": "/admin/faqs",
     "Why Choose": "/admin/why-choose",
     "Hero Typography": "/admin/hero-typography",
-    "Packages Header": "/admin/page-headers/packages",
-    "Offers Header": "/admin/page-headers/offers",
-    "Multimedia Header": "/admin/page-headers/multimedia",
-    "Careers Header": "/admin/page-headers/careers",
+    "Header Content": "/admin/page-headers",
     "SEO & Sharing": "/admin/seo-sharing",
     "About Page": "/admin/about-page",
     "Contact Page": "/admin/contact-page",
@@ -250,6 +248,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, onSignOut, isCol
     {
       title: "Pages",
       items: [
+        {
+          name: "Header Content",
+          icon: <Layers className="w-4 h-4" />,
+        },
         {
           name: "SEO & Sharing",
           icon: <Globe className="w-4 h-4" />,

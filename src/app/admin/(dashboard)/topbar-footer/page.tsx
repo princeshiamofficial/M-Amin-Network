@@ -24,7 +24,7 @@ interface FooterContent {
   twitter: string;
   linkedin: string;
   addressEn: string;
-  addressBn: string;
+  addressBn?: string;
   email: string;
 }
 
@@ -35,14 +35,14 @@ interface TopbarContent {
 
 interface AffiliationBadge {
   textEn: string;
-  textBn: string;
+  textBn?: string;
   isCyan: boolean;
   image?: string;
 }
 
 interface LicenseBadge {
   textEn: string;
-  textBn: string;
+  textBn?: string;
   isMono: boolean;
   colorStyle: string; // "cyan" | "emerald" | "slate"
   image?: string;
@@ -75,21 +75,20 @@ const defaultFooterContent: FooterContent = {
   twitter: "https://x.com/maminnetwork",
   linkedin: "https://linkedin.com/company/maminnetwork",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
-  addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
   email: "info@m-aminnetwork.com",
 };
 
-const defaultNavLinks: { nameEn: string; nameBn: string; href: string }[] = [
-  { nameEn: "Home", nameBn: "হোম", href: "/" },
-  { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
-  { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
-  { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
-  { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
-  { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
-  { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
-  { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
-  { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
-  { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+const defaultNavLinks: { nameEn: string; nameBn?: string; href: string }[] = [
+  { nameEn: "Home", href: "/" },
+  { nameEn: "Packages", href: "/packages" },
+  { nameEn: "Offers", href: "/offers" },
+  { nameEn: "Coverage", href: "/coverage" },
+  { nameEn: "Multimedia", href: "/multimedia" },
+  { nameEn: "Complain", href: "/complain" },
+  { nameEn: "Pay Bill", href: "/bill-payment" },
+  { nameEn: "Careers", href: "/careers" },
+  { nameEn: "Contact", href: "/contact" },
+  { nameEn: "About", href: "/about" },
 ];
 
 const defaultTopbarContent: TopbarContent = {
@@ -98,13 +97,13 @@ const defaultTopbarContent: TopbarContent = {
 };
 
 const defaultBadges: AffiliationBadge[] = [
-  { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
-  { textEn: "AS150164 BGP NETWORK", textBn: "AS150164 বিজিপি নেটওয়ার্ক", isCyan: true }
+  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" },
+  { textEn: "AS150164 BGP NETWORK", isCyan: true }
 ];
 
 const defaultLicenses: LicenseBadge[] = [
-  { textEn: "ASN: AS150164", textBn: "ASN: AS150164", isMono: true, colorStyle: "cyan" },
-  { textEn: "BTRC Licensed", textBn: "বিটিআরসি অনুমোদিত", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
+  { textEn: "ASN: AS150164", isMono: true, colorStyle: "cyan" },
+  { textEn: "BTRC Licensed", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
 ];
 
 const defaultPhones = ["+880 1707-009267"];
@@ -153,7 +152,7 @@ function normalizeFooterContent(value: unknown): FooterContent {
     twitter: textValue(record.twitter, defaultFooterContent.twitter),
     linkedin: textValue(record.linkedin, defaultFooterContent.linkedin),
     addressEn: textValue(record.addressEn, defaultFooterContent.addressEn),
-    addressBn: textValue(record.addressBn, defaultFooterContent.addressBn),
+    addressBn: textValue(record.addressBn ?? "", defaultFooterContent.addressBn ?? ""),
     email: textValue(record.email, defaultFooterContent.email),
   };
 }
@@ -188,8 +187,8 @@ export default function TopbarFooterPage() {
   const [isUploadingPdf, setIsUploadingPdf] = useState(false);
 
   // New item form states
-  const [newBadge, setNewBadge] = useState<AffiliationBadge>({ textEn: "", textBn: "", isCyan: false, image: "" });
-  const [newLicense, setNewLicense] = useState<LicenseBadge>({ textEn: "", textBn: "", isMono: false, colorStyle: "cyan", image: "" });
+  const [newBadge, setNewBadge] = useState<AffiliationBadge>({ textEn: "", isCyan: false, image: "" });
+  const [newLicense, setNewLicense] = useState<LicenseBadge>({ textEn: "", isMono: false, colorStyle: "cyan", image: "" });
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -350,7 +349,7 @@ export default function TopbarFooterPage() {
             saveFooterContentPatch({
               email: footerContent.email,
               addressEn: footerContent.addressEn,
-              addressBn: footerContent.addressBn,
+              addressBn: footerContent.addressBn ?? "",
             }),
             setSetting("footer_phones", serializePhoneList(normalizedPhones)),
           ]);
@@ -440,7 +439,7 @@ export default function TopbarFooterPage() {
     } as AffiliationBadge;
     if (field === "image" && typeof value === "string" && value.trim()) {
       nextBadge.textEn = nextBadge.textEn.trim() || imageBadgeFallbackText;
-      nextBadge.textBn = nextBadge.textBn.trim() || imageBadgeFallbackText;
+      nextBadge.textBn = nextBadge.textEn;
     }
     updated[index] = nextBadge;
     setBadges(updated);
@@ -455,18 +454,18 @@ export default function TopbarFooterPage() {
   const addNewBadge = (e: React.FormEvent) => {
     e.preventDefault();
     const image = newBadge.image?.trim() ? newBadge.image.trim() : undefined;
-    if (!image && (!newBadge.textEn.trim() || !newBadge.textBn.trim())) {
-      toast("Please fill in both English and Bangla text fields.");
+    if (!image && (!newBadge.textEn.trim() || false)) {
+      toast("Please fill in the English text field.");
       return;
     }
     const badgeToAppend: AffiliationBadge = {
       textEn: newBadge.textEn.trim() || imageBadgeFallbackText,
-      textBn: newBadge.textBn.trim() || imageBadgeFallbackText,
+      textBn: newBadge.textEn.trim() || imageBadgeFallbackText,
       isCyan: newBadge.isCyan,
       image
     };
     setBadges([...badges, badgeToAppend]);
-    setNewBadge({ textEn: "", textBn: "", isCyan: false, image: "" });
+    setNewBadge({ textEn: "", isCyan: false, image: "" });
   };
 
   // License badge handlers
@@ -496,7 +495,7 @@ export default function TopbarFooterPage() {
     } as LicenseBadge;
     if (field === "image" && typeof value === "string" && value.trim()) {
       nextLicense.textEn = nextLicense.textEn.trim() || imageBadgeFallbackText;
-      nextLicense.textBn = nextLicense.textBn.trim() || imageBadgeFallbackText;
+      nextLicense.textBn = nextLicense.textEn;
     }
     updated[index] = nextLicense;
     setLicenses(updated);
@@ -511,21 +510,21 @@ export default function TopbarFooterPage() {
   const addNewLicense = (e: React.FormEvent) => {
     e.preventDefault();
     const image = newLicense.image?.trim() ? newLicense.image.trim() : undefined;
-    if (!image && (!newLicense.textEn.trim() || !newLicense.textBn.trim())) {
-      toast("Please fill in both English and Bangla text fields.");
+    if (!image && (!newLicense.textEn.trim() || false)) {
+      toast("Please fill in the English text field.");
       return;
     }
     setLicenses([
       ...licenses,
       {
         textEn: newLicense.textEn.trim() || imageBadgeFallbackText,
-        textBn: newLicense.textBn.trim() || imageBadgeFallbackText,
+      textBn: newLicense.textEn.trim() || imageBadgeFallbackText,
         isMono: newLicense.isMono,
         colorStyle: newLicense.colorStyle,
         image,
       },
     ]);
-    setNewLicense({ textEn: "", textBn: "", isMono: false, colorStyle: "cyan", image: "" });
+    setNewLicense({ textEn: "", isMono: false, colorStyle: "cyan", image: "" });
   };
 
   if (!auth) return null;
@@ -618,7 +617,6 @@ export default function TopbarFooterPage() {
                       <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
                         <th className="px-4 py-3 w-16 text-center">Order</th>
                         <th className="px-4 py-3">English Label</th>
-                        <th className="px-4 py-3">Bangla Label</th>
                         <th className="px-4 py-3 w-48">Badge Image</th>
                         <th className="px-4 py-3 w-28 text-center">Mono Font</th>
                         <th className="px-4 py-3 w-32 text-center">Color Style</th>
@@ -674,26 +672,7 @@ export default function TopbarFooterPage() {
                                   required
                                 />
                               )}
-                            </td>
-
-                            {/* Bangla Label */}
-                            <td className="px-4 py-2">
-                              {lic.image ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                  Image badge
-                                </span>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={lic.textBn}
-                                  onChange={(e) => handleLicenseFieldChange(idx, "textBn", e.target.value)}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                  required
-                                />
-                              )}
-                            </td>
-
-                            {/* Badge Image Upload & Preview */}
+                            </td>{/* Badge Image Upload & Preview */}
                             <td className="px-4 py-2">
                               <div className="flex items-center gap-3">
                                 {/* Thumbnail Preview */}
@@ -809,14 +788,6 @@ export default function TopbarFooterPage() {
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">Bangla Text</label>
-                      <input
-                        type="text"
-                        value={newLicense.textBn}
-                        onChange={(e) => setNewLicense({ ...newLicense, textBn: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        placeholder="e.g. বিটিআরসি অনুমোদিত"
-                      />
                     </div>
                       </>
                     )}
@@ -990,14 +961,6 @@ export default function TopbarFooterPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Address (Bangla)</label>
-                  <textarea
-                    value={footerContent.addressBn}
-                    onChange={(e) => setFooterContent({ ...footerContent, addressBn: e.target.value })}
-                    className="min-h-24 w-full resize-y bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-brand-blue leading-relaxed"
-                    placeholder="যেমন: বাসা নং ৬৮, কদমতলী, আগানগর..."
-                    required
-                  />
                 </div>
               </div>
             </div>
@@ -1025,7 +988,6 @@ export default function TopbarFooterPage() {
                       <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
                         <th className="px-4 py-3 w-16 text-center">Order</th>
                         <th className="px-4 py-3">English Label (Fallback)</th>
-                        <th className="px-4 py-3">Bangla Label (Fallback)</th>
                         <th className="px-4 py-3 w-48">Badge Image</th>
                         <th className="px-4 py-3 w-28 text-center">Cyan Accent</th>
                         <th className="px-4 py-3 w-20 text-center">Action</th>
@@ -1076,23 +1038,6 @@ export default function TopbarFooterPage() {
                                   type="text"
                                   value={badge.textEn}
                                   onChange={(e) => handleBadgeFieldChange(idx, "textEn", e.target.value)}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                  required
-                                />
-                              )}
-                            </td>
-
-                            {/* Bangla Label */}
-                            <td className="px-4 py-2">
-                              {badge.image ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                  Image badge
-                                </span>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={badge.textBn}
-                                  onChange={(e) => handleBadgeFieldChange(idx, "textBn", e.target.value)}
                                   className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                                   required
                                 />
@@ -1199,16 +1144,6 @@ export default function TopbarFooterPage() {
                         onChange={(e) => setNewBadge({ ...newBadge, textEn: e.target.value })}
                         className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
                         placeholder="e.g. ISPAB MEMBER"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">Bangla Fallback</label>
-                      <input
-                        type="text"
-                        value={newBadge.textBn}
-                        onChange={(e) => setNewBadge({ ...newBadge, textBn: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        placeholder="e.g. আইএসপিএবি সদস্য"
                       />
                     </div>
                       </>

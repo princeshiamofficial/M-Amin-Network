@@ -17,30 +17,25 @@ interface HeroTypography {
 interface HeroMetric {
   value: string;
   titleEn: string;
-  titleBn: string;
+  titleBn?: string;
   descEn: string;
-  descBn: string;
+  descBn?: string;
 }
 
 const defaultHeroTypography: HeroTypography = {
   badgeText: "BTRC Licensed Broadband Provider",
   mainTitle: "Blazing Fast Fiber | Internet in Keraniganj",
   subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
-  slides: [
-    "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-    "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-    "/933503ea823535235e8159f65709292f.jpg",
-    "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-  ]
+  slides: []
 };
 
 const MAX_HERO_SLIDES = 6;
 
 const defaultHeroMetrics: HeroMetric[] = [
-  { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ" },
-  { value: "2,000+", titleEn: "Active Clients", titleBn: "সক্রিয় গ্রাহক", descEn: "Trusted by homes & businesses", descBn: "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার" },
-  { value: "10+", titleEn: "Cities Served", titleBn: "পরিষেবা এলাকা", descEn: "Across South Keraniganj", descBn: "দক্ষিণ কেরানীগঞ্জ জুড়ে" },
-  { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট" },
+  { value: "99.9%", titleEn: "Guaranteed Uptime", descEn: "Redundant upstream connections" },
+  { value: "2,000+", titleEn: "Active Clients", descEn: "Trusted by homes & businesses" },
+  { value: "10+", titleEn: "Cities Served", descEn: "Across South Keraniganj" },
+  { value: "24/7", titleEn: "Support Response", descEn: "Expert technical field support" },
 ];
 
 const defaultMetricSuffixes = ["%", "+", "+", "/7"];
@@ -96,7 +91,16 @@ export default function HeroTypographyPage() {
     getSetting("hero_typography").then(saved => {
       if (saved) {
         const parsed = saved as Record<string, unknown>;
-        const savedSlides = Array.isArray(parsed.slides) ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "") : [];
+        const savedSlides = Array.isArray(parsed.slides)
+          ? parsed.slides.filter((slide): slide is string => 
+              typeof slide === "string" && 
+              slide.trim() !== "" &&
+              !slide.includes("28ca5e1d52c944ebfc4dd9f2b300980d") &&
+              !slide.includes("6c55d74de82b7eee7127c3e2d4939b1f") &&
+              !slide.includes("933503ea823535235e8159f65709292f") &&
+              !slide.includes("ea82d2834f062ee8d73d8b99aebe0d31")
+            )
+          : [];
         setHeroTypography({
           badgeText: (parsed.badgeText as string) || defaultHeroTypography.badgeText,
           mainTitle: (parsed.mainTitle as string) || defaultHeroTypography.mainTitle,
@@ -199,6 +203,15 @@ export default function HeroTypographyPage() {
     updated[index] = {
       ...updated[index],
       value
+    };
+    setHeroMetrics(updated);
+  };
+
+  const updateMetricField = (index: number, field: keyof HeroMetric, val: string) => {
+    const updated = [...heroMetrics];
+    updated[index] = {
+      ...updated[index],
+      [field]: val
     };
     setHeroMetrics(updated);
   };
@@ -318,10 +331,11 @@ export default function HeroTypographyPage() {
               {heroMetrics.map((metric, idx) => (
                 <div key={idx} className="p-4 border border-slate-200 rounded-xl bg-slate-50/50 space-y-3">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Card {idx + 1} Settings</span>
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 block uppercase">{defaultHeroMetrics[idx].titleEn} Number</label>
-                      <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white focus-within:border-brand-blue">
+                  <div className="space-y-3.5">
+                    {/* Value inputs */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Number Value</label>
                         <input
                           type="number"
                           min="0"
@@ -329,14 +343,71 @@ export default function HeroTypographyPage() {
                           value={getMetricNumber(metric.value || "")}
                           onChange={(e) => handleMetricNumberChange(idx, e.target.value)}
                           disabled={!allowEdit}
-                          className="w-full border-0 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none disabled:bg-slate-50 disabled:text-slate-400"
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue disabled:bg-slate-50 disabled:text-slate-400"
                           placeholder={idx === 0 ? "99.9" : idx === 1 ? "2000" : idx === 2 ? "10" : "24"}
                           required
                         />
-                        <span className="flex min-w-10 items-center justify-center border-l border-slate-200 bg-slate-50 px-2 text-xs font-bold text-slate-500">
-                          {getMetricSuffix(metric.value || "", idx)}
-                        </span>
                       </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 block uppercase">Suffix (e.g. %, +, /7)</label>
+                        <input
+                          type="text"
+                          value={getMetricSuffix(metric.value || "", idx)}
+                          onChange={(e) => {
+                            const num = getMetricNumber(metric.value || "");
+                            updateMetricValue(idx, num ? `${num}${e.target.value}` : e.target.value);
+                          }}
+                          disabled={!allowEdit}
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue disabled:bg-slate-50 disabled:text-slate-400"
+                          placeholder="%"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Titles */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 block uppercase">Card Title</label>
+                      <input
+                        type="text"
+                        value={metric.titleEn || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const updated = [...heroMetrics];
+                          updated[idx] = {
+                            ...updated[idx],
+                            titleEn: val,
+                            titleBn: val
+                          };
+                          setHeroMetrics(updated);
+                        }}
+                        disabled={!allowEdit}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue disabled:bg-slate-50 disabled:text-slate-400"
+                        placeholder="e.g. Active Clients"
+                        required
+                      />
+                    </div>
+
+                    {/* Descriptions */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-slate-500 block uppercase">Card Description</label>
+                      <input
+                        type="text"
+                        value={metric.descEn || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const updated = [...heroMetrics];
+                          updated[idx] = {
+                            ...updated[idx],
+                            descEn: val,
+                            descBn: val
+                          };
+                          setHeroMetrics(updated);
+                        }}
+                        disabled={!allowEdit}
+                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue disabled:bg-slate-50 disabled:text-slate-400"
+                        placeholder="e.g. Trusted clients"
+                        required
+                      />
                     </div>
                   </div>
                 </div>
@@ -429,8 +500,8 @@ export default function HeroTypographyPage() {
                 {heroMetrics.map((stat, idx) => (
                   <div key={idx} className="p-2 rounded-lg bg-slate-950/40 border border-slate-800/80 text-center backdrop-blur-xs flex flex-col justify-center min-h-[58px]">
                     <div className="text-[11px] font-black text-cyan-400 text-glow leading-none">{stat.value}</div>
-                    <div className="text-[7.5px] font-bold text-white leading-tight mt-1">{defaultHeroMetrics[idx].titleEn}</div>
-                    <div className="text-[6.5px] text-slate-400 leading-tight mt-0.5">{defaultHeroMetrics[idx].descEn}</div>
+                    <div className="text-[7.5px] font-bold text-white leading-tight mt-1">{stat.titleEn || defaultHeroMetrics[idx].titleEn}</div>
+                    <div className="text-[6.5px] text-slate-400 leading-tight mt-0.5">{stat.descEn || defaultHeroMetrics[idx].descEn}</div>
                   </div>
                 ))}
               </div>

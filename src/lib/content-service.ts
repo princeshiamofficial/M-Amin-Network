@@ -34,7 +34,8 @@ const OBJECT_KEYS = [
   "contact_content",
   "complaint_content_guidelines",
   "topbar_content",
-  "page_headers"
+  "page_headers",
+  "why_choose_content"
 ];
 
 function isObjectKey(key: string): boolean {

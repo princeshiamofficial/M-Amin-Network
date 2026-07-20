@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import NextImage from "next/image";
 
 export interface MorphCarouselProps {
   className?: string;
@@ -227,6 +228,22 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     const useTextures = images.length > 0;
     gl.uniform1i(uUseTexturesLoc, useTextures ? 1 : 0);
 
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const newWidth = Math.max(1, Math.floor(rect.width * dpr));
+      const newHeight = Math.max(1, Math.floor(rect.height * dpr));
+      if (canvas.width !== newWidth || canvas.height !== newHeight) {
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+      }
+    };
+
+    resizeCanvas();
+    const resizeObserver = new ResizeObserver(() => resizeCanvas());
+    resizeObserver.observe(canvas);
+    window.addEventListener("resize", resizeCanvas);
+
     if (useTextures) {
       const loadTexture = (url: string) => {
         const tex = gl.createTexture();
@@ -312,22 +329,13 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       animationFrameId = requestAnimationFrame(render);
     };
 
-    // Resize handler
-    const handleResize = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * (window.devicePixelRatio || 1);
-      canvas.height = rect.height * (window.devicePixelRatio || 1);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    
     // Start loop
     render();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", resizeCanvas);
+      resizeObserver.disconnect();
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
       textures.forEach((tex) => {
@@ -357,13 +365,39 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     return () => clearInterval(timer);
   }, [autoplay, activeIndex, isTransitioning, totalSlides, autoplayInterval, triggerTransition]);
 
+  const isCurrentGif = images && images.length > 0 && images[activeIndex] && images[activeIndex].toLowerCase().endsWith(".gif");
+
   return (
     <div className={`relative w-full h-full overflow-hidden ${aspectRatio} ${className}`}>
       {/* WebGL Canvas */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full block pointer-events-none"
+        className={`absolute inset-0 w-full h-full block pointer-events-none transition-opacity duration-500 ${
+          isCurrentGif ? "opacity-0" : "opacity-100"
+        }`}
       />
+
+      {/* HTML Image fallback for animated GIFs */}
+      {(images || []).map((src, idx) => {
+        const isGif = src.toLowerCase().endsWith(".gif");
+        if (!isGif) return null;
+        return (
+          <div
+            key={src + idx}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${
+              activeIndex === idx ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+          >
+            <NextImage
+              src={src}
+              alt="Animated slide"
+              fill
+              unoptimized
+              className="object-cover pointer-events-none"
+            />
+          </div>
+        );
+      })}
       
       {/* Background overlay matrix dots */}
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />

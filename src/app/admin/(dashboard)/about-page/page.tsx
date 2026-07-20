@@ -7,108 +7,93 @@ import * as Lucide from "lucide-react";
 
 export interface Credential {
   keyEn: string;
-  keyBn: string;
+  keyBn?: string;
   valEn: string;
-  valBn: string;
+  valBn?: string;
 }
 
 export interface InfraCard {
   titleEn: string;
-  titleBn: string;
+  titleBn?: string;
   descEn: string;
-  descBn: string;
+  descBn?: string;
   iconName: string;
 }
 
 export interface AboutContentFull {
   headerTitleEn: string;
-  headerTitleBn: string;
+  headerTitleBn?: string;
   headerDescEn: string;
-  headerDescBn: string;
+  headerDescBn?: string;
   
   missionTitleEn: string;
-  missionTitleBn: string;
+  missionTitleBn?: string;
   missionP1En: string;
-  missionP1Bn: string;
+  missionP1Bn?: string;
   missionP2En: string;
-  missionP2Bn: string;
+  missionP2Bn?: string;
   
   credTitleEn: string;
-  credTitleBn: string;
+  credTitleBn?: string;
   credentials: Credential[];
   
   infraTitleEn: string;
-  infraTitleBn: string;
+  infraTitleBn?: string;
   infraDescEn: string;
-  infraDescBn: string;
+  infraDescBn?: string;
   infraCards: InfraCard[];
   
   integrityTitleEn: string;
-  integrityTitleBn: string;
+  integrityTitleBn?: string;
   integrityDescEn: string;
-  integrityDescBn: string;
+  integrityDescBn?: string;
   btn1En: string;
-  btn1Bn: string;
+  btn1Bn?: string;
   btn2En: string;
-  btn2Bn: string;
+  btn2Bn?: string;
 }
 
 export const defaultAboutContentFull: AboutContentFull = {
   headerTitleEn: "About ",
-  headerTitleBn: "আমাদের ",
   headerDescEn: "Discover our history, network infrastructure capabilities, and why we are South Keraniganj's most trusted broadband provider.",
-  headerDescBn: "আমাদের ইতিহাস, নেটওয়ার্ক অবকাঠামোর সক্ষমতা এবং কেন আমরা দক্ষিণ কেরানীগঞ্জের সবচেয়ে বিশ্বস্ত ব্রডব্যান্ড প্রদানকারী তা জানুন।",
   
   missionTitleEn: "Our Mission",
-  missionTitleBn: "আমাদের লক্ষ্য",
   missionP1En: "At M Amin Network, we believe high-speed, reliable internet is no longer a luxury—it is an essential utility for education, commerce, and communication. Since our inception, we have dedicated ourselves to bridging the digital divide in South Keraniganj by deploying pure, 100% optical fiber connections (FTTH) direct to homes and businesses.",
-  missionP1Bn: "এম আমিন নেটওয়ার্কে আমরা বিশ্বাস করি উচ্চগতির ও নির্ভরযোগ্য ইন্টারনেট আর কোনো বিলাসিতা নয়—এটি শিক্ষা, ব্যবসা ও যোগাযোগের জন্য একটি অপরিহার্য সেবা। শুরু থেকেই আমরা দক্ষিণ কেরানীগঞ্জে শতভাগ অপটিক্যাল ফাইবার সংযোগ (FTTH) স্থাপনের মাধ্যমে ডিজিটাল ব্যবধান দূর করতে কাজ করে যাচ্ছি।",
   missionP2En: "Operating our own Autonomous System Number (AS150164), we peer directly with major local and global content exchanges. This infrastructure gives our subscribers latency-free access to remote work resources, streaming caches (Google GGC, Facebook FNA, Netflix OCA), and multiplayer gaming servers.",
-  missionP2Bn: "আমাদের নিজস্ব স্বায়ত্তশাসিত সিস্টেম নম্বর (AS150164) পরিচালনা করে আমরা সরাসরি বড় লোকাল ও বৈশ্বিক কন্টেন্ট এক্সচেঞ্জের সাথে যুক্ত হয়েছি। এই অবকাঠামো আমাদের গ্রাহকদের রিমোট কাজ, স্ট্রিমিং ক্যাশ এবং মাল্টিপ্লেয়ার গেমিং সার্ভারে লেটেন্সি-মুক্ত অ্যাক্সেস প্রদান করে।",
   
   credTitleEn: "Key Credentials",
-  credTitleBn: "মূল প্রমাণপত্র",
   credentials: [
-    { keyEn: "License Authority", keyBn: "লাইসেন্স কর্তৃপক্ষ", valEn: "BTRC Bangladesh", valBn: "বিটিআরসি বাংলাদেশ" },
-    { keyEn: "ISP Association Membership", keyBn: "আইএসপি অ্যাসোসিয়েশন সদস্যপদ", valEn: "ISPAB Active Member", valBn: "আইএসপিএবি সক্রিয় সদস্য" },
-    { keyEn: "Autonomous System (ASN)", keyBn: "স্বায়ত্তশাসিত সিস্টেম (ASN)", valEn: "AS150164", valBn: "AS150164" },
-    { keyEn: "Service Coverage", keyBn: "পরিষেবা এলাকা", valEn: "South Keraniganj, Dhaka", valBn: "দক্ষিণ কেরানীগঞ্জ, ঢাকা" },
-    { keyEn: "Line Configuration", keyBn: "লাইন কনফিগারেশন", valEn: "100% Fiber (FTTH)", valBn: "১০০% ফাইবার (FTTH)" }
+    { keyEn: "License Authority", valEn: "BTRC Bangladesh" },
+    { keyEn: "ISP Association Membership", valEn: "ISPAB Active Member" },
+    { keyEn: "Autonomous System (ASN)", valEn: "AS150164" },
+    { keyEn: "Service Coverage", valEn: "South Keraniganj, Dhaka" },
+    { keyEn: "Line Configuration", valEn: "100% Fiber (FTTH)" }
   ],
   
   infraTitleEn: "Infrastructure Powerhouse",
-  infraTitleBn: "অবকাঠামোগত শক্তি",
   infraDescEn: "We leverage modern networking standards to maintain steady throughput, routing, and uptime.",
-  infraDescBn: "আমরা অবিচ্ছিন্ন থ্রুপুট, রাউটিং এবং আপটাইম বজায় রাখতে আধুনিক নেটওয়ার্কিং স্ট্যান্ডার্ড ব্যবহার করি।",
   infraCards: [
     {
-      titleEn: "BGP Multi-Homing Routing", titleBn: "বিজিপি মাল্টি-হোমিং রাউটিং",
+      titleEn: "BGP Multi-Homing Routing",
       descEn: "By operating our own BGP network (AS150164), we peer with multiple major upstream Tier-1 network gateways. In the event of a fiber outage from one upstream gateway, our router automatically re-routes packets instantly.",
-      descBn: "আমাদের নিজস্ব বিজিপি নেটওয়ার্ক (AS150164) পরিচালনা করে আমরা একাধিক আপস্ট্রিম টিয়ার-১ গেটওয়ের সাথে যুক্ত হয়েছি। কোনো একটি গেটওয়েতে বিভ্রাট দেখা দিলে আমাদের রাউটার তাৎক্ষণিকভাবে স্বয়ংক্রিয়ভাবে পথ পরিবর্তন করে।",
       iconName: "Network"
     },
     {
-      titleEn: "Local Exchange Peering", titleBn: "লোকাল এক্সচেঞ্জ পিয়ারিং",
+      titleEn: "Local Exchange Peering",
       descEn: "We route directly to Bangladesh Internet Exchange (BDIX) and various local hosting centers. Subscribing to M Amin Network gives you access of up to 100 Mbps to local databases, FTP streaming archives, and live TV portals.",
-      descBn: "আমরা সরাসরি বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) এবং বিভিন্ন লোকাল হোস্টিং সেন্টারে ট্রাফিক রাউট করি। এম আমিন নেটওয়ার্কে সাবস্ক্রাইব করলে আপনি লোকাল ডাটাবেস ও এফটিপিতে ১০০ এমবিপিএস পর্যন্ত স্পিড পাবেন।",
       iconName: "Database"
     },
     {
-      titleEn: "24/7 On-Field Dispatch", titleBn: "২৪/৭ অন-ফিল্ড ডিসপ্যাচ",
+      titleEn: "24/7 On-Field Dispatch",
       descEn: "Unlike major centralized ISPs, our support center is localized right inside South Keraniganj. Our field crews, splicing engineers, and technical support assistants are situated nearby to provide instant physical repair service.",
-      descBn: "আমাদের সাপোর্ট সেন্টার দক্ষিণ কেরানীগঞ্জের ভেতরেই অবস্থিত। আমাদের অন-ফিল্ড টিম ও টেকনিশিয়ানরা যেকোনো শারীরিক ত্রুটি দ্রুত মেরামতের জন্য সবসময় প্রস্তুত থাকে।",
       iconName: "Wrench"
     }
   ],
   
   integrityTitleEn: "Our Integrity Guarantee",
-  integrityTitleBn: "আমাদের সততার নিশ্চয়তা",
   integrityDescEn: "We adhere strictly to the guidelines and standards set forth by the Bangladesh Telecommunication Regulatory Commission (BTRC). We guarantee that you will receive the minimum committed bandwidth speeds as defined in your contract, with no hidden fair usage policies (FUP) or caps.",
-  integrityDescBn: "আমরা বাংলাদেশ টেলিযোগাযোগ নিয়ন্ত্রণ কমিশন (বিটিআরসি)-এর গাইডলাইন কঠোরভাবে মেনে চলি। আমরা গ্যারান্টি দিচ্ছি যে আপনার চুক্তিতে নির্ধারিত গতি আপনি পাবেন, কোনো লুকানো ফেয়ার ইউজেজ পলিসি (FUP) বা ক্যাপ থাকবে না।",
   btn1En: "Explore Packages",
-  btn1Bn: "প্যাকেজ সমূহ দেখুন",
-  btn2En: "Support Center",
-  btn2Bn: "সহায়তা কেন্দ্র"
+  btn2En: "Support Center"
 };
 
 const AVAILABLE_ICONS = [
@@ -262,17 +247,9 @@ export default function AboutPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.headerTitleEn} onChange={e => updateField("headerTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.headerTitleBn} onChange={e => updateField("headerTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
                 <textarea rows={2} value={content.headerDescEn} onChange={e => updateField("headerDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={2} value={content.headerDescBn} onChange={e => updateField("headerDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -286,25 +263,13 @@ export default function AboutPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.missionTitleEn} onChange={e => updateField("missionTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.missionTitleBn} onChange={e => updateField("missionTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 1 (English)</label>
                 <textarea rows={4} value={content.missionP1En} onChange={e => updateField("missionP1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Paragraph 1 (Bangla)</label>
-                <textarea rows={4} value={content.missionP1Bn} onChange={e => updateField("missionP1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 2 (English)</label>
                 <textarea rows={4} value={content.missionP2En} onChange={e => updateField("missionP2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Paragraph 2 (Bangla)</label>
-                <textarea rows={4} value={content.missionP2Bn} onChange={e => updateField("missionP2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -317,10 +282,6 @@ export default function AboutPageAdmin() {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.credTitleEn} onChange={e => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.credTitleBn} onChange={e => updateField("credTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
             
@@ -338,7 +299,7 @@ export default function AboutPageAdmin() {
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("credentials", [...(content.credentials || []), { keyEn: "", keyBn: "", valEn: "", valBn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
+              <button onClick={() => updateField("credentials", [...(content.credentials || []), { keyEn: "", valEn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
                 + Add Credential
               </button>
             </div>
@@ -353,17 +314,9 @@ export default function AboutPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.infraTitleEn} onChange={e => updateField("infraTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.infraTitleBn} onChange={e => updateField("infraTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
                 <textarea rows={2} value={content.infraDescEn} onChange={e => updateField("infraDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={2} value={content.infraDescBn} onChange={e => updateField("infraDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
 
@@ -382,7 +335,7 @@ export default function AboutPageAdmin() {
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("infraCards", [...content.infraCards, { titleEn: "", titleBn: "", descEn: "", descBn: "", iconName: "Network" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
+              <button onClick={() => updateField("infraCards", [...content.infraCards, { titleEn: "", descEn: "", iconName: "Network" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
                 + Add Infrastructure Card
               </button>
             </div>
@@ -397,33 +350,17 @@ export default function AboutPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.integrityTitleEn} onChange={e => updateField("integrityTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.integrityTitleBn} onChange={e => updateField("integrityTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
                 <textarea rows={3} value={content.integrityDescEn} onChange={e => updateField("integrityDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={3} value={content.integrityDescBn} onChange={e => updateField("integrityDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Primary Button (English)</label>
                 <input type="text" value={content.btn1En} onChange={e => updateField("btn1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Primary Button (Bangla)</label>
-                <input type="text" value={content.btn1Bn} onChange={e => updateField("btn1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Secondary Button (English)</label>
                 <input type="text" value={content.btn2En} onChange={e => updateField("btn2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Secondary Button (Bangla)</label>
-                <input type="text" value={content.btn2Bn} onChange={e => updateField("btn2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>

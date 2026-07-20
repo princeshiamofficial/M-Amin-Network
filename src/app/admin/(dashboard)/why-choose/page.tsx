@@ -4,13 +4,14 @@ import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
+import { toast } from "sonner";
 
 interface NetworkFeature {
   id: string;
   titleEn: string;
-  titleBn: string;
+  titleBn?: string;
   descEn: string;
-  descBn: string;
+  descBn?: string;
   iconName: string;
   _sort_order: number;
 }
@@ -69,13 +70,20 @@ function ActionMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => 
 export default function WhyChoosePage() {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
-  const [lang, setLang] = useState<"EN" | "BN">("EN");
+  const [lang] = useState<"EN" | "BN">("EN");
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentFeature, setCurrentFeature] = useState<Partial<NetworkFeature>>({ _sort_order: 0 });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [ordered, setOrdered] = useState<NetworkFeature[]>([]);
+
+  // Section heading state
+  const [headingEn, setHeadingEn] = useState("Why Choose M Amin Network?");
+  const [subtitleEn, setSubtitleEn] = useState("");
+  const [headingBn, setHeadingBn] = useState("");
+  const [subtitleBn, setSubtitleBn] = useState("");
+  const [headingSaved, setHeadingSaved] = useState(false);
 
   // --- Drag-and-drop state (same pattern as dashboard quick actions) ---
   const orderedRef = useRef<NetworkFeature[]>([]);
@@ -108,6 +116,15 @@ export default function WhyChoosePage() {
         setOrdered([]);
       }
     });
+    getSetting("why_choose_content").then(saved => {
+      if (saved) {
+        const s = saved as Record<string, string>;
+        setHeadingEn(s.headingEn || "Why Choose M Amin Network?");
+        setSubtitleEn(s.subtitleEn || "");
+        setHeadingBn(s.headingBn || "");
+        setSubtitleBn(s.subtitleBn || "");
+      }
+    });
   }, [router]);
 
   const openNewForm = () => {
@@ -122,25 +139,38 @@ export default function WhyChoosePage() {
     setSetting("network_features", withOrder);
   };
 
+  const saveHeading = async () => {
+    await setSetting("why_choose_content", { headingEn, subtitleEn, headingBn, subtitleBn });
+    setHeadingSaved(true);
+    toast.success("Section heading saved!");
+    setTimeout(() => setHeadingSaved(false), 3000);
+  };
+
   const saveFeature = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentFeature.titleEn || !currentFeature.descEn) return;
 
+    const dataToSave = {
+      ...currentFeature,
+      titleBn: currentFeature.titleEn,
+      descBn: currentFeature.descEn,
+    };
+
     let updated: NetworkFeature[];
     if (isEditing && currentFeature.id) {
       updated = ordered.map(f =>
-        f.id === currentFeature.id ? { ...f, ...currentFeature } as NetworkFeature : f
+        f.id === currentFeature.id ? { ...f, ...dataToSave } as NetworkFeature : f
       );
     } else {
       updated = [
         ...ordered,
         {
-          ...currentFeature,
+          ...dataToSave,
           id: `nf-${Date.now()}`,
           titleEn: currentFeature.titleEn || "",
-          titleBn: currentFeature.titleBn || "",
+          titleBn: currentFeature.titleEn || "",
           descEn: currentFeature.descEn || "",
-          descBn: currentFeature.descBn || "",
+          descBn: currentFeature.descEn || "",
           iconName: currentFeature.iconName || "Zap",
           _sort_order: currentFeature._sort_order ?? ordered.length,
         } as NetworkFeature
@@ -244,6 +274,7 @@ export default function WhyChoosePage() {
   }, []);
 
   if (!auth) return null;
+  const features = ordered ?? [];
 
   const AVAILABLE_ICONS = [
     "Zap", "Wifi", "Gamepad2", "LifeBuoy", "Cloud", "Building2",
@@ -256,29 +287,78 @@ export default function WhyChoosePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2 ml-auto">
-          <div className="inline-flex rounded-xl border border-slate-200 overflow-hidden">
-            <button
-              onClick={() => setLang("EN")}
-              className={`px-3 py-2 text-xs font-bold transition-colors cursor-pointer ${lang === "EN" ? "bg-brand-blue text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => setLang("BN")}
-              className={`px-3 py-2 text-xs font-bold transition-colors cursor-pointer ${lang === "BN" ? "bg-brand-blue text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
-            >
-              Bangla
-            </button>
+
+      {/* Section Heading Editor */}
+      <div className="bg-white border border-slate-200/80 shadow-sm rounded-2xl p-6 space-y-4">
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+          <Lucide.LayoutTemplate className="w-5 h-5 text-orange-500" />
+          <div>
+            <h2 className="text-base font-bold text-slate-800">Section Heading</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Edit the title and subtitle shown at the top of the &quot;Why Choose&quot; section on the homepage.</p>
           </div>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Section Title (English)</label>
+            <input
+              type="text"
+              value={headingEn}
+              onChange={e => setHeadingEn(e.target.value)}
+              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium"
+              placeholder="e.g. Why Choose M Amin Network?"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Section Title (বাংলা)</label>
+            <input
+              type="text"
+              value={headingBn}
+              onChange={e => setHeadingBn(e.target.value)}
+              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium"
+              placeholder="বাংলা শিরোনাম লিখুন..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Subtitle / Description (English)</label>
+            <textarea
+              rows={2}
+              value={subtitleEn}
+              onChange={e => setSubtitleEn(e.target.value)}
+              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium resize-none"
+              placeholder="A short description about why customers should choose you..."
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Subtitle / Description (বাংলা)</label>
+            <textarea
+              rows={2}
+              value={subtitleBn}
+              onChange={e => setSubtitleBn(e.target.value)}
+              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium resize-none"
+              placeholder="বাংলা বিবরণ লিখুন..."
+            />
+          </div>
+        </div>
+        <div className="flex justify-end pt-2">
           <button
-            onClick={openNewForm}
-            className="px-4 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
+            onClick={saveHeading}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition-all cursor-pointer shadow-md active:scale-[0.98]"
           >
-            <Lucide.Plus className="w-4 h-4" /> Add Feature
+            {headingSaved ? <Lucide.CheckCircle2 className="w-4 h-4" /> : <Lucide.Save className="w-4 h-4" />}
+            {headingSaved ? "Saved!" : "Save Heading"}
           </button>
         </div>
+      </div>
+
+      {/* Feature Cards */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h2 className="text-sm font-extrabold text-slate-700">Feature Cards</h2>
+        <button
+          onClick={openNewForm}
+          className="px-4 py-2.5 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center gap-1.5 cursor-pointer"
+        >
+          <Lucide.Plus className="w-4 h-4" /> Add Feature
+        </button>
       </div>
 
       {mounted && isFormOpen && createPortal(
@@ -303,17 +383,7 @@ export default function WhyChoosePage() {
                   placeholder="e.g. 100% Fiber Optic (FTTH)"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Title (Bangla)</label>
-                <input
-                  type="text"
-                  required
-                  value={currentFeature.titleBn || ""}
-                  onChange={(e) => setCurrentFeature({ ...currentFeature, titleBn: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                  placeholder="e.g. ১০০% ফাইবার অপটিক (FTTH)"
-                />
-              </div>
+
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700 block">Description (English)</label>
                 <textarea
@@ -325,17 +395,7 @@ export default function WhyChoosePage() {
                   placeholder="Describe this feature in English..."
                 />
               </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700 block">Description (Bangla)</label>
-                <textarea
-                  required
-                  rows={3}
-                  value={currentFeature.descBn || ""}
-                  onChange={(e) => setCurrentFeature({ ...currentFeature, descBn: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
-                  placeholder="Describe this feature in Bangla..."
-                />
-              </div>
+
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700 block">Icon</label>
                 <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-3 border border-slate-200 rounded-xl bg-slate-50/50 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -379,7 +439,7 @@ export default function WhyChoosePage() {
       )}
 
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" style={{ overflow: "anchor" as React.CSSProperties["overflow"] }}>
-        {ordered.map((f) => {
+        {features.map((f) => {
           const IconComp = (Lucide as unknown as Record<string, React.ElementType>)[f.iconName] || Lucide.Zap;
           const title = lang === "EN" ? f.titleEn : f.titleBn;
           const desc = lang === "EN" ? f.descEn : f.descBn;
@@ -425,7 +485,7 @@ export default function WhyChoosePage() {
             </li>
           );
         })}
-        {ordered.length === 0 && (
+        {features.length === 0 && (
           <li className="col-span-full py-16 text-center text-slate-400 font-semibold text-sm border border-dashed border-slate-200 rounded-2xl bg-white">
             No features found. Click &quot;Add Feature&quot; to create one.
           </li>

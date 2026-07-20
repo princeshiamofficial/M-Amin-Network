@@ -157,13 +157,13 @@ export default function Multimedia() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3">
-              {t(headerData.multimedia_title_en, headerData.multimedia_title_bn)}{" "}
+              {t(headerData.multimedia_title_en, headerData.multimedia_title_bn ?? "")}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t(headerData.multimedia_title_highlight_en, headerData.multimedia_title_highlight_bn)}
+                {t(headerData.multimedia_title_highlight_en, headerData.multimedia_title_highlight_bn ?? "")}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-              {t(headerData.multimedia_subtitle_en, headerData.multimedia_subtitle_bn)}
+              {t(headerData.multimedia_subtitle_en, headerData.multimedia_subtitle_bn ?? "")}
             </p>
           </div>
         </div>

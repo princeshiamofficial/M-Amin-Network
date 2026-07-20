@@ -1,3 +1,4 @@
+@import url('https://fonts.maateen.me/solaiman-lipi/font.css');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -498,4 +499,12 @@ body {
   html {
     @apply font-sans;
   }
+}
+
+/* Force SolaimanLipi font when Google Translate translates the page to Bangla */
+html[lang="bn"],
+html[lang="bn"] * {
+  font-family: 'SolaimanLipi', var(--font-sans), sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }

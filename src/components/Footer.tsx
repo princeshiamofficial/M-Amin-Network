@@ -14,20 +14,20 @@ interface FooterData {
   twitter: string;
   linkedin: string;
   addressEn: string;
-  addressBn: string;
+  addressBn?: string;
   email: string;
 }
 
 interface AffiliationBadge {
   textEn: string;
-  textBn: string;
+  textBn?: string;
   isCyan: boolean;
   image?: string;
 }
 
 interface LicenseBadge {
   textEn: string;
-  textBn: string;
+  textBn?: string;
   isMono: boolean;
   colorStyle: string; // "cyan" | "emerald" | "slate"
   image?: string;
@@ -35,7 +35,7 @@ interface LicenseBadge {
 
 interface NavLink {
   nameEn: string;
-  nameBn: string;
+  nameBn?: string;
   href: string;
 }
 
@@ -46,31 +46,30 @@ const defaultFooterData: FooterData = {
   twitter: "https://x.com/maminnetwork",
   linkedin: "https://linkedin.com/company/maminnetwork",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
-  addressBn: "বাসা নং ৬৮, কদমতলী, আগানগর, দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
   email: "info@m-aminnetwork.com",
 };
 
 const defaultNavLinks: NavLink[] = [
-  { nameEn: "Home", nameBn: "হোম", href: "/" },
-  { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
-  { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
-  { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
-  { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
-  { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
-  { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
-  { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
-  { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
-  { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+  { nameEn: "Home", href: "/" },
+  { nameEn: "Packages", href: "/packages" },
+  { nameEn: "Offers", href: "/offers" },
+  { nameEn: "Coverage", href: "/coverage" },
+  { nameEn: "Multimedia", href: "/multimedia" },
+  { nameEn: "Complain", href: "/complain" },
+  { nameEn: "Pay Bill", href: "/bill-payment" },
+  { nameEn: "Careers", href: "/careers" },
+  { nameEn: "Contact", href: "/contact" },
+  { nameEn: "About", href: "/about" },
 ];
 
 const defaultBadges: AffiliationBadge[] = [
-  { textEn: "ISPAB MEMBER", textBn: "আইএসপিএবি সদস্য", isCyan: false, image: "/ispab.jpeg" },
-  { textEn: "AS150164 BGP NETWORK", textBn: "AS150164 বিজিপি নেটওয়ার্ক", isCyan: true }
+  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" },
+  { textEn: "AS150164 BGP NETWORK", isCyan: true }
 ];
 
 const defaultLicenses: LicenseBadge[] = [
   { textEn: "ASN: AS150164", textBn: "ASN: AS150164", isMono: true, colorStyle: "cyan" },
-  { textEn: "BTRC Licensed", textBn: "বিটিআরসি অনুমোদিত", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
+  { textEn: "BTRC Licensed", isMono: false, colorStyle: "emerald", image: "/btrc.png" }
 ];
 
 const defaultPhones = ["+880 1707-009267"];
@@ -92,7 +91,7 @@ function normalizeFooterData(value: unknown): FooterData {
     twitter: textValue(record.twitter, defaultFooterData.twitter),
     linkedin: textValue(record.linkedin, defaultFooterData.linkedin),
     addressEn: textValue(record.addressEn, defaultFooterData.addressEn),
-    addressBn: textValue(record.addressBn, defaultFooterData.addressBn),
+    addressBn: textValue(record.addressBn ?? "", defaultFooterData.addressBn ?? ""),
     email: textValue(record.email, defaultFooterData.email),
   };
 }
@@ -102,7 +101,7 @@ function normalizeAffiliationBadge(value: unknown): AffiliationBadge {
     ? value as Record<string, unknown>
     : {};
   const textEn = textValue(record.textEn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
-  const textBn = textValue(record.textBn, imageBadgeFallbackText).trim() || imageBadgeFallbackText;
+  const textBn = textValue(record.textBn ?? "", imageBadgeFallbackText).trim() || imageBadgeFallbackText;
   const savedImage = textValue(record.image, "").trim();
   const shouldUseDefaultIspabImage = textEn.toUpperCase().includes("ISPAB") && !savedImage;
 
@@ -261,7 +260,7 @@ export default function Footer() {
               />
             </Link>
             <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-              {t("Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.", "দক্ষিণ কেরানীগঞ্জ, ঢাকার শীর্ষস্থানীয় ইন্টারনেট সেবা প্রদানকারী (ISP)। আমরা বাসা ও অফিসের জন্য অতি-দ্রুত, বাফার-মুক্ত, এবং SLA-সমর্থিত ব্রডব্যান্ড ইন্টারনেট সেবা প্রদান করি।")}
+              {"Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses."}
             </p>
             <div className="flex items-center gap-3 mt-2 text-xs flex-wrap">
               {licenses.map((lic, idx) => {
@@ -291,7 +290,7 @@ export default function Footer() {
                       lic.isMono ? "font-mono" : "font-semibold"
                     }`}
                   >
-                    {t(lic.textEn, lic.textBn)}
+                    {t(lic.textEn, lic.textBn ?? "")}
                   </span>
                 );
               })}
@@ -369,14 +368,14 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="md:col-span-4">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t("Quick Links", "কুইক লিংক")}
+              {"Quick Links"}
             </h3>
             <div className="grid grid-cols-3 gap-2 text-sm">
               <ul className="space-y-3">
                 {col1.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="hover:text-brand-cyan transition-colors">
-                      {t(link.nameEn, link.nameBn)}
+                      {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
                 ))}
@@ -385,13 +384,13 @@ export default function Footer() {
                 {col2.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="hover:text-brand-cyan transition-colors">
-                      {t(link.nameEn, link.nameBn)}
+                      {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
                 ))}
                 <li>
                   <a href="/btrc-tariff.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors whitespace-nowrap">
-                    {t("BTRC Approved Tariff", "বিটিআরসি অনুমোদিত ট্যারিফ")}
+                    {"BTRC Approved Tariff"}
                   </a>
                 </li>
               </ul>
@@ -399,7 +398,7 @@ export default function Footer() {
                 {col3.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="hover:text-brand-cyan transition-colors">
-                      {t(link.nameEn, link.nameBn)}
+                      {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
                 ))}
@@ -410,7 +409,7 @@ export default function Footer() {
           {/* Contact Details */}
           <div className="md:col-span-3">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t("Contact Info", "যোগাযোগ")}
+              {"Contact Info"}
             </h3>
             <ul className="space-y-4 text-sm text-slate-400">
               <li className="flex gap-2.5 items-start">
@@ -433,7 +432,7 @@ export default function Footer() {
                   />
                 </svg>
                 <span>
-                  {t(footerData.addressEn, footerData.addressBn)}
+                  {t(footerData.addressEn, footerData.addressBn ?? "")}
                 </span>
               </li>
               {phones.map((phone, idx) => (
@@ -483,10 +482,10 @@ export default function Footer() {
           {/* Affiliation and Badges */}
           <div className="md:col-span-2">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
-              {t("Our Affiliations", "আমাদের অধিভুক্তি")}
+              {"Our Affiliations"}
             </h3>
             <p className="text-sm text-slate-400 mt-2 mb-4 leading-relaxed max-w-[280px]">
-              {t("We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).", "আমরা ইন্টারনেট সার্ভিস প্রোভাইডার অ্যাসোসিয়েশন অব বাংলাদেশ (ISPAB)-এর একজন গর্বিত ও সক্রিয় সদস্য।")}
+              {"We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB)."}
             </p>
             <div className="flex flex-col gap-3">
               {badges.map((badge, idx) => {
@@ -506,7 +505,7 @@ export default function Footer() {
                 return (
                   <div key={idx} className="p-3 rounded-lg bg-brand-card border border-brand-border text-center flex items-center justify-center min-h-[50px]">
                     <span className={`text-xs font-bold tracking-widest leading-normal ${badge.isCyan ? "text-brand-cyan" : "text-slate-300"}`}>
-                      {t(badge.textEn, badge.textBn)}
+                      {t(badge.textEn, badge.textBn ?? "")}
                     </span>
                   </div>
                 );
@@ -531,18 +530,18 @@ export default function Footer() {
         {/* Bottom copyright */}
         <div className="pt-2 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-slate-500">
-            {t("© 2026 M Amin Network. All Rights Reserved.", "© 2026 এম আমিন নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।")}
+            {"© 2026 M Amin Network. All Rights Reserved."}
           </p>
           <div className="flex gap-4 text-xs text-slate-500">
             <Link href="/" className="hover:text-brand-cyan transition-colors">
-              {t("Privacy Policy", "গোপনীয়তা নীতি")}
+              {"Privacy Policy"}
             </Link>
             <span>&bull;</span>
             <Link href="/" className="hover:text-brand-cyan transition-colors">
-              {t("Terms of Service", "ব্যবহারের শর্তাবলী")}
+              {"Terms of Service"}
             </Link>
             <span>&bull;</span>
-            <span className="text-slate-400">{t("Keraniganj ISP", "কেরানীগঞ্জ আইএসপি")}</span>
+            <span className="text-slate-400">{"Keraniganj ISP"}</span>
           </div>
         </div>
       </div>

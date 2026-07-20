@@ -8,7 +8,7 @@ import { getSetting } from "@/actions/content";
 
 interface NavLink {
   nameEn: string;
-  nameBn: string;
+  nameBn?: string;
   href: string;
 }
 
@@ -44,24 +44,32 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const [lang, setLang] = useState(() => {
+  const [lang, setLang] = useState("EN");
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("app-lang") || "EN";
+      const getActiveLangFromCookie = () => {
+        const match = document.cookie.match(/googtrans=([^;]+)/);
+        if (match && match[1] && match[1].includes("/bn")) {
+          return "BN";
+        }
+        return localStorage.getItem("app-lang") || "EN";
+      };
+      setLang(getActiveLangFromCookie());
     }
-    return "EN";
-  });
+  }, []);
 
   const defaultNavLinks: NavLink[] = [
-    { nameEn: "Home", nameBn: "হোম", href: "/" },
-    { nameEn: "Packages", nameBn: "প্যাকেজ", href: "/packages" },
-    { nameEn: "Offers", nameBn: "অফার", href: "/offers" },
-    { nameEn: "Coverage", nameBn: "কাভারেজ", href: "/coverage" },
-    { nameEn: "Multimedia", nameBn: "মাল্টিমিডিয়া", href: "/multimedia" },
-    { nameEn: "Complain", nameBn: "অভিযোগ", href: "/complain" },
-    { nameEn: "Pay Bill", nameBn: "বিল পরিশোধ", href: "/bill-payment" },
-    { nameEn: "Careers", nameBn: "ক্যারিয়ার", href: "/careers" },
-    { nameEn: "Contact", nameBn: "যোগাযোগ", href: "/contact" },
-    { nameEn: "About", nameBn: "আমাদের সম্পর্কে", href: "/about" },
+    { nameEn: "Home", href: "/" },
+    { nameEn: "Packages", href: "/packages" },
+    { nameEn: "Offers", href: "/offers" },
+    { nameEn: "Coverage", href: "/coverage" },
+    { nameEn: "Multimedia", href: "/multimedia" },
+    { nameEn: "Complain", href: "/complain" },
+    { nameEn: "Pay Bill", href: "/bill-payment" },
+    { nameEn: "Careers", href: "/careers" },
+    { nameEn: "Contact", href: "/contact" },
+    { nameEn: "About", href: "/about" },
   ];
 
   const [linksList, setLinksList] = useState<NavLink[]>(defaultNavLinks);
@@ -72,9 +80,33 @@ export default function Navbar() {
     setLang(newLang);
     if (typeof window !== "undefined") {
       localStorage.setItem("app-lang", newLang);
+      const domain = window.location.hostname;
+      if (newLang === "BN") {
+        document.cookie = "googtrans=/en/bn; path=/";
+        document.cookie = `googtrans=/en/bn; path=/; domain=${domain}`;
+        if (domain.includes(".")) {
+          const parts = domain.split(".");
+          if (parts.length >= 2) {
+            const rootDomain = "." + parts.slice(-2).join(".");
+            document.cookie = `googtrans=/en/bn; path=/; domain=${rootDomain}`;
+          }
+        }
+      } else {
+        document.cookie = "googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = `googtrans=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        if (domain.includes(".")) {
+          const parts = domain.split(".");
+          if (parts.length >= 2) {
+            const rootDomain = "." + parts.slice(-2).join(".");
+            document.cookie = `googtrans=; path=/; domain=${rootDomain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+          }
+        }
+      }
       window.dispatchEvent(new Event("languageChange"));
+      window.location.reload();
     }
   };
+
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -144,7 +176,7 @@ export default function Navbar() {
     }
   }, []);
 
-  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  const t = (en: string, bn?: string) => (lang === "BN" && bn ? bn : en);
   const hotlineHref = topbarContent.hotline.replace(/[^\d+]/g, "");
 
   if (pathname?.startsWith("/admin")) return null;
@@ -173,7 +205,7 @@ export default function Navbar() {
                   d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 0 1-7.108-7.108c-.155-.44.01-1.029.387-1.31l1.293-.97c.362-.271.528-.733.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
                 />
               </svg>
-              <span className="text-[10px] font-black tracking-wider uppercase">{t("Hotline", "হটলাইন")}</span>
+              <span className="text-[10px] font-black tracking-wider uppercase">{"Hotline"}</span>
             </div>
             <a href={`tel:${hotlineHref}`} className="hover:text-brand-cyan transition-colors font-bold font-mono text-slate-200">
               {topbarContent.hotline}
@@ -212,7 +244,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {linksList.map((link) => {
               const isActive = pathname === link.href;
-              const linkName = t(link.nameEn, link.nameBn);
+              const linkName = t(link.nameEn, link.nameBn ?? "");
               return (
                 <Link
                   key={link.href + linkName}
@@ -238,26 +270,39 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             {/* Language Switcher Dropdown */}
             <div className="relative group py-1">
-              <button className="flex items-center gap-1 hover:text-brand-blue transition-colors font-semibold text-sm text-slate-600">
-                <svg className="w-4 h-4 text-slate-500 group-hover:text-brand-blue transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-                </svg>
-                <span>{lang}</span>
+              <button className="flex items-center gap-1.5 hover:text-brand-blue transition-colors font-semibold text-sm text-slate-600">
+                <Image
+                  src={lang === "EN" ? "https://www.untitledui.com/images/flags/GB.svg" : "https://www.untitledui.com/images/flags/BD.svg"}
+                  alt={lang === "EN" ? "English" : "Bangla"}
+                  width={16}
+                  height={16}
+                  className="rounded-full object-cover size-4 shrink-0"
+                />
+                <span className="notranslate">{lang === "EN" ? "English" : "বাংলা"}</span>
                 <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180 text-slate-500 group-hover:text-brand-blue" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                 </svg>
               </button>
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-1 w-24 rounded-lg bg-white border border-slate-200 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-1 font-sans">
+              <div className="absolute right-0 mt-1 w-32 rounded-lg bg-white border border-slate-200 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-1 font-sans">
                 <button
                   onClick={() => handleLangChange("EN")}
                   className={`w-full text-left px-3 py-1.5 hover:bg-slate-100 transition-colors text-xs font-semibold flex items-center justify-between ${
                     lang === "EN" ? "text-brand-blue bg-brand-blue/5" : "text-slate-700"
                   }`}
                 >
-                  <span>English</span>
-                  {lang === "EN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue"></span>}
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="https://www.untitledui.com/images/flags/GB.svg"
+                      alt="English"
+                      width={14}
+                      height={14}
+                      className="rounded-full object-cover size-3.5 shrink-0"
+                    />
+                    <span className="notranslate">English</span>
+                  </div>
+                  {lang === "EN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue shrink-0"></span>}
                 </button>
                 <button
                   onClick={() => handleLangChange("BN")}
@@ -265,8 +310,17 @@ export default function Navbar() {
                     lang === "BN" ? "text-brand-blue bg-brand-blue/5" : "text-slate-700"
                   }`}
                 >
-                  <span>বাংলা</span>
-                  {lang === "BN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue"></span>}
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src="https://www.untitledui.com/images/flags/BD.svg"
+                      alt="Bangla"
+                      width={14}
+                      height={14}
+                      className="rounded-full object-cover size-3.5 shrink-0"
+                    />
+                    <span className="notranslate">বাংলা</span>
+                  </div>
+                  {lang === "BN" && <span className="w-1.5 h-1.5 rounded-full bg-brand-blue shrink-0"></span>}
                 </button>
               </div>
             </div>
@@ -276,7 +330,7 @@ export default function Navbar() {
               href="/portal"
               className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark font-extrabold text-xs shadow-md shadow-brand-blue/15 hover:shadow-lg hover:shadow-brand-blue/20 hover:scale-[1.02] transition-all cursor-pointer"
             >
-              {t("Client Portal", "গ্রাহক পোর্টাল")}
+              {"Client Portal"}
             </Link>
           </div>
 
@@ -338,7 +392,7 @@ export default function Navbar() {
         <div className="px-4 pt-2 pb-3 space-y-1 bg-white border-b border-slate-200/80 backdrop-blur-lg">
           {linksList.map((link) => {
             const isActive = pathname === link.href;
-            const linkName = t(link.nameEn, link.nameBn);
+            const linkName = link.nameEn;
             return (
               <Link
                 key={link.href + linkName}
@@ -360,23 +414,37 @@ export default function Navbar() {
             );
           })}
           <div className="flex items-center justify-between py-3 border-t border-slate-100 mt-2 px-2">
-            <span className="text-slate-500 text-sm font-semibold">{t("Language", "ভাষা")}</span>
-            <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg">
+            <span className="text-slate-500 text-sm font-semibold">{"Language"}</span>
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
               <button
                 onClick={() => handleLangChange("EN")}
-                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
                   lang === "EN" ? "bg-white text-brand-blue shadow-sm" : "text-slate-500"
                 }`}
               >
-                EN
+                <Image
+                  src="https://www.untitledui.com/images/flags/GB.svg"
+                  alt="English"
+                  width={14}
+                  height={14}
+                  className="rounded-full object-cover size-3.5 shrink-0"
+                />
+                <span className="notranslate">English</span>
               </button>
               <button
                 onClick={() => handleLangChange("BN")}
-                className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 ${
                   lang === "BN" ? "bg-white text-brand-blue shadow-sm" : "text-slate-500"
                 }`}
               >
-                বাংলা
+                <Image
+                  src="https://www.untitledui.com/images/flags/BD.svg"
+                  alt="Bangla"
+                  width={14}
+                  height={14}
+                  className="rounded-full object-cover size-3.5 shrink-0"
+                />
+                <span className="notranslate">বাংলা</span>
               </button>
             </div>
           </div>
@@ -387,7 +455,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
               className="block w-full text-center px-4 py-3 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-white text-base font-semibold shadow-lg shadow-brand-blue/20"
             >
-              {t("Client Portal", "গ্রাহক পোর্টাল")}
+              {"Client Portal"}
             </Link>
           </div>
         </div>

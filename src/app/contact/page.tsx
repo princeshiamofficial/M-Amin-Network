@@ -68,13 +68,13 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-              {t(content.titleEn, content.titleBn)}{" "}
+              {t(content.titleEn, content.titleEn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t(content.highlightEn, content.highlightBn)}
+                {t(content.highlightEn, content.highlightEn)}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-              {t(content.descEn, content.descBn)}
+              {t(content.descEn, content.descEn)}
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function Contact() {
             <div className="lg:col-span-5 space-y-8">
               {/* Details */}
               <div className="bg-slate-50 border border-slate-200/60 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <h3 className="text-slate-900 font-extrabold text-lg">{t(content.infoTitleEn, content.infoTitleBn)}</h3>
+                <h3 className="text-slate-900 font-extrabold text-lg">{t(content.infoTitleEn, content.infoTitleEn)}</h3>
                 <ul className="space-y-6 text-sm text-left">
                   <li className="flex gap-4 items-start text-left">
                     <div className="w-10 h-10 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center border border-brand-blue/20 shrink-0 mt-0.5">
@@ -98,11 +98,11 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.officeTitleEn, content.officeTitleBn)}</h4>
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.officeTitleEn, content.officeTitleEn)}</h4>
                       <p className="text-slate-600 leading-relaxed text-xs">
-                        {t(content.officeL1En, content.officeL1Bn)}
+                        {t(content.officeL1En, content.officeL1En)}
                         <br />
-                        {t(content.officeL2En, content.officeL2Bn)}
+                        {t(content.officeL2En, content.officeL2En)}
                       </p>
                     </div>
                   </li>
@@ -114,11 +114,11 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.phoneTitleEn, content.phoneTitleBn)}</h4>
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.phoneTitleEn, content.phoneTitleEn)}</h4>
                       <p className="text-slate-600 text-xs space-y-1">
                         {content.phones?.map((phone, idx) => (
                           <React.Fragment key={idx}>
-                            {t(phone.labelEn, phone.labelBn)} <a href={`tel:${phone.number}`} className="hover:text-brand-blue text-slate-900 font-mono font-bold">{phone.number}</a>
+                            {t(phone.labelEn, phone.labelEn)} <a href={`tel:${phone.number}`} className="hover:text-brand-blue text-slate-900 font-mono font-bold">{phone.number}</a>
                             {idx !== content.phones.length - 1 && <br />}
                           </React.Fragment>
                         ))}
@@ -133,11 +133,11 @@ export default function Contact() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.emailTitleEn, content.emailTitleBn)}</h4>
+                      <h4 className="text-slate-900 font-bold block mb-1">{t(content.emailTitleEn, content.emailTitleEn)}</h4>
                       <p className="text-slate-600 text-xs">
-                        {t(content.emailGenLabelEn, content.emailGenLabelBn)} <a href={`mailto:${content.emailGenAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailGenAddr}</a>
+                        {t(content.emailGenLabelEn, content.emailGenLabelEn)} <a href={`mailto:${content.emailGenAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailGenAddr}</a>
                         <br />
-                        {t(content.emailOpsLabelEn, content.emailOpsLabelBn)} <a href={`mailto:${content.emailOpsAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailOpsAddr}</a>
+                        {t(content.emailOpsLabelEn, content.emailOpsLabelEn)} <a href={`mailto:${content.emailOpsAddr}`} className="hover:text-brand-blue text-brand-blue font-mono font-semibold">{content.emailOpsAddr}</a>
                       </p>
                     </div>
                   </li>
@@ -162,15 +162,15 @@ export default function Contact() {
                 {!success ? (
                   <form onSubmit={handleSubmit} className="space-y-5 text-left">
                     <div>
-                      <h3 className="text-slate-900 font-extrabold text-xl">{t(content.formTitleEn, content.formTitleBn)}</h3>
+                      <h3 className="text-slate-900 font-extrabold text-xl">{t(content.formTitleEn, content.formTitleEn)}</h3>
                       <p className="text-xs text-slate-600 mt-1">
-                        {t(content.formDescEn, content.formDescBn)}
+                        {t(content.formDescEn, content.formDescEn)}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 text-left">
                       <div className="flex flex-col gap-1.5 text-left">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Your Full Name", "আপনার নাম")}</label>
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{"Your Full Name"}</label>
                         <input
                           type="text"
                           required
@@ -183,7 +183,7 @@ export default function Contact() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                         <div className="flex flex-col gap-1.5 text-left">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Contact Phone", "মোবাইল নম্বর")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{"Contact Phone"}</label>
                           <input
                             type="tel"
                             required
@@ -194,7 +194,7 @@ export default function Contact() {
                           />
                         </div>
                         <div className="flex flex-col gap-1.5 text-left">
-                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল ঠিকানা")}</label>
+                          <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{"Email Address"}</label>
                           <input
                             type="email"
                             value={form.email}
@@ -206,27 +206,27 @@ export default function Contact() {
                       </div>
 
                       <div className="flex flex-col gap-1.5 text-left">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Subject Type", "জিজ্ঞাসার বিষয়")}</label>
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{"Subject Type"}</label>
                         <select
                           value={form.subject}
                           onChange={(e) => setForm({ ...form, subject: e.target.value })}
                           className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-brand-cyan cursor-pointer"
                         >
-                          <option value="Inquiry" className="bg-white text-slate-800">{t("General Business Inquiry", "সাধারণ ব্যবসায়িক জিজ্ঞাসা")}</option>
-                          <option value="Corporate Connection" className="bg-white text-slate-800">{t("Dedicated Corporate Internet Connection", "ডেডিকেটেড কর্পোরেট ইন্টারনেট সংযোগ")}</option>
-                          <option value="Reseller Panel" className="bg-white text-slate-800">{t("Sub-ISP / Reseller Panel request", "সাব-আইএসপি / রিসেলার প্যানেলের অনুরোধ")}</option>
-                          <option value="Billing Query" className="bg-white text-slate-800">{t("Billing invoice queries", "বিল ও ইনভয়েস সংক্রান্ত জিজ্ঞাসা")}</option>
+                          <option value="Inquiry" className="bg-white text-slate-800">{"General Business Inquiry"}</option>
+                          <option value="Corporate Connection" className="bg-white text-slate-800">{"Dedicated Corporate Internet Connection"}</option>
+                          <option value="Reseller Panel" className="bg-white text-slate-800">{"Sub-ISP / Reseller Panel request"}</option>
+                          <option value="Billing Query" className="bg-white text-slate-800">{"Billing invoice queries"}</option>
                         </select>
                       </div>
 
                       <div className="flex flex-col gap-1.5 text-left">
-                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Detailed Message", "বিস্তারিত বার্তা")}</label>
+                        <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{"Detailed Message"}</label>
                         <textarea
                           required
                           rows={4}
                           value={form.msg}
                           onChange={(e) => setForm({ ...form, msg: e.target.value })}
-                          placeholder={t("Write your connection query, location details, or requirements here...", "আপনার সংযোগের জিজ্ঞাসা, কাঙ্ক্ষিত সংযোগের ঠিকানা বা প্রয়োজনীয়তা এখানে লিখুন...")}
+                          placeholder={"Write your connection query, location details, or requirements here..."}
                           className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-cyan resize-none font-sans"
                         />
                       </div>
@@ -240,10 +240,10 @@ export default function Contact() {
                       {submitting ? (
                         <>
                           <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                          {t("Sending Inquiry...", "অনুসন্ধান পাঠানো হচ্ছে...")}
+                          {"Sending Inquiry..."}
                         </>
                       ) : (
-                        t("Submit Inquiry Form", "অনুসন্ধান জমা দিন")
+                        "Submit Inquiry Form"
                       )}
                     </button>
                   </form>
@@ -256,16 +256,16 @@ export default function Contact() {
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="text-slate-900 font-bold text-2xl">{t("Message Dispatched!", "বার্তা সফলভাবে পাঠানো হয়েছে!")}</h3>
+                      <h3 className="text-slate-900 font-bold text-2xl">{"Message Dispatched!"}</h3>
                       <p className="text-sm text-slate-600">
-                        {t("Thank you for reaching out,", "যোগাযোগ করার জন্য ধন্যবাদ,")} <span className="text-slate-900 font-bold">{form.name}</span>.
+                        {"Thank you for reaching out,"} <span className="text-slate-900 font-bold">{form.name}</span>.
                       </p>
                     </div>
 
                     <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
                       {t(
                         "Your general inquiry form has been recorded. Our front-desk coordinator will review your topic and contact you back at your number shortly.",
-                        "আপনার বার্তাটি রেকর্ড করা হয়েছে। আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।"
+                        ""
                       )}
                     </p>
 
@@ -273,7 +273,7 @@ export default function Contact() {
                       onClick={handleReset}
                       className="px-6 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300/80 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                     >
-                      {t("Send Another Message", "আরেকটি বার্তা পাঠান")}
+                      {"Send Another Message"}
                     </button>
                   </div>
                 )}

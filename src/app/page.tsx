@@ -36,9 +36,9 @@ interface FAQ {
 interface NetworkFeature {
   id: string;
   titleEn: string;
-  titleBn: string;
+  titleBn?: string;
   descEn: string;
-  descBn: string;
+  descBn?: string;
   iconName: string;
   _sort_order: number;
 }
@@ -53,9 +53,9 @@ interface HeroTypography {
 interface HeroMetric {
   value: string;
   titleEn: string;
-  titleBn: string;
+  titleBn?: string;
   descEn: string;
-  descBn: string;
+  descBn?: string;
 }
 
 const DEFAULT_HERO_SLIDES = [
@@ -121,9 +121,9 @@ function normalizeHeroMetrics(saved: unknown): HeroMetric[] {
     return {
       value: String(metric.value || fallback.value),
       titleEn: String(metric.titleEn || fallback.titleEn),
-      titleBn: String(metric.titleBn || fallback.titleBn),
+      titleBn: String((metric.titleBn ?? "") || (fallback.titleBn ?? "")),
       descEn: String(metric.descEn || fallback.descEn),
-      descBn: String(metric.descBn || fallback.descBn),
+      descBn: String((metric.descBn ?? "") || (fallback.descBn ?? "")),
     };
   });
 }
@@ -212,14 +212,32 @@ export default function Home() {
   const [heroTypography, setHeroTypography] = useState<HeroTypography>(DEFAULT_HERO_TYPOGRAPHY);
   const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(DEFAULT_HERO_METRICS);
   const [networkFeatures, setNetworkFeatures] = useState<NetworkFeature[]>([]);
+  const [featuresLoading, setFeaturesLoading] = useState(true);
+  const [whyChooseContent, setWhyChooseContent] = useState({
+    headingEn: "Why Choose M Amin Network?",
+    headingBn: "",
+    subtitleEn: "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
+    subtitleBn: "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।",
+  });
 
   useEffect(() => {
-    getSetting("network_features").then((saved) => {
-      if (Array.isArray(saved)) {
-        setNetworkFeatures(saved as NetworkFeature[]);
-      } else {
-        setNetworkFeatures([]);
+    Promise.all([
+      getSetting("network_features"),
+      getSetting("why_choose_content"),
+    ]).then(([feats, wcc]) => {
+      if (Array.isArray(feats)) {
+        setNetworkFeatures(feats as NetworkFeature[]);
       }
+      if (wcc) {
+        const s = wcc as Record<string, string>;
+        setWhyChooseContent(prev => ({
+          headingEn: s.headingEn || prev.headingEn,
+          headingBn: s.headingBn || prev.headingBn,
+          subtitleEn: s.subtitleEn || prev.subtitleEn,
+          subtitleBn: s.subtitleBn || prev.subtitleBn,
+        }));
+      }
+      setFeaturesLoading(false);
     });
   }, []);
   
@@ -389,62 +407,62 @@ export default function Home() {
     {
       speed: 10,
       price: 500,
-      type: t("Home Starter", "হোম স্টার্টার"),
+      type: "Home Starter",
       features: [
-        t("Buffer-free YouTube & Facebook", "বাফার-মুক্ত ইউটিউব ও ফেসবুক"),
-        t("Unlimited Data Usage", "আনলিমিটেড ডাটা ব্যবহার"),
-        t("Ideal for 2-3 Devices", "২-৩টি ডিভাইসের জন্য আদর্শ"),
-        t("24/7 Phone Support", "২৪/৭ ফোন সাপোর্ট"),
-        t("Shared Bandwidth", "শেয়ার্ড ব্যান্ডউইথ"),
+        "Buffer-free YouTube & Facebook",
+        "Unlimited Data Usage",
+        "Ideal for 2-3 Devices",
+        "24/7 Phone Support",
+        "Shared Bandwidth",
       ],
     },
     {
       speed: 20,
       price: 800,
-      type: t("Home Standard", "হোম স্ট্যান্ডার্ড"),
+      type: "Home Standard",
       features: [
-        t("Super-fast FTP & Torrenting", "সুপার-ফাস্ট এফটিপি ও টরেন্টিং"),
-        t("Seamless Full HD Streaming", "সিমলেস ফুল এইচডি স্ট্রিমিং"),
-        t("Ideal for 4-6 Devices", "৪-৬টি ডিভাইসের জন্য আদর্শ"),
-        t("Priority Customer Support", "অগ্রাধিকার গ্রাহক সহায়তা"),
-        t("Public IP on request", "অনুরোধে পাবলিক আইপি"),
+        "Super-fast FTP & Torrenting",
+        "Seamless Full HD Streaming",
+        "Ideal for 4-6 Devices",
+        "Priority Customer Support",
+        "Public IP on request",
       ],
     },
     {
       speed: 30,
       price: 1000,
-      type: t("Super Gamer", "সুপার গেমার"),
+      type: "Super Gamer",
       popular: true,
       features: [
-        t("Low-Ping Gamer Routing", "লো-পিং গেমার রাউটিং"),
-        t("Free BDIX & Local FTP Access", "ফ্রি বিডিআইএক্স ও লোকাল এফটিপি অ্যাক্সেস"),
-        t("Ideal for 7-10 Devices", "৭-১০টি ডিভাইসের জন্য আদর্শ"),
-        t("4K UHD Support", "৪কে ইউএইচডি সাপোর্ট"),
-        t("24/7 Dedicated Support Hotline", "২৪/৭ ডেডিকেটেড সাপোর্ট হটলাইন"),
+        "Low-Ping Gamer Routing",
+        "Free BDIX & Local FTP Access",
+        "Ideal for 7-10 Devices",
+        "4K UHD Support",
+        "24/7 Dedicated Support Hotline",
       ],
     },
     {
       speed: 50,
       price: 1500,
-      type: t("Ultra Power", "আল্ট্রা পাওয়ার"),
+      type: "Ultra Power",
       features: [
-        t("Dedicated Speed Allocation", "ডেডিকেটেড স্পিড অ্যালোকেশন"),
-        t("Extremely Low Latency BGP Routing", "অত্যন্ত কম লেটেন্সি বিজিপি রাউটিং"),
-        t("Best for heavy downloaders & Work From Home", "হেভি ডাউনলোডার এবং ওয়ার্ক ফ্রম হোমের জন্য সেরা"),
-        t("Static Public IP Included", "স্ট্যাটিক পাবলিক আইপি অন্তর্ভুক্ত"),
-        t("Priority SLA < 1 Hour", "অগ্রাধিকার এসএলএ < ১ ঘণ্টা"),
+        "Dedicated Speed Allocation",
+        "Extremely Low Latency BGP Routing",
+        "Best for heavy downloaders & Work From Home",
+        "Static Public IP Included",
+        "Priority SLA < 1 Hour",
       ],
     },
     {
       speed: 100,
       price: 2500,
-      type: t("SOHO Premium", "SOHO প্রিমিয়াম"),
+      type: "SOHO Premium",
       features: [
-        t("Symmetric 1:1 Dedicated Bandwidth", "সিমেট্রিক ১:১ ডেডিকেটেড ব্যান্ডউইথ"),
-        t("Multi-Homing Routing (AS150164)", "মাল্টি-হোমিং রাউটিং (AS150164)"),
-        t("Perfect for small offices & Content Creators", "ছোট অফিস এবং কন্টেন্ট ক্রিয়েটরদের জন্য উপযুক্ত"),
-        t("Premium SLA < 30 mins Support", "প্রিমিয়াম এসএলএ < ৩০ মিনিট সাপোর্ট"),
-        t("Dual-WAN Failover Support", "ডুয়াল-ওয়্যান ফেইলওভার সাপোর্ট"),
+        "Symmetric 1:1 Dedicated Bandwidth",
+        "Multi-Homing Routing (AS150164)",
+        "Perfect for small offices & Content Creators",
+        "Premium SLA < 30 mins Support",
+        "Dual-WAN Failover Support",
       ],
     },
   ];
@@ -510,7 +528,7 @@ export default function Home() {
             </div>
             <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
               <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
-              {t("BTRC Licensed Broadband Provider", "বিটিআরসি অনুমোদিত ব্রডব্যান্ড প্রোভাইডার")}
+              {"BTRC Licensed Broadband Provider"}
             </div>
             
             <h1 className="hidden text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
@@ -522,9 +540,9 @@ export default function Home() {
               )}
             </h1>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-              {t("Blazing Fast Fiber", "দ্রুতগতির ফাইবার")} <br />
+              {"Blazing Fast Fiber"} <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t("Internet in Keraniganj", "ইন্টারনেট কেরানীগঞ্জে")}
+                {"Internet in Keraniganj"}
               </span>
             </h1>
 
@@ -543,7 +561,7 @@ export default function Home() {
                 href="/packages"
                 className="px-3.5 py-2.5 sm:px-5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs sm:text-sm font-extrabold hover:opacity-90 transition-opacity shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer"
               >
-                {t("View Packages", "প্যাকেজ সমূহ দেখুন")}
+                {"View Packages"}
                 <svg
                   className="w-3.5 h-3.5 sm:w-4 sm:h-4"
                   fill="none"
@@ -674,8 +692,8 @@ export default function Home() {
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
                   <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
                 </h3>
-                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(DEFAULT_HERO_METRICS[i].titleEn, DEFAULT_HERO_METRICS[i].titleBn)}</h4>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(DEFAULT_HERO_METRICS[i].descEn, DEFAULT_HERO_METRICS[i].descBn)}</p>
+                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(DEFAULT_HERO_METRICS[i].titleEn, DEFAULT_HERO_METRICS[i].titleBn ?? "")}</h4>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(DEFAULT_HERO_METRICS[i].descEn, DEFAULT_HERO_METRICS[i].descBn ?? "")}</p>
               </div>
             );
           })}
@@ -690,7 +708,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-              {t("Choose the Perfect Plan for You", "আপনার জন্য সেরা প্ল্যানটি বেছে নিন")}
+              {"Choose the Perfect Plan for You"}
             </h3>
             <p className="text-slate-650 mt-4 leading-relaxed">
               {t(
@@ -704,7 +722,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-stretch">
             {packages.map((plan, i) => {
               const allFeatures = [
-                t(`Speed: ${plan.speed} Mbps`, `গতি: ${plan.speed} এমবিপিএস`),
+                `Speed: ${plan.speed} Mbps`,
                 ...plan.features,
               ];
               return (
@@ -716,7 +734,7 @@ export default function Home() {
                 >
                   {plan.popular && (
                     <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#0273b3] to-[#014c77] text-white text-xs font-black tracking-widest px-5 py-2 rounded-full shadow-[0_4px_12px_rgba(2,115,179,0.3)] border border-white/20 z-30 uppercase">
-                      {t("POPULAR", "জনপ্রিয়")}
+                      {"POPULAR"}
                     </span>
                   )}
 
@@ -735,7 +753,7 @@ export default function Home() {
                           {plan.price}
                         </span>
                         <span className="text-[10px] font-bold uppercase tracking-widest ml-1.5 opacity-80">
-                          /{t("Monthly", "মাসিক")}
+                          /{"Monthly"}
                         </span>
                       </div>
                     </div>
@@ -770,7 +788,7 @@ export default function Home() {
                           href={`/packages?plan=${plan.speed}`}
                           className="mx-auto w-full max-w-[180px] py-3 bg-linear-to-r from-[#10b981] to-[#047857] hover:scale-[1.03] active:scale-[0.98] text-white text-xs font-black tracking-widest rounded-full transition-all duration-300 text-center block shadow-md hover:shadow-lg hover:shadow-emerald-500/10 uppercase cursor-pointer"
                         >
-                          {t("BUY NOW", "অর্ডার করুন")}
+                          {"BUY NOW"}
                         </Link>
                       </div>
                     </div>
@@ -788,18 +806,41 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
-              {t("Why Choose M Amin Network?", "কেন এম আমিন নেটওয়ার্ক বেছে নেবেন?")}
-            </h3>
-            <p className="text-slate-400 mt-4 leading-relaxed">
-              {t(
-                "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
-                "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।"
-              )}
-            </p>
+            {featuresLoading ? (
+              <>
+                <div className="h-10 w-72 mx-auto bg-white/10 rounded-xl animate-pulse mb-4" />
+                <div className="h-4 w-full bg-white/5 rounded-lg animate-pulse mb-2" />
+                <div className="h-4 w-4/5 mx-auto bg-white/5 rounded-lg animate-pulse" />
+              </>
+            ) : (
+              <>
+                <h3 className="text-3xl sm:text-4xl font-extrabold text-white">
+                  {t(whyChooseContent.headingEn, whyChooseContent.headingBn || whyChooseContent.headingEn)}
+                </h3>
+                {(whyChooseContent.subtitleEn || whyChooseContent.subtitleBn) && (
+                  <p className="text-slate-400 mt-4 leading-relaxed">
+                    {t(whyChooseContent.subtitleEn, whyChooseContent.subtitleBn || whyChooseContent.subtitleEn)}
+                  </p>
+                )}
+              </>
+            )}
           </div>
 
-          {networkFeatures.length === 0 ? (
+          {featuresLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="p-8 rounded-3xl bg-white/5 border border-white/10 flex flex-col gap-4 animate-pulse">
+                  <div className="w-12 h-12 rounded-xl bg-white/10" />
+                  <div className="h-5 w-3/4 bg-white/10 rounded-lg" />
+                  <div className="space-y-2">
+                    <div className="h-3 w-full bg-white/5 rounded" />
+                    <div className="h-3 w-5/6 bg-white/5 rounded" />
+                    <div className="h-3 w-2/3 bg-white/5 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : networkFeatures.length === 0 ? (
             <div className="text-center py-12 text-slate-500 text-sm">
               No features configured yet. Admins can add them from the panel.
             </div>
@@ -816,10 +857,10 @@ export default function Home() {
                       <IconComponent className="w-6 h-6" />
                     </div>
                     <h4 className="text-lg font-bold text-white tracking-wide">
-                      {t(feat.titleEn, feat.titleBn)}
+                      {t(feat.titleEn, feat.titleBn ?? "")}
                     </h4>
                     <p className="text-sm text-slate-400 leading-relaxed">
-                      {t(feat.descEn, feat.descBn)}
+                      {t(feat.descEn, feat.descBn ?? "")}
                     </p>
                   </div>
                 );
@@ -830,11 +871,12 @@ export default function Home() {
       </section>
 
 
+
       {/* Customer Review Section */}
       {publishedTestimonials.length > 0 && (
         <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{t("What Our Customers Say", "আমাদের গ্রাহকেরা যা বলছেন")}</h3>
+            <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{"What Our Customers Say"}</h3>
 
             <AnimatedTestimonials
               testimonials={publishedTestimonials}
@@ -852,10 +894,10 @@ export default function Home() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-12">
               <h3 className="text-3xl font-extrabold text-slate-900">
-                {t("Frequently Asked Questions", "সাধারণ জিজ্ঞাসা (FAQ)")}
+                {"Frequently Asked Questions"}
               </h3>
               <p className="text-slate-500 mt-2 text-sm">
-                {t("Find quick answers to common questions about our services", "আমাদের সেবা সম্পর্কে সাধারণ প্রশ্নের উত্তরসমূহ এখানে খুঁজুন")}
+                {"Find quick answers to common questions about our services"}
               </p>
             </div>
 

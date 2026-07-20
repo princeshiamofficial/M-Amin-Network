@@ -155,7 +155,7 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
       title: "Zero Installation Fee",
       badge: "New Connection",
       badgeColor: "bg-brand-cyan/15 border-brand-cyan/30 text-brand-cyan",
-      details: "Subscribe to any 20 Mbps or higher home internet package for a minimum contract of 6 months, and get standard installation & optical fiber line connection completely free (saves ৳1,000 BDT).",
+      details: "",
       code: "FREEINSTALL2026",
       validUntil: "31 Dec 2026",
       _sort_order: 0
@@ -164,7 +164,7 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
       title: "Pay 10 Months, Get 12",
       badge: "Best Value",
       badgeColor: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 animate-pulse",
-      details: "Pay for 10 months upfront on any Home Broadband or Gamer Pack plan, and get an additional 2 months of subscription completely free (saves up to ৳3,000 BDT).",
+      details: "",
       code: "ANNUAL10",
       validUntil: "Ongoing Promotion",
       _sort_order: 1
@@ -173,7 +173,7 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
       title: "Free Public IP for Gamers",
       badge: "Gamer Special",
       badgeColor: "bg-brand-blue/15 border-brand-blue/30 text-brand-blue",
-      details: "Subscribe to the 30 Mbps Gamer Pack or higher and receive a dedicated Static Public IP address for hosting lobbies and obtaining lowest pings at 0 extra monthly cost (saves ৳150/month).",
+      details: "",
       code: "GAMERIP",
       validUntil: "31 Oct 2026",
       _sort_order: 2
@@ -219,13 +219,13 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
   ],
   hero_typography: [
-    { mainTitle: "Blazing Fast Fiber | Internet in Keraniganj", subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.", slides: JSON.stringify(["/28ca5e1d52c944ebfc4dd9f2b300980d.jpg","/6c55d74de82b7eee7127c3e2d4939b1f.jpg","/933503ea823535235e8159f65709292f.jpg","/ea82d2834f062ee8d73d8b99aebe0d31.jpg"]), _sort_order: 0 }
+    { mainTitle: "Blazing Fast Fiber | Internet in Keraniganj", subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.", slides: JSON.stringify([]), _sort_order: 0 }
   ],
   hero_metrics: [
-    { value: "99.9%", titleEn: "Guaranteed Uptime", titleBn: "গ্যারান্টিড আপটাইম", descEn: "Redundant upstream connections", descBn: "অতিরিক্ত আপস্ট্রিম সংযোগ", _sort_order: 0 },
-    { value: "2,000+", titleEn: "Active Clients", titleBn: "সক্রিয় গ্রাহক", descEn: "Trusted by homes & businesses", descBn: "বাসা ও ব্যবসার বিশ্বস্ত অংশীদার", _sort_order: 1 },
-    { value: "10+", titleEn: "Cities Served", titleBn: "পরিষেবা এলাকা", descEn: "Across South Keraniganj", descBn: "দক্ষিণ কেরানীগঞ্জ জুড়ে", _sort_order: 2 },
-    { value: "24/7", titleEn: "Support Response", titleBn: "সহায়তা প্রতিক্রিয়া", descEn: "Expert technical field support", descBn: "দক্ষ টেকনিক্যাল ফিল্ড সাপোর্ট", _sort_order: 3 }
+    { value: "99.9%", titleEn: "Guaranteed Uptime", descEn: "Redundant upstream connections", _sort_order: 0 },
+    { value: "2,000+", titleEn: "Active Clients", descEn: "Trusted by homes & businesses", _sort_order: 1 },
+    { value: "10+", titleEn: "Cities Served", descEn: "Across South Keraniganj", _sort_order: 2 },
+    { value: "24/7", titleEn: "Support Response", descEn: "Expert technical field support", _sort_order: 3 }
   ],
   offers_page_content: [
     { title: "Monsoon Campaigns & Discounts", subtitle: "Unlock high-speed splicing broadband peering plans at zero installation fees.", _sort_order: 0 }
@@ -255,54 +255,39 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { id: "main", settings_json: { appName: "M-Amin Network" }, _sort_order: 0 }
   ],
   network_features: [
-    { id: "nf-1", titleEn: "100% Fiber Optic (FTTH)", titleBn: "১০০% ফাইবার অপটিক (FTTH)", descEn: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.", descBn: "সরাসরি আপনার বাসায় বিশুদ্ধ অপটিক্যাল ফাইবার। কোনো তামার তারের অবনতি নেই, যা বায়ুমণ্ডলীয় হস্তক্ষেপ ও বজ্রপাত থেকে নিরাপদ সংযোগ প্রদান করে।", iconName: "Zap", _sort_order: 0 },
-    { id: "nf-2", titleEn: "Dedicated BGP Routing", titleBn: "ডেডিকেটেড বিজিপি রাউটিং", descEn: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.", descBn: "AS150164 পরিচালনা আমাদের স্মার্ট রাউটিং পলিসি সক্ষম করে। আমরা সরাসরি BDIX, GGC (গুগল), SNA (ফেসবুক) এবং প্রধান লোকাল ক্যাশ সার্ভারের সাথে যুক্ত।", iconName: "Wifi", _sort_order: 1 },
-    { id: "nf-3", titleEn: "Low-Ping Gamer Optimizations", titleBn: "লো-পিং গেমার অপ্টিমাইজেশান", descEn: "Specialized low-latency paths to Southeast Asia and European servers (PUBG, Free Fire, CS2, Valorant). Zero packet loss, steady pings, and jitter control.", descBn: "দক্ষিণ-পূর্ব এশিয়া ও ইউরোপীয় সার্ভারে বিশেষায়িত লো-লেটেন্সি পাথ (PUBG, Free Fire, CS2, Valorant)। শূন্য প্যাকেট লস, স্থির পিং এবং জিটার কন্ট্রোল।", iconName: "Gamepad2", _sort_order: 2 },
-    { id: "nf-4", titleEn: "24/7 Priority SLA Support", titleBn: "২৪/৭ অগ্রাধিকার SLA সাপোর্ট", descEn: "No waiting for hours. Our localized support hub in South Keraniganj ensures our field technicians are dispatched to your home or office in record time.", descBn: "ঘণ্টার পর ঘণ্টা অপেক্ষা করতে হবে না। দক্ষিণ কেরানীগঞ্জে আমাদের লোকাল সাপোর্ট হাব নিশ্চিত করে যে আমাদের টেকনিশিয়ানরা রেকর্ড সময়ে আপনার বাসা বা অফিসে পৌঁছে যাবে।", iconName: "LifeBuoy", _sort_order: 3 },
-    { id: "nf-5", titleEn: "BDIX & Local FTP Access", titleBn: "BDIX ও লোকাল এফটিপি অ্যাক্সেস", descEn: "Get unlimited speeds of up to 100 Mbps to localized Bangladesh Internet Exchange (BDIX) resources, local FTP server movies, live TV, and games caches.", descBn: "বাংলাদেশ ইন্টারনেট এক্সচেঞ্জ (BDIX) রিসোর্স, লোকাল এফটিপি মুভি, লাইভ টিভি এবং গেম ক্যাশে ১০০ এমবিপিএস পর্যন্ত আনলিমিটেড স্পিড পান।", iconName: "Cloud", _sort_order: 4 },
-    { id: "nf-6", titleEn: "Corporate Dedicated Backup", titleBn: "কর্পোরেট ডেডিকেটেড ব্যাকআপ", descEn: "Dual backbones with auto-failover, ensuring continuous SLA-backed business operations. Static IPs, multi-router protocols, and direct client portal support.", descBn: "অটো-ফেইলওভার সহ ডুয়াল ব্যাকবোন, যা অব্যাহত SLA-সমর্থিত ব্যবসায়িক কার্যক্রম নিশ্চিত করে। স্ট্যাটিক আইপি এবং ডিরেক্ট ক্লায়েন্ট সাপোর্ট।", iconName: "Building2", _sort_order: 5 }
+    { id: "nf-1", titleEn: "100% Fiber Optic (FTTH)", descEn: "Pure optical fiber direct to your home. No copper line degradation, providing immune connectivity to atmospheric interference and electrical storms.", iconName: "Zap", _sort_order: 0 },
+    { id: "nf-2", titleEn: "Dedicated BGP Routing", descEn: "Operating AS150164 enables smart routing policies. We peer directly with BDIX, GGC (Google), SNA (Facebook), and major localized content delivery caches.", iconName: "Wifi", _sort_order: 1 },
+    { id: "nf-3", titleEn: "Low-Ping Gamer Optimizations", descEn: "Specialized low-latency paths to Southeast Asia and European servers (PUBG, Free Fire, CS2, Valorant). Zero packet loss, steady pings, and jitter control.", iconName: "Gamepad2", _sort_order: 2 },
+    { id: "nf-4", titleEn: "24/7 Priority SLA Support", descEn: "No waiting for hours. Our localized support hub in South Keraniganj ensures our field technicians are dispatched to your home or office in record time.", iconName: "LifeBuoy", _sort_order: 3 },
+    { id: "nf-5", titleEn: "BDIX & Local FTP Access", descEn: "Get unlimited speeds of up to 100 Mbps to localized Bangladesh Internet Exchange (BDIX) resources, local FTP server movies, live TV, and games caches.", iconName: "Cloud", _sort_order: 4 },
+    { id: "nf-6", titleEn: "Corporate Dedicated Backup", descEn: "Dual backbones with auto-failover, ensuring continuous SLA-backed business operations. Static IPs, multi-router protocols, and direct client portal support.", iconName: "Building2", _sort_order: 5 }
   ],
   page_headers: [
     {
       packages_bg: "/video/package-header.mp4",
       packages_title_en: "Flexible & Premium",
-      packages_title_bn: "ফ্লেক্সিবল ও প্রিমিয়াম",
       packages_title_highlight_en: "Broadband Plans",
-      packages_title_highlight_bn: "ব্রডব্যান্ড প্ল্যান",
       packages_subtitle_en: "Choose from our diverse range of fiber optic broadband connections. All plans come with unlimited volume, high-speed peers, and 24/7 technical monitoring.",
-      packages_subtitle_bn: "আমাদের বিভিন্ন ফাইবার অপটিক ব্রডব্যান্ড সংযোগ থেকে বেছে নিন। সমস্ত প্ল্যানে আনলিমিটেড ভলিউম, হাই-স্পিড পিয়ার্স এবং ২৪/৭ মনিটরিং অন্তর্ভুক্ত।",
       
       offers_bg: "/offer.jpg",
       offers_title_en: "Monsoon Campaigns",
-      offers_title_bn: "বর্ষা মৌসুমী ক্যাম্পেইন",
       offers_title_highlight_en: "& Discounts",
-      offers_title_highlight_bn: "ও ছাড়",
       offers_subtitle_en: "Unlock high-speed splicing broadband peering plans at zero installation fees.",
-      offers_subtitle_bn: "শূন্য ইনস্টলেশন ফি-তে হাই-স্পিড ব্রডব্যান্ড পিয়ারিং প্ল্যান আনলক করুন।",
       
       coverage_bg: "/coverage.jpg",
       coverage_title_en: "Active Coverage",
-      coverage_title_bn: "সক্রিয় কভারেজ",
       coverage_title_highlight_en: "& Splicing Zones",
-      coverage_title_highlight_bn: "ও স্প্লাইসিং জোন",
       coverage_subtitle_en: "Check if our fiber optic broadband coverage is available in your neighborhood of South Keraniganj.",
-      coverage_subtitle_bn: "দক্ষিণ কেরানীগঞ্জে আপনার এলাকায় আমাদের ফাইবার অপটিক ব্রডব্যান্ড সংযোগ আছে কিনা তা পরীক্ষা করুন।",
       
       multimedia_bg: "/Multimedia.jpg",
       multimedia_title_en: "Multimedia",
-      multimedia_title_bn: "মাল্টিমিডিয়া",
       multimedia_title_highlight_en: "& BDIX Portal",
-      multimedia_title_highlight_bn: "ও বিডিআইএক্স পোর্টাল",
       multimedia_subtitle_en: "Access our high-speed local entertainment gateways to stream movies, play games, and watch live TV at speeds up to 100 Mbps.",
-      multimedia_subtitle_bn: "মুভি স্ট্রিম করতে, গেম খেলতে এবং লাইভ টিভি দেখতে আমাদের হাই-স্পিড লোকাল বিনোদন গেটওয়েগুলো অ্যাক্সেস করুন।",
       
       careers_bg: "/footer-bg.jpg",
       careers_title_en: "Build Your Career",
-      careers_title_bn: "আপনার ক্যারিয়ার গড়ুন",
       careers_title_highlight_en: "With NOC Splicers",
-      careers_title_highlight_bn: "এনওসি স্প্লাইসারদের সাথে",
       careers_subtitle_en: "Explore open opportunities, engineering apprenticeships, and localized support roles at South Keraniganj.",
-      careers_subtitle_bn: "দক্ষিণ কেরানীগঞ্জে আমাদের সাথে নতুন সুযোগ, ইঞ্জিনিয়ারিং শিক্ষানবিস এবং লোকাল সাপোর্ট ভূমিকা অন্বেষণ করুন।",
       
       _sort_order: 0
     }

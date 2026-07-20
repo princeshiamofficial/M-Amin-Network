@@ -5,50 +5,50 @@ import Image from "next/image";
 import { submitPaymentAction } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 const defaultBillPaymentPageContent = {
-  str1En: "Home Standard", str1Bn: "হোম স্ট্যান্ডার্ড",
-  str2En: "Gamer Professional", str2Bn: "গেমার প্রফেশনাল",
-  str3En: "Home Elite", str3Bn: "হোম এলিট",
-  str4En: "July", str4Bn: "জুলাই",
-  str5En: "Demo Subscriber", str5Bn: "ডেমো গ্রাহক",
-  str6En: "Quick Pay", str6Bn: "কুইক পে",
-  str7En: "Instantly make your payment using a variety of available facilities, such as bKash, MasterCard, Visa card, and other payment methods.", str7Bn: "বিকাশ, মাস্টারকার্ড, ভিসা কার্ড এবং অন্যান্য পেমেন্ট চ্যানেল ব্যবহার করে তাৎক্ষণিকভাবে আপনার পেমেন্ট করুন।",
-  str8En: "Customer ID", str8Bn: "গ্রাহক আইডি",
-  str9En: "Ex: 123456", str9Bn: "উদা: 123456",
-  str10En: "Verifying...", str10Bn: "যাচাই করা হচ্ছে...",
-  str11En: "Pay Now", str11Bn: "পে নাও",
-  str12En: "Account Not Found", str12Bn: "অ্যাকাউন্ট পাওয়া যায়নি",
-  str13En: "No billing record found for this Client ID. Please check the ID and try again.", str13Bn: "এই ক্লায়েন্ট আইডিতে কোনো বিলিং রেকর্ড পাওয়া যায়নি। আইডিটি পুনরায় পরীক্ষা করুন।",
-  str14En: "Try Again", str14Bn: "আবার চেষ্টা করুন",
-  str15En: "Bill Payment", str15Bn: "বিল পরিশোধ",
-  str16En: "Pay your monthly broadband bill securely online.", str16Bn: "নিরাপদে অনলাইনে আপনার মাসিক ব্রডব্যান্ড বিল পরিশোধ করুন।",
-  str17En: "Secure Payment", str17Bn: "নিরাপদ পেমেন্ট",
-  str18En: "Client ID", str18Bn: "ক্লায়েন্ট আইডি",
-  str19En: "Phone", str19Bn: "ফোন",
-  str20En: "Change Account", str20Bn: "অ্যাকাউন্ট পরিবর্তন",
-  str21En: "Package", str21Bn: "প্যাকেজ",
-  str22En: "Monthly Bill", str22Bn: "মাসিক বিল",
-  str23En: "Per Month", str23Bn: "প্রতি মাসে",
-  str24En: "Due Amount", str24Bn: "বকেয়া পরিমাণ",
-  str25En: "Due by", str25Bn: "মেয়াদ",
-  str26En: "Select Payment Gateway", str26Bn: "পেমেন্ট গেটওয়ে নির্বাচন করুন",
-  str27En: "All payments are secured with 256-bit SSL encryption. Your card details are never stored on our servers.", str27Bn: "সমস্ত পেমেন্ট ২৫৬-বিট SSL এনক্রিপশন দ্বারা সুরক্ষিত। আপনার কার্ডের তথ্য কখনও আমাদের সার্ভারে সংরক্ষণ করা হয় না।",
-  str28En: "Processing Payment...", str28Bn: "পেমেন্ট প্রক্রিয়া করা হচ্ছে...",
-  str29En: "Pay ৳", str29Bn: "পরিশোধ করুন ৳",
-  str30En: "BDT Now", str30Bn: "BDT এখনই",
-  str31En: "Account Up to Date", str31Bn: "অ্যাকাউন্ট আপডেট",
-  str32En: "Account", str32Bn: "অ্যাকাউন্ট",
-  str33En: "has no outstanding dues.", str33Bn: "এর কোনো বকেয়া নেই।",
-  str34En: "Your next payment is due by", str34Bn: "পরবর্তী পেমেন্টের তারিখ",
-  str35En: "Check Another Account", str35Bn: "অন্য অ্যাকাউন্ট পরীক্ষা করুন",
-  str36En: "Payment Successful!", str36Bn: "পেমেন্ট সফল!",
-  str37En: "Thank you,", str37Bn: "ধন্যবাদ,",
-  str38En: "Transaction ID", str38Bn: "ট্রানজেকশন আইডি",
-  str39En: "Gateway", str39Bn: "গেটওয়ে",
-  str40En: "Amount Paid", str40Bn: "পরিশোধিত পরিমাণ",
-  str41En: "Status", str41Bn: "স্ট্যাটাস",
-  str42En: "Confirmed", str42Bn: "নিশ্চিত",
-  str43En: "Pay Another Bill", str43Bn: "আরেকটি বিল পরিশোধ করুন",
-  str44En: "Download Receipt", str44Bn: "রসিদ ডাউনলোড করুন",
+  str1En: "Home Standard",
+  str2En: "Gamer Professional",
+  str3En: "Home Elite",
+  str4En: "July",
+  str5En: "Demo Subscriber",
+  str6En: "Quick Pay",
+  str7En: "Instantly make your payment using a variety of available facilities, such as bKash, MasterCard, Visa card, and other payment methods.",
+  str8En: "Customer ID",
+  str9En: "Ex: 123456",
+  str10En: "Verifying...",
+  str11En: "Pay Now",
+  str12En: "Account Not Found",
+  str13En: "No billing record found for this Client ID. Please check the ID and try again.",
+  str14En: "Try Again",
+  str15En: "Bill Payment",
+  str16En: "Pay your monthly broadband bill securely online.",
+  str17En: "Secure Payment",
+  str18En: "Client ID",
+  str19En: "Phone",
+  str20En: "Change Account",
+  str21En: "Package",
+  str22En: "Monthly Bill",
+  str23En: "Per Month",
+  str24En: "Due Amount",
+  str25En: "Due by",
+  str26En: "Select Payment Gateway",
+  str27En: "All payments are secured with 256-bit SSL encryption. Your card details are never stored on our servers.",
+  str28En: "Processing Payment...",
+  str29En: "Pay ৳",
+  str30En: "BDT Now",
+  str31En: "Account Up to Date",
+  str32En: "Account",
+  str33En: "has no outstanding dues.",
+  str34En: "Your next payment is due by",
+  str35En: "Check Another Account",
+  str36En: "Payment Successful!",
+  str37En: "Thank you,",
+  str38En: "Transaction ID",
+  str39En: "Gateway",
+  str40En: "Amount Paid",
+  str41En: "Status",
+  str42En: "Confirmed",
+  str43En: "Pay Another Bill",
+  str44En: "Download Receipt",
 };
 
 interface CustomerBill {
@@ -75,15 +75,15 @@ export default function BillPayment() {
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const translatePlanName = (name: string) => {
-    if (name === "Home Standard") return t(pageContent.str1En, pageContent.str1Bn);
-    if (name === "Gamer Professional") return t(pageContent.str2En, pageContent.str2Bn);
-    if (name === "Home Elite") return t(pageContent.str3En, pageContent.str3Bn);
+    if (name === "Home Standard") return t(pageContent.str1En, pageContent.str1En);
+    if (name === "Gamer Professional") return t(pageContent.str2En, pageContent.str2En);
+    if (name === "Home Elite") return t(pageContent.str3En, pageContent.str3En);
     return name;
   };
 
   const translateDueDate = (date: string) => {
     if (date.includes("July")) {
-      return date.replace("July", t(pageContent.str4En, pageContent.str4Bn));
+      return date.replace("July", t(pageContent.str4En, pageContent.str4En));
     }
     return date;
   };
@@ -146,7 +146,7 @@ export default function BillPayment() {
         // Default mock user
         setBillDetails({
           clientId: clientIdInput.toUpperCase(),
-          name: t(pageContent.str5En, pageContent.str5Bn),
+          name: t(pageContent.str5En, pageContent.str5En),
           phone: phoneInput || "017XXXXXXXX",
           planName: "Home Elite",
           speed: "30 Mbps",
@@ -219,7 +219,7 @@ export default function BillPayment() {
                   className="object-contain"
                 />
                 <h1 className="text-[#2563EB] dark:text-[#548AFF] md:text-3xl text-2xl font-bold">
-                  {t("Quick Pay", "কুইক পে")}
+                  {"Quick Pay"}
                 </h1>
                 <p className="text-[#4A535F] dark:text-[#ABB3C3] font-medium md:w-11/12 w-full text-sm leading-relaxed">
                   {t(
@@ -256,7 +256,7 @@ export default function BillPayment() {
               <div className="flex justify-center items-center md:border-l border-t md:border-t-0 border-[#ecf3ff] dark:border-[#3D4A67] md:pl-12 pt-8 md:pt-0">
                 <form onSubmit={handleSearch} className="flex flex-col gap-4 w-full text-left">
                   <label className="text-[#4A535F] dark:text-[#ABB3C3] font-medium text-sm">
-                    {t("Customer ID", "গ্রাহক আইডি")}
+                    {"Customer ID"}
                   </label>
                   <div className="flex items-center border-2 dark:border border-[#ecf3ff] dark:border-gray-600 bg-white dark:bg-[#1A2230] rounded-lg divide-x-2 dark:divide-x divide-[#ecf3ff] dark:divide-gray-600">
                     <span className="px-4 text-[#2563EB] dark:text-white shrink-0">
@@ -267,7 +267,7 @@ export default function BillPayment() {
                     <input
                       type="text"
                       required
-                      placeholder={t("Ex: 123456", "উদা: 123456")}
+                      placeholder={"Ex: 123456"}
                       value={clientIdInput}
                       onChange={(e) => setClientIdInput(e.target.value)}
                       className="focus:outline-none px-3 py-3 bg-transparent text-sm w-full font-mono uppercase text-slate-800 dark:text-white"
@@ -281,11 +281,11 @@ export default function BillPayment() {
                     {searching ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t("Verifying...", "যাচাই করা হচ্ছে...")}
+                        {"Verifying..."}
                       </>
                     ) : (
                       <>
-                        {t("Pay Now", "পে নাও")}{" "}
+                        {"Pay Now"}{" "}
                         <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                           <path fill="none" strokeLinecap="square" strokeMiterlimit="10" strokeWidth="48" d="m268 112 144 144-144 144m124-144H100"></path>
                         </svg>
@@ -305,14 +305,14 @@ export default function BillPayment() {
                     <div>
                       <h3 className="text-slate-900 font-extrabold text-xl">{billDetails?.name}</h3>
                       <p className="text-xs text-slate-600 font-mono mt-0.5">
-                        {t(pageContent.str18En, pageContent.str18Bn)}: {billDetails?.clientId} | {t(pageContent.str19En, pageContent.str19Bn)}: {billDetails?.phone}
+                        {t(pageContent.str18En, pageContent.str18En)}: {billDetails?.clientId} | {t(pageContent.str19En, pageContent.str19En)}: {billDetails?.phone}
                       </p>
                     </div>
                     <button
                       onClick={handleReset}
                       className="text-xs text-slate-600 hover:text-brand-blue font-semibold border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
                     >
-                      {t(pageContent.str20En, pageContent.str20Bn)}
+                      {t(pageContent.str20En, pageContent.str20En)}
                     </button>
                   </div>
 
@@ -320,7 +320,7 @@ export default function BillPayment() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
                     <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl">
                       <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
-                        {t(pageContent.str21En, pageContent.str21Bn)}
+                        {t(pageContent.str21En, pageContent.str21En)}
                       </span>
                       <span className="text-slate-900 font-bold text-sm block mt-1">
                         {billDetails ? translatePlanName(billDetails.planName) : ""}
@@ -330,17 +330,17 @@ export default function BillPayment() {
 
                     <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl">
                       <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
-                        {t(pageContent.str22En, pageContent.str22Bn)}
+                        {t(pageContent.str22En, pageContent.str22En)}
                       </span>
                       <span className="text-slate-900 font-extrabold text-sm block mt-1 font-mono">
                         ৳{billDetails?.monthlyBill} BDT
                       </span>
-                      <span className="text-slate-500 text-xs">{t(pageContent.str23En, pageContent.str23Bn)}</span>
+                      <span className="text-slate-500 text-xs">{t(pageContent.str23En, pageContent.str23En)}</span>
                     </div>
 
                     <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl">
                       <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold block">
-                        {t(pageContent.str24En, pageContent.str24Bn)}
+                        {t(pageContent.str24En, pageContent.str24En)}
                       </span>
                       <span
                         className={`font-extrabold text-sm block mt-1 font-mono ${
@@ -350,7 +350,7 @@ export default function BillPayment() {
                         ৳{billDetails?.dueBill} BDT
                       </span>
                       <span className="text-slate-500 text-xs">
-                        {t(pageContent.str25En, pageContent.str25Bn)} {billDetails ? translateDueDate(billDetails.dueDate) : ""}
+                        {t(pageContent.str25En, pageContent.str25En)} {billDetails ? translateDueDate(billDetails.dueDate) : ""}
                       </span>
                     </div>
                   </div>
@@ -360,7 +360,7 @@ export default function BillPayment() {
                     <form onSubmit={handlePaymentSubmit} className="space-y-6 border-t border-slate-200 pt-6">
                       <div className="text-left">
                         <label className="text-xs text-slate-600 font-bold uppercase tracking-wider block mb-3">
-                          {t(pageContent.str26En, pageContent.str26Bn)}
+                          {t(pageContent.str26En, pageContent.str26En)}
                         </label>
                         <div className="grid grid-cols-2 gap-4">
                           {gateways.map((gt) => (
@@ -391,7 +391,7 @@ export default function BillPayment() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                         <span>
-                          {t(pageContent.str27En, pageContent.str27Bn)}
+                          {t(pageContent.str27En, pageContent.str27En)}
                         </span>
                       </div>
 
@@ -403,10 +403,10 @@ export default function BillPayment() {
                         {paying ? (
                           <>
                             <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
-                            {t(pageContent.str28En, pageContent.str28Bn)}
+                            {t(pageContent.str28En, pageContent.str28En)}
                           </>
                         ) : (
-                          `${t(pageContent.str29En, pageContent.str29Bn)}${billDetails?.dueBill} ${t(pageContent.str30En, pageContent.str30Bn)}`
+                          `${t(pageContent.str29En, pageContent.str29En)}${billDetails?.dueBill} ${t(pageContent.str30En, pageContent.str30En)}`
                         )}
                       </button>
                     </form>
@@ -419,11 +419,11 @@ export default function BillPayment() {
                         </svg>
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-slate-900 font-bold text-lg">{t(pageContent.str31En, pageContent.str31Bn)}</h4>
+                        <h4 className="text-slate-900 font-bold text-lg">{t(pageContent.str31En, pageContent.str31En)}</h4>
                         <p className="text-xs text-slate-600 max-w-sm mx-auto">
-                          {t(pageContent.str32En, pageContent.str32Bn)}{" "}
-                          {billDetails?.clientId} {t(pageContent.str33En, pageContent.str33Bn)}{" "}
-                          {t(pageContent.str34En, pageContent.str34Bn)}{" "}
+                          {t(pageContent.str32En, pageContent.str32En)}{" "}
+                          {billDetails?.clientId} {t(pageContent.str33En, pageContent.str33En)}{" "}
+                          {t(pageContent.str34En, pageContent.str34En)}{" "}
                           {billDetails ? translateDueDate(billDetails.dueDate) : ""}.
                         </p>
                       </div>
@@ -431,7 +431,7 @@ export default function BillPayment() {
                         onClick={handleReset}
                         className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-5 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                       >
-                        {t(pageContent.str35En, pageContent.str35Bn)}
+                        {t(pageContent.str35En, pageContent.str35En)}
                       </button>
                     </div>
                   )}
@@ -446,29 +446,29 @@ export default function BillPayment() {
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="text-slate-900 font-extrabold text-2xl">{t(pageContent.str36En, pageContent.str36Bn)}</h3>
+                    <h3 className="text-slate-900 font-extrabold text-2xl">{t(pageContent.str36En, pageContent.str36En)}</h3>
                     <p className="text-sm text-slate-600">
-                      {t(pageContent.str37En, pageContent.str37Bn)} <span className="text-slate-900 font-bold">{billDetails?.name}</span>.
+                      {t(pageContent.str37En, pageContent.str37En)} <span className="text-slate-900 font-bold">{billDetails?.name}</span>.
                     </p>
                   </div>
 
                   {/* Receipt overview */}
                   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left text-slate-700">
                     <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                      <span>{t(pageContent.str38En, pageContent.str38Bn)}</span>
+                      <span>{t(pageContent.str38En, pageContent.str38En)}</span>
                       <span className="text-brand-blue font-bold text-right truncate max-w-[160px]">{txnId}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                      <span>{t(pageContent.str39En, pageContent.str39Bn)}</span>
+                      <span>{t(pageContent.str39En, pageContent.str39En)}</span>
                       <span className="text-slate-800 font-bold uppercase">{selectedGateway}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 pb-2 mb-2 text-xs text-slate-500">
-                      <span>{t(pageContent.str40En, pageContent.str40Bn)}</span>
+                      <span>{t(pageContent.str40En, pageContent.str40En)}</span>
                       <span className="text-slate-800 font-bold">৳১২৫০ BDT</span>
                     </div>
                     <div className="flex justify-between text-xs text-slate-500">
-                      <span>{t(pageContent.str41En, pageContent.str41Bn)}</span>
-                      <span className="text-emerald-600 font-bold">{t(pageContent.str42En, pageContent.str42Bn)}</span>
+                      <span>{t(pageContent.str41En, pageContent.str41En)}</span>
+                      <span className="text-emerald-600 font-bold">{t(pageContent.str42En, pageContent.str42En)}</span>
                     </div>
                   </div>
 
@@ -477,13 +477,13 @@ export default function BillPayment() {
                       onClick={handleReset}
                       className="px-6 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
                     >
-                      {t(pageContent.str43En, pageContent.str43Bn)}
+                      {t(pageContent.str43En, pageContent.str43En)}
                     </button>
                     <button
                       onClick={() => toast(lang === "BN" ? "রসিদ ডাউনলোড: Receipt-MAN-2026.pdf তৈরি করা হয়েছে।" : "Receipt download simulated: Receipt-MAN-2026.pdf has been generated.")}
                       className="px-6 py-2.5 rounded-xl bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-xs font-black transition-opacity cursor-pointer"
                     >
-                      {t(pageContent.str44En, pageContent.str44Bn)}
+                      {t(pageContent.str44En, pageContent.str44En)}
                     </button>
                   </div>
                 </div>

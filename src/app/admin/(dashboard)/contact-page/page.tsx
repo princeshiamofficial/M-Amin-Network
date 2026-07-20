@@ -6,67 +6,65 @@ import * as Lucide from "lucide-react";
 
 export interface PhoneEntry {
   labelEn: string;
-  labelBn: string;
+  labelBn?: string;
   number: string;
 }
 
 export interface ContactContentFull {
-  tagEn: string; tagBn: string;
-  titleEn: string; titleBn: string;
-  highlightEn: string; highlightBn: string;
-  descEn: string; descBn: string;
+  tagEn: string; tagBn?: string;
+  titleEn: string; titleBn?: string;
+  highlightEn: string; highlightBn?: string;
+  descEn: string; descBn?: string;
   
-  infoTitleEn: string; infoTitleBn: string;
+  infoTitleEn: string; infoTitleBn?: string;
   
-  officeTitleEn: string; officeTitleBn: string;
-  officeL1En: string; officeL1Bn: string;
-  officeL2En: string; officeL2Bn: string;
+  officeTitleEn: string; officeTitleBn?: string;
+  officeL1En: string; officeL1Bn?: string;
+  officeL2En: string; officeL2Bn?: string;
 
-  phoneTitleEn: string; phoneTitleBn: string;
+  phoneTitleEn: string; phoneTitleBn?: string;
   phones: PhoneEntry[];
 
-  emailTitleEn: string; emailTitleBn: string;
-  emailGenLabelEn: string; emailGenLabelBn: string;
+  emailTitleEn: string; emailTitleBn?: string;
+  emailGenLabelEn: string; emailGenLabelBn?: string;
   emailGenAddr: string;
-  emailOpsLabelEn: string; emailOpsLabelBn: string;
+  emailOpsLabelEn: string; emailOpsLabelBn?: string;
   emailOpsAddr: string;
 
   mapEmbedUrl: string;
 
-  formTitleEn: string; formTitleBn: string;
-  formDescEn: string; formDescBn: string;
+  formTitleEn: string; formTitleBn?: string;
+  formDescEn: string; formDescBn?: string;
 }
 
 export const defaultContactContent: ContactContentFull = {
-  tagEn: "Get In Touch", tagBn: "যোগাযোগ করুন",
-  titleEn: "Contact ", titleBn: "আমাদের সাথে ",
-  highlightEn: "Our Team", highlightBn: "যোগাযোগ",
+  tagEn: "Get In Touch",
+  titleEn: "Contact ",
+  highlightEn: "Our Team",
   descEn: "Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.",
-  descBn: "সংযোগের সম্ভাব্যতা যাচাই, বিশেষ ছাড় বা কর্পোরেট ডেডিকেটেড ইন্টারনেট সম্পর্কে কোনো জিজ্ঞাসা আছে? সরাসরি যোগাযোগ করুন অথবা নিচের ফর্মটি পূরণ করুন।",
   
-  infoTitleEn: "Contact Information", infoTitleBn: "যোগাযোগের তথ্য",
+  infoTitleEn: "Contact Information",
   
-  officeTitleEn: "Corporate Office", officeTitleBn: "প্রধান কার্যালয়",
-  officeL1En: "House No. 68, Kadomtoli, Aganagar,", officeL1Bn: "বাসা নং ৬৮, কদমতলী, আগানগর,",
-  officeL2En: "South Keraniganj, Dhaka-1310, Bangladesh.", officeL2Bn: "দক্ষিণ কেরানীগঞ্জ, ঢাকা-১৩১০, বাংলাদেশ।",
+  officeTitleEn: "Corporate Office",
+  officeL1En: "House No. 68, Kadomtoli, Aganagar,",
+  officeL2En: "South Keraniganj, Dhaka-1310, Bangladesh.",
 
-  phoneTitleEn: "Telephone Hotlines", phoneTitleBn: "হটলাইন নম্বরসমূহ",
+  phoneTitleEn: "Telephone Hotlines",
   phones: [
-    { labelEn: "Residential Support:", labelBn: "গ্রাহক সেবা:", number: "+880 1707-009267" },
-    { labelEn: "Corporate Desk:", labelBn: "কর্পোরেট ডেস্ক:", number: "+880 1707-009267" }
+    { labelEn: "Residential Support:", number: "+880 1707-009267" },
+    { labelEn: "Corporate Desk:", number: "+880 1707-009267" }
   ],
 
-  emailTitleEn: "Email Correspondence", emailTitleBn: "ইমেইল যোগাযোগ",
-  emailGenLabelEn: "General Queries:", emailGenLabelBn: "সাধারণ জিজ্ঞাসা:",
+  emailTitleEn: "Email Correspondence",
+  emailGenLabelEn: "General Queries:",
   emailGenAddr: "info@m-aminnetwork.com",
-  emailOpsLabelEn: "Network Ops:", emailOpsLabelBn: "নেটওয়ার্ক অপস:",
+  emailOpsLabelEn: "Network Ops:",
   emailOpsAddr: "mibappy00@gmail.com",
 
   mapEmbedUrl: "https://maps.google.com/maps?q=M%20Amin%20Network,%20Dhaka&t=&z=16&ie=UTF8&iwloc=&output=embed",
 
-  formTitleEn: "Send an Inquiry", formTitleBn: "অনুসন্ধান জানান",
-  formDescEn: "Fill out the form below and our operations support manager will follow up with you.",
-  formDescBn: "নিচের ফর্মটি পূরণ করুন এবং আমাদের অপারেশন ম্যানেজার আপনার সাথে যোগাযোগ করবেন।"
+  formTitleEn: "Send an Inquiry",
+  formDescEn: "Fill out the form below and our operations support manager will follow up with you."
 };
 
 export default function ContactPageAdmin() {
@@ -89,8 +87,8 @@ export default function ContactPageAdmin() {
         // Migration for older schema to phones array
         if (!parsed.phones && parsed.phoneResNum) {
           parsed.phones = [
-            { labelEn: parsed.phoneResLabelEn || "Residential Support:", labelBn: parsed.phoneResLabelBn || "গ্রাহক সেবা:", number: parsed.phoneResNum },
-            { labelEn: parsed.phoneCorpLabelEn || "Corporate Desk:", labelBn: parsed.phoneCorpLabelBn || "কর্পোরেট ডেস্ক:", number: parsed.phoneCorpNum || "" }
+            { labelEn: parsed.phoneResLabelEn || "Residential Support:", labelBn: parsed.phoneResLabelBn || "", number: parsed.phoneResNum },
+            { labelEn: parsed.phoneCorpLabelEn || "Corporate Desk:", labelBn: parsed.phoneCorpLabelBn || "", number: parsed.phoneCorpNum || "" }
           ];
         }
         setContent(parsed); 
@@ -102,7 +100,23 @@ export default function ContactPageAdmin() {
 
   const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    setSetting("contact_content_full", content as unknown);
+    // Mirror En -> Bn
+    const nextContent = { ...content };
+    const fields = Object.keys(nextContent) as (keyof ContactContentFull)[];
+    fields.forEach(key => {
+      if (key.endsWith("En")) {
+        const bnKey = key.replace(/En$/, "Bn") as keyof ContactContentFull;
+        if (bnKey in nextContent) (nextContent as Record<string, unknown>)[bnKey] = (nextContent as Record<string, unknown>)[key];
+      }
+    });
+    if (Array.isArray(nextContent.phones)) {
+      nextContent.phones = nextContent.phones.map(p => ({
+        ...p,
+        labelBn: p.labelEn
+      }));
+    }
+    setSetting("contact_content_full", nextContent as unknown);
+    setContent(nextContent);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -150,34 +164,22 @@ export default function ContactPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Tag (English)</label>
                 <input type="text" value={content.tagEn} onChange={e => updateField("tagEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Tag (Bangla)</label>
-                <input type="text" value={content.tagBn} onChange={e => updateField("tagBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.titleEn} onChange={e => updateField("titleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.titleBn} onChange={e => updateField("titleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Highlight Text (English)</label>
                 <input type="text" value={content.highlightEn} onChange={e => updateField("highlightEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Highlight Text (Bangla)</label>
-                <input type="text" value={content.highlightBn} onChange={e => updateField("highlightBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
                 <textarea rows={2} value={content.descEn} onChange={e => updateField("descEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (Bangla)</label>
-                <textarea rows={2} value={content.descBn} onChange={e => updateField("descBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
             </div>
           </div>
         )}
@@ -190,35 +192,23 @@ export default function ContactPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Block Title (English)</label>
                 <input type="text" value={content.infoTitleEn} onChange={e => updateField("infoTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Block Title (Bangla)</label>
-                <input type="text" value={content.infoTitleBn} onChange={e => updateField("infoTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
 
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Office Title (English)</label>
                 <input type="text" value={content.officeTitleEn} onChange={e => updateField("officeTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Office Title (Bangla)</label>
-                <input type="text" value={content.officeTitleBn} onChange={e => updateField("officeTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Line 1 (English)</label>
                 <input type="text" value={content.officeL1En} onChange={e => updateField("officeL1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Line 1 (Bangla)</label>
-                <input type="text" value={content.officeL1Bn} onChange={e => updateField("officeL1Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Line 2 (English)</label>
                 <input type="text" value={content.officeL2En} onChange={e => updateField("officeL2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Line 2 (Bangla)</label>
-                <input type="text" value={content.officeL2Bn} onChange={e => updateField("officeL2Bn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
             </div>
           </div>
         )}
@@ -231,10 +221,7 @@ export default function ContactPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Block Title (English)</label>
                 <input type="text" value={content.phoneTitleEn} onChange={e => updateField("phoneTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Block Title (Bangla)</label>
-                <input type="text" value={content.phoneTitleBn} onChange={e => updateField("phoneTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
             </div>
 
             <div className="space-y-3">
@@ -250,7 +237,7 @@ export default function ContactPageAdmin() {
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("phones", [...(content.phones || []), { labelEn: "", labelBn: "", number: "" }] as unknown as PhoneEntry[])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
+              <button onClick={() => updateField("phones", [...(content.phones || []), { labelEn: "", number: "" }] as unknown as PhoneEntry[])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer">
                 + Add Phone Number
               </button>
             </div>
@@ -265,17 +252,10 @@ export default function ContactPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
                 <input type="text" value={content.emailTitleEn} onChange={e => updateField("emailTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (Bangla)</label>
-                <input type="text" value={content.emailTitleBn} onChange={e => updateField("emailTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">General Label (EN)</label>
                 <input type="text" value={content.emailGenLabelEn} onChange={e => updateField("emailGenLabelEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">General Label (BN)</label>
-                <input type="text" value={content.emailGenLabelBn} onChange={e => updateField("emailGenLabelBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">General Email</label>
@@ -284,10 +264,6 @@ export default function ContactPageAdmin() {
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Ops Label (EN)</label>
                 <input type="text" value={content.emailOpsLabelEn} onChange={e => updateField("emailOpsLabelEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Ops Label (BN)</label>
-                <input type="text" value={content.emailOpsLabelBn} onChange={e => updateField("emailOpsLabelBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Ops Email</label>
@@ -309,18 +285,12 @@ export default function ContactPageAdmin() {
                 <label className="text-xs font-bold text-slate-700">Form Title (English)</label>
                 <input type="text" value={content.formTitleEn} onChange={e => updateField("formTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Form Title (Bangla)</label>
-                <input type="text" value={content.formTitleBn} onChange={e => updateField("formTitleBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Form Description (English)</label>
                 <textarea rows={2} value={content.formDescEn} onChange={e => updateField("formDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Form Description (Bangla)</label>
-                <textarea rows={2} value={content.formDescBn} onChange={e => updateField("formDescBn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
+              
             </div>
           </div>
         )}

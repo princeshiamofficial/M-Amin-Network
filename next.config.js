@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: false,
+  images: {
+    unoptimized: true,
+  },
   serverExternalPackages: ["mysql2"],
   experimental: {
     serverActions: {
