@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import React, { useState, useEffect } from "react";
-import { getSetting, setSetting } from "@/actions/content";
+import { getSetting, setSetting, createNotification } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -103,6 +103,14 @@ export default function TicketsPage() {
     setShowAddTicket(false);
     setNewTicket({ clientId: "", name: "", phone: "", category: "Hardware", desc: "" });
     toast.success("Ticket added successfully.");
+
+    createNotification({
+      type: "ticket",
+      title: `New support ticket from ${ticket.name}`,
+      message: ticket.desc,
+      link: "/admin/tickets",
+      metadata: { id: ticket.id, category: ticket.category }
+    }).catch(() => {});
   };
 
   if (!auth) return null;

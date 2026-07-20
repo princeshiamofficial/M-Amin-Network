@@ -51,7 +51,8 @@ const TABLES_SCHEMAS: Record<string, string> = {
   complaint_content_guidelines: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255), `body` TEXT, `_sort_order` DOUBLE",
   global_settings: "`id` VARCHAR(50) PRIMARY KEY, `settings_json` JSON NOT NULL, `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, `_sort_order` DOUBLE",
   network_features: "`id` VARCHAR(255) PRIMARY KEY, `titleEn` VARCHAR(255), `titleBn` VARCHAR(500), `descEn` TEXT, `descBn` TEXT, `iconName` VARCHAR(255), `_sort_order` DOUBLE",
-  page_headers: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `packages_bg` VARCHAR(500), `packages_title_en` VARCHAR(255), `packages_title_bn` VARCHAR(255), `packages_title_highlight_en` VARCHAR(255), `packages_title_highlight_bn` VARCHAR(255), `packages_subtitle_en` TEXT, `packages_subtitle_bn` TEXT, `offers_bg` VARCHAR(500), `offers_title_en` VARCHAR(255), `offers_title_bn` VARCHAR(255), `offers_title_highlight_en` VARCHAR(255), `offers_title_highlight_bn` VARCHAR(255), `offers_subtitle_en` TEXT, `offers_subtitle_bn` TEXT, `coverage_bg` VARCHAR(500), `coverage_title_en` VARCHAR(255), `coverage_title_bn` VARCHAR(255), `coverage_title_highlight_en` VARCHAR(255), `coverage_title_highlight_bn` VARCHAR(255), `coverage_subtitle_en` TEXT, `coverage_subtitle_bn` TEXT, `multimedia_bg` VARCHAR(500), `multimedia_title_en` VARCHAR(255), `multimedia_title_bn` VARCHAR(255), `multimedia_title_highlight_en` VARCHAR(255), `multimedia_title_highlight_bn` VARCHAR(255), `multimedia_subtitle_en` TEXT, `multimedia_subtitle_bn` TEXT, `careers_bg` VARCHAR(500), `careers_title_en` VARCHAR(255), `careers_title_bn` VARCHAR(255), `careers_title_highlight_en` VARCHAR(255), `careers_title_highlight_bn` VARCHAR(255), `careers_subtitle_en` TEXT, `careers_subtitle_bn` TEXT, `_sort_order` DOUBLE"
+  page_headers: "`_auto_id` INT AUTO_INCREMENT PRIMARY KEY, `packages_bg` VARCHAR(500), `packages_title_en` VARCHAR(255), `packages_title_bn` VARCHAR(255), `packages_title_highlight_en` VARCHAR(255), `packages_title_highlight_bn` VARCHAR(255), `packages_subtitle_en` TEXT, `packages_subtitle_bn` TEXT, `offers_bg` VARCHAR(500), `offers_title_en` VARCHAR(255), `offers_title_bn` VARCHAR(255), `offers_title_highlight_en` VARCHAR(255), `offers_title_highlight_bn` VARCHAR(255), `offers_subtitle_en` TEXT, `offers_subtitle_bn` TEXT, `coverage_bg` VARCHAR(500), `coverage_title_en` VARCHAR(255), `coverage_title_bn` VARCHAR(255), `coverage_title_highlight_en` VARCHAR(255), `coverage_title_highlight_bn` VARCHAR(255), `coverage_subtitle_en` TEXT, `coverage_subtitle_bn` TEXT, `multimedia_bg` VARCHAR(500), `multimedia_title_en` VARCHAR(255), `multimedia_title_bn` VARCHAR(255), `multimedia_title_highlight_en` VARCHAR(255), `multimedia_title_highlight_bn` VARCHAR(255), `multimedia_subtitle_en` TEXT, `multimedia_subtitle_bn` TEXT, `careers_bg` VARCHAR(500), `careers_title_en` VARCHAR(255), `careers_title_bn` VARCHAR(255), `careers_title_highlight_en` VARCHAR(255), `careers_title_highlight_bn` VARCHAR(255), `careers_subtitle_en` TEXT, `careers_subtitle_bn` TEXT, `_sort_order` DOUBLE",
+  notifications: "`id` VARCHAR(255) PRIMARY KEY, `type` VARCHAR(100), `title` VARCHAR(500), `message` TEXT, `link` VARCHAR(500), `metadata` JSON, `read` BOOLEAN DEFAULT FALSE, `date` VARCHAR(255), `_sort_order` DOUBLE"
 };
 
 const SEED_DATA: Record<string, Record<string, unknown>[]> = {
@@ -291,7 +292,8 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
       
       _sort_order: 0
     }
-  ]
+  ],
+  notifications: []
 };
 
 function quoteIdentifier(identifier: string): string {

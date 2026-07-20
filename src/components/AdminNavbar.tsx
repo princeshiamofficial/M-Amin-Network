@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PenLine, User, Settings, LogOut, Trash2 } from "lucide-react";
-import { getSetting, setSetting } from "@/actions/content";
+import { getSetting, setSetting, getNotifications, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from "@/actions/content";
 
 interface AdminNavbarProps {
   activeTab: string;
@@ -69,14 +69,11 @@ export default function AdminNavbar({
     title: string;
     time: string;
     read: boolean;
+    link?: string;
   }
 
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    { id: "1", title: "New ticket filed by Mehan Ahmed", time: "5 mins ago", read: false },
-    { id: "2", title: "Payment of ৳1,250 BDT received via bKash", time: "12 mins ago", read: false },
-    { id: "3", title: "New job application from Mehedi Hasan", time: "2 hours ago", read: true },
-    { id: "4", title: "Complaint registered: Frequent Disconnections", time: "5 hours ago", read: true },
-  ]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(true);
 
   const getRelativeTime = (dateStr: string) => {
     try {
@@ -101,86 +98,22 @@ export default function AdminNavbar({
   React.useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const fetchNotifications = () => {
-      Promise.all([
-        getSetting("tickets"),
-        getSetting("payments"),
-        getSetting("job_applications"),
-        getSetting("complaints")
-      ]).then(([tickets, payments, applications, complaints]) => {
-        const list: Array<{ id: string; title: string; dateObj: Date; time: string }> = [];
-
-        if (Array.isArray(tickets)) {
-          tickets.forEach((t: Record<string, unknown>) => {
-            if (t && t.id) {
-              list.push({
-                id: `ticket-${t.id as string}`,
-                title: `New ticket filed by ${t.name as string || "Customer"}: ${t.category as string || "Support"}`,
-                dateObj: new Date(t.date as string || Date.now()),
-                time: getRelativeTime(t.date as string),
-              });
-            }
-          });
-        }
-
-        if (Array.isArray(payments)) {
-          payments.forEach((p: Record<string, unknown>) => {
-            if (p && p.id) {
-              list.push({
-                id: `payment-${p.id as string}`,
-                title: `Payment of ৳${(p.amount as number) || 0} BDT received via ${p.gateway as string || "bKash"} from ${p.name as string || "Customer"}`,
-                dateObj: new Date(p.date as string || Date.now()),
-                time: getRelativeTime(p.date as string),
-              });
-            }
-          });
-        }
-
-        if (Array.isArray(applications)) {
-          applications.forEach((a: Record<string, unknown>) => {
-            if (a && a.id) {
-              list.push({
-                id: `application-${a.id as string}`,
-                title: `New job application from ${a.name as string || "Applicant"} for ${a.jobTitle as string || "Position"}`,
-                dateObj: new Date(a.date as string || Date.now()),
-                time: getRelativeTime(a.date as string),
-              });
-            }
-          });
-        }
-
-        if (Array.isArray(complaints)) {
-          complaints.forEach((c: Record<string, unknown>) => {
-            if (c && c.id) {
-              list.push({
-                id: `complaint-${c.id as string}`,
-                title: `Complaint registered: ${c.category as string || "General"} by ${c.name as string || "Customer"}`,
-                dateObj: new Date(c.date as string || Date.now()),
-                time: getRelativeTime(c.date as string),
-              });
-            }
-          });
-        }
-
-        // Sort by date descending
-        list.sort((a, b) => b.dateObj.getTime() - a.dateObj.getTime());
-
-        // Get read ids from localStorage
-        const readIds = JSON.parse(localStorage.getItem("read_notifications") || "[]") as string[];
-
-        const mapped = list.slice(0, 8).map(item => ({
-          id: item.id,
-          title: item.title,
-          time: item.time,
-          read: readIds.includes(item.id)
+    const fetchNotifications = async () => {
+      try {
+        const raw = await getNotifications();
+        const mapped = raw.slice(0, 8).map((item: Record<string, unknown>) => ({
+          id: String(item.id || ""),
+          title: String(item.title || item.message || "Notification"),
+          time: getRelativeTime(String(item.date || "")),
+          read: Boolean(item.read),
+          link: item.link ? String(item.link) : undefined,
         }));
-
-        if (mapped.length > 0) {
-          setNotifications(mapped);
-        }
-      }).catch(() => {
-        // Safe fallback
-      });
+        setNotifications(mapped);
+      } catch {
+        // safe fallback
+      } finally {
+        setLoadingNotifications(false);
+      }
     };
 
     fetchNotifications();
@@ -188,19 +121,20 @@ export default function AdminNavbar({
     return () => clearInterval(interval);
   }, []);
 
-  const handleMarkAsRead = (id: string) => {
-    const readIds = JSON.parse(localStorage.getItem("read_notifications") || "[]") as string[];
-    if (!readIds.includes(id)) {
-      readIds.push(id);
-      localStorage.setItem("read_notifications", JSON.stringify(readIds));
-    }
+  const handleMarkAsRead = async (id: string) => {
+    await markNotificationAsRead(id);
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
   };
 
-  const handleMarkAllRead = () => {
-    const readIds = notifications.map(n => n.id);
-    localStorage.setItem("read_notifications", JSON.stringify(readIds));
+  const handleMarkAllRead = async () => {
+    await markAllNotificationsAsRead();
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const handleDeleteNotification = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    await deleteNotification(id);
+    setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -263,6 +197,11 @@ export default function AdminNavbar({
                 )}
               </div>
               <div className="divide-y divide-slate-100 max-h-60 overflow-y-auto scrollbar-none">
+                {notifications.length === 0 && (
+                  <div className="p-4 text-center text-slate-400 text-[11px] font-medium">
+                    No notifications yet
+                  </div>
+                )}
                 {notifications.map((n) => (
                   <div
                     key={n.id}
@@ -271,9 +210,20 @@ export default function AdminNavbar({
                   >
                     <div className="flex justify-between items-start gap-1">
                       <span className={`text-[11px] leading-relaxed ${!n.read ? "text-slate-900 font-bold text-left block" : "text-slate-600 text-left block"}`}>
-                        {n.title}
+                        {n.link ? <a href={n.link} onClick={(e) => { if (!n.read) { e.stopPropagation(); handleMarkAsRead(n.id); }}} className="hover:underline">{n.title}</a> : n.title}
                       </span>
-                      {!n.read && <span className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1 shrink-0" />}
+                      <div className="flex items-center gap-1 shrink-0">
+                        {!n.read && <span className="w-1.5 h-1.5 bg-brand-blue rounded-full mt-1 shrink-0" />}
+                        <button
+                          onClick={(e) => handleDeleteNotification(e, n.id)}
+                          className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer"
+                          title="Dismiss"
+                        >
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                     <span className="text-[9px] text-slate-400 font-mono text-left block">{n.time}</span>
                   </div>

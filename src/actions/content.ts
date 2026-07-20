@@ -465,6 +465,19 @@ export async function submitComplaintAction(newComplaint: Record<string, unknown
     
     complaintsArr.push(complaintToSave);
     const success = await setSettingInternal("complaints", complaintsArr);
+
+    if (success) {
+      const name = String(newComplaint.name || "Customer");
+      const category = String(newComplaint.category || "General");
+      createNotification({
+        type: "complaint",
+        title: `New complaint from ${name}: ${category}`,
+        message: `Complaint registered by ${name} - Category: ${category}`,
+        link: "/admin/complaints",
+        metadata: { ref: generatedRef, category }
+      }).catch(() => {});
+    }
+    
     return { success, ref: generatedRef };
   } catch (error) {
     console.error("submitComplaintAction error:", error);
@@ -492,6 +505,18 @@ export async function submitJobApplicationAction(
     
     applicationsArr.push(newApplication);
     const success = await setSettingInternal("job_applications", applicationsArr);
+
+    if (success) {
+      const name = String(applyForm.applicantName || applyForm.name || "Applicant");
+      createNotification({
+        type: "job_application",
+        title: `New job application from ${name}`,
+        message: `${name} applied for ${position}`,
+        link: "/admin/job-applications",
+        metadata: { id: generatedId, position }
+      }).catch(() => {});
+    }
+    
     return { success, id: generatedId };
   } catch (error) {
     console.error("submitJobApplicationAction error:", error);
@@ -516,6 +541,18 @@ export async function submitPackageRequestAction(
 
     requestsArr.unshift(newRequest);
     const success = await setSettingInternal("package_requests", requestsArr);
+
+    if (success) {
+      const name = String(requestInfo.name || "Customer");
+      const plan = String(requestInfo.planName || "Package");
+      createNotification({
+        type: "package_request",
+        title: `New package request from ${name}`,
+        message: `${name} requested ${plan}`,
+        link: "/admin/applications",
+        metadata: { id: generatedId, planName: plan }
+      }).catch(() => {});
+    }
 
     // Also add to claims so it appears on /admin/applications
     try {
@@ -576,6 +613,17 @@ export async function submitPaymentAction(
     
     paymentsArr.push(newPayment);
     const success = await setSettingInternal("payments", paymentsArr);
+
+    if (success) {
+      createNotification({
+        type: "payment",
+        title: `Payment of ৳${paymentInfo.amount} received via ${paymentInfo.gateway}`,
+        message: `Payment from ${paymentInfo.name} - ${paymentInfo.planName}`,
+        link: "/admin/bills",
+        metadata: { txnId: generatedTxn, amount: paymentInfo.amount, gateway: paymentInfo.gateway }
+      }).catch(() => {});
+    }
+    
     return { success, txnId: generatedTxn };
   } catch (error) {
     console.error("submitPaymentAction error:", error);
@@ -612,6 +660,17 @@ export async function submitClaimAction(
     
     claimsArr.push(newClaim);
     const success = await setSettingInternal("claims", claimsArr);
+
+    if (success) {
+      createNotification({
+        type: "claim",
+        title: `New claim from ${claimForm.name}`,
+        message: `${claimForm.name} claimed ${promoInfo.title}`,
+        link: "/admin/applications",
+        metadata: { id: generatedId, code: promoInfo.code }
+      }).catch(() => {});
+    }
+    
     return { success, id: generatedId };
   } catch (error) {
     console.error("submitClaimAction error:", error);
@@ -699,6 +758,90 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
     return { success: false, error: "User account not found." };
   } catch {
     return { success: false, error: "Failed to reset password." };
+  }
+}
+
+export async function createNotification(data: {
+  type: string;
+  title: string;
+  message?: string;
+  link?: string;
+  metadata?: Record<string, unknown>;
+}): Promise<{ success: boolean; id?: string }> {
+  try {
+    const id = `NOTIF-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const notification = {
+      id,
+      type: data.type,
+      title: data.title,
+      message: data.message || data.title,
+      link: data.link || "",
+      metadata: data.metadata ? JSON.stringify(data.metadata) : null,
+      read: false,
+      date: new Date().toLocaleString(),
+      _sort_order: Date.now()
+    };
+
+    const raw = await getSettingInternal("notifications");
+    const notifications = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    notifications.unshift(notification);
+    const success = await setSettingInternal("notifications", notifications);
+    return { success, id };
+  } catch (error) {
+    console.error("createNotification error:", error);
+    return { success: false };
+  }
+}
+
+export async function getNotifications(): Promise<Record<string, unknown>[]> {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) return [];
+    const raw = await getSettingInternal("notifications");
+    return Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function markNotificationAsRead(id: string): Promise<boolean> {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) return false;
+    const raw = await getSettingInternal("notifications");
+    const notifications = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    const updated = notifications.map((n) =>
+      n.id === id ? { ...n, read: true } : n
+    );
+    return await setSettingInternal("notifications", updated);
+  } catch {
+    return false;
+  }
+}
+
+export async function markAllNotificationsAsRead(): Promise<boolean> {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) return false;
+    const raw = await getSettingInternal("notifications");
+    const notifications = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    const updated = notifications.map((n) => ({ ...n, read: true }));
+    return await setSettingInternal("notifications", updated);
+  } catch {
+    return false;
+  }
+}
+
+export async function deleteNotification(id: string): Promise<boolean> {
+  try {
+    const authenticated = await isAdminAuthenticated();
+    if (!authenticated) return false;
+    const raw = await getSettingInternal("notifications");
+    const notifications = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
+    const filtered = notifications.filter((n) => n.id !== id);
+    return await setSettingInternal("notifications", filtered);
+  } catch {
+    return false;
   }
 }
 
