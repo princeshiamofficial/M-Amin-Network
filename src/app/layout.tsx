@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from 'sonner';
 import MaintenanceWrapper from "@/components/MaintenanceWrapper";
+import ScrollToTop from "@/components/ScrollToTop";
 import { getSetting } from "@/actions/content";
 import Script from "next/script";
 
@@ -326,6 +327,7 @@ export default async function RootLayout({
 
       </head>
       <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
+        <ScrollToTop />
         <div id="google_translate_element" style={{ display: "none" }} />
         <MaintenanceWrapper isMaintenance={isMaintenance} maintenanceMessage={maintenanceMessage}>
           <Navbar />
