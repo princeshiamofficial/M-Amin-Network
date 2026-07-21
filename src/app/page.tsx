@@ -531,16 +531,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col gap-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
           <div className="lg:col-span-7 text-center lg:text-left flex flex-col gap-6 animate-fade-in-up">
-            <div className="hidden self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
+            <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
               <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
               {t(heroTypography.badgeText, heroTypography.badgeText)}
             </div>
-            <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
-              <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
-              {"BTRC Licensed Broadband Provider"}
-            </div>
             
-            <h1 className="hidden text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
               {t(heroTitleFirst, heroTitleFirst)} <br />
               {heroTitleSecond && (
                 <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
@@ -548,21 +544,9 @@ export default function Home() {
                 </span>
               )}
             </h1>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-              {"Blazing Fast Fiber"} <br />
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {"Internet in Keraniganj"}
-              </span>
-            </h1>
 
-            <p className="hidden text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              {t(heroTypography.subtitle, heroTypography.subtitle)}
-            </p>
             <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              {t(
-                "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.",
-                "এম আমিন নেটওয়ার্ক (AS150164) দক্ষিণ কেরানীগঞ্জের শীর্ষস্থানীয় আইএসপি, যা ডেডিকেটেড রাউটিংসহ উচ্চগতির এবং স্থিতিশীল ইন্টারনেট প্রদান করে।"
-              )}
+              {t(heroTypography.subtitle, heroTypography.subtitle)}
             </p>
 
              <div className="flex flex-row flex-wrap gap-2.5 sm:gap-3 justify-center lg:justify-start mt-4">
@@ -701,8 +685,8 @@ export default function Home() {
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
                   <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
                 </h3>
-                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(DEFAULT_HERO_METRICS[i].titleEn, DEFAULT_HERO_METRICS[i].titleBn ?? "")}</h4>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(DEFAULT_HERO_METRICS[i].descEn, DEFAULT_HERO_METRICS[i].descBn ?? "")}</p>
+                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.titleEn, stat.titleBn || stat.titleEn)}</h4>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.descEn, stat.descBn || stat.descEn)}</p>
               </div>
             );
           })}
