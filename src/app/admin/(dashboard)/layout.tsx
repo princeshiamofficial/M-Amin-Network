@@ -141,6 +141,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
 
     let cancelled = false;
     const verifyActiveSession = async () => {
+      if (typeof document !== "undefined" && document.hidden) return;
       const isServerAuth = await isAdminAuthenticated();
       if (cancelled || isServerAuth) return;
 

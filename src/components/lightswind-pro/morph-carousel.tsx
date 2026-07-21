@@ -275,9 +275,25 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
 
     // Animation Loop
     let animationFrameId: number;
+    let isVisible = true;
     const startTime = Date.now();
 
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting && !document.hidden;
+    }, { threshold: 0.01 });
+    intersectionObserver.observe(canvas);
+
     const render = () => {
+      if (!isVisible) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       const currentTime = (Date.now() - startTime) / 1000;
 
       // Handle transition easing (quintic ease out-in style)
@@ -334,6 +350,8 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      intersectionObserver.disconnect();
       window.removeEventListener("resize", resizeCanvas);
       resizeObserver.disconnect();
       gl.deleteBuffer(buffer);
@@ -358,6 +376,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     if (!autoplay || isTransitioning) return;
 
     const timer = setInterval(() => {
+      if (typeof document !== "undefined" && document.hidden) return;
       const nextIdx = (activeIndex + 1) % totalSlides;
       triggerTransition(nextIdx);
     }, autoplayInterval);

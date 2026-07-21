@@ -117,7 +117,10 @@ export default function AdminNavbar({
     };
 
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000);
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.hidden) return;
+      fetchNotifications();
+    }, 15000);
     return () => clearInterval(interval);
   }, []);
 
