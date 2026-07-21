@@ -299,7 +299,7 @@ export default function WhyChoosePage() {
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Section Title (English)</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Section Title</label>
             <input
               type="text"
               value={headingEn}
@@ -309,33 +309,13 @@ export default function WhyChoosePage() {
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Section Title (বাংলা)</label>
-            <input
-              type="text"
-              value={headingBn}
-              onChange={e => setHeadingBn(e.target.value)}
-              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium"
-              placeholder="বাংলা শিরোনাম লিখুন..."
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Subtitle / Description (English)</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Subtitle / Description</label>
             <textarea
               rows={2}
               value={subtitleEn}
               onChange={e => setSubtitleEn(e.target.value)}
               className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium resize-none"
               placeholder="A short description about why customers should choose you..."
-            />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">Subtitle / Description (বাংলা)</label>
-            <textarea
-              rows={2}
-              value={subtitleBn}
-              onChange={e => setSubtitleBn(e.target.value)}
-              className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium resize-none"
-              placeholder="বাংলা বিবরণ লিখুন..."
             />
           </div>
         </div>
@@ -373,7 +353,7 @@ export default function WhyChoosePage() {
             <h3 className="text-sm font-extrabold text-slate-800 mb-4">{isEditing ? "Edit Feature" : "Add New Feature"}</h3>
             <form onSubmit={saveFeature} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Title (English)</label>
+                <label className="text-xs font-bold text-slate-700 block">Title</label>
                 <input
                   type="text"
                   required
@@ -385,14 +365,14 @@ export default function WhyChoosePage() {
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700 block">Description (English)</label>
+                <label className="text-xs font-bold text-slate-700 block">Description</label>
                 <textarea
                   required
                   rows={3}
                   value={currentFeature.descEn || ""}
                   onChange={(e) => setCurrentFeature({ ...currentFeature, descEn: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
-                  placeholder="Describe this feature in English..."
+                  placeholder="Describe this feature..."
                 />
               </div>
 

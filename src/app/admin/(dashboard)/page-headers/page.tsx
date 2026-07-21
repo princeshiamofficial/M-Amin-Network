@@ -201,7 +201,7 @@ export default function HeaderContentPage() {
             {/* Subtitle textarea */}
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
-                Subtitle Description (English)
+                Subtitle Description
               </label>
               <textarea
                 rows={4}
@@ -216,7 +216,7 @@ export default function HeaderContentPage() {
             {/* Normal Title input */}
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
-                Normal Title Prefix (English)
+                Normal Title Prefix
               </label>
               <input
                 type="text"
@@ -229,7 +229,7 @@ export default function HeaderContentPage() {
             {/* Highlighted Title input */}
             <div>
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
-                Highlighted Title Suffix (English)
+                Highlighted Title Suffix
               </label>
               <input
                 type="text"

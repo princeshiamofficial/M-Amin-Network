@@ -949,9 +949,9 @@ export default function TopbarFooterPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700 block">Address (English)</label>
+                  <label className="text-xs font-bold text-slate-700 block">Address</label>
                   <textarea
                     value={footerContent.addressEn}
                     onChange={(e) => setFooterContent({ ...footerContent, addressEn: e.target.value })}
@@ -959,8 +959,6 @@ export default function TopbarFooterPage() {
                     placeholder="e.g. House No. 68, Kadomtoli, Aganagar..."
                     required
                   />
-                </div>
-                <div className="space-y-1">
                 </div>
               </div>
             </div>
