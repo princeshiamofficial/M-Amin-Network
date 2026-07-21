@@ -211,6 +211,7 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [heroTypography, setHeroTypography] = useState<HeroTypography>(DEFAULT_HERO_TYPOGRAPHY);
   const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(DEFAULT_HERO_METRICS);
+  const [heroLoading, setHeroLoading] = useState(true);
   const [networkFeatures, setNetworkFeatures] = useState<NetworkFeature[]>([]);
   const [featuresLoading, setFeaturesLoading] = useState(true);
   const [whyChooseContent, setWhyChooseContent] = useState({
@@ -374,23 +375,30 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    getSetting("hero_typography").then((saved) => {
-      if (!saved || typeof saved !== "object") return;
-      const parsed = saved as Record<string, unknown>;
-      const slides = Array.isArray(parsed.slides)
-        ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "").slice(0, 6)
-        : DEFAULT_HERO_SLIDES;
+    Promise.all([
+      getSetting("hero_typography"),
+      getSetting("hero_metrics"),
+    ]).then(([savedTypo, savedMetrics]) => {
+      if (savedTypo && typeof savedTypo === "object") {
+        const parsed = savedTypo as Record<string, unknown>;
+        const slides = Array.isArray(parsed.slides)
+          ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "").slice(0, 6)
+          : DEFAULT_HERO_SLIDES;
 
-      setHeroTypography({
-        badgeText: typeof parsed.badgeText === "string" && parsed.badgeText.trim() ? parsed.badgeText : DEFAULT_HERO_TYPOGRAPHY.badgeText,
-        mainTitle: typeof parsed.mainTitle === "string" && parsed.mainTitle.trim() ? parsed.mainTitle : DEFAULT_HERO_TYPOGRAPHY.mainTitle,
-        subtitle: typeof parsed.subtitle === "string" && parsed.subtitle.trim() ? parsed.subtitle : DEFAULT_HERO_TYPOGRAPHY.subtitle,
-        slides: slides.length > 0 ? slides : DEFAULT_HERO_SLIDES,
-      });
-    });
+        setHeroTypography({
+          badgeText: typeof parsed.badgeText === "string" && parsed.badgeText.trim() ? parsed.badgeText : DEFAULT_HERO_TYPOGRAPHY.badgeText,
+          mainTitle: typeof parsed.mainTitle === "string" && parsed.mainTitle.trim() ? parsed.mainTitle : DEFAULT_HERO_TYPOGRAPHY.mainTitle,
+          subtitle: typeof parsed.subtitle === "string" && parsed.subtitle.trim() ? parsed.subtitle : DEFAULT_HERO_TYPOGRAPHY.subtitle,
+          slides: slides.length > 0 ? slides : DEFAULT_HERO_SLIDES,
+        });
+      }
 
-    getSetting("hero_metrics").then((saved) => {
-      setHeroMetrics(normalizeHeroMetrics(saved));
+      if (savedMetrics) {
+        setHeroMetrics(normalizeHeroMetrics(savedMetrics));
+      }
+      setHeroLoading(false);
+    }).catch(() => {
+      setHeroLoading(false);
     });
   }, []);
 
@@ -531,23 +539,39 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col gap-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
           <div className="lg:col-span-7 text-center lg:text-left flex flex-col gap-6 animate-fade-in-up">
-            <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
-              <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
-              {t(heroTypography.badgeText, heroTypography.badgeText)}
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-              {t(heroTitleFirst, heroTitleFirst)} <br />
-              {heroTitleSecond && (
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                  {t(heroTitleSecond, heroTitleSecond)}
-                </span>
-              )}
-            </h1>
+            {heroLoading ? (
+              <div className="flex flex-col gap-5 py-2 animate-pulse">
+                <div className="h-7 w-64 rounded-full bg-slate-800/80 border border-slate-700/50 self-center lg:self-start mb-1" />
+                <div className="flex flex-col gap-3">
+                  <div className="h-10 sm:h-12 lg:h-14 w-4/5 max-w-xl rounded-2xl bg-slate-800/80 self-center lg:self-start" />
+                  <div className="h-10 sm:h-12 lg:h-14 w-3/5 max-w-md rounded-2xl bg-linear-to-r from-slate-800/80 to-slate-700/50 self-center lg:self-start" />
+                </div>
+                <div className="flex flex-col gap-2 mt-1">
+                  <div className="h-4 sm:h-5 w-full max-w-2xl rounded-lg bg-slate-800/70 self-center lg:self-start" />
+                  <div className="h-4 sm:h-5 w-3/4 max-w-xl rounded-lg bg-slate-800/50 self-center lg:self-start" />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
+                  <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
+                  {t(heroTypography.badgeText, heroTypography.badgeText)}
+                </div>
+                
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                  {t(heroTitleFirst, heroTitleFirst)} <br />
+                  {heroTitleSecond && (
+                    <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
+                      {t(heroTitleSecond, heroTitleSecond)}
+                    </span>
+                  )}
+                </h1>
 
-            <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              {t(heroTypography.subtitle, heroTypography.subtitle)}
-            </p>
+                <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                  {t(heroTypography.subtitle, heroTypography.subtitle)}
+                </p>
+              </>
+            )}
 
              <div className="flex flex-row flex-wrap gap-2.5 sm:gap-3 justify-center lg:justify-start mt-4">
               <Link
@@ -674,22 +698,35 @@ export default function Home() {
 
         {/* Trust Stats Metrics (database-driven from admin hero-typography) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
-          {heroMetrics.map((stat, i) => {
-            const parsedValue = parseHeroMetricValue(stat.value);
-
-            return (
+          {heroLoading ? (
+            Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="p-3 sm:p-4 rounded-xl bg-brand-card/40 border border-brand-border/40 text-center glass-panel"
+                className="p-4 rounded-xl bg-brand-card/40 border border-brand-border/40 text-center glass-panel animate-pulse flex flex-col items-center justify-center gap-2.5 h-24"
               >
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
-                  <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
-                </h3>
-                <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.titleEn, stat.titleBn || stat.titleEn)}</h4>
-                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.descEn, stat.descBn || stat.descEn)}</p>
+                <div className="h-7 w-20 bg-slate-800/80 rounded-lg" />
+                <div className="h-3 w-28 bg-slate-800/70 rounded" />
+                <div className="h-2.5 w-32 bg-slate-800/50 rounded" />
               </div>
-            );
-          })}
+            ))
+          ) : (
+            heroMetrics.map((stat, i) => {
+              const parsedValue = parseHeroMetricValue(stat.value);
+
+              return (
+                <div
+                  key={i}
+                  className="p-3 sm:p-4 rounded-xl bg-brand-card/40 border border-brand-border/40 text-center glass-panel"
+                >
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-brand-cyan mb-1.5 text-glow">
+                    <CountUp end={parsedValue.end} decimals={parsedValue.decimals} prefix={parsedValue.prefix} suffix={parsedValue.suffix} />
+                  </h3>
+                  <h4 className="text-white font-bold text-xs sm:text-sm tracking-wide">{t(stat.titleEn, stat.titleBn || stat.titleEn)}</h4>
+                  <p className="text-[10px] sm:text-xs text-slate-400 mt-1">{t(stat.descEn, stat.descBn || stat.descEn)}</p>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </section>
