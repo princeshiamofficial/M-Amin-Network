@@ -482,8 +482,10 @@ async function migrateManagedUserCompatibilityColumns(connection: mysql.PoolConn
   }
 }
 
-// Startup table schema auto-creation and seeding
-export const dbInitPromise = (async () => {
+const globalForDb = global as unknown as { dbInitPromise?: Promise<void> };
+
+// Startup table schema auto-creation and seeding (runs ONCE per Node process)
+export const dbInitPromise = globalForDb.dbInitPromise || (globalForDb.dbInitPromise = (async () => {
   try {
     await ensureDatabaseExists();
     const connection = await pool.getConnection();
@@ -509,6 +511,6 @@ export const dbInitPromise = (async () => {
   } catch (error) {
     console.error("Failed to verify/create/seed database tables on startup:", error);
   }
-})();
+})());
 
 export default pool;

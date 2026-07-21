@@ -211,7 +211,24 @@ function mapUserFields(item: unknown, tableName: string): Record<string, unknown
   return newItem;
 }
 
+const settingCache = new Map<string, { value: unknown; expiresAt: number }>();
+const CACHE_TTL_MS = 5000;
+
+export function invalidateSettingCache(key?: string) {
+  if (key) {
+    settingCache.delete(key);
+  } else {
+    settingCache.clear();
+  }
+}
+
 export async function getSettingInternal(key: string): Promise<unknown> {
+  const now = Date.now();
+  const cached = settingCache.get(key);
+  if (cached && cached.expiresAt > now) {
+    return cached.value;
+  }
+
   await dbInitPromise;
   try {
     const tableName = getTableName(key);
@@ -264,14 +281,20 @@ export async function getSettingInternal(key: string): Promise<unknown> {
         const keys = Object.keys(row);
         return keys.length === 1 && keys[0] === "value";
       })) {
-        return parsedRows.map((row) => row.value);
+        const resultVal = parsedRows.map((row) => row.value);
+        settingCache.set(key, { value: resultVal, expiresAt: now + CACHE_TTL_MS });
+        return resultVal;
       }
 
-      return isArray ? parsedRows : (parsedRows[0] || null);
+      const resultVal = isArray ? parsedRows : (parsedRows[0] || null);
+      settingCache.set(key, { value: resultVal, expiresAt: now + CACHE_TTL_MS });
+      return resultVal;
     } catch (error: unknown) {
       const e = error as { code?: string };
       if (e.code === 'ER_NO_SUCH_TABLE') {
-        return isArray ? [] : null;
+        const emptyVal = isArray ? [] : null;
+        settingCache.set(key, { value: emptyVal, expiresAt: now + CACHE_TTL_MS });
+        return emptyVal;
       }
       logDbError("getSetting SELECT", key, error);
       throw error;
@@ -297,6 +320,7 @@ export async function getSettingTableRowCount(key: string): Promise<number | nul
 }
 
 export async function setSettingInternal(key: string, data: unknown): Promise<boolean> {
+  settingCache.delete(key);
   await dbInitPromise;
   try {
     const tableName = getTableName(key);

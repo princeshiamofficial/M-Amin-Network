@@ -26,9 +26,7 @@ const pool = globalForMysql.pool || mysql.createPool({
   charset: DB_CHARSET,
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForMysql.pool = pool;
-}
+globalForMysql.pool = pool;
 
 export async function query<T = unknown>(sql: string, params: QueryValue[] = []): Promise<T> {
   const [results] = await pool.execute(sql, params);
