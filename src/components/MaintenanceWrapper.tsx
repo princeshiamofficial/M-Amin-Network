@@ -24,14 +24,21 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
     let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
     let isDestroyed = false;
 
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+
     function connectWS() {
-      if (isDestroyed) return;
+      if (isDestroyed || retryCount >= MAX_RETRIES) return;
 
       try {
         const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsUrl = `${wsProtocol}//${window.location.hostname}:3015`;
 
         socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+          retryCount = 0;
+        };
 
         socket.onmessage = (event) => {
           try {
@@ -46,17 +53,19 @@ export default function MaintenanceWrapper({ children, isMaintenance, maintenanc
         };
 
         socket.onerror = () => {
-          socket?.close();
+          try { socket?.close(); } catch { /* ignore */ }
         };
 
         socket.onclose = () => {
-          if (!isDestroyed) {
-            reconnectTimeout = setTimeout(connectWS, 5000);
+          if (!isDestroyed && retryCount < MAX_RETRIES) {
+            retryCount++;
+            reconnectTimeout = setTimeout(connectWS, Math.min(5000 * Math.pow(2, retryCount - 1), 30000));
           }
         };
       } catch {
-        if (!isDestroyed) {
-          reconnectTimeout = setTimeout(connectWS, 5000);
+        if (!isDestroyed && retryCount < MAX_RETRIES) {
+          retryCount++;
+          reconnectTimeout = setTimeout(connectWS, Math.min(5000 * Math.pow(2, retryCount - 1), 30000));
         }
       }
     }
