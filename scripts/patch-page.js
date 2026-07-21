@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 // patch-page.js - Applies dynamic service cards & network features to page.tsx
 const fs = require("fs");
 const path = require("path");

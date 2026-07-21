@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Validate token usage in codebase
  * Finds hardcoded values that should use design tokens
