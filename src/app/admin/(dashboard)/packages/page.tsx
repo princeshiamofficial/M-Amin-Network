@@ -354,7 +354,7 @@ export default function AdminPackagesPage() {
                 <TableHead>Monthly Charge</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Tagline</TableHead>
-                <TableHead>Homepage Popular</TableHead>
+                <TableHead>Popular</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
