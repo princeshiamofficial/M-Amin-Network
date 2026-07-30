@@ -543,7 +543,7 @@ export default function AdminPackagesPage() {
                   className="w-4 h-4 text-brand-blue border-slate-350 rounded focus:ring-brand-blue cursor-pointer"
                 />
                 <label htmlFor="popular_chk" className="text-slate-800 font-bold text-xs select-none cursor-pointer">
-                  Mark as Popular / Feature on Homepage
+                  Mark as Popular
                 </label>
               </div>
 
