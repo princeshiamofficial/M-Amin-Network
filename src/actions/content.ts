@@ -136,28 +136,9 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
 
 export async function verifyAdminLoginAction(usernameInput: string, passwordInput: string): Promise<{ success: boolean; error?: string; username?: string; role?: string }> {
   try {
-    const defaultAuth: Record<string, string> = {
-      username: "admin",
-      email: "admin@mamin.net",
-      password: "password",
-      role: "Super Administrator",
-    };
-
-    const defaultUsers: Record<string, unknown>[] = [
-      { id: "USR-1", username: "admin", name: "admin", role: "Super Administrator", role_id: "ROLE-1", email: "admin@maminnetwork.test", status: "Active", avatarUrl: "", avatar_url: "", password: "password", phone: "", address: "", companyName: "M-Amin Network", company_name: "M-Amin Network", is_banned: false, _sort_order: 0 },
-      { id: "USR-2", username: "moderator_support", name: "moderator_support", role: "Support Staff", role_id: "ROLE-2", email: "support@maminnetwork.test", status: "Active", avatarUrl: "", avatar_url: "", password: "password", phone: "", address: "", companyName: "M-Amin Network", company_name: "M-Amin Network", is_banned: false, _sort_order: 1 }
-    ];
-
-    let savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
-    if (!savedAuth || typeof savedAuth !== "object" || !savedAuth.password) {
-      savedAuth = defaultAuth;
-      await setSettingInternal("admin_auth", defaultAuth);
-    }
-
-    let savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
-    if (!Array.isArray(savedUsers) || savedUsers.length === 0) {
-      savedUsers = defaultUsers;
-      await setSettingInternal("admin_users", defaultUsers);
+    const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, string> | null;
+    if (!savedAuth) {
+      return { success: false, error: "System credentials not found." };
     }
 
     const cleanUser = usernameInput.trim().toLowerCase();
@@ -167,6 +148,7 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
     let matchedRole = "";
     let matchedUserId = "";
 
+    const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
     const userList = Array.isArray(savedUsers) ? savedUsers : [];
     const primaryAdminUser = userList.find(u => {
       const id = String(u.id || "");
