@@ -288,11 +288,8 @@ function PackagesContent() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       getSetting("packages_list").then(saved => {
-        if (saved) {
+        if (Array.isArray(saved)) {
           setAllPlans(saved as Plan[]);
-        } else {
-          setSetting("packages_list", defaultPlans as Plan[]);
-          setAllPlans(defaultPlans);
         }
       });
       getSetting("page_headers").then(saved => {

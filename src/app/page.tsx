@@ -10,9 +10,11 @@ import { ChevronDown, ChevronUp, Zap, Wifi, Gamepad2, LifeBuoy, Cloud, Building2
 import Image from "next/image";
 
 interface Plan {
-  speed: number;
+  speed: string | number;
   price: number;
-  type: string;
+  name: string;
+  category?: "home" | "gaming" | "corporate";
+  tagline?: string;
   features: string[];
   popular?: boolean;
 }
@@ -420,69 +422,24 @@ export default function Home() {
     "Doleshwar",
   ];
 
-  const packages: Plan[] = [
-    {
-      speed: 10,
-      price: 500,
-      type: "Home Starter",
-      features: [
-        "Buffer-free YouTube & Facebook",
-        "Unlimited Data Usage",
-        "Ideal for 2-3 Devices",
-        "24/7 Phone Support",
-        "Shared Bandwidth",
-      ],
-    },
-    {
-      speed: 20,
-      price: 800,
-      type: "Home Standard",
-      features: [
-        "Super-fast FTP & Torrenting",
-        "Seamless Full HD Streaming",
-        "Ideal for 4-6 Devices",
-        "Priority Customer Support",
-        "Public IP on request",
-      ],
-    },
-    {
-      speed: 30,
-      price: 1000,
-      type: "Super Gamer",
-      popular: true,
-      features: [
-        "Low-Ping Gamer Routing",
-        "Free BDIX & Local FTP Access",
-        "Ideal for 7-10 Devices",
-        "4K UHD Support",
-        "24/7 Dedicated Support Hotline",
-      ],
-    },
-    {
-      speed: 50,
-      price: 1500,
-      type: "Ultra Power",
-      features: [
-        "Dedicated Speed Allocation",
-        "Extremely Low Latency BGP Routing",
-        "Best for heavy downloaders & Work From Home",
-        "Static Public IP Included",
-        "Priority SLA < 1 Hour",
-      ],
-    },
-    {
-      speed: 100,
-      price: 2500,
-      type: "SOHO Premium",
-      features: [
-        "Symmetric 1:1 Dedicated Bandwidth",
-        "Multi-Homing Routing (AS150164)",
-        "Perfect for small offices & Content Creators",
-        "Premium SLA < 30 mins Support",
-        "Dual-WAN Failover Support",
-      ],
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<"home" | "gaming" | "corporate">("home");
+  const [packagesList, setPackagesList] = useState<Plan[]>([]);
+  const [packagesLoading, setPackagesLoading] = useState(true);
+
+  useEffect(() => {
+    getSetting("packages_list").then((saved) => {
+      if (Array.isArray(saved)) {
+        setPackagesList(saved as Plan[]);
+      } else {
+        setPackagesList([]);
+      }
+      setPackagesLoading(false);
+    });
+  }, []);
+
+  const filteredPlans = packagesList.filter(
+    (plan) => (plan.category || "home") === activeTab
+  );
 
   const handleCoverageSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -502,7 +459,8 @@ export default function Home() {
     }
   };
 
-  const selectedPlan = packages[speedSlider];
+  const selectedPlan = packagesList[speedSlider] || packagesList[0] || null;
+  const selectedSpeedVal = selectedPlan ? (parseInt(String(selectedPlan.speed), 10) || 0) : 0;
   const heroSlides = heroTypography.slides;
   const heroTitleParts = (heroTypography.mainTitle || DEFAULT_HERO_TYPOGRAPHY.mainTitle).split("|");
   const heroTitleFirst = heroTitleParts[0]?.trim() || DEFAULT_HERO_TYPOGRAPHY.mainTitle;
@@ -647,7 +605,7 @@ export default function Home() {
                 <div className="relative w-44 h-44 rounded-full border-4 border-dashed border-brand-border flex flex-col items-center justify-center shadow-[0_0_40px_rgba(0,114,255,0.05)]">
                   <div className="absolute inset-2 rounded-full bg-brand-dark flex flex-col items-center justify-center">
                     <span className="text-5xl font-black text-white text-glow-blue leading-none">
-                      {selectedPlan.speed}
+                      {selectedSpeedVal}
                     </span>
                     <span className="text-brand-cyan text-xs font-bold tracking-widest mt-1">
                       MBPS
@@ -656,7 +614,7 @@ export default function Home() {
                   <div className="absolute inset-0 rounded-full border-2 border-brand-cyan/30 animate-pulse-slow" />
                 </div>
                 <span className="text-brand-cyan text-sm font-semibold mt-4 tracking-wider uppercase">
-                  {selectedPlan.type}
+                  {selectedPlan?.name || "Fiber Internet"}
                 </span>
               </div>
 
@@ -665,7 +623,7 @@ export default function Home() {
                 <input
                   type="range"
                   min="0"
-                  max={packages.length - 1}
+                  max={Math.max(0, packagesList.length - 1)}
                   value={speedSlider}
                   onChange={(e) => setSpeedSlider(Number(e.target.value))}
                   className="w-full h-2 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-cyan focus:outline-none"
@@ -683,10 +641,10 @@ export default function Home() {
               <div className="flex items-center justify-between bg-brand-dark/60 border border-brand-border/60 rounded-2xl p-4">
                 <div>
                   <span className="text-xs text-slate-400 block">Monthly Price</span>
-                  <span className="text-xl font-bold text-white font-mono">৳{selectedPlan.price} BDT</span>
+                  <span className="text-xl font-bold text-white font-mono">৳{selectedPlan?.price || 0} BDT</span>
                 </div>
                 <Link
-                  href={`/packages?plan=${selectedPlan.speed}`}
+                  href={`/packages?plan=${selectedSpeedVal}`}
                   className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
                 >
                   Order Plan
@@ -736,9 +694,9 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-              {"Choose the Perfect Plan for You"}
+              {t("Choose the Perfect Plan for You", "আপনার জন্য নিখুঁত প্ল্যান বেছে নিন")}
             </h3>
             <p className="text-slate-650 mt-4 leading-relaxed">
               {t(
@@ -748,23 +706,57 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Category Tab Selectors */}
+          <div className="flex justify-center mb-12 relative z-20">
+            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl">
+              {[
+                { id: "home", label: t("Home Internet", "হোম ইন্টারনেট") },
+                { id: "gaming", label: t("Gamer Packs", "গেমার প্যাক") },
+                { id: "corporate", label: t("Corporate Dedicated", "কর্পোরেট ডেডিকেটেড") },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
+                  className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? "force-active-tab shadow-md relative z-10"
+                      : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center items-stretch">
-            {packages.map((plan, i) => {
-              const allFeatures = [
-                `Speed: ${plan.speed} Mbps`,
-                ...plan.features,
-              ];
-              return (
+            {packagesLoading ? (
+              [...Array(3)].map((_, i) => (
+                <div key={i} className="rounded-2xl bg-slate-100 animate-pulse h-[460px] w-full border border-slate-200" />
+              ))
+            ) : filteredPlans.length === 0 ? (
+              <div className="col-span-full text-center py-12 text-slate-500 text-sm font-medium">
+                {t("No packages available in this category.", "এই ক্যাটাগরিতে কোনো প্যাকেজ পাওয়া যায়নি।")}
+              </div>
+            ) : (
+              filteredPlans.map((plan, i) => {
+                const parsedSpeedNum = parseInt(String(plan.speed), 10);
+                const speedLabel = String(plan.speed).includes("Mbps") ? plan.speed : `${plan.speed} Mbps`;
+                const allFeatures = [
+                  t(`Speed: ${speedLabel}`, `গতি: ${speedLabel}`),
+                  ...plan.features,
+                ];
+                return (
                 <div
                   key={i}
                   className={`relative w-full transition-all duration-300 hover:scale-[1.02] ${
                     plan.popular ? "lg:scale-105 z-20" : "z-10"
                   }`}
                 >
-                  {plan.popular && (
+                  {!!plan.popular && (
                     <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-linear-to-r from-[#0273b3] to-[#014c77] text-white text-xs font-black tracking-widest px-5 py-2 rounded-full shadow-[0_4px_12px_rgba(2,115,179,0.3)] border border-white/20 z-30 uppercase">
-                      {"POPULAR"}
+                      {t("POPULAR", "জনপ্রিয়")}
                     </span>
                   )}
 
@@ -774,16 +766,21 @@ export default function Home() {
                       className="bg-linear-to-br from-[#10b981] to-[#047857] pt-10 pb-12 px-6 flex flex-col items-center justify-center text-white select-none"
                       style={{ clipPath: "polygon(0 0, 100% 0, 100% 80%, 0 88%)" }}
                     >
-                      <h3 className="text-white text-xl font-extrabold uppercase tracking-wider mb-1.5">
-                        {plan.type}
+                      <h3 className="text-white text-xl font-extrabold uppercase tracking-wider mb-1">
+                        {plan.name}
                       </h3>
+                      {plan.tagline && (
+                        <p className="text-[10px] text-white/80 font-medium tracking-wide mb-2 text-center max-w-[240px] truncate">
+                          {plan.tagline}
+                        </p>
+                      )}
                       <div className="flex items-baseline justify-center text-white">
                         <span className="text-3xl font-bold mr-0.5 opacity-90">৳</span>
                         <span className="text-5xl font-black font-sans tracking-tight leading-none">
                           {plan.price}
                         </span>
                         <span className="text-[10px] font-bold uppercase tracking-widest ml-1.5 opacity-80">
-                          /{"Monthly"}
+                          /{t("Monthly", "মাসিক")}
                         </span>
                       </div>
                     </div>
@@ -815,17 +812,17 @@ export default function Home() {
                       {/* BUY NOW Button */}
                       <div className="mt-auto">
                         <Link
-                          href={`/packages?plan=${plan.speed}`}
+                          href={`/packages?plan=${parsedSpeedNum || plan.speed}`}
                           className="mx-auto w-full max-w-[180px] py-3 bg-linear-to-r from-[#10b981] to-[#047857] hover:scale-[1.03] active:scale-[0.98] text-white text-xs font-black tracking-widest rounded-full transition-all duration-300 text-center block shadow-md hover:shadow-lg hover:shadow-emerald-500/10 uppercase cursor-pointer"
                         >
-                          {"BUY NOW"}
+                          {t("BUY NOW", "এখনই কিনুন")}
                         </Link>
                       </div>
                     </div>
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </div>
       </section>
