@@ -307,6 +307,23 @@ export default function AdminPackagesPage() {
     }
   };
 
+  const handleTogglePopular = (planName: string) => {
+    if (!allowEdit) {
+      toast.error("You don't have permission to edit packages.");
+      return;
+    }
+    const updated = packages.map((pkg) => {
+      if (pkg.name === planName) {
+        const newPopularStatus = !pkg.popular;
+        toast.success(`"${pkg.name}" is now marked as ${newPopularStatus ? "Popular" : "Standard"}`);
+        return { ...pkg, popular: newPopularStatus };
+      }
+      return pkg;
+    });
+    setPackages(updated);
+    setSetting("packages_list", updated as any);
+  };
+
   if (!mounted || !isAuthenticated) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-white text-slate-600">
@@ -400,14 +417,20 @@ export default function AdminPackagesPage() {
                       </TableCell>
                       <TableCell className="text-slate-500 max-w-xs truncate">{p.tagline}</TableCell>
                       <TableCell>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                          p.popular
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : "bg-slate-50/50 text-slate-400 border-slate-100/70"
-                        }`}>
+                        <button
+                          type="button"
+                          disabled={!allowEdit}
+                          onClick={() => handleTogglePopular(p.name)}
+                          title={p.popular ? "Click to set as Standard" : "Click to set as Popular"}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+                            p.popular
+                              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 shadow-xs"
+                              : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                          }`}
+                        >
                           <Star className={`w-3 h-3 ${p.popular ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
                           <span>{p.popular ? "Popular" : "Standard"}</span>
-                        </span>
+                        </button>
                       </TableCell>
                       <TableCell className="text-right">
                         {(allowEdit || allowDelete) && (
