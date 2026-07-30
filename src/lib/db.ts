@@ -5,10 +5,12 @@ import pool, { DB_CHARSET, DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER, quer
 export { query };
 
 import { initWebSocketServer } from './wsServer';
-try {
-  initWebSocketServer();
-} catch (e) {
-  console.warn("WS init failed on startup:", e);
+if (process.env.ENABLE_WS === "true") {
+  try {
+    initWebSocketServer();
+  } catch (e) {
+    console.warn("WS init skipped:", e);
+  }
 }
 
 const TABLES_SCHEMAS: Record<string, string> = {
@@ -484,32 +486,34 @@ async function migrateManagedUserCompatibilityColumns(connection: mysql.PoolConn
 
 const globalForDb = global as unknown as { dbInitPromise?: Promise<void> };
 
-// Startup table schema auto-creation and seeding (runs ONCE per Node process)
+// Fast startup table schema check (bypasses heavy loops if database is already initialized)
 export const dbInitPromise = globalForDb.dbInitPromise || (globalForDb.dbInitPromise = (async () => {
   try {
-    await ensureDatabaseExists();
     const connection = await pool.getConnection();
 
     try {
-      // Create & migrate all tables if not exist. Existing rows are preserved.
-      for (const [table, schema] of Object.entries(TABLES_SCHEMAS)) {
-        await verifyAndMigrateTable(connection, table, schema);
-      }
+      const [rows] = await connection.query("SHOW TABLES LIKE 'global_settings'");
+      const isAlreadyInitialized = Array.isArray(rows) && rows.length > 0;
 
-      // Seed only brand-new/empty tables. Existing production data is never replaced.
-      for (const [table, items] of Object.entries(SEED_DATA)) {
-        await seedTableIfEmpty(connection, table, items);
-      }
+      if (!isAlreadyInitialized || process.env.FORCE_DB_MIGRATE === "true") {
+        await ensureDatabaseExists();
+        for (const [table, schema] of Object.entries(TABLES_SCHEMAS)) {
+          await verifyAndMigrateTable(connection, table, schema);
+        }
 
-      await migrateManagedUserPasswords(connection);
-      await migrateManagedUserCompatibilityColumns(connection);
+        for (const [table, items] of Object.entries(SEED_DATA)) {
+          await seedTableIfEmpty(connection, table, items);
+        }
+
+        await migrateManagedUserPasswords(connection);
+        await migrateManagedUserCompatibilityColumns(connection);
+        console.log("Database schema verified and initialized.");
+      }
     } finally {
       connection.release();
     }
-
-    console.log("All database tables verified, created, migrated and seeded successfully.");
   } catch (error) {
-    console.error("Failed to verify/create/seed database tables on startup:", error);
+    console.error("Database initialization check:", error);
   }
 })());
 
