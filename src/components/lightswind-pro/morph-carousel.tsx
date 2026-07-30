@@ -280,23 +280,21 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
 
     const handleVisibilityChange = () => {
       isVisible = !document.hidden;
+      if (isVisible) drawFrame();
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       isVisible = entry.isIntersecting && !document.hidden;
+      if (isVisible) drawFrame();
     }, { threshold: 0.01 });
     intersectionObserver.observe(canvas);
 
-    const render = () => {
-      if (!isVisible) {
-        animationFrameId = requestAnimationFrame(render);
-        return;
-      }
+    const drawFrame = () => {
+      if (!isVisible) return;
 
       const currentTime = (Date.now() - startTime) / 1000;
 
-      // Handle transition easing (quintic ease out-in style)
       if (isTransitioning) {
         const diff = targetProgress.current - transitionProgress.current;
         if (Math.abs(diff) < 0.005) {
@@ -306,7 +304,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
           transitionProgress.current = 0;
           targetProgress.current = 0;
         } else {
-          transitionProgress.current += diff * 0.08; // smooth easing step
+          transitionProgress.current += diff * 0.08;
         }
       }
 
@@ -314,7 +312,6 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       gl.uniform1f(uTimeLoc, currentTime);
 
       if (useTextures) {
-        // Bind textures
         if (textures[activeTextureIndex.current]) {
           gl.activeTexture(gl.TEXTURE0);
           gl.bindTexture(gl.TEXTURE_2D, textures[activeTextureIndex.current]);
@@ -326,7 +323,6 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
           gl.uniform1i(uTexNextLoc, 1);
         }
       } else {
-        // Bind gradient colors
         const currentGrad = PROCEDURAL_GRADIENTS[activeTextureIndex.current];
         const nextGrad = PROCEDURAL_GRADIENTS[nextTextureIndex.current];
 
@@ -336,17 +332,17 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
         gl.uniform3fv(uColorNext2Loc, nextGrad.c2);
       }
 
-      // Draw
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0.0, 0.0, 0.0, 0.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-      animationFrameId = requestAnimationFrame(render);
+      if (isTransitioning) {
+        animationFrameId = requestAnimationFrame(drawFrame);
+      }
     };
 
-    // Start loop
-    render();
+    drawFrame();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
@@ -360,7 +356,7 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
         if (tex) gl.deleteTexture(tex);
       });
     };
-  }, [isTransitioning, images]);
+  }, [images]);
 
   // Handle slide transitions
   const triggerTransition = useCallback((targetIndex: number) => {

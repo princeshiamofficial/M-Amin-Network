@@ -303,7 +303,7 @@ function PackagesContent() {
   // Auto-select plan from url query parameter if available
   useEffect(() => {
     const planQuery = searchParams.get("plan");
-    if (planQuery) {
+    if (planQuery && allPlans.length > 0) {
       const parsedSpeed = parseInt(planQuery, 10);
       const matchedPlan = allPlans.find(
         (p) => parseInt(p.speed, 10) === parsedSpeed
@@ -314,7 +314,7 @@ function PackagesContent() {
         setIsModalOpen(true);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, allPlans]);
 
   const filteredPlans = allPlans.filter((p) => p.category === activeTab);
 

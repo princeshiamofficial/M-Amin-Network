@@ -5,7 +5,7 @@ import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getSetting } from "@/actions/content";
+import { getSetting, submitPackageRequestAction } from "@/actions/content";
 import { ChevronDown, ChevronUp, Zap, Wifi, Gamepad2, LifeBuoy, Cloud, Building2, Server, Shield, Globe, Headphones, Monitor, Router, Network, Signal, Activity, Lock, Cpu, Database, Mail, Phone, MessageSquare, Users, Clock, CheckCircle, AlertCircle, Info, HelpCircle, Star, Heart, ThumbsUp, Award, TrendingUp, BarChart3 } from "lucide-react";
 import Image from "next/image";
 
@@ -437,6 +437,69 @@ export default function Home() {
     });
   }, []);
 
+  const [selectedOrderPlan, setSelectedOrderPlan] = useState<Plan | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    area: "Kadomtoli",
+    referralCode: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderRef, setOrderRef] = useState("");
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedOrderPlan) return;
+
+    setIsSubmitting(true);
+
+    const result = await submitPackageRequestAction({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email || "N/A",
+      zone: formData.area,
+      price: selectedOrderPlan.price,
+      address: formData.address,
+      planName: selectedOrderPlan.name,
+      speed: String(selectedOrderPlan.speed),
+      referralCode: formData.referralCode.trim() || "N/A",
+    });
+
+    if (result.success && result.id) {
+      setIsSubmitting(false);
+      setOrderSuccess(true);
+      setOrderRef(result.id);
+      return;
+    }
+
+    setIsSubmitting(false);
+    alert("Could not submit request. Please try again.");
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      phone: "",
+      email: "",
+      address: "",
+      area: "Kadomtoli",
+      referralCode: "",
+    });
+    setOrderSuccess(false);
+    setIsModalOpen(false);
+  };
+
   const filteredPlans = packagesList.filter(
     (plan) => (plan.category || "home") === activeTab
   );
@@ -643,12 +706,17 @@ export default function Home() {
                   <span className="text-xs text-slate-400 block">Monthly Price</span>
                   <span className="text-xl font-bold text-white font-mono">৳{selectedPlan?.price || 0} BDT</span>
                 </div>
-                <Link
-                  href={`/packages?plan=${selectedSpeedVal}`}
-                  className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity"
+                <button
+                  onClick={() => {
+                    if (selectedPlan) {
+                      setSelectedOrderPlan(selectedPlan);
+                      setIsModalOpen(true);
+                    }
+                  }}
+                  className="bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark text-sm font-extrabold px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   Order Plan
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -811,12 +879,15 @@ export default function Home() {
 
                       {/* BUY NOW Button */}
                       <div className="mt-auto">
-                        <Link
-                          href={`/packages?plan=${parsedSpeedNum || plan.speed}`}
+                        <button
+                          onClick={() => {
+                            setSelectedOrderPlan(plan);
+                            setIsModalOpen(true);
+                          }}
                           className="mx-auto w-full max-w-[180px] py-3 bg-linear-to-r from-[#10b981] to-[#047857] hover:scale-[1.03] active:scale-[0.98] text-white text-xs font-black tracking-widest rounded-full transition-all duration-300 text-center block shadow-md hover:shadow-lg hover:shadow-emerald-500/10 uppercase cursor-pointer"
                         >
                           {t("BUY NOW", "এখনই কিনুন")}
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -998,6 +1069,198 @@ export default function Home() {
                 height={550}
                 className="w-full h-auto object-contain rounded-2xl block select-none"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order connection Modal */}
+      {isModalOpen && selectedOrderPlan && (
+        <div className="fixed inset-0 z-100 overflow-y-auto bg-slate-900/60 backdrop-blur-sm">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="bg-white border border-slate-100 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-lg w-full relative text-left">
+            <button
+              onClick={resetForm}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-900 cursor-pointer"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {!orderSuccess ? (
+              <form onSubmit={handleOrderSubmit} className="space-y-5 text-left">
+                <div>
+                  <h3 className="text-slate-900 font-bold text-xl">{t("New Internet Connection", "নতুন ইন্টারনেট সংযোগ")}</h3>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {t("Complete this form to request optical fiber setup for", "অপটিক্যাল ফাইবার সংযোগের জন্য এই ফর্মটি পূরণ করুন")}{" "}
+                    <span className="text-[#0072ff] font-bold">{selectedOrderPlan.name} ({selectedOrderPlan.speed})</span>
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 text-left">
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Full Name", "আপনার নাম")}</label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Mehan Ahmed"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Phone Number", "মোবাইল নম্বর")}</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        required
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 01707009267"
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Email Address", "ইমেইল অ্যাড্রেস")}</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder={t("optional", "ঐচ্ছিক")}
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Coverage Zone", "কভারেজ এলাকা")}</label>
+                      <select
+                        name="area"
+                        value={formData.area}
+                        onChange={handleInputChange}
+                        className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20 cursor-pointer"
+                      >
+                        {coverageAreas.map((area) => (
+                          <option key={area} value={area} className="bg-white text-slate-900">
+                            {area}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5 text-left">
+                      <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Monthly Pricing", "মাসিক বিল")}</label>
+                      <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-600 font-mono flex items-center justify-between">
+                        <span>{t("Rate", "মূল্য")}</span>
+                        <span className="font-bold text-slate-900">৳{selectedOrderPlan.price} BDT</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Refer / Promo Code", "রেফারাল / প্রোমো কোড")}</label>
+                    <input
+                      type="text"
+                      name="referralCode"
+                      value={formData.referralCode}
+                      onChange={handleInputChange}
+                      placeholder={t("optional", "ঐচ্ছিক")}
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 text-left">
+                    <label className="text-xs text-slate-600 font-bold uppercase tracking-wider">{t("Installation Address", "সংযোজের বিস্তারিত ঠিকানা")}</label>
+                    <textarea
+                      name="address"
+                      required
+                      rows={3}
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      placeholder="e.g. House No. 25, Lane 3, Kadomtoli, South Keraniganj"
+                      className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#0072ff] focus:ring-1 focus:ring-[#0072ff]/20 resize-none font-sans"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3.5 text-xs text-blue-700 leading-relaxed flex gap-2 text-left">
+                  <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span>
+                    {t(
+                      "Our field representative will contact you within 4 hours to verify feasibility and schedule installation. Connection setups take less than 24 hours.",
+                      "আমাদের প্রতিনিধি ৪ ঘণ্টার মধ্যে আপনার সাথে যোগাযোগ করে সংযোগের সম্ভাব্যতা যাচাই এবং লাইন ইনস্টলেশন সম্পন্ন করবেন।"
+                    )}
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-linear-to-r from-brand-blue to-brand-cyan text-brand-dark py-4 rounded-xl font-bold tracking-wide transition-all shadow-lg hover:opacity-95 flex justify-center items-center gap-2 cursor-pointer"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-brand-dark border-t-transparent rounded-full animate-spin" />
+                      {t("Processing Request...", "অনুরোধ প্রসেস হচ্ছে...")}
+                    </>
+                  ) : (
+                    t("Submit Connection Request", "সংযোগের জন্য অনুরোধ পাঠান")
+                  )}
+                </button>
+              </form>
+            ) : (
+              <div className="text-center py-8 space-y-6">
+                <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto text-emerald-600 animate-pulse">
+                  <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-slate-900 font-extrabold text-2xl">{t("Request Submitted!", "অনুরোধ জমা হয়েছে!")}</h3>
+                  <p className="text-sm text-slate-500">
+                    {t("Thank you, ", "ধন্যবাদ, ")} <span className="text-slate-700 font-bold">{formData.name}</span>. {t("Your internet connection ticket has been successfully registered.", "আপনার সংযোগ অনুরোধের টিকেট সফলভাবে রেজিস্টার করা হয়েছে।")}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 max-w-sm mx-auto font-mono text-left">
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2 mb-2 text-xs text-slate-500">
+                    <span>{t("Order Reference", "অর্ডার রেফারেন্স")}</span>
+                    <span className="text-[#0072ff] font-bold">{orderRef}</span>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-200/80 pb-2 mb-2 text-xs text-slate-500">
+                    <span>{t("Selected Plan", "নির্বাচিত প্ল্যান")}</span>
+                    <span className="text-slate-800 font-bold">{selectedOrderPlan.name} ({selectedOrderPlan.speed})</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>{t("Contact Phone", "যোগাযোগের ফোন")}</span>
+                    <span className="text-slate-800 font-bold">{formData.phone}</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
+                  {t(
+                    "A support representative will call you at your number shortly to coordinate fiber line routing and router installation. Please keep your phone active.",
+                    "সংযোগের লাইন এবং রাউটার ইনস্টলেশনের জন্য আমাদের প্রতিনিধি খুব শীঘ্রই আপনার নম্বরে কল করবেন। অনুগ্রহ করে আপনার ফোনটি সচল রাখুন।"
+                  )}
+                </p>
+
+                <button
+                  onClick={resetForm}
+                  className="px-6 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-sm font-bold transition-colors cursor-pointer"
+                >
+                  {t("Close Window", "উইন্ডো বন্ধ করুন")}
+                </button>
+              </div>
+            )}
             </div>
           </div>
         </div>
