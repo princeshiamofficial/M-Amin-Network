@@ -326,7 +326,7 @@ export default async function RootLayout({
         />
 
       </head>
-      <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`}>
+      <body className={`${geistSans.className} min-h-full flex flex-col bg-brand-dark text-slate-100 overflow-x-hidden`} suppressHydrationWarning={true}>
         <ScrollToTop />
         <div id="google_translate_element" style={{ display: "none" }} />
         <MaintenanceWrapper isMaintenance={isMaintenance} maintenanceMessage={maintenanceMessage}>
