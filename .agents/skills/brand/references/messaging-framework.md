@@ -1,18 +1,18 @@
-# Messaging Framework
+﻿# Messaging Framework
 
 ## Framework Structure
 
 ```
 Mission (Why we exist)
-    ↓
+    â†“
 Vision (Where we're going)
-    ↓
+    â†“
 Value Proposition (What we offer)
-    ↓
+    â†“
 Positioning Statement (How we're different)
-    ↓
+    â†“
 Key Messages (What we say)
-    ↓
+    â†“
 Proof Points (Why to believe)
 ```
 

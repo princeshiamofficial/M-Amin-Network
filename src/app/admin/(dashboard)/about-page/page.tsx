@@ -172,7 +172,7 @@ export default function AboutPageAdmin() {
   const [auth, setAuth] = useState(false);
   const [content, setContent] = useState<AboutContentFull>(defaultAboutContentFull);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState("header");
+  const [activeTab, setActiveTab] = useState("mission");
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -199,7 +199,20 @@ export default function AboutPageAdmin() {
 
   const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    await setSetting("about_content_full", content as unknown as Record<string, unknown>);
+    const payload = {
+      ...content,
+      credentials: (content.credentials || []).map(c => ({
+        ...c,
+        keyBn: c.keyEn,
+        valBn: c.valEn,
+      })),
+      infraCards: (content.infraCards || []).map(c => ({
+        ...c,
+        titleBn: c.titleEn,
+        descBn: c.descEn,
+      })),
+    };
+    await setSetting("about_content_full", payload as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -215,7 +228,7 @@ export default function AboutPageAdmin() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">About Page Content</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage all text and translations for the About page.</p>
+          <p className="text-sm text-slate-500 mt-0.5">Manage all text and content for the About page.</p>
         </div>
         <div className="flex items-center gap-3">
           {saved && (
@@ -230,7 +243,7 @@ export default function AboutPageAdmin() {
       </div>
 
       <div className="flex gap-4 border-b border-slate-200 pb-2">
-        {["header", "mission", "credentials", "infrastructure", "integrity"].map((tab) => (
+        {["mission", "credentials", "infrastructure", "integrity"].map((tab) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors capitalize ${activeTab === tab ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
             {tab}
@@ -239,21 +252,6 @@ export default function AboutPageAdmin() {
       </div>
 
       <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        {activeTab === "header" && (
-          <div className="space-y-6">
-            <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Header Section</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.headerTitleEn} onChange={e => updateField("headerTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={2} value={content.headerDescEn} onChange={e => updateField("headerDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-            </div>
-          </div>
-        )}
 
         {activeTab === "mission" && (
           <div className="space-y-6">
@@ -277,10 +275,10 @@ export default function AboutPageAdmin() {
 
         {activeTab === "credentials" && (
           <div className="space-y-6">
-            <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Credentials Section</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Key Credentials Section</h3>
+            <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (English)</label>
+                <label className="text-xs font-bold text-slate-700">Section Title (English)</label>
                 <input type="text" value={content.credTitleEn} onChange={e => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
@@ -289,17 +287,15 @@ export default function AboutPageAdmin() {
               {(content.credentials || []).map((cred, i) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-center">
                   <div className="grid grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Key EN" value={cred.keyEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value EN" value={cred.valEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Key BN" value={cred.keyBn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Value BN" value={cred.valBn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valBn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                    <input type="text" placeholder="Key (e.g. License Authority)" value={cred.keyEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
+                    <input type="text" placeholder="Value (e.g. BTRC Bangladesh)" value={cred.valEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
                   </div>
-                  <button onClick={() => updateField("credentials", (content.credentials || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <button onClick={() => updateField("credentials", (content.credentials || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("credentials", [...(content.credentials || []), { keyEn: "", valEn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
+              <button onClick={() => updateField("credentials", [...(content.credentials || []), { keyEn: "", valEn: "" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer">
                 + Add Credential
               </button>
             </div>
@@ -324,18 +320,16 @@ export default function AboutPageAdmin() {
               {(content.infraCards || []).map((card, i) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-4 items-start">
                   <IconPicker value={card.iconName} onChange={v => { const c = [...(content.infraCards || [])]; c[i].iconName = v; updateField("infraCards", c); }} />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Title EN" value={card.titleEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <input type="text" placeholder="Title BN" value={card.titleBn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc EN" value={card.descEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
-                    <textarea rows={2} placeholder="Desc BN" value={card.descBn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descBn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border rounded-lg w-full" />
+                  <div className="grid grid-cols-1 gap-3 flex-1">
+                    <input type="text" placeholder="Title (e.g. BGP Multi-Homing Routing)" value={card.titleEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
+                    <textarea rows={2} placeholder="Description..." value={card.descEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800 resize-none" />
                   </div>
-                  <button onClick={() => updateField("infraCards", (content.infraCards || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <button onClick={() => updateField("infraCards", (content.infraCards || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
               ))}
-              <button onClick={() => updateField("infraCards", [...content.infraCards, { titleEn: "", descEn: "", iconName: "Network" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg">
+              <button onClick={() => updateField("infraCards", [...(content.infraCards || []), { titleEn: "", descEn: "", iconName: "Network" }])} className="px-4 py-2 text-xs font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer">
                 + Add Infrastructure Card
               </button>
             </div>

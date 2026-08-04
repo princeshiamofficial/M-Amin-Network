@@ -1,4 +1,4 @@
-# Design Routing Guide
+﻿# Design Routing Guide
 
 When to use each design sub-skill.
 
@@ -18,7 +18,7 @@ When to use each design sub-skill.
 ## Routing by Task Type
 
 ### Brand Identity Tasks
-**→ brand**
+**â†’ brand**
 
 - Define brand colors and typography
 - Create logo usage guidelines
@@ -28,7 +28,7 @@ When to use each design sub-skill.
 - Audit brand consistency
 
 ### Token System Tasks
-**→ design-system**
+**â†’ design-system**
 
 - Create design tokens JSON
 - Generate CSS variables
@@ -38,7 +38,7 @@ When to use each design sub-skill.
 - Document state and variants
 
 ### Implementation Tasks
-**→ ui-styling**
+**â†’ ui-styling**
 
 - Add shadcn/ui components
 - Style with Tailwind classes
@@ -47,7 +47,7 @@ When to use each design sub-skill.
 - Build accessible components
 
 ### Logo Design Tasks
-**→ logo-design**
+**â†’ logo-design**
 
 - Create logos with AI (Gemini Nano Banana)
 - Search logo styles, color palettes, industry guidelines
@@ -55,7 +55,7 @@ When to use each design sub-skill.
 - Explore 55+ styles (minimalist, vintage, luxury, geometric, etc.)
 
 ### Corporate Identity Program Tasks
-**→ cip-design**
+**â†’ cip-design**
 
 - Generate CIP deliverables (business cards, letterheads, signage, vehicles, apparel)
 - Create CIP briefs with industry/style analysis
@@ -63,7 +63,7 @@ When to use each design sub-skill.
 - Render HTML presentations from CIP mockups
 
 ### Presentation Tasks
-**→ slides**
+**â†’ slides**
 
 - Create strategic HTML presentations
 - Data visualization with Chart.js
@@ -71,7 +71,7 @@ When to use each design sub-skill.
 - Use layout patterns and design tokens
 
 ### Banner Design Tasks
-**→ banner-design**
+**â†’ banner-design**
 
 - Design banners for social media (Facebook, Twitter, LinkedIn, YouTube, Instagram)
 - Create ad banners (Google Ads, Meta Ads)
@@ -80,7 +80,7 @@ When to use each design sub-skill.
 - 22 art direction styles (minimalist, bold typography, gradient, glassmorphism, etc.)
 
 ### Icon Design Tasks
-**→ icon-design**
+**â†’ icon-design**
 
 - Generate SVG icons with AI (Gemini 3.1 Pro Preview)
 - Batch icon variations in multiple styles
@@ -115,36 +115,36 @@ When to use each design sub-skill.
 ### New Project Setup
 
 ```
-1. brand → Define identity
+1. brand â†’ Define identity
    - Colors, typography, voice
 
-2. design-system → Create tokens
+2. design-system â†’ Create tokens
    - Primitive, semantic, component
 
-3. ui-styling → Implement
+3. ui-styling â†’ Implement
    - Configure Tailwind, add components
 ```
 
 ### Design System Migration
 
 ```
-1. brand → Audit existing
+1. brand â†’ Audit existing
    - Extract brand colors, fonts
 
-2. design-system → Formalize tokens
+2. design-system â†’ Formalize tokens
    - Create three-layer architecture
 
-3. ui-styling → Update code
+3. ui-styling â†’ Update code
    - Replace hardcoded values
 ```
 
 ### Component Creation
 
 ```
-1. design-system → Reference specs
+1. design-system â†’ Reference specs
    - Button states, sizes, variants
 
-2. ui-styling → Implement
+2. ui-styling â†’ Implement
    - Build with shadcn/ui + Tailwind
 ```
 
@@ -152,11 +152,11 @@ When to use each design sub-skill.
 
 ```
 brand
-    ↓ (colors, typography)
+    â†“ (colors, typography)
 design-system
-    ↓ (tokens, specs)
+    â†“ (tokens, specs)
 ui-styling
-    ↓ (components)
+    â†“ (components)
 Application Code
 ```
 
@@ -182,7 +182,7 @@ npx shadcn@latest add button card input
 ## When to Use Multiple Skills
 
 Use **all eight** when:
-- Complete brand package from scratch (logo → CIP → presentation)
+- Complete brand package from scratch (logo â†’ CIP â†’ presentation)
 
 Use **brand + design-system + ui-styling** when:
 - Design system setup and implementation

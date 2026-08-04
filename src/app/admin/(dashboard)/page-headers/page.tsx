@@ -10,11 +10,13 @@ import {
   Tag, 
   MapPin, 
   Tv2, 
-  Briefcase 
+  Briefcase,
+  PhoneCall,
+  Info
 } from "lucide-react";
 import { toast } from "sonner";
 
-type TabId = "packages" | "offers" | "coverage" | "multimedia" | "careers";
+type TabId = "packages" | "offers" | "coverage" | "multimedia" | "careers" | "contact" | "about";
 
 interface HeaderSection {
   bg: string;
@@ -29,14 +31,20 @@ export default function HeaderContentPage() {
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("packages");
 
-  // State for all 5 page headers
+  // State for all 7 page headers
   const [headers, setHeaders] = useState<Record<TabId, HeaderSection>>({
     packages: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
     offers: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
     coverage: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
     multimedia: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
     careers: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
+    contact: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
+    about: { bg: "", titleEn: "", highlightEn: "", subtitleEn: "" },
   });
+
+  // State for Homepage Packages Section Heading
+  const [packagesSecTitleEn, setPackagesSecTitleEn] = useState("Choose the Perfect Plan for You");
+  const [packagesSecSubtitleEn, setPackagesSecSubtitleEn] = useState("High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.");
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -79,12 +87,69 @@ export default function HeaderContentPage() {
             highlightEn: data.careers_title_highlight_en || "",
             subtitleEn: data.careers_subtitle_en || "",
           },
+          contact: {
+            bg: data.contact_bg || "",
+            titleEn: data.contact_title_en || "Contact ",
+            highlightEn: data.contact_title_highlight_en || "Our Team",
+            subtitleEn: data.contact_subtitle_en || "Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.",
+          },
+          about: {
+            bg: data.about_bg || "",
+            titleEn: data.about_title_en || "About ",
+            highlightEn: data.about_title_highlight_en || "M Amin Network",
+            subtitleEn: data.about_subtitle_en || "Discover our history, network infrastructure capabilities, and why we are South Keraniganj's most trusted broadband provider.",
+          },
         });
       }
     });
+
+    getSetting("contact_content_full").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          const data = item as Record<string, string>;
+          setHeaders(prev => ({
+            ...prev,
+            contact: {
+              bg: prev.contact.bg || "",
+              titleEn: data.titleEn || prev.contact.titleEn || "Contact ",
+              highlightEn: data.highlightEn || prev.contact.highlightEn || "Our Team",
+              subtitleEn: data.descEn || prev.contact.subtitleEn || "Have questions about coverage feasibility, pricing discounts, or corporate dedicated connections? Reach out to us directly or fill out the query form.",
+            }
+          }));
+        }
+      }
+    });
+
+    getSetting("about_content_full").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          const data = item as Record<string, string>;
+          setHeaders(prev => ({
+            ...prev,
+            about: {
+              bg: prev.about.bg || "",
+              titleEn: data.headerTitleEn || prev.about.titleEn || "About ",
+              highlightEn: data.highlightEn || prev.about.highlightEn || "M Amin Network",
+              subtitleEn: data.headerDescEn || prev.about.subtitleEn || "Discover our history, network infrastructure capabilities, and why we are South Keraniganj's most trusted broadband provider.",
+            }
+          }));
+        }
+      }
+    });
+
+    getSetting("packages_content").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          const data = item as Record<string, string>;
+          if (data.titleEn) setPackagesSecTitleEn(data.titleEn);
+          if (data.subtitleEn) setPackagesSecSubtitleEn(data.subtitleEn);
+        }
+      }
+    });
   }, [router]);
-
-
 
   const handleFieldChange = (field: keyof HeaderSection, value: string) => {
     setHeaders(prev => ({
@@ -97,7 +162,7 @@ export default function HeaderContentPage() {
   };
 
   const save = async () => {
-    const current = await getSetting("page_headers") || {};
+    const current = await getSetting("page_headers") as Record<string, string> || {};
     
     // Construct the settings payload with EN mirrored to BN automatically to support clean inputs
     const updated = {
@@ -141,11 +206,56 @@ export default function HeaderContentPage() {
       careers_title_highlight_bn: headers.careers.highlightEn,
       careers_subtitle_en: headers.careers.subtitleEn,
       careers_subtitle_bn: headers.careers.subtitleEn,
+
+      contact_bg: headers.contact.bg,
+      contact_title_en: headers.contact.titleEn,
+      contact_title_bn: headers.contact.titleEn,
+      contact_title_highlight_en: headers.contact.highlightEn,
+      contact_title_highlight_bn: headers.contact.highlightEn,
+      contact_subtitle_en: headers.contact.subtitleEn,
+      contact_subtitle_bn: headers.contact.subtitleEn,
+
+      about_bg: headers.about.bg,
+      about_title_en: headers.about.titleEn,
+      about_title_bn: headers.about.titleEn,
+      about_title_highlight_en: headers.about.highlightEn,
+      about_title_highlight_bn: headers.about.highlightEn,
+      about_subtitle_en: headers.about.subtitleEn,
+      about_subtitle_bn: headers.about.subtitleEn,
     };
 
     await setSetting("page_headers", updated);
+    await setSetting("packages_content", {
+      titleEn: packagesSecTitleEn,
+      subtitleEn: packagesSecSubtitleEn,
+    });
+
+    const currentContact = await getSetting("contact_content_full") as Record<string, unknown> || {};
+    const updatedContact = {
+      ...currentContact,
+      titleEn: headers.contact.titleEn,
+      titleBn: headers.contact.titleEn,
+      highlightEn: headers.contact.highlightEn,
+      highlightBn: headers.contact.highlightEn,
+      descEn: headers.contact.subtitleEn,
+      descBn: headers.contact.subtitleEn,
+    };
+    await setSetting("contact_content_full", updatedContact);
+
+    const currentAbout = await getSetting("about_content_full") as Record<string, unknown> || {};
+    const updatedAbout = {
+      ...currentAbout,
+      headerTitleEn: headers.about.titleEn,
+      headerTitleBn: headers.about.titleEn,
+      highlightEn: headers.about.highlightEn,
+      highlightBn: headers.about.highlightEn,
+      headerDescEn: headers.about.subtitleEn,
+      headerDescBn: headers.about.subtitleEn,
+    };
+    await setSetting("about_content_full", updatedAbout);
+
     setSaved(true);
-    toast.success("Header Content settings updated successfully!");
+    toast.success("Header & Section Content settings updated successfully!");
     setTimeout(() => setSaved(false), 3000);
   };
 
@@ -159,30 +269,34 @@ export default function HeaderContentPage() {
     { id: "coverage", label: "Coverage", icon: <MapPin className="w-4 h-4" /> },
     { id: "multimedia", label: "Multimedia", icon: <Tv2 className="w-4 h-4" /> },
     { id: "careers", label: "Careers", icon: <Briefcase className="w-4 h-4" /> },
+    { id: "contact", label: "Contact", icon: <PhoneCall className="w-4 h-4" /> },
+    { id: "about", label: "About", icon: <Info className="w-4 h-4" /> },
   ];
 
   return (
     <div className="space-y-6 animate-fade-in">
 
-      {/* Tabs navigation */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {tabs.map((tab) => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs transition-all cursor-pointer whitespace-nowrap shadow-sm border ${
-                isActive
-                  ? "bg-slate-900 border-slate-900 text-white"
-                  : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              {tab.icon}
-              {tab.label} Header
-            </button>
-          );
-        })}
+      {/* Pixel-perfect Minimal Underline Tabs Navigation */}
+      <div className="border-b border-slate-200 mb-6">
+        <nav className="flex space-x-8 overflow-x-auto pb-0" aria-label="Tabs">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-3 px-1 inline-flex items-center gap-2 text-sm font-semibold whitespace-nowrap transition-all cursor-pointer border-b-2 -mb-px ${
+                  isActive
+                    ? "border-[#635BFF] text-[#635BFF]"
+                    : "border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300"
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
       {/* Config Editor Body */}
@@ -242,6 +356,42 @@ export default function HeaderContentPage() {
 
           </div>
         </div>
+
+        {activeTab === "packages" && (
+          <div className="pt-6 border-t border-slate-100 space-y-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
+                Homepage Packages Section Heading
+              </h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
+                  Homepage Section Title
+                </label>
+                <input
+                  type="text"
+                  value={packagesSecTitleEn}
+                  onChange={(e) => setPackagesSecTitleEn(e.target.value)}
+                  className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium"
+                  placeholder="e.g. Choose the Perfect Plan for You"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
+                  Homepage Section Subtitle / Description
+                </label>
+                <textarea
+                  rows={2}
+                  value={packagesSecSubtitleEn}
+                  onChange={(e) => setPackagesSecSubtitleEn(e.target.value)}
+                  className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none resize-none font-sans transition-all font-medium"
+                  placeholder="Enter section description..."
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Separated Save Button Section */}
         <div className="pt-4 border-t border-slate-100 flex items-center gap-3">

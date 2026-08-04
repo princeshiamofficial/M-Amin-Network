@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { MorphCarousel } from "@/components/lightswind-pro/morph-carousel";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
+import LogoCloud from "@/components/ui/logo-cloud";
 import { useTranslation } from "@/hooks/useTranslation";
 import { getSetting, submitPackageRequestAction } from "@/actions/content";
 import { ChevronDown, ChevronUp, Zap, Wifi, Gamepad2, LifeBuoy, Cloud, Building2, Server, Shield, Globe, Headphones, Monitor, Router, Network, Signal, Activity, Lock, Cpu, Database, Mail, Phone, MessageSquare, Users, Clock, CheckCircle, AlertCircle, Info, HelpCircle, Star, Heart, ThumbsUp, Award, TrendingUp, BarChart3 } from "lucide-react";
@@ -211,35 +212,97 @@ export default function Home() {
   });
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [heroTypography, setHeroTypography] = useState<HeroTypography>(DEFAULT_HERO_TYPOGRAPHY);
-  const [heroMetrics, setHeroMetrics] = useState<HeroMetric[]>(DEFAULT_HERO_METRICS);
+  const [heroTypography, setHeroTypography] = useState<HeroTypography | null>(null);
+  const [heroMetrics, setHeroMetrics] = useState<HeroMetric[] | null>(null);
   const [heroLoading, setHeroLoading] = useState(true);
   const [networkFeatures, setNetworkFeatures] = useState<NetworkFeature[]>([]);
   const [featuresLoading, setFeaturesLoading] = useState(true);
-  const [whyChooseContent, setWhyChooseContent] = useState({
-    headingEn: "Why Choose M Amin Network?",
-    headingBn: "",
-    subtitleEn: "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
-    subtitleBn: "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।",
-  });
+  const [whyChooseContent, setWhyChooseContent] = useState<{
+    headingEn: string;
+    headingBn: string;
+    subtitleEn: string;
+    subtitleBn: string;
+  } | null>(null);
+  const [testimonialsContent, setTestimonialsContent] = useState<{
+    headingEn: string;
+  } | null>(null);
+  const [packagesContent, setPackagesContent] = useState<{
+    titleEn: string;
+    subtitleEn: string;
+  } | null>(null);
 
   useEffect(() => {
     Promise.all([
       getSetting("network_features"),
       getSetting("why_choose_content"),
-    ]).then(([feats, wcc]) => {
+      getSetting("testimonials_content"),
+      getSetting("packages_content"),
+    ]).then(([feats, wcc, tc, pc]) => {
       if (Array.isArray(feats)) {
         setNetworkFeatures(feats as NetworkFeature[]);
       }
-      if (wcc) {
+      if (wcc && typeof wcc === "object") {
         const s = wcc as Record<string, string>;
-        setWhyChooseContent(prev => ({
-          headingEn: s.headingEn || prev.headingEn,
-          headingBn: s.headingBn || prev.headingBn,
-          subtitleEn: s.subtitleEn || prev.subtitleEn,
-          subtitleBn: s.subtitleBn || prev.subtitleBn,
-        }));
+        setWhyChooseContent({
+          headingEn: s.headingEn || "Why Choose M Amin Network?",
+          headingBn: s.headingBn || "",
+          subtitleEn: s.subtitleEn || "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
+          subtitleBn: s.subtitleBn || "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।",
+        });
+      } else {
+        setWhyChooseContent({
+          headingEn: "Why Choose M Amin Network?",
+          headingBn: "",
+          subtitleEn: "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
+          subtitleBn: "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।",
+        });
       }
+
+      if (tc) {
+        const item = Array.isArray(tc) ? tc[0] : tc;
+        if (item && typeof item === "object") {
+          const s = item as Record<string, string>;
+          setTestimonialsContent({ headingEn: s.headingEn || "What Our Customers Say" });
+        } else {
+          setTestimonialsContent({ headingEn: "What Our Customers Say" });
+        }
+      } else {
+        setTestimonialsContent({ headingEn: "What Our Customers Say" });
+      }
+
+      if (pc) {
+        const item = Array.isArray(pc) ? pc[0] : pc;
+        if (item && typeof item === "object") {
+          const s = item as Record<string, string>;
+          setPackagesContent({
+            titleEn: s.titleEn || "Choose the Perfect Plan for You",
+            subtitleEn: s.subtitleEn || "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
+          });
+        } else {
+          setPackagesContent({
+            titleEn: "Choose the Perfect Plan for You",
+            subtitleEn: "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
+          });
+        }
+      } else {
+        setPackagesContent({
+          titleEn: "Choose the Perfect Plan for You",
+          subtitleEn: "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
+        });
+      }
+      setFeaturesLoading(false);
+    }).catch(() => {
+      setWhyChooseContent({
+        headingEn: "Why Choose M Amin Network?",
+        headingBn: "",
+        subtitleEn: "We operate our own BGP autonomous system routing (AS150164) directly peering with all major exchanges to guarantee absolute lowest latency for gaming, VoIP, and video calling.",
+        subtitleBn: "আমরা আমাদের নিজস্ব বিজিপি স্বায়ত্তশাসিত রাউটিং (AS150164) পরিচালনা করি এবং গেমিং, ভিওআইপি ও ভিডিও কলের জন্য সর্বনিম্ন লেটেন্সি নিশ্চিত করতে সরাসরি সমস্ত বড় এক্সচেঞ্জের সাথে যুক্ত হয়েছি।",
+      });
+      setTestimonialsContent({ headingEn: "What Our Customers Say" });
+      setPackagesContent({
+        titleEn: "Choose the Perfect Plan for You",
+        subtitleEn: "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
+      });
       setFeaturesLoading(false);
     });
   }, []);
@@ -393,13 +456,19 @@ export default function Home() {
           subtitle: typeof parsed.subtitle === "string" && parsed.subtitle.trim() ? parsed.subtitle : DEFAULT_HERO_TYPOGRAPHY.subtitle,
           slides: slides.length > 0 ? slides : DEFAULT_HERO_SLIDES,
         });
+      } else {
+        setHeroTypography(DEFAULT_HERO_TYPOGRAPHY);
       }
 
       if (savedMetrics) {
         setHeroMetrics(normalizeHeroMetrics(savedMetrics));
+      } else {
+        setHeroMetrics(DEFAULT_HERO_METRICS);
       }
       setHeroLoading(false);
     }).catch(() => {
+      setHeroTypography(DEFAULT_HERO_TYPOGRAPHY);
+      setHeroMetrics(DEFAULT_HERO_METRICS);
       setHeroLoading(false);
     });
   }, []);
@@ -422,11 +491,30 @@ export default function Home() {
     "Doleshwar",
   ];
 
-  const [activeTab, setActiveTab] = useState<"home" | "gaming" | "corporate">("home");
+interface PackageCategory {
+  id: string;
+  name: string;
+}
+
+const defaultPackageCategories: PackageCategory[] = [
+  { id: "home", name: "Home Internet" },
+  { id: "gaming", name: "Gamer Packs" },
+  { id: "corporate", name: "Corporate Dedicated" },
+];
+
+  const [categories, setCategories] = useState<PackageCategory[]>(defaultPackageCategories);
+  const [activeTab, setActiveTab] = useState<string>("home");
   const [packagesList, setPackagesList] = useState<Plan[]>([]);
   const [packagesLoading, setPackagesLoading] = useState(true);
 
   useEffect(() => {
+    getSetting("package_categories").then((saved) => {
+      if (Array.isArray(saved) && saved.length > 0) {
+        const list = saved as PackageCategory[];
+        setCategories(list);
+        setActiveTab((prev) => (list.some((c) => c.id === prev) ? prev : list[0].id));
+      }
+    });
     getSetting("packages_list").then((saved) => {
       if (Array.isArray(saved)) {
         setPackagesList(saved as Plan[]);
@@ -524,18 +612,27 @@ export default function Home() {
 
   const selectedPlan = packagesList[speedSlider] || packagesList[0] || null;
   const selectedSpeedVal = selectedPlan ? (parseInt(String(selectedPlan.speed), 10) || 0) : 0;
-  const heroSlides = heroTypography.slides;
-  const heroTitleParts = (heroTypography.mainTitle || DEFAULT_HERO_TYPOGRAPHY.mainTitle).split("|");
+  const heroSlides = heroTypography ? heroTypography.slides : [];
+  const currentTypography = heroTypography || DEFAULT_HERO_TYPOGRAPHY;
+  const heroTitleParts = (currentTypography.mainTitle || DEFAULT_HERO_TYPOGRAPHY.mainTitle).split("|");
   const heroTitleFirst = heroTitleParts[0]?.trim() || DEFAULT_HERO_TYPOGRAPHY.mainTitle;
   const heroTitleSecond = heroTitleParts[1]?.trim() || "";
-  const publishedTestimonials = testimonials
-    .filter((test) => test.isPublished && test.name.trim() && test.comment.trim() && test.src?.trim())
+  const reviewTestimonials = testimonials
+    .filter((test) => test.isPublished && test.name.trim() && (test.rating > 0 || (test.comment && test.comment.trim() !== "")))
     .map((test) => ({
       quote: t(test.comment, test.comment),
       name: test.name,
       designation: t(test.role, test.role),
-      src: test.src as string,
+      src: test.src || "",
       rating: test.rating > 0 ? test.rating : undefined,
+    }));
+
+  const logoTestimonials = testimonials
+    .filter((test) => test.isPublished && test.name.trim() && (!test.rating || test.rating === 0) && (!test.comment || test.comment.trim() === ""))
+    .map((test) => ({
+      name: test.name,
+      role: test.role,
+      src: test.src,
     }));
 
   return (
@@ -560,7 +657,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col gap-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
           <div className="lg:col-span-7 text-center lg:text-left flex flex-col gap-6 animate-fade-in-up">
-            {heroLoading ? (
+            {heroLoading || !heroTypography ? (
               <div className="flex flex-col gap-5 py-2 animate-pulse">
                 <div className="h-7 w-64 rounded-full bg-slate-800/80 border border-slate-700/50 self-center lg:self-start mb-1" />
                 <div className="flex flex-col gap-3">
@@ -576,7 +673,7 @@ export default function Home() {
               <>
                 <div className="inline-flex self-center lg:self-start items-center gap-2 px-3 py-1.5 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-semibold tracking-wider uppercase mb-2">
                   <span className="w-2 h-2 rounded-full bg-brand-cyan animate-ping" />
-                  {t(heroTypography.badgeText, heroTypography.badgeText)}
+                  {t(currentTypography.badgeText, currentTypography.badgeText)}
                 </div>
                 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
@@ -589,7 +686,7 @@ export default function Home() {
                 </h1>
 
                 <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                  {t(heroTypography.subtitle, heroTypography.subtitle)}
+                  {t(currentTypography.subtitle, currentTypography.subtitle)}
                 </p>
               </>
             )}
@@ -724,7 +821,7 @@ export default function Home() {
 
         {/* Trust Stats Metrics (database-driven from admin hero-typography) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full max-w-5xl mx-auto lg:mx-0 animate-fade-in-up">
-          {heroLoading ? (
+          {heroLoading || !heroMetrics ? (
             Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
@@ -762,36 +859,36 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-brand-blue/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-              {t("Choose the Perfect Plan for You", "আপনার জন্য নিখুঁত প্ল্যান বেছে নিন")}
-            </h3>
-            <p className="text-slate-650 mt-4 leading-relaxed">
-              {t(
-                "High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.",
-                "সিমলেস স্ট্রিমিং, বাফার-মুক্ত গেমিং এবং উচ্চ-ক্ষমতাসম্পন্ন কর্পোরেট নেটওয়ার্কের জন্য ডিজাইন করা উচ্চগতির ফাইবার অপটিক ইন্টারনেট প্যাকেজ সমূহ।"
-              )}
-            </p>
-          </div>
+          {packagesLoading || !packagesContent ? (
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <div className="h-10 w-72 mx-auto bg-slate-200 rounded-xl animate-pulse mb-4" />
+              <div className="h-4 w-full bg-slate-100 rounded-lg animate-pulse" />
+            </div>
+          ) : (
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+                {t(packagesContent.titleEn, packagesContent.titleEn)}
+              </h3>
+              <p className="text-slate-650 mt-4 leading-relaxed">
+                {t(packagesContent.subtitleEn, packagesContent.subtitleEn)}
+              </p>
+            </div>
+          )}
 
           {/* Category Tab Selectors */}
-          <div className="flex justify-center mb-12 relative z-20">
-            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl">
-              {[
-                { id: "home", label: t("Home Internet", "হোম ইন্টারনেট") },
-                { id: "gaming", label: t("Gamer Packs", "গেমার প্যাক") },
-                { id: "corporate", label: t("Corporate Dedicated", "কর্পোরেট ডেডিকেটেড") },
-              ].map((tab) => (
+          <div className="flex justify-center mb-12 relative z-20 overflow-x-auto max-w-full px-4">
+            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl flex-wrap justify-center gap-1">
+              {categories.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
+                  onClick={() => setActiveTab(tab.id)}
                   className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? "force-active-tab shadow-md relative z-10"
                       : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
                   }`}
                 >
-                  {tab.label}
+                  {tab.name}
                 </button>
               ))}
             </div>
@@ -809,7 +906,6 @@ export default function Home() {
               </div>
             ) : (
               filteredPlans.map((plan, i) => {
-                const parsedSpeedNum = parseInt(String(plan.speed), 10);
                 const speedLabel = String(plan.speed).includes("Mbps") ? plan.speed : `${plan.speed} Mbps`;
                 const allFeatures = [
                   t(`Speed: ${speedLabel}`, `গতি: ${speedLabel}`),
@@ -904,7 +1000,7 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            {featuresLoading ? (
+            {featuresLoading || !whyChooseContent ? (
               <>
                 <div className="h-10 w-72 mx-auto bg-white/10 rounded-xl animate-pulse mb-4" />
                 <div className="h-4 w-full bg-white/5 rounded-lg animate-pulse mb-2" />
@@ -970,16 +1066,24 @@ export default function Home() {
 
 
 
-      {/* Customer Review Section */}
-      {publishedTestimonials.length > 0 && (
-        <section className="w-full bg-white py-16 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h3 className="text-3xl font-extrabold text-slate-900 mb-12">{"What Our Customers Say"}</h3>
+      {/* Customer Review & Partner Network Section */}
+      {(reviewTestimonials.length > 0 || logoTestimonials.length > 0) && (
+        <section className="w-full bg-white pt-16 pb-8 relative overflow-hidden border-y border-slate-100 shadow-inner text-slate-900 -mt-10 -mb-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col gap-4">
+            <h3 className="text-3xl font-extrabold text-slate-900 mb-2">
+              {testimonialsContent?.headingEn || ""}
+            </h3>
 
-            <AnimatedTestimonials
-              testimonials={publishedTestimonials}
-              autoplay={true}
-            />
+            {reviewTestimonials.length > 0 && (
+              <AnimatedTestimonials
+                testimonials={reviewTestimonials}
+                autoplay={true}
+              />
+            )}
+
+            <div className="pt-2">
+              <LogoCloud items={logoTestimonials.length > 0 ? logoTestimonials : undefined} />
+            </div>
           </div>
         </section>
       )}

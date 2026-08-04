@@ -1,4 +1,4 @@
----
+﻿---
 name: brand
 description: Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides.
 argument-hint: "[update|review|create] [args]"
@@ -50,9 +50,9 @@ node scripts/inject-brand-context.cjs --json | head -20
 ```
 
 **Files synced:**
-- `docs/brand-guidelines.md` → Source of truth
-- `assets/design-tokens.json` → Token definitions
-- `assets/design-tokens.css` → CSS variables
+- `docs/brand-guidelines.md` â†’ Source of truth
+- `assets/design-tokens.json` â†’ Token definitions
+- `assets/design-tokens.css` â†’ CSS variables
 
 ## Subcommands
 
@@ -80,7 +80,7 @@ node scripts/inject-brand-context.cjs --json | head -20
 | Script | Purpose |
 |--------|---------|
 | `scripts/inject-brand-context.cjs` | Extract brand context for prompt injection |
-| `scripts/sync-brand-to-tokens.cjs` | Sync brand-guidelines.md → design-tokens.json/css |
+| `scripts/sync-brand-to-tokens.cjs` | Sync brand-guidelines.md â†’ design-tokens.json/css |
 | `scripts/validate-asset.cjs` | Validate asset naming, size, format |
 | `scripts/extract-colors.cjs` | Extract and compare colors against palette |
 

@@ -212,12 +212,12 @@ export default function Navbar() {
             </a>
           </div>
           
-          <div className="flex items-center gap-1.5 font-semibold text-slate-400">
+          <div className="flex items-center gap-1.5 font-semibold text-white">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
             </span>
-            <span>{topbarContent.availabilityText}</span>
+            <span className="text-white">{topbarContent.availabilityText}</span>
           </div>
         </div>
       </div>

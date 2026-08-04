@@ -1,4 +1,4 @@
-# Asset Organization Guide
+﻿# Asset Organization Guide
 
 Guidelines for organizing marketing assets in a structured, searchable system.
 
@@ -6,38 +6,38 @@ Guidelines for organizing marketing assets in a structured, searchable system.
 
 ```
 project-root/
-├── .assets/                          # Git-tracked metadata
-│   ├── manifest.json                 # Central asset registry
-│   ├── tags.json                     # Tagging system
-│   ├── versions/                     # Version history
-│   │   └── {asset-id}/
-│   │       └── v{n}.json
-│   └── metadata/                     # Type-specific metadata
-│       ├── designs.json
-│       ├── banners.json
-│       ├── logos.json
-│       └── videos.json
-├── assets/                           # Raw files
-│   ├── designs/
-│   │   ├── campaigns/                # Campaign-specific designs
-│   │   ├── web/                      # Website graphics
-│   │   └── print/                    # Print materials
-│   ├── banners/
-│   │   ├── social-media/             # Platform banners
-│   │   ├── email-headers/            # Email template headers
-│   │   └── landing-pages/            # Hero/section images
-│   ├── logos/
-│   │   ├── full-horizontal/          # Full logo with wordmark
-│   │   ├── icon-only/                # Symbol only
-│   │   ├── monochrome/               # Single color versions
-│   │   └── variations/               # Special versions
-│   ├── videos/
-│   │   ├── ads/                      # Promotional videos
-│   │   ├── tutorials/                # How-to content
-│   │   └── testimonials/             # Customer videos
-│   ├── infographics/                 # Data visualizations
-│   └── generated/                    # AI-generated assets
-│       └── {YYYYMMDD}/               # Date-organized
+â”œâ”€â”€ .assets/                          # Git-tracked metadata
+â”‚   â”œâ”€â”€ manifest.json                 # Central asset registry
+â”‚   â”œâ”€â”€ tags.json                     # Tagging system
+â”‚   â”œâ”€â”€ versions/                     # Version history
+â”‚   â”‚   â””â”€â”€ {asset-id}/
+â”‚   â”‚       â””â”€â”€ v{n}.json
+â”‚   â””â”€â”€ metadata/                     # Type-specific metadata
+â”‚       â”œâ”€â”€ designs.json
+â”‚       â”œâ”€â”€ banners.json
+â”‚       â”œâ”€â”€ logos.json
+â”‚       â””â”€â”€ videos.json
+â”œâ”€â”€ assets/                           # Raw files
+â”‚   â”œâ”€â”€ designs/
+â”‚   â”‚   â”œâ”€â”€ campaigns/                # Campaign-specific designs
+â”‚   â”‚   â”œâ”€â”€ web/                      # Website graphics
+â”‚   â”‚   â””â”€â”€ print/                    # Print materials
+â”‚   â”œâ”€â”€ banners/
+â”‚   â”‚   â”œâ”€â”€ social-media/             # Platform banners
+â”‚   â”‚   â”œâ”€â”€ email-headers/            # Email template headers
+â”‚   â”‚   â””â”€â”€ landing-pages/            # Hero/section images
+â”‚   â”œâ”€â”€ logos/
+â”‚   â”‚   â”œâ”€â”€ full-horizontal/          # Full logo with wordmark
+â”‚   â”‚   â”œâ”€â”€ icon-only/                # Symbol only
+â”‚   â”‚   â”œâ”€â”€ monochrome/               # Single color versions
+â”‚   â”‚   â””â”€â”€ variations/               # Special versions
+â”‚   â”œâ”€â”€ videos/
+â”‚   â”‚   â”œâ”€â”€ ads/                      # Promotional videos
+â”‚   â”‚   â”œâ”€â”€ tutorials/                # How-to content
+â”‚   â”‚   â””â”€â”€ testimonials/             # Customer videos
+â”‚   â”œâ”€â”€ infographics/                 # Data visualizations
+â”‚   â””â”€â”€ generated/                    # AI-generated assets
+â”‚       â””â”€â”€ {YYYYMMDD}/               # Date-organized
 ```
 
 ## Naming Convention

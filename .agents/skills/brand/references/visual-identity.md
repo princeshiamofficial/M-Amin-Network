@@ -1,4 +1,4 @@
-# Visual Identity Basics
+﻿# Visual Identity Basics
 
 ## Core Visual Elements
 
@@ -12,17 +12,17 @@
 ### Color Palette
 ```
 Primary Colors (1-2)
-├── Main brand color
-└── Supporting primary
+â”œâ”€â”€ Main brand color
+â””â”€â”€ Supporting primary
 
 Secondary Colors (2-3)
-├── Accent colors
-└── Supporting visuals
+â”œâ”€â”€ Accent colors
+â””â”€â”€ Supporting visuals
 
 Neutrals (3-4)
-├── Text colors
-├── Background colors
-└── UI elements
+â”œâ”€â”€ Text colors
+â”œâ”€â”€ Background colors
+â””â”€â”€ UI elements
 ```
 
 ### Typography

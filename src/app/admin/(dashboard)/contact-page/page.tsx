@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { setSetting } from "@/actions/content";
+import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
 
@@ -72,7 +72,7 @@ export default function ContactPageAdmin() {
   const [auth, setAuth] = useState(false);
   const [content, setContent] = useState<ContactContentFull>(defaultContactContent);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState("header");
+  const [activeTab, setActiveTab] = useState("office");
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -80,27 +80,29 @@ export default function ContactPageAdmin() {
       return;
     }
     setAuth(true);
-    const s = localStorage.getItem("contact_content_full");
-    if (s) {
-      try { 
-        const parsed = JSON.parse(s);
-        // Migration for older schema to phones array
-        if (!parsed.phones && parsed.phoneResNum) {
-          parsed.phones = [
-            { labelEn: parsed.phoneResLabelEn || "Residential Support:", labelBn: parsed.phoneResLabelBn || "", number: parsed.phoneResNum },
-            { labelEn: parsed.phoneCorpLabelEn || "Corporate Desk:", labelBn: parsed.phoneCorpLabelBn || "", number: parsed.phoneCorpNum || "" }
-          ];
+
+    getSetting("contact_content_full").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          const parsed = item as unknown as ContactContentFull;
+          if (!parsed.phones && (parsed as unknown as Record<string, string>).phoneResNum) {
+            const legacy = parsed as unknown as Record<string, string>;
+            parsed.phones = [
+              { labelEn: legacy.phoneResLabelEn || "Residential Support:", labelBn: legacy.phoneResLabelBn || "", number: legacy.phoneResNum },
+              { labelEn: legacy.phoneCorpLabelEn || "Corporate Desk:", labelBn: legacy.phoneCorpLabelBn || "", number: legacy.phoneCorpNum || "" }
+            ];
+          }
+          setContent(parsed);
         }
-        setContent(parsed); 
-      } catch { /* ignore */ }
-    } else {
-      setSetting("contact_content_full", defaultContactContent as unknown);
-    }
+      } else {
+        setSetting("contact_content_full", defaultContactContent as unknown as Record<string, unknown>);
+      }
+    });
   }, [router]);
 
   const save = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    // Mirror En -> Bn
     const nextContent = { ...content };
     const fields = Object.keys(nextContent) as (keyof ContactContentFull)[];
     fields.forEach(key => {
@@ -115,7 +117,10 @@ export default function ContactPageAdmin() {
         labelBn: p.labelEn
       }));
     }
-    setSetting("contact_content_full", nextContent as unknown);
+    await setSetting("contact_content_full", nextContent as unknown as Record<string, unknown>);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("contact_content_full", JSON.stringify(nextContent));
+    }
     setContent(nextContent);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -147,7 +152,7 @@ export default function ContactPageAdmin() {
       </div>
 
       <div className="flex gap-4 border-b border-slate-200 pb-2">
-        {["header", "office", "phone", "email", "map & form"].map((tab) => (
+        {["office", "phone", "email", "map & form"].map((tab) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors capitalize ${activeTab === tab ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
             {tab}
@@ -156,33 +161,6 @@ export default function ContactPageAdmin() {
       </div>
 
       <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-        {activeTab === "header" && (
-          <div className="space-y-6">
-            <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Header Section</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Tag (English)</label>
-                <input type="text" value={content.tagEn} onChange={e => updateField("tagEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.titleEn} onChange={e => updateField("titleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Highlight Text (English)</label>
-                <input type="text" value={content.highlightEn} onChange={e => updateField("highlightEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={2} value={content.descEn} onChange={e => updateField("descEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              
-            </div>
-          </div>
-        )}
 
         {activeTab === "office" && (
           <div className="space-y-6">

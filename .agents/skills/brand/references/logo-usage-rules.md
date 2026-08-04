@@ -1,4 +1,4 @@
-# Logo Usage Rules
+﻿# Logo Usage Rules
 
 Guidelines for proper logo implementation across all marketing materials.
 
@@ -26,15 +26,15 @@ Guidelines for proper logo implementation across all marketing materials.
 The clear space around the logo should equal the height of the logo mark (icon portion).
 
 ```
-    ┌─────────────────────────────┐
-    │           [x]               │
-    │   ┌───────────────────┐     │
-    │   │                   │     │
-[x] │   │    [LOGO]         │ [x] │
-    │   │                   │     │
-    │   └───────────────────┘     │
-    │           [x]               │
-    └─────────────────────────────┘
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚           [x]               â”‚
+    â”‚   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”     â”‚
+    â”‚   â”‚                   â”‚     â”‚
+[x] â”‚   â”‚    [LOGO]         â”‚ [x] â”‚
+    â”‚   â”‚                   â”‚     â”‚
+    â”‚   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜     â”‚
+    â”‚           [x]               â”‚
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 Where [x] = height of logo mark
@@ -74,24 +74,24 @@ Where [x] = height of logo mark
 ## Incorrect Usage
 
 ### Absolute Don'ts
-- ❌ Stretch or compress logo
-- ❌ Rotate at angles
-- ❌ Add drop shadows
-- ❌ Apply gradient fills
-- ❌ Use unapproved colors
-- ❌ Add strokes or outlines
-- ❌ Place on busy backgrounds
-- ❌ Crop any portion
-- ❌ Rearrange elements
-- ❌ Add additional elements
+- âŒ Stretch or compress logo
+- âŒ Rotate at angles
+- âŒ Add drop shadows
+- âŒ Apply gradient fills
+- âŒ Use unapproved colors
+- âŒ Add strokes or outlines
+- âŒ Place on busy backgrounds
+- âŒ Crop any portion
+- âŒ Rearrange elements
+- âŒ Add additional elements
 
 ### Visual Examples
 ```
 WRONG: Stretched      WRONG: Rotated       WRONG: Wrong color
-┌──────────────┐      ┌────────┐          ┌────────┐
-│   L O G O    │      │  /    │          │ LOGO   │ <- wrong color
-└──────────────┘      │ /LOGO │          └────────┘
-                      └───────/
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”          â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   L O G O    â”‚      â”‚  /    â”‚          â”‚ LOGO   â”‚ <- wrong color
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â”‚ /LOGO â”‚          â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                      â””â”€â”€â”€â”€â”€â”€â”€/
 ```
 
 ## Co-branding
@@ -128,19 +128,19 @@ Option B: Stacked
 ### File Organization
 ```
 assets/logos/
-├── full-horizontal/
-│   ├── logo-full-color.svg
-│   ├── logo-full-color.png
-│   ├── logo-reversed.svg
-│   ├── logo-mono-dark.svg
-│   └── logo-mono-light.svg
-├── icon-only/
-│   ├── icon-full-color.svg
-│   ├── icon-reversed.svg
-│   └── favicon.ico
-└── monochrome/
-    ├── logo-black.svg
-    └── logo-white.svg
+â”œâ”€â”€ full-horizontal/
+â”‚   â”œâ”€â”€ logo-full-color.svg
+â”‚   â”œâ”€â”€ logo-full-color.png
+â”‚   â”œâ”€â”€ logo-reversed.svg
+â”‚   â”œâ”€â”€ logo-mono-dark.svg
+â”‚   â””â”€â”€ logo-mono-light.svg
+â”œâ”€â”€ icon-only/
+â”‚   â”œâ”€â”€ icon-full-color.svg
+â”‚   â”œâ”€â”€ icon-reversed.svg
+â”‚   â””â”€â”€ favicon.ico
+â””â”€â”€ monochrome/
+    â”œâ”€â”€ logo-black.svg
+    â””â”€â”€ logo-white.svg
 ```
 
 ## Platform-Specific Guidelines

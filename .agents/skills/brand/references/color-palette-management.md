@@ -1,4 +1,4 @@
-# Color Palette Management
+﻿# Color Palette Management
 
 Guidelines for defining, extracting, and enforcing brand colors.
 
@@ -7,23 +7,23 @@ Guidelines for defining, extracting, and enforcing brand colors.
 ### Hierarchy
 ```
 Primary Colors (1-2)
-├── Main brand color - Used for CTAs, headers, key elements
-└── Supporting primary - Secondary emphasis
+â”œâ”€â”€ Main brand color - Used for CTAs, headers, key elements
+â””â”€â”€ Supporting primary - Secondary emphasis
 
 Secondary Colors (2-3)
-├── Accent colors - Highlights, interactive states
-└── Supporting visuals - Icons, illustrations
+â”œâ”€â”€ Accent colors - Highlights, interactive states
+â””â”€â”€ Supporting visuals - Icons, illustrations
 
 Neutral Palette (3-5)
-├── Background colors - Page, card, modal backgrounds
-├── Text colors - Headings, body, muted text
-└── UI elements - Borders, dividers, shadows
+â”œâ”€â”€ Background colors - Page, card, modal backgrounds
+â”œâ”€â”€ Text colors - Headings, body, muted text
+â””â”€â”€ UI elements - Borders, dividers, shadows
 
 Semantic Colors (4)
-├── Success - #22C55E (green)
-├── Warning - #F59E0B (amber)
-├── Error - #EF4444 (red)
-└── Info - #3B82F6 (blue)
+â”œâ”€â”€ Success - #22C55E (green)
+â”œâ”€â”€ Warning - #F59E0B (amber)
+â”œâ”€â”€ Error - #EF4444 (red)
+â””â”€â”€ Info - #3B82F6 (blue)
 ```
 
 ## Color Documentation Format

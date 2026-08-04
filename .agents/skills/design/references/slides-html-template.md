@@ -1,4 +1,4 @@
-# HTML Slide Template
+﻿# HTML Slide Template
 
 Complete HTML structure with navigation, tokens, and Chart.js integration.
 
@@ -39,7 +39,7 @@ Complete HTML structure with navigation, tokens, and Chart.js integration.
 
         @media (min-width: 769px) {
             .slide-deck {
-                /* Lock to 16:9 — letterbox if viewport ratio differs */
+                /* Lock to 16:9 â€” letterbox if viewport ratio differs */
                 max-width: calc(100vh * 16 / 9);
                 max-height: calc(100vw * 9 / 16);
                 margin: auto;
@@ -66,7 +66,7 @@ Complete HTML structure with navigation, tokens, and Chart.js integration.
 
         .slide.active { opacity: 1; visibility: visible; }
 
-        /* Slide inner wrapper — constrains content within safe area */
+        /* Slide inner wrapper â€” constrains content within safe area */
         .slide-content {
             width: 100%;
             max-width: 100%;
@@ -162,9 +162,9 @@ Complete HTML structure with navigation, tokens, and Chart.js integration.
 
     <!-- Navigation -->
     <div class="nav-controls">
-        <button class="nav-btn" onclick="prevSlide()">←</button>
+        <button class="nav-btn" onclick="prevSlide()">â†</button>
         <span class="slide-counter"><span id="current">1</span> / <span id="total">9</span></span>
-        <button class="nav-btn" onclick="nextSlide()">→</button>
+        <button class="nav-btn" onclick="nextSlide()">â†’</button>
     </div>
 
     <script>

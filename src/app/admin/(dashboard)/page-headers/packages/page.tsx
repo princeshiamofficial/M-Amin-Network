@@ -14,6 +14,9 @@ export default function PackagesHeaderPage() {
   const [highlightEn, setHighlightEn] = useState("");
   const [subtitleEn, setSubtitleEn] = useState("");
 
+  const [secTitleEn, setSecTitleEn] = useState("Choose the Perfect Plan for You");
+  const [secSubtitleEn, setSecSubtitleEn] = useState("High-speed fiber optic internet packages designed for seamless streaming, buffer-free gaming, and high-performance corporate networks.");
+
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
       router.replace("/admin");
@@ -28,9 +31,18 @@ export default function PackagesHeaderPage() {
         setSubtitleEn(data.packages_subtitle_en || "");
       }
     });
+
+    getSetting("packages_content").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          const data = item as Record<string, string>;
+          if (data.titleEn) setSecTitleEn(data.titleEn);
+          if (data.subtitleEn) setSecSubtitleEn(data.subtitleEn);
+        }
+      }
+    });
   }, [router]);
-
-
 
   const save = async () => {
     const s = await getSetting("page_headers") || {};
@@ -44,8 +56,12 @@ export default function PackagesHeaderPage() {
       packages_subtitle_bn: subtitleEn,
     };
     await setSetting("page_headers", updated);
+    await setSetting("packages_content", {
+      titleEn: secTitleEn,
+      subtitleEn: secSubtitleEn,
+    });
     setSaved(true);
-    toast.success("Packages Page Header updated successfully!");
+    toast.success("Packages Page & Section Headers updated successfully!");
     setTimeout(() => setSaved(false), 3000);
   };
 
@@ -102,6 +118,38 @@ export default function PackagesHeaderPage() {
               />
             </div>
 
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-slate-100 space-y-4">
+          <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
+            Homepage Packages Section Heading
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
+                Homepage Section Title
+              </label>
+              <input
+                type="text"
+                value={secTitleEn}
+                onChange={(e) => setSecTitleEn(e.target.value)}
+                className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none transition-all font-medium"
+                placeholder="Choose the Perfect Plan for You"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">
+                Homepage Section Subtitle / Description
+              </label>
+              <textarea
+                rows={2}
+                value={secSubtitleEn}
+                onChange={(e) => setSecSubtitleEn(e.target.value)}
+                className="w-full bg-[#f8fafc] border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-800 focus:bg-white focus:border-orange-500 outline-none resize-none font-sans transition-all font-medium"
+                placeholder="Enter section description..."
+              />
+            </div>
           </div>
         </div>
 

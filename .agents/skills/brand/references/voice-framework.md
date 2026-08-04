@@ -1,4 +1,4 @@
-# Brand Voice Framework
+﻿# Brand Voice Framework
 
 ## Voice vs. Tone
 
@@ -11,25 +11,25 @@ Example: A friendly brand (voice) might be celebratory in a win announcement but
 
 ### Tone Spectrum
 ```
-Formal ←――――――――――――――→ Casual
+Formal â†â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â†’ Casual
 [Legal docs]     [Social media]
 ```
 
 ### Language Spectrum
 ```
-Simple ←――――――――――――――→ Complex
+Simple â†â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â†’ Complex
 [Consumer]       [Technical B2B]
 ```
 
 ### Character Spectrum
 ```
-Serious ←――――――――――――――→ Playful
+Serious â†â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â†’ Playful
 [Finance]        [Entertainment]
 ```
 
 ### Emotion Spectrum
 ```
-Reserved ←――――――――――――――→ Expressive
+Reserved â†â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â€•â†’ Expressive
 [Corporate]      [Lifestyle brand]
 ```
 

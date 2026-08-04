@@ -102,17 +102,34 @@ export default function About() {
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
   const [content, setContent] = useState<AboutContentFull>(defaultContent);
+  const [bgUrl, setBgUrl] = useState("/About.jpg");
 
   useEffect(() => {
+    getSetting("page_headers").then((ph) => {
+      if (ph) {
+        const data = ph as Record<string, string>;
+        if (data.about_bg) setBgUrl(data.about_bg);
+        setContent(prev => ({
+          ...prev,
+          headerTitleEn: data.about_title_en || prev.headerTitleEn,
+          highlightEn: data.about_title_highlight_en || (prev as unknown as Record<string, string>).highlightEn || "M Amin Network",
+          headerDescEn: data.about_subtitle_en || prev.headerDescEn,
+        }));
+      }
+    });
+
     getSetting("about_content_full").then(saved => {
       if (saved) {
         const merged = { ...defaultContent, ...(saved as unknown as Partial<AboutContentFull>) };
-        // Ensure array fields always have valid arrays
         if (!Array.isArray(merged.credentials)) merged.credentials = defaultContent.credentials;
         if (!Array.isArray(merged.infraCards)) merged.infraCards = defaultContent.infraCards;
-        setContent(merged);
-      } else {
-        setContent(defaultContent);
+        const record = saved as unknown as Record<string, string>;
+        setContent(prev => ({
+          ...merged,
+          headerTitleEn: record.headerTitleEn || prev.headerTitleEn,
+          highlightEn: record.highlightEn || (prev as unknown as Record<string, string>).highlightEn || "M Amin Network",
+          headerDescEn: record.headerDescEn || prev.headerDescEn,
+        }));
       }
     });
   }, []);
@@ -123,7 +140,7 @@ export default function About() {
       <div 
         className="relative w-full overflow-hidden bg-slate-950 py-3 sm:py-6 border-b border-white/5 bg-cover bg-center"
         style={{
-          backgroundImage: 'linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("/About.jpg")'
+          backgroundImage: `linear-gradient(to bottom, rgba(9, 13, 24, 0.45), rgba(9, 13, 24, 0.75)), url("${bgUrl}")`
         }}
       >
         <div className="absolute inset-0 bg-brand-dark/20 mix-blend-multiply pointer-events-none" />
@@ -134,7 +151,7 @@ export default function About() {
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
               {t(content.headerTitleEn, content.headerTitleEn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {"M Amin Network"}
+                {t((content as unknown as Record<string, string>).highlightEn || "M Amin Network", (content as unknown as Record<string, string>).highlightEn || "M Amin Network")}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">

@@ -20,22 +20,11 @@ const OBJECT_KEYS = [
   "contact_content",
   "complaint_content_guidelines",
   "topbar_content",
-  "system_config",
-  "admin_auth",
-  "site_content",
-  "site_logo",
-  "hero_typography",
-  "offers_page_content",
-  "footer_content",
-  "bill_payment_page_content",
-  "support_page_content",
-  "portal_page_content",
-  "about_content",
-  "contact_content",
-  "complaint_content_guidelines",
-  "topbar_content",
   "page_headers",
-  "why_choose_content"
+  "why_choose_content",
+  "testimonials_content",
+  "packages_content",
+  "contact_content_full"
 ];
 
 function isObjectKey(key: string): boolean {

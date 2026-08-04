@@ -27,14 +27,28 @@ import {
   Star,
   Pencil,
   Trash2,
-  MoreVertical
+  MoreVertical,
+  FolderKanban,
+  FolderPlus,
+  X
 } from "lucide-react";
+
+export interface PackageCategory {
+  id: string;
+  name: string;
+}
+
+export const defaultCategories: PackageCategory[] = [
+  { id: "home", name: "Home Internet" },
+  { id: "gaming", name: "Gamer Packs" },
+  { id: "corporate", name: "Corporate Dedicated" },
+];
 
 interface Plan {
   speed: string;
   price: number;
   name: string;
-  category: "home" | "gaming" | "corporate";
+  category: string;
   tagline: string;
   popular?: boolean;
   features: string[];
@@ -182,30 +196,48 @@ export default function AdminPackagesPage() {
   const allowEdit = canEdit("/admin/packages");
   const allowDelete = canDelete("/admin/packages");
 
+  // Category state
+  const [categories, setCategories] = useState<PackageCategory[]>(defaultCategories);
+  const [isCatModalOpen, setIsCatModalOpen] = useState(false);
+  const [editingCat, setEditingCat] = useState<PackageCategory | null>(null);
+  const [catNameInput, setCatNameInput] = useState("");
+
   // Package state
   const [packages, setPackages] = useState<Plan[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Modal forms state
+  // Package modal forms state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanName, setEditingPlanName] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     speed: "",
     price: "",
-    category: "home" as "home" | "gaming" | "corporate",
+    category: "home",
     tagline: "",
     features: "",
     popular: false,
   });
 
+  const loadCategories = React.useCallback(() => {
+    if (typeof window === "undefined") return;
+    getSetting("package_categories").then(saved => {
+      if (Array.isArray(saved) && saved.length > 0) {
+        setCategories(saved as PackageCategory[]);
+      } else {
+        setSetting("package_categories", defaultCategories as unknown as Record<string, unknown>[]);
+        setCategories(defaultCategories);
+      }
+    });
+  }, []);
+
   const loadPackages = React.useCallback(() => {
     if (typeof window === "undefined") return;
     getSetting("packages_list").then(saved => {
       if (saved) {
-        setPackages(saved as any);
+        setPackages(saved as unknown as Plan[]);
       } else {
-        setSetting("packages_list", defaultPackages as any);
+        setSetting("packages_list", defaultPackages as unknown as Record<string, unknown>[]);
         setPackages(defaultPackages);
       }
     });
@@ -220,19 +252,22 @@ export default function AdminPackagesPage() {
           router.push("/admin");
         } else {
           setIsAuthenticated(true);
+          loadCategories();
           loadPackages();
         }
       }
     }, 0);
 
     return () => clearTimeout(timeout);
-  }, [router, loadPackages]);
+  }, [router, loadPackages, loadCategories]);
 
   // Listen to database reset event triggered from the parent layout
   useEffect(() => {
     const handleReset = async () => {
       if (typeof window !== "undefined") {
-        setSetting("packages_list", defaultPackages as any);
+        setSetting("package_categories", defaultCategories as unknown as Record<string, unknown>[]);
+        setCategories(defaultCategories);
+        setSetting("packages_list", defaultPackages as unknown as Record<string, unknown>[]);
         setPackages(defaultPackages);
       }
     };
@@ -240,13 +275,81 @@ export default function AdminPackagesPage() {
     return () => window.removeEventListener("reset_db", handleReset);
   }, []);
 
+  // Category handlers
+  const handleOpenAddCategoryModal = () => {
+    setEditingCat(null);
+    setCatNameInput("");
+    setIsCatModalOpen(true);
+  };
+
+  const handleOpenEditCategoryModal = (cat: PackageCategory) => {
+    setEditingCat(cat);
+    setCatNameInput(cat.name);
+    setIsCatModalOpen(true);
+  };
+
+  const handleSaveCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = catNameInput.trim();
+    if (!trimmed) {
+      toast("Category name cannot be empty.");
+      return;
+    }
+
+    let updated: PackageCategory[];
+    if (editingCat) {
+      updated = categories.map((c) => (c.id === editingCat.id ? { ...c, name: trimmed } : c));
+      toast(`Category "${trimmed}" updated successfully!`);
+    } else {
+      const generatedId = trimmed
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      const finalId = generatedId || `cat-${Date.now()}`;
+
+      if (categories.some((c) => c.id === finalId)) {
+        toast("A category with this name already exists!");
+        return;
+      }
+      updated = [...categories, { id: finalId, name: trimmed }];
+      toast(`New category "${trimmed}" added successfully!`);
+    }
+
+    setCategories(updated);
+    setSetting("package_categories", updated as unknown as Record<string, unknown>[]);
+    setIsCatModalOpen(false);
+    setCatNameInput("");
+    setEditingCat(null);
+  };
+
+  const handleDeleteCategory = async (cat: PackageCategory) => {
+    if (categories.length <= 1) {
+      toast("At least one category is required.");
+      return;
+    }
+
+    const confirmText = `Are you sure you want to delete category "${cat.name}"? Packages in this category will be moved to default category.`;
+    if (await confirmAction(confirmText)) {
+      const fallbackId = categories.find((c) => c.id !== cat.id)?.id || "home";
+      const updatedCats = categories.filter((c) => c.id !== cat.id);
+      const updatedPkgs = packages.map((p) => (p.category === cat.id ? { ...p, category: fallbackId } : p));
+
+      setCategories(updatedCats);
+      setPackages(updatedPkgs);
+      setSetting("package_categories", updatedCats as unknown as Record<string, unknown>[]);
+      setSetting("packages_list", updatedPkgs as unknown as Record<string, unknown>[]);
+      toast(`Category "${cat.name}" deleted successfully.`);
+    }
+  };
+
+  // Package handlers
   const handleOpenAddModal = () => {
     setEditingPlanName(null);
     setFormData({
       name: "",
       speed: "",
       price: "",
-      category: "home",
+      category: categories[0]?.id || "home",
       tagline: "",
       features: "",
       popular: false,
@@ -294,7 +397,7 @@ export default function AdminPackagesPage() {
     }
 
     setPackages(updated);
-    setSetting("packages_list", updated as any);
+    setSetting("packages_list", updated as unknown as Record<string, unknown>[]);
     setIsModalOpen(false);
     toast(editingPlanName ? "Package updated successfully!" : "New package created successfully!");
   };
@@ -303,7 +406,7 @@ export default function AdminPackagesPage() {
     if (await confirmAction(`Are you sure you want to delete package "${name}"?`)) {
       const updated = packages.filter((p) => p.name !== name);
       setPackages(updated);
-      setSetting("packages_list", updated as any);
+      setSetting("packages_list", updated as unknown as Record<string, unknown>[]);
     }
   };
 
@@ -321,7 +424,7 @@ export default function AdminPackagesPage() {
       return pkg;
     });
     setPackages(updated);
-    setSetting("packages_list", updated as any);
+    setSetting("packages_list", updated as unknown as Record<string, unknown>[]);
   };
 
   if (!mounted || !isAuthenticated) {
@@ -337,6 +440,61 @@ export default function AdminPackagesPage() {
 
   return (
     <div className="w-full space-y-6">
+      {/* Category Management Bar */}
+      <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div className="flex items-center gap-2">
+            <FolderKanban className="w-4 h-4 text-brand-blue" />
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">Package Categories ({categories.length})</h3>
+          </div>
+          {allowAdd && (
+            <button
+              type="button"
+              onClick={handleOpenAddCategoryModal}
+              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5"
+            >
+              <FolderPlus className="w-3.5 h-3.5 text-brand-blue" />
+              <span>Add Category</span>
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-2 pt-1">
+          {categories.map((cat) => (
+            <div
+              key={cat.id}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 font-bold"
+            >
+              <span>{cat.name}</span>
+              {(allowEdit || allowDelete) && (
+                <div className="flex items-center gap-1 ml-1 border-l border-slate-200 pl-1.5">
+                  {allowEdit && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditCategoryModal(cat)}
+                      className="p-1 text-slate-500 hover:text-brand-blue transition-colors cursor-pointer"
+                      title="Edit Category"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  )}
+                  {allowDelete && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(cat)}
+                      className="p-1 text-slate-500 hover:text-red-500 transition-colors cursor-pointer"
+                      title="Delete Category"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 space-y-6">
         {/* Filters and search + Add button */}
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
@@ -383,95 +541,142 @@ export default function AdminPackagesPage() {
               ) : (
                 [...packages]
                   .reverse()
-                  .filter((p) =>
-                    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((p) => (
-                    <TableRow key={p.name}>
-                      <TableCell className="font-extrabold text-slate-900">{p.name}</TableCell>
-                      <TableCell className="font-semibold text-slate-900">
-                        <span className="bg-blue-50/70 text-brand-blue border border-blue-100/50 rounded-lg px-2.5 py-1 font-bold inline-flex items-center gap-1">
-                          <Zap className="w-3 h-3 fill-blue-500 text-blue-500" />
-                          {p.speed}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-extrabold text-[13px] text-emerald-650">৳{p.price} BDT</TableCell>
-                      <TableCell>
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                          p.category === "home"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                            : p.category === "gaming"
-                            ? "bg-violet-50 text-violet-700 border-violet-100"
-                            : "bg-blue-50 text-blue-700 border-blue-100"
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            p.category === "home"
-                              ? "bg-emerald-500"
-                              : p.category === "gaming"
-                              ? "bg-violet-500"
-                              : "bg-blue-500"
-                          }`} />
-                          <span className="capitalize">{p.category}</span>
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-slate-500 max-w-xs truncate">{p.tagline}</TableCell>
-                      <TableCell>
-                        <button
-                          type="button"
-                          disabled={!allowEdit}
-                          onClick={() => handleTogglePopular(p.name)}
-                          title={p.popular ? "Click to set as Standard" : "Click to set as Popular"}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer hover:scale-105 active:scale-95 ${
-                            p.popular
-                              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 shadow-xs"
-                              : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
-                          }`}
-                        >
-                          <Star className={`w-3 h-3 ${p.popular ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
-                          <span>{p.popular ? "Popular" : "Standard"}</span>
-                        </button>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {(allowEdit || allowDelete) && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
-                                <MoreVertical className="w-4 h-4" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
-                              {allowEdit && (
-                                <DropdownMenuItem
-                                  onClick={() => handleOpenEditModal(p)}
-                                  className="px-3 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
-                                >
-                                  <Pencil className="w-3.5 h-3.5" />
-                                  <span>Edit Plan</span>
-                                </DropdownMenuItem>
-                              )}
-                              {allowDelete && (
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(p.name)}
-                                  className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                  <span>Delete</span>
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  .filter((p) => {
+                    const catObj = categories.find((c) => c.id === p.category);
+                    const catName = catObj ? catObj.name : p.category;
+                    return (
+                      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      catName.toLowerCase().includes(searchTerm.toLowerCase())
+                    );
+                  })
+                  .map((p) => {
+                    const catObj = categories.find((c) => c.id === p.category);
+                    const catDisplayName = catObj ? catObj.name : p.category;
+
+                    return (
+                      <TableRow key={p.name}>
+                        <TableCell className="font-extrabold text-slate-900">{p.name}</TableCell>
+                        <TableCell className="font-semibold text-slate-900">
+                          <span className="bg-blue-50/70 text-brand-blue border border-blue-100/50 rounded-lg px-2.5 py-1 font-bold inline-flex items-center gap-1">
+                            <Zap className="w-3 h-3 fill-blue-500 text-blue-500" />
+                            {p.speed}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-extrabold text-[13px] text-emerald-650">৳{p.price} BDT</TableCell>
+                        <TableCell>
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border bg-blue-50 text-blue-700 border-blue-100">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span>{catDisplayName}</span>
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-slate-500 max-w-xs truncate">{p.tagline}</TableCell>
+                        <TableCell>
+                          <button
+                            type="button"
+                            disabled={!allowEdit}
+                            onClick={() => handleTogglePopular(p.name)}
+                            title={p.popular ? "Click to set as Standard" : "Click to set as Popular"}
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+                              p.popular
+                                ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 shadow-xs"
+                                : "bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:text-slate-700"
+                            }`}
+                          >
+                            <Star className={`w-3 h-3 ${p.popular ? "fill-amber-500 text-amber-500" : "text-slate-400"}`} />
+                            <span>{p.popular ? "Popular" : "Standard"}</span>
+                          </button>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {(allowEdit || allowDelete) && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="inline-flex items-center justify-center p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-colors cursor-pointer outline-none">
+                                  <MoreVertical className="w-4 h-4" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200 rounded-xl shadow-xl py-1">
+                                {allowEdit && (
+                                  <DropdownMenuItem
+                                    onClick={() => handleOpenEditModal(p)}
+                                    className="px-3 py-2 text-xs font-bold text-brand-blue hover:bg-slate-50 cursor-pointer flex items-center gap-2"
+                                  >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                    <span>Edit Plan</span>
+                                  </DropdownMenuItem>
+                                )}
+                                {allowDelete && (
+                                  <DropdownMenuItem
+                                    onClick={() => handleDelete(p.name)}
+                                    className="px-3 py-2 text-xs font-bold text-red-650 hover:bg-red-50 cursor-pointer flex items-center gap-2"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <span>Delete</span>
+                                  </DropdownMenuItem>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
               )}
             </TableBody>
           </Table>
         </div>
       </div>
 
-      {/* Add / Edit Modal Overlay */}
+      {/* Add / Edit Category Modal */}
+      {isCatModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 relative">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <h3 className="text-slate-900 font-extrabold text-sm uppercase tracking-wider">
+                {editingCat ? "Edit Category Name" : "Add Package Category"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsCatModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCategory} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-slate-700 font-bold text-xs block">Category Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Gamer Packs"
+                  value={catNameInput}
+                  onChange={(e) => setCatNameInput(e.target.value)}
+                  className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsCatModalOpen(false)}
+                  className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-brand-blue text-white font-bold rounded-xl text-xs hover:opacity-95 cursor-pointer shadow-md"
+                >
+                  {editingCat ? "Save Category" : "Add Category"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Package Modal Overlay */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl max-w-md w-full p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
@@ -523,12 +728,14 @@ export default function AdminPackagesPage() {
                   <label className="text-slate-700 font-bold block">Plan Category</label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value as "home" | "gaming" | "corporate" })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:outline-none focus:border-brand-blue cursor-pointer"
                   >
-                    <option value="home">Home Broadband</option>
-                    <option value="gaming">Gaming Optimized</option>
-                    <option value="corporate">Corporate Splice</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -592,4 +799,3 @@ export default function AdminPackagesPage() {
     </div>
   );
 }
-

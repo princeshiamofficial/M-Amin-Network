@@ -14,7 +14,8 @@ import {
   Plus,
   Trash2,
   Menu,
-  Upload
+  Upload,
+  ShieldCheck
 } from "lucide-react";
 
 interface FooterContent {
@@ -26,6 +27,8 @@ interface FooterContent {
   addressEn: string;
   addressBn?: string;
   email: string;
+  aboutText?: string;
+  affiliationText?: string;
 }
 
 interface TopbarContent {
@@ -76,6 +79,8 @@ const defaultFooterContent: FooterContent = {
   linkedin: "https://linkedin.com/company/maminnetwork",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
   email: "info@m-aminnetwork.com",
+  aboutText: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+  affiliationText: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
 };
 
 const defaultNavLinks: { nameEn: string; nameBn?: string; href: string }[] = [
@@ -97,8 +102,7 @@ const defaultTopbarContent: TopbarContent = {
 };
 
 const defaultBadges: AffiliationBadge[] = [
-  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" },
-  { textEn: "AS150164 BGP NETWORK", isCyan: true }
+  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" }
 ];
 
 const defaultLicenses: LicenseBadge[] = [
@@ -154,6 +158,8 @@ function normalizeFooterContent(value: unknown): FooterContent {
     addressEn: textValue(record.addressEn, defaultFooterContent.addressEn),
     addressBn: textValue(record.addressBn ?? "", defaultFooterContent.addressBn ?? ""),
     email: textValue(record.email, defaultFooterContent.email),
+    aboutText: textValue(record.aboutText, defaultFooterContent.aboutText ?? ""),
+    affiliationText: textValue(record.affiliationText, defaultFooterContent.affiliationText ?? ""),
   };
 }
 
@@ -350,6 +356,7 @@ export default function TopbarFooterPage() {
               email: footerContent.email,
               addressEn: footerContent.addressEn,
               addressBn: footerContent.addressBn ?? "",
+              aboutText: footerContent.aboutText,
             }),
             setSetting("footer_phones", serializePhoneList(normalizedPhones)),
           ]);
@@ -357,6 +364,9 @@ export default function TopbarFooterPage() {
         case "affiliations":
           results = await Promise.all([
             setSetting("footer_badges", badges.map(normalizeAffiliationBadge)),
+            saveFooterContentPatch({
+              affiliationText: footerContent.affiliationText,
+            }),
           ]);
           break;
         case "social-link":
@@ -510,17 +520,17 @@ export default function TopbarFooterPage() {
   const addNewLicense = (e: React.FormEvent) => {
     e.preventDefault();
     const image = newLicense.image?.trim() ? newLicense.image.trim() : undefined;
-    if (!image && (!newLicense.textEn.trim() || false)) {
-      toast("Please fill in the English text field.");
+    if (!image) {
+      toast("Please choose a license badge image.");
       return;
     }
     setLicenses([
       ...licenses,
       {
-        textEn: newLicense.textEn.trim() || imageBadgeFallbackText,
-      textBn: newLicense.textEn.trim() || imageBadgeFallbackText,
-        isMono: newLicense.isMono,
-        colorStyle: newLicense.colorStyle,
+        textEn: imageBadgeFallbackText,
+        textBn: imageBadgeFallbackText,
+        isMono: false,
+        colorStyle: "cyan",
         image,
       },
     ]);
@@ -530,11 +540,7 @@ export default function TopbarFooterPage() {
   if (!auth) return null;
 
   return (
-    <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 space-y-6">
-      <div>
-        <h2 className="text-lg font-extrabold text-slate-900">Header &amp; Footer Global CMS Settings</h2>
-        <p className="text-xs text-slate-500 mt-1">Configure layout badges, contacts, social presence, header navigation, and copyright variables dynamically.</p>
-      </div>
+    <div className="space-y-6 animate-fade-in">
 
       {/* Tabs list (Consolidated to only 6 tabs as requested) */}
       <div className="flex border-b border-slate-100 pb-px gap-6 overflow-x-auto select-none">
@@ -600,218 +606,80 @@ export default function TopbarFooterPage() {
         {/* Tab 2: Brand License */}
         {activeSection === "brand-license" && (
           <div className="space-y-6 w-full animate-fade-in">
-            
-            {/* Section A: Brand & Badges */}
-            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
+            {/* Section B: Brand License Badges */}
+            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-6 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
-                <Info className="w-4 h-4 text-brand-blue" /> Brand License/Status Badges
+                <ShieldCheck className="w-4 h-4 text-brand-blue" /> Brand License Badges
               </h3>
 
-              <div className="space-y-4 pt-4">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-800 block">Brand License/Status Badges List</span>
-                
-                {/* Licenses Editor Table */}
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
-                        <th className="px-4 py-3 w-16 text-center">Order</th>
-                        <th className="px-4 py-3">English Label</th>
-                        <th className="px-4 py-3 w-48">Badge Image</th>
-                        <th className="px-4 py-3 w-28 text-center">Mono Font</th>
-                        <th className="px-4 py-3 w-32 text-center">Color Style</th>
-                        <th className="px-4 py-3 w-20 text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-150">
-                      {licenses.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="py-8 text-center text-slate-400 font-semibold">No status badges configured. Add one below.</td>
-                        </tr>
-                      ) : (
-                        licenses.map((lic, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/50">
-                            {/* Order */}
-                            <td className="px-4 py-2 text-center flex items-center justify-center gap-1.5 mt-0.5">
-                              <button
-                                type="button"
-                                onClick={() => moveLicenseUp(idx)}
-                                disabled={idx === 0}
-                                className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                                  idx === 0 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                                }`}
-                                title="Move Up"
-                              >
-                                <ArrowUp className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => moveLicenseDown(idx)}
-                                disabled={idx === licenses.length - 1}
-                                className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                                  idx === licenses.length - 1 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                                }`}
-                                title="Move Down"
-                              >
-                                <ArrowDown className="w-3.5 h-3.5" />
-                              </button>
-                            </td>
-
-                            {/* English Label */}
-                            <td className="px-4 py-2">
-                              {lic.image ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                  Image badge
-                                </span>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={lic.textEn}
-                                  onChange={(e) => handleLicenseFieldChange(idx, "textEn", e.target.value)}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                  required
-                                />
-                              )}
-                            </td>{/* Badge Image Upload & Preview */}
-                            <td className="px-4 py-2">
-                              <div className="flex items-center gap-3">
-                                {/* Thumbnail Preview */}
-                                <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
-                                  {lic.image ? (
-                                    <Image
-                                      src={lic.image}
-                                      alt="License badge preview"
-                                      width={64}
-                                      height={48}
-                                      className="max-w-full max-h-full object-contain p-1"
-                                    />
-                                  ) : (
-                                    <span className="text-[9px] text-slate-400 font-bold">No Image</span>
-                                  )}
-                                </div>
-
-                                {/* Controls */}
-                                <div className="flex flex-col gap-1">
-                                  <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 px-2.5 py-1 rounded transition-colors text-center select-none shadow-xs">
-                                    {lic.image ? "Change" : "Upload"}
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      className="hidden"
-                                      onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                          if (file.size > 500 * 1024) {
-                                            toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
-                                            return;
-                                          }
-                                          const reader = new FileReader();
-                                          reader.onload = (event) => {
-                                            const base64 = event.target?.result as string;
-                                            handleLicenseFieldChange(idx, "image", base64);
-                                          };
-                                          reader.readAsDataURL(file);
-                                        }
-                                      }}
-                                    />
-                                  </label>
-                                  {lic.image && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleLicenseFieldChange(idx, "image", "")}
-                                      className="text-[9px] text-red-500 hover:text-red-755 font-bold transition-colors text-center cursor-pointer"
-                                    >
-                                      Clear
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </td>
-
-                            {/* Mono Font Checkbox */}
-                            <td className="px-4 py-2 text-center">
-                              <input
-                                type="checkbox"
-                                checked={lic.isMono}
-                                onChange={(e) => handleLicenseFieldChange(idx, "isMono", e.target.checked)}
-                                className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue cursor-pointer"
-                              />
-                            </td>
-
-                            {/* Color Style Selector */}
-                            <td className="px-4 py-2 text-center">
-                              <select
-                                value={lic.colorStyle}
-                                onChange={(e) => handleLicenseFieldChange(idx, "colorStyle", e.target.value)}
-                                className="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue cursor-pointer w-full"
-                              >
-                                <option value="cyan">Cyan accent</option>
-                                <option value="emerald">Emerald highlight</option>
-                                <option value="slate">Slate gray</option>
-                              </select>
-                            </td>
-
-                            {/* Delete */}
-                            <td className="px-4 py-2 text-center">
-                              <button
-                                type="button"
-                                onClick={() => deleteLicense(idx)}
-                                className="p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg cursor-pointer"
-                                title="Delete Badge"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800">Brand Licenses</span>
+                  <span className="text-xs text-slate-400 font-semibold">{licenses.length} License{licenses.length === 1 ? "" : "s"}</span>
                 </div>
+                
+                {/* Licenses Grid Cards */}
+                {licenses.length === 0 ? (
+                  <div className="py-8 text-center text-slate-400 font-semibold bg-white border border-slate-200 rounded-xl">
+                    No status badges configured. Add one below.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {licenses.map((lic, idx) => (
+                      <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3 relative group hover:border-slate-300 transition-all">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">License #{idx + 1}</span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveLicenseUp(idx)}
+                              disabled={idx === 0}
+                              className={`p-1 rounded-lg border border-slate-100 transition-colors ${
+                                idx === 0 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
+                              }`}
+                              title="Move Left/Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveLicenseDown(idx)}
+                              disabled={idx === licenses.length - 1}
+                              className={`p-1 rounded-lg border border-slate-100 transition-colors ${
+                                idx === licenses.length - 1 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
+                              }`}
+                              title="Move Right/Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteLicense(idx)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                              title="Delete License"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
 
-                {/* Quick Add License Badge */}
-                <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-3">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
-                    <Plus className="w-4 h-4 text-brand-blue" /> Add License/Status Badge
-                  </span>
-                  <div className={newLicense.image ? "grid grid-cols-1 md:grid-cols-3 gap-4 items-center" : "grid grid-cols-1 md:grid-cols-5 gap-4 items-center"}>
-                    {!newLicense.image && (
-                      <>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">English Text</label>
-                      <input
-                        type="text"
-                        value={newLicense.textEn}
-                        onChange={(e) => setNewLicense({ ...newLicense, textEn: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        placeholder="e.g. BTRC Licensed"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                    </div>
-                      </>
-                    )}
-                    
-                    {/* Badge Image Upload & Preview */}
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">Badge Image</label>
-                      <div className="flex items-center gap-3 mt-1.5">
-                        <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
-                          {newLicense.image ? (
+                        <div className="flex items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100 min-h-[70px]">
+                          {lic.image ? (
                             <Image
-                              src={newLicense.image}
+                              src={lic.image}
                               alt="License preview"
-                              width={64}
-                              height={48}
-                              className="max-w-full max-h-full object-contain p-1"
+                              width={120}
+                              height={50}
+                              className="max-h-12 w-auto object-contain"
                             />
                           ) : (
-                            <span className="text-[9px] text-slate-400 font-bold">No Image</span>
+                            <span className="text-xs text-slate-400 font-bold">No Image</span>
                           )}
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 px-2.5 py-1 rounded transition-colors text-center select-none shadow-xs">
-                            {newLicense.image ? "Change" : "Upload"}
+
+                        <div className="flex items-center gap-2 pt-1">
+                          <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 px-3 py-1.5 rounded-lg transition-colors text-center select-none shadow-xs w-full">
+                            {lic.image ? "Change Image" : "Upload Image"}
                             <input
                               type="file"
                               accept="image/*"
@@ -826,56 +694,87 @@ export default function TopbarFooterPage() {
                                   const reader = new FileReader();
                                   reader.onload = (event) => {
                                     const base64 = event.target?.result as string;
-                                    setNewLicense({ ...newLicense, image: base64 });
+                                    handleLicenseFieldChange(idx, "image", base64);
                                   };
                                   reader.readAsDataURL(file);
                                 }
                               }}
                             />
                           </label>
-                          {newLicense.image && (
+                          {lic.image && (
                             <button
                               type="button"
-                              onClick={() => setNewLicense({ ...newLicense, image: "" })}
-                              className="text-[9px] text-red-500 hover:text-red-755 font-bold transition-colors text-center cursor-pointer"
+                              onClick={() => handleLicenseFieldChange(idx, "image", "")}
+                              className="p-1.5 text-xs text-red-500 hover:bg-red-50 font-bold rounded-lg transition-colors cursor-pointer shrink-0"
+                              title="Clear Image"
                             >
                               Clear
                             </button>
                           )}
                         </div>
                       </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">Color Theme</label>
-                      <select
-                        value={newLicense.colorStyle}
-                        onChange={(e) => setNewLicense({ ...newLicense, colorStyle: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue cursor-pointer"
-                      >
-                        <option value="cyan">Cyan accent</option>
-                        <option value="emerald">Emerald highlight</option>
-                        <option value="slate">Slate gray</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2 pt-5 md:pt-4">
-                      <input
-                        type="checkbox"
-                        id="newLicenseMono"
-                        checked={newLicense.isMono}
-                        onChange={(e) => setNewLicense({ ...newLicense, isMono: e.target.checked })}
-                        className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue cursor-pointer"
-                      />
-                      <label htmlFor="newLicenseMono" className="text-xs font-bold text-slate-655 cursor-pointer select-none">Mono font style</label>
-                    </div>
+                    ))}
                   </div>
-                  <button
-                    type="button"
-                    onClick={addNewLicense}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-[10px] uppercase tracking-wider transition-all cursor-pointer select-none active:scale-[0.97] shadow-xs"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Append Badge
-                  </button>
+                )}
+              </div>
+
+              {/* Add License Card */}
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-4 shadow-xs">
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider border-b border-slate-100 pb-2">
+                  <Plus className="w-4 h-4 text-brand-blue" /> Add New Brand License
+                </span>
+                
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  {/* Thumbnail Preview */}
+                  <div className="w-24 h-16 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+                    {newLicense.image ? (
+                      <Image
+                        src={newLicense.image}
+                        alt="License preview"
+                        width={96}
+                        height={64}
+                        className="max-w-full max-h-full object-contain p-1"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-bold">No Image Selected</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm select-none">
+                      {newLicense.image ? "Change Image" : "Choose Image"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 500 * 1024) {
+                              toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const base64 = event.target?.result as string;
+                              setNewLicense({ ...newLicense, image: base64 });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    {newLicense.image && (
+                      <button
+                        type="button"
+                        onClick={addNewLicense}
+                        className="px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-sm"
+                      >
+                        + Append License
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -960,6 +859,16 @@ export default function TopbarFooterPage() {
                     required
                   />
                 </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 block">Footer Company Description (About Text)</label>
+                  <textarea
+                    value={footerContent.aboutText ?? ""}
+                    onChange={(e) => setFooterContent({ ...footerContent, aboutText: e.target.value })}
+                    className="min-h-24 w-full resize-y bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-brand-blue leading-relaxed"
+                    placeholder="Top-tier Internet Service Provider (ISP) in South Keraniganj..."
+                    required
+                  />
+                </div>
               </div>
             </div>
             {renderSectionSaveButton("contact-info")}
@@ -969,205 +878,91 @@ export default function TopbarFooterPage() {
         {/* Tab 4: Affiliations */}
         {activeSection === "affiliations" && (
           <div className="space-y-6 w-full animate-fade-in">
-
             {/* Section D: Affiliations & Membership */}
-            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-4 shadow-xs">
+            <div className="p-5 border border-slate-200 rounded-2xl bg-slate-50/30 space-y-6 shadow-xs">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 pb-2 border-b border-slate-100 flex items-center gap-1.5">
                 <Building className="w-4 h-4 text-brand-blue" /> Our Affiliations
               </h3>
 
-              <div className="space-y-4 pt-4">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-800 block">Affiliation Badges List</span>
-                
-                {/* Badges Editor Table */}
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold">
-                        <th className="px-4 py-3 w-16 text-center">Order</th>
-                        <th className="px-4 py-3">English Label (Fallback)</th>
-                        <th className="px-4 py-3 w-48">Badge Image</th>
-                        <th className="px-4 py-3 w-28 text-center">Cyan Accent</th>
-                        <th className="px-4 py-3 w-20 text-center">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-150">
-                      {badges.length === 0 ? (
-                        <tr>
-                          <td colSpan={6} className="py-8 text-center text-slate-400 font-semibold">No badges configured. Add one below.</td>
-                        </tr>
-                      ) : (
-                        badges.map((badge, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/50">
-                            {/* Order */}
-                            <td className="px-4 py-2 text-center flex items-center justify-center gap-1.5 mt-0.5">
-                              <button
-                                type="button"
-                                onClick={() => moveBadgeUp(idx)}
-                                disabled={idx === 0}
-                                className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                                  idx === 0 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                                }`}
-                                title="Move Up"
-                              >
-                                <ArrowUp className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => moveBadgeDown(idx)}
-                                disabled={idx === badges.length - 1}
-                                className={`p-1.5 rounded-lg border border-slate-100 transition-colors shadow-xs ${
-                                  idx === badges.length - 1 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
-                                }`}
-                                title="Move Down"
-                              >
-                                <ArrowDown className="w-3.5 h-3.5" />
-                              </button>
-                            </td>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-700 block">Affiliation Description Text</label>
+                <textarea
+                  value={footerContent.affiliationText ?? ""}
+                  onChange={(e) => setFooterContent({ ...footerContent, affiliationText: e.target.value })}
+                  className="min-h-20 w-full resize-y bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-brand-blue leading-relaxed"
+                  placeholder="We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB)."
+                  required
+                />
+              </div>
 
-                            {/* English Label */}
-                            <td className="px-4 py-2">
-                              {badge.image ? (
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                  Image badge
-                                </span>
-                              ) : (
-                                <input
-                                  type="text"
-                                  value={badge.textEn}
-                                  onChange={(e) => handleBadgeFieldChange(idx, "textEn", e.target.value)}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                                  required
-                                />
-                              )}
-                            </td>
-
-                            {/* Image Preview & Upload (No raw text input box) */}
-                            <td className="px-4 py-2">
-                              <div className="flex items-center gap-3">
-                                {/* Thumbnail Preview */}
-                                <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
-                                  {badge.image ? (
-                                    <Image
-                                      src={badge.image}
-                                      alt="Badge preview"
-                                      width={64}
-                                      height={48}
-                                      className="max-w-full max-h-full object-contain p-1"
-                                    />
-                                  ) : (
-                                    <span className="text-[9px] text-slate-400 font-bold">No Image</span>
-                                  )}
-                                </div>
-
-                                {/* Controls */}
-                                <div className="flex flex-col gap-1">
-                                  <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 px-2.5 py-1 rounded transition-colors text-center select-none shadow-xs">
-                                    {badge.image ? "Change" : "Upload"}
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      className="hidden"
-                                      onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                          if (file.size > 500 * 1024) {
-                                            toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
-                                            return;
-                                          }
-                                          const reader = new FileReader();
-                                          reader.onload = (event) => {
-                                            const base64 = event.target?.result as string;
-                                            handleBadgeFieldChange(idx, "image", base64);
-                                          };
-                                          reader.readAsDataURL(file);
-                                        }
-                                      }}
-                                    />
-                                  </label>
-                                  {badge.image && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleBadgeFieldChange(idx, "image", "")}
-                                      className="text-[9px] text-red-500 hover:text-red-750 font-bold transition-colors text-center cursor-pointer"
-                                    >
-                                      Clear
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            </td>
-
-                            {/* Cyan Accent */}
-                            <td className="px-4 py-2 text-center">
-                              <input
-                                type="checkbox"
-                                checked={badge.isCyan}
-                                onChange={(e) => handleBadgeFieldChange(idx, "isCyan", e.target.checked)}
-                                className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue cursor-pointer"
-                              />
-                            </td>
-
-                            {/* Delete */}
-                            <td className="px-4 py-2 text-center">
-                              <button
-                                type="button"
-                                onClick={() => deleteBadge(idx)}
-                                className="p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg cursor-pointer"
-                                title="Delete Badge"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800">Affiliation Badges</span>
+                  <span className="text-xs text-slate-400 font-semibold">{badges.length} Badge{badges.length === 1 ? "" : "s"}</span>
                 </div>
+                
+                {/* Badges Grid Cards */}
+                {badges.length === 0 ? (
+                  <div className="py-8 text-center text-slate-400 font-semibold bg-white border border-slate-200 rounded-xl">
+                    No badges configured. Add one below.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {badges.map((badge, idx) => (
+                      <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3 relative group hover:border-slate-300 transition-all">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Badge #{idx + 1}</span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveBadgeUp(idx)}
+                              disabled={idx === 0}
+                              className={`p-1 rounded-lg border border-slate-100 transition-colors ${
+                                idx === 0 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
+                              }`}
+                              title="Move Left/Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveBadgeDown(idx)}
+                              disabled={idx === badges.length - 1}
+                              className={`p-1 rounded-lg border border-slate-100 transition-colors ${
+                                idx === badges.length - 1 ? "text-slate-200 bg-slate-50 cursor-not-allowed" : "text-slate-500 hover:bg-slate-100 bg-white cursor-pointer"
+                              }`}
+                              title="Move Right/Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteBadge(idx)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                              title="Delete Badge"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
 
-                {/* Quick Add Badge */}
-                <div className="bg-slate-50/50 border border-slate-200 rounded-xl p-4 space-y-3">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider">
-                    <Plus className="w-4 h-4 text-brand-blue" /> Add Affiliation Badge
-                  </span>
-                  <div className={newBadge.image ? "grid grid-cols-1 md:grid-cols-2 gap-4 items-center" : "grid grid-cols-1 md:grid-cols-4 gap-4 items-center"}>
-                    {!newBadge.image && (
-                      <>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">English Fallback</label>
-                      <input
-                        type="text"
-                        value={newBadge.textEn}
-                        onChange={(e) => setNewBadge({ ...newBadge, textEn: e.target.value })}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                        placeholder="e.g. ISPAB MEMBER"
-                      />
-                    </div>
-                      </>
-                    )}
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase block">Badge Image</label>
-                      <div className="flex items-center gap-3 mt-1.5">
-                        {/* Thumbnail Preview */}
-                        <div className="w-16 h-12 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
-                          {newBadge.image ? (
+                        <div className="flex items-center justify-center p-3 bg-slate-50 rounded-lg border border-slate-100 min-h-[70px]">
+                          {badge.image ? (
                             <Image
-                              src={newBadge.image}
+                              src={badge.image}
                               alt="Badge preview"
-                              width={64}
-                              height={48}
-                              className="max-w-full max-h-full object-contain p-1"
+                              width={120}
+                              height={50}
+                              className="max-h-12 w-auto object-contain"
                             />
                           ) : (
-                            <span className="text-[9px] text-slate-400 font-bold">No Image</span>
+                            <span className="text-xs text-slate-400 font-bold">No Image</span>
                           )}
                         </div>
 
-                        {/* Controls */}
-                        <div className="flex flex-col gap-1">
-                          <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-[10px] font-bold text-slate-700 px-2.5 py-1 rounded transition-colors text-center select-none shadow-xs">
-                            {newBadge.image ? "Change" : "Upload"}
+                        <div className="flex items-center gap-2 pt-1">
+                          <label className="cursor-pointer bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 px-3 py-1.5 rounded-lg transition-colors text-center select-none shadow-xs w-full">
+                            {badge.image ? "Change Image" : "Upload Image"}
                             <input
                               type="file"
                               accept="image/*"
@@ -1182,43 +977,87 @@ export default function TopbarFooterPage() {
                                   const reader = new FileReader();
                                   reader.onload = (event) => {
                                     const base64 = event.target?.result as string;
-                                    setNewBadge({ ...newBadge, image: base64 });
+                                    handleBadgeFieldChange(idx, "image", base64);
                                   };
                                   reader.readAsDataURL(file);
                                 }
                               }}
                             />
                           </label>
-                          {newBadge.image && (
+                          {badge.image && (
                             <button
                               type="button"
-                              onClick={() => setNewBadge({ ...newBadge, image: "" })}
-                              className="text-[9px] text-red-500 hover:text-red-750 font-bold transition-colors text-center cursor-pointer"
+                              onClick={() => handleBadgeFieldChange(idx, "image", "")}
+                              className="p-1.5 text-xs text-red-500 hover:bg-red-50 font-bold rounded-lg transition-colors cursor-pointer shrink-0"
+                              title="Clear Image"
                             >
                               Clear
                             </button>
                           )}
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 pt-5 md:pt-4">
-                      <input
-                        type="checkbox"
-                        id="newBadgeCyan"
-                        checked={newBadge.isCyan}
-                        onChange={(e) => setNewBadge({ ...newBadge, isCyan: e.target.checked })}
-                        className="w-4 h-4 text-brand-blue border-slate-300 rounded focus:ring-brand-blue cursor-pointer"
-                      />
-                      <label htmlFor="newBadgeCyan" className="text-xs font-bold text-slate-655 cursor-pointer select-none">Cyan Accent Style</label>
-                    </div>
+                    ))}
                   </div>
-                  <button
-                    type="button"
-                    onClick={addNewBadge}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-[10px] uppercase tracking-wider transition-all cursor-pointer select-none active:scale-[0.97] shadow-xs"
-                  >
-                    <Plus className="w-3.5 h-3.5" /> Append Badge
-                  </button>
+                )}
+              </div>
+
+              {/* Add Badge Card */}
+              <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-4 shadow-xs">
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider border-b border-slate-100 pb-2">
+                  <Plus className="w-4 h-4 text-brand-blue" /> Add New Affiliation Badge
+                </span>
+                
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  {/* Thumbnail Preview */}
+                  <div className="w-24 h-16 border border-slate-200 rounded-lg bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+                    {newBadge.image ? (
+                      <Image
+                        src={newBadge.image}
+                        alt="Badge preview"
+                        width={96}
+                        height={64}
+                        className="max-w-full max-h-full object-contain p-1"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-slate-400 font-bold">No Image Selected</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm select-none">
+                      {newBadge.image ? "Change Image" : "Choose Image"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 500 * 1024) {
+                              toast("File size exceeds 500KB. Please upload a smaller logo image (under 500KB) to ensure it saves correctly in local storage.");
+                              return;
+                            }
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const base64 = event.target?.result as string;
+                              setNewBadge({ ...newBadge, image: base64 });
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
+
+                    {newBadge.image && (
+                      <button
+                        type="button"
+                        onClick={addNewBadge}
+                        className="px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-sm"
+                      >
+                        + Append Badge
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

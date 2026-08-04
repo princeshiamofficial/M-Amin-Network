@@ -736,26 +736,7 @@ export default function AdminDashboardPage() {
     },
   ];
 
-  const defaultTestimonials: Testimonial[] = [
-    {
-      id: "TEST-001",
-      author: "Adil Chowdhury",
-      role: "Freelance Designer",
-      text: "The internet speeds are super stable. Bufferless 4K streaming and low latency during night peering works perfectly.",
-      rating: 5,
-      isPublished: true,
-      image: "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-    },
-    {
-      id: "TEST-002",
-      author: "Farhana Yasmin",
-      role: "Work From Home Mom",
-      text: "Good customer service. Line issues are resolved within hours after reporting to the support team.",
-      rating: 4,
-      isPublished: true,
-      image: "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-    },
-  ];
+  const defaultTestimonials: Testimonial[] = [];
 
   const defaultFAQs: FAQ[] = [
     {
@@ -1112,7 +1093,7 @@ export default function AdminDashboardPage() {
         affiliationDescEn: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
         privacyTextEn: "Privacy Policy",
         termsTextEn: "Terms of Service",
-        brandTextEn: "Keraniganj ISP"
+        brandTextEn: "Dhaka District ISP"
       };
       const defaultSys = { peeringBandwidthLimit: "10 Gbps", maintenanceMode: false };
       const defaultNavLinks = [
@@ -1172,8 +1153,7 @@ export default function AdminDashboardPage() {
       ];
       setSetting("network_features", defaultFeatures);
       const defaultBadges = [
-        { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" },
-        { textEn: "AS150164 BGP NETWORK", isCyan: true }
+        { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" }
       ];
       setSetting("footer_badges", defaultBadges);
       const defaultLicenses = [

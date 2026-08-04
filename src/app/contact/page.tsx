@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { getSetting } from "@/actions/content";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ContactContentFull, defaultContactContent } from "@/app/admin/(dashboard)/contact-page/page";
 
@@ -20,14 +21,14 @@ export default function Contact() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("contact_content_full");
-    if (saved) {
-      try {
-        setContent(JSON.parse(saved));
-      } catch {
-        setContent(defaultContactContent);
+    getSetting("contact_content_full").then((s) => {
+      if (s) {
+        const item = Array.isArray(s) ? s[0] : s;
+        if (item && typeof item === "object") {
+          setContent(item as unknown as ContactContentFull);
+        }
       }
-    }
+    });
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -1,20 +1,20 @@
-# Token Architecture
+﻿# Token Architecture
 
 Three-layer token system for scalable, themeable design systems.
 
 ## Layer Overview
 
 ```
-┌─────────────────────────────────────────┐
-│  Component Tokens                       │  Per-component overrides
-│  --button-bg, --card-padding            │
-├─────────────────────────────────────────┤
-│  Semantic Tokens                        │  Purpose-based aliases
-│  --color-primary, --spacing-section     │
-├─────────────────────────────────────────┤
-│  Primitive Tokens                       │  Raw design values
-│  --color-blue-600, --space-4            │
-└─────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Component Tokens                       â”‚  Per-component overrides
+â”‚  --button-bg, --card-padding            â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Semantic Tokens                        â”‚  Purpose-based aliases
+â”‚  --color-primary, --spacing-section     â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Primitive Tokens                       â”‚  Raw design values
+â”‚  --color-blue-600, --space-4            â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ## Why Three Layers?
@@ -161,10 +161,10 @@ Examples:
 
 ```
 tokens/
-├── primitives.css     # Raw values
-├── semantic.css       # Purpose aliases
-├── components.css     # Component tokens
-└── index.css          # Imports all
+â”œâ”€â”€ primitives.css     # Raw values
+â”œâ”€â”€ semantic.css       # Purpose aliases
+â”œâ”€â”€ components.css     # Component tokens
+â””â”€â”€ index.css          # Imports all
 ```
 
 Or single file with layer comments:

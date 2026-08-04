@@ -1,6 +1,6 @@
----
+﻿---
 name: design-system
-description: Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations.
+description: Token architecture, component specifications, and slide generation. Three-layer tokens (primitiveâ†’semanticâ†’component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations.
 argument-hint: "[component or token]"
 license: MIT
 metadata:
@@ -30,9 +30,9 @@ Load: `references/token-architecture.md`
 
 ```
 Primitive (raw values)
-       ↓
+       â†“
 Semantic (purpose aliases)
-       ↓
+       â†“
 Component (component-specific)
 ```
 
@@ -100,7 +100,7 @@ node scripts/validate-tokens.cjs --dir src/
 ## Integration
 
 **With brand:** Extract primitives from brand colors/typography
-**With ui-styling:** Component tokens → Tailwind config
+**With ui-styling:** Component tokens â†’ Tailwind config
 
 **Skill Dependencies:** brand, ui-styling
 **Primary Agents:** ui-ux-designer, frontend-developer
@@ -114,7 +114,7 @@ Brand-compliant presentations using design tokens + Chart.js + contextual decisi
 | File | Purpose |
 |------|---------|
 | `docs/brand-guidelines.md` | Brand identity, voice, colors |
-| `assets/design-tokens.json` | Token definitions (primitive→semantic→component) |
+| `assets/design-tokens.json` | Token definitions (primitiveâ†’semanticâ†’component) |
 | `assets/design-tokens.css` | CSS variables (import in slides) |
 | `assets/css/slide-animations.css` | CSS animation library |
 
@@ -139,10 +139,10 @@ python scripts/search-slides.py "cta" --context --position 9 --prev-emotion frus
 |------|---------|
 | `data/slide-strategies.csv` | 15 deck structures + emotion arcs + sparkline beats |
 | `data/slide-layouts.csv` | 25 layouts + component variants + animations |
-| `data/slide-layout-logic.csv` | Goal → Layout + break_pattern flag |
-| `data/slide-typography.csv` | Content type → Typography scale |
-| `data/slide-color-logic.csv` | Emotion → Color treatment |
-| `data/slide-backgrounds.csv` | Slide type → Image category (Pexels/Unsplash) |
+| `data/slide-layout-logic.csv` | Goal â†’ Layout + break_pattern flag |
+| `data/slide-typography.csv` | Content type â†’ Typography scale |
+| `data/slide-color-logic.csv` | Emotion â†’ Color treatment |
+| `data/slide-backgrounds.csv` | Slide type â†’ Image category (Pexels/Unsplash) |
 | `data/slide-copy.csv` | 25 copywriting formulas (PAS, AIDA, FAB) |
 | `data/slide-charts.csv` | 25 chart types with Chart.js config |
 
@@ -150,18 +150,18 @@ python scripts/search-slides.py "cta" --context --position 9 --prev-emotion frus
 
 ```
 1. Parse goal/context
-        ↓
-2. Search slide-strategies.csv → Get strategy + emotion beats
-        ↓
+        â†“
+2. Search slide-strategies.csv â†’ Get strategy + emotion beats
+        â†“
 3. For each slide:
-   a. Query slide-layout-logic.csv → layout + break_pattern
-   b. Query slide-typography.csv → type scale
-   c. Query slide-color-logic.csv → color treatment
-   d. Query slide-backgrounds.csv → image if needed
+   a. Query slide-layout-logic.csv â†’ layout + break_pattern
+   b. Query slide-typography.csv â†’ type scale
+   c. Query slide-color-logic.csv â†’ color treatment
+   d. Query slide-backgrounds.csv â†’ image if needed
    e. Apply animation class from slide-animations.css
-        ↓
+        â†“
 4. Generate HTML with design tokens
-        ↓
+        â†“
 5. Validate with slide-token-validator.py
 ```
 
@@ -169,7 +169,7 @@ python scripts/search-slides.py "cta" --context --position 9 --prev-emotion frus
 
 Premium decks alternate between emotions for engagement:
 ```
-"What Is" (frustration) ↔ "What Could Be" (hope)
+"What Is" (frustration) â†” "What Could Be" (hope)
 ```
 
 System calculates pattern breaks at 1/3 and 2/3 positions.

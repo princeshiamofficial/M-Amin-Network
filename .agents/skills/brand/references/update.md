@@ -1,4 +1,4 @@
-Update brand colors, typography, and style - automatically syncs to all design system files.
+﻿Update brand colors, typography, and style - automatically syncs to all design system files.
 
 <args>$ARGUMENTS</args>
 
@@ -78,7 +78,7 @@ Output summary:
 | File | Purpose |
 |------|---------|
 | `docs/brand-guidelines.md` | Human-readable brand documentation |
-| `assets/design-tokens.json` | Token definitions (primitive→semantic→component) |
+| `assets/design-tokens.json` | Token definitions (primitiveâ†’semanticâ†’component) |
 | `assets/design-tokens.css` | CSS variables for UI components |
 
 ## Skills Used

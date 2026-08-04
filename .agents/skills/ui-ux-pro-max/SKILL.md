@@ -1,4 +1,4 @@
----
+﻿---
 name: ui-ux-pro-max
 description: Comprehensive design guide for web, mobile, and desktop applications. Contains 67 styles, 161 color palettes, 57 font pairings, 99 UX guidelines, and 25 chart types across 22 technology stacks.
 ---
@@ -41,15 +41,15 @@ Use this skill when the user requests any of the following:
 
 | Scenario | Trigger Examples | Start From |
 |----------|-----------------|------------|
-| **New project / page** | "做一个 landing page"、"Build a dashboard" | Step 1 → Step 2 (design system) |
-| **New component** | "Create a pricing card"、"Add a modal" | Step 3 (domain search: style, ux) |
-| **Choose style / color / font** | "What style fits a fintech app?"、"推荐配色" | Step 2 (design system) |
-| **Review existing UI** | "Review this page for UX issues"、"检查无障碍" | Quick Reference checklist above |
-| **Fix a UI bug** | "Button hover is broken"、"Layout shifts on load" | Quick Reference → relevant section |
-| **Improve / optimize** | "Make this faster"、"Improve mobile experience" | Step 3 (domain search: ux, react) |
+| **New project / page** | "åšä¸€ä¸ª landing page"ã€"Build a dashboard" | Step 1 â†’ Step 2 (design system) |
+| **New component** | "Create a pricing card"ã€"Add a modal" | Step 3 (domain search: style, ux) |
+| **Choose style / color / font** | "What style fits a fintech app?"ã€"æŽ¨èé…è‰²" | Step 2 (design system) |
+| **Review existing UI** | "Review this page for UX issues"ã€"æ£€æŸ¥æ— éšœç¢" | Quick Reference checklist above |
+| **Fix a UI bug** | "Button hover is broken"ã€"Layout shifts on load" | Quick Reference â†’ relevant section |
+| **Improve / optimize** | "Make this faster"ã€"Improve mobile experience" | Step 3 (domain search: ux, react) |
 | **Implement dark mode** | "Add dark mode support" | Step 3 (domain: style "dark mode") |
 | **Add charts / data viz** | "Add an analytics dashboard chart" | Step 3 (domain: chart) |
-| **Stack best practices** | "React performance tips"、"SwiftUI navigation" | Step 4 (stack search) |
+| **Stack best practices** | "React performance tips"ã€"SwiftUI navigation" | Step 4 (stack search) |
 
 Follow this workflow:
 
@@ -89,8 +89,8 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persi
 ```
 
 This creates:
-- `design-system/MASTER.md` — Global Source of Truth with all design rules
-- `design-system/pages/` — Folder for page-specific overrides
+- `design-system/MASTER.md` â€” Global Source of Truth with all design rules
+- `design-system/pages/` â€” Folder for page-specific overrides
 
 **With page-specific override:**
 ```bash
@@ -98,7 +98,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persi
 ```
 
 This also creates:
-- `design-system/pages/dashboard.md` — Page-specific deviations from Master
+- `design-system/pages/dashboard.md` â€” Page-specific deviations from Master
 
 **How hierarchical retrieval works:**
 1. When building a specific page (e.g., "Checkout"), first check `design-system/pages/checkout.md`
@@ -129,7 +129,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --varia
 | `--density` | Spacious (24-96px spacing scale) | Standard (16-64px, current default) | Dense/dashboard (8-32px spacing scale) |
 
 - `--motion` attaches a ready-to-use GSAP snippet (with framework notes, Do/Don't, and performance notes) pulled from `--domain gsap`, matched to the resolved tier (Subtle/Standard/Complex).
-- `--density` overrides the `--space-*` CSS variable table in the ASCII/markdown/MASTER.md output — use it for dashboards (high) vs. marketing pages (low) without hand-editing tokens.
+- `--density` overrides the `--space-*` CSS variable table in the ASCII/markdown/MASTER.md output â€” use it for dashboards (high) vs. marketing pages (low) without hand-editing tokens.
 - Leaving a dial unset keeps that part of the output exactly as it was before (no behavior change).
 
 **Example:**
@@ -206,7 +206,7 @@ python3 skills/ui-ux-pro-max/scripts/search.py "enterprise tableview density per
 
 ## Example Workflow
 
-**User request:** "Make an AI search homepage。"
+**User request:** "Make an AI search homepageã€‚"
 
 ### Step 1: Analyze Requirements
 - Product type: Tool (AI search engine)
@@ -260,8 +260,8 @@ python3 skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design-system 
 
 ### Query Strategy
 
-- Use **multi-dimensional keywords** — combine product + industry + tone + density: `"entertainment social vibrant content-dense"` not just `"app"`
-- Try different keywords for the same need: `"playful neon"` → `"vibrant dark"` → `"content-first minimal"`
+- Use **multi-dimensional keywords** â€” combine product + industry + tone + density: `"entertainment social vibrant content-dense"` not just `"app"`
+- Try different keywords for the same need: `"playful neon"` â†’ `"vibrant dark"` â†’ `"content-first minimal"`
 - Use `--design-system` first for full recommendations, then `--domain` to deep-dive any dimension you're unsure about
 - Add `--stack <stack>` for implementation-specific guidance when the target stack is known
 
@@ -270,21 +270,21 @@ python3 skills/ui-ux-pro-max/scripts/search.py "fintech crypto" --design-system 
 | Problem | What to Do |
 |---------|------------|
 | Can't decide on style/color | Re-run `--design-system` with different keywords |
-| Dark mode contrast issues | Quick Reference §6: `color-dark-mode` + `color-accessible-pairs` |
-| Animations feel unnatural | Quick Reference §7: `spring-physics` + `easing` + `exit-faster-than-enter` |
-| Form UX is poor | Quick Reference §8: `inline-validation` + `error-clarity` + `focus-management` |
-| Navigation feels confusing | Quick Reference §9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
-| Layout breaks on small screens | Quick Reference §5: `mobile-first` + `breakpoint-consistency` |
-| Performance / jank | Quick Reference §3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
+| Dark mode contrast issues | Quick Reference Â§6: `color-dark-mode` + `color-accessible-pairs` |
+| Animations feel unnatural | Quick Reference Â§7: `spring-physics` + `easing` + `exit-faster-than-enter` |
+| Form UX is poor | Quick Reference Â§8: `inline-validation` + `error-clarity` + `focus-management` |
+| Navigation feels confusing | Quick Reference Â§9: `nav-hierarchy` + `bottom-nav-limit` + `back-behavior` |
+| Layout breaks on small screens | Quick Reference Â§5: `mobile-first` + `breakpoint-consistency` |
+| Performance / jank | Quick Reference Â§3: `virtualize-lists` + `main-thread-budget` + `debounce-throttle` |
 
 ### Pre-Delivery Checklist
 
 - Run `--domain ux "animation accessibility z-index loading"` as a UX validation pass before implementation
-- Run through Quick Reference **§1–§3** (CRITICAL + HIGH) as a final review
+- Run through Quick Reference **Â§1â€“Â§3** (CRITICAL + HIGH) as a final review
 - Test on 375px (small phone) and landscape orientation
 - Verify behavior with **reduced-motion** enabled and **Dynamic Type** at largest size
 - Check dark mode contrast independently (don't assume light mode values work)
-- Confirm all touch targets ≥44pt and no content hidden behind safe areas
+- Confirm all touch targets â‰¥44pt and no content hidden behind safe areas
 
 ---
 
@@ -295,21 +295,21 @@ Scope notice: The rules below are for App UI (iOS/Android/React Native/Flutter),
 
 ### Icons & Visual Elements
 
-- 默认图标库使用 **Phosphor (`@phosphor-icons/react`)**。`src/ui-ux-pro-max/data/icons.csv` 中列出的只是常用推荐图标，不是完整集合。
-- 当推荐表中找不到合适的图标时：
-  - **优先继续从 Phosphor 的完整图标集中选择任何语义更贴切的图标**；
-  - 如果 Phosphor 也没有理想选项，可以使用 **Heroicons (`@heroicons/react`)** 作为备选，注意保持风格一致（线性/填充、笔画粗细、圆角风格）。
+- é»˜è®¤å›¾æ ‡åº“ä½¿ç”¨ **Phosphor (`@phosphor-icons/react`)**ã€‚`src/ui-ux-pro-max/data/icons.csv` ä¸­åˆ—å‡ºçš„åªæ˜¯å¸¸ç”¨æŽ¨èå›¾æ ‡ï¼Œä¸æ˜¯å®Œæ•´é›†åˆã€‚
+- å½“æŽ¨èè¡¨ä¸­æ‰¾ä¸åˆ°åˆé€‚çš„å›¾æ ‡æ—¶ï¼š
+  - **ä¼˜å…ˆç»§ç»­ä»Ž Phosphor çš„å®Œæ•´å›¾æ ‡é›†ä¸­é€‰æ‹©ä»»ä½•è¯­ä¹‰æ›´è´´åˆ‡çš„å›¾æ ‡**ï¼›
+  - å¦‚æžœ Phosphor ä¹Ÿæ²¡æœ‰ç†æƒ³é€‰é¡¹ï¼Œå¯ä»¥ä½¿ç”¨ **Heroicons (`@heroicons/react`)** ä½œä¸ºå¤‡é€‰ï¼Œæ³¨æ„ä¿æŒé£Žæ ¼ä¸€è‡´ï¼ˆçº¿æ€§/å¡«å……ã€ç¬”ç”»ç²—ç»†ã€åœ†è§’é£Žæ ¼ï¼‰ã€‚
 
 | Rule | Standard | Avoid | Why It Matters |
 |------|----------|--------|----------------|
-| **No Emoji as Structural Icons** | Use vector-based icons (e.g., Phosphor `@phosphor-icons/react`, Heroicons `@heroicons/react`, react-native-vector-icons, @expo/vector-icons). | Using emojis (🎨 🚀 ⚙️) for navigation, settings, or system controls. | Emojis are font-dependent, inconsistent across platforms, and cannot be controlled via design tokens. |
+| **No Emoji as Structural Icons** | Use vector-based icons (e.g., Phosphor `@phosphor-icons/react`, Heroicons `@heroicons/react`, react-native-vector-icons, @expo/vector-icons). | Using emojis (ðŸŽ¨ ðŸš€ âš™ï¸) for navigation, settings, or system controls. | Emojis are font-dependent, inconsistent across platforms, and cannot be controlled via design tokens. |
 | **Vector-Only Assets** | Use SVG or platform vector icons that scale cleanly and support theming. | Raster PNG icons that blur or pixelate. | Ensures scalability, crisp rendering, and dark/light mode adaptability. |
 | **Stable Interaction States** | Use color, opacity, or elevation transitions for press states without changing layout bounds. | Layout-shifting transforms that move surrounding content or trigger visual jitter. | Prevents unstable interactions and preserves smooth motion/perceived quality on mobile. |
 | **Correct Brand Logos** | Use official brand assets and follow their usage guidelines (spacing, color, clear space). | Guessing logo paths, recoloring unofficially, or modifying proportions. | Prevents brand misuse and ensures legal/platform compliance. |
 | **Consistent Icon Sizing** | Define icon sizes as design tokens (e.g., icon-sm, icon-md = 24pt, icon-lg). | Mixing arbitrary values like 20pt / 24pt / 28pt randomly. | Maintains rhythm and visual hierarchy across the interface. |
 | **Stroke Consistency** | Use a consistent stroke width within the same visual layer (e.g., 1.5px or 2px). | Mixing thick and thin stroke styles arbitrarily. | Inconsistent strokes reduce perceived polish and cohesion. |
 | **Filled vs Outline Discipline** | Use one icon style per hierarchy level. | Mixing filled and outline icons at the same hierarchy level. | Maintains semantic clarity and stylistic coherence. |
-| **Touch Target Minimum** | Minimum 44×44pt interactive area (use hitSlop if icon is smaller). | Small icons without expanded tap area. | Meets accessibility and platform usability standards. |
+| **Touch Target Minimum** | Minimum 44Ã—44pt interactive area (use hitSlop if icon is smaller). | Small icons without expanded tap area. | Meets accessibility and platform usability standards. |
 | **Icon Alignment** | Align icons to text baseline and maintain consistent padding. | Misaligned icons or inconsistent spacing around them. | Prevents subtle visual imbalance that reduces perceived quality. |
 | **Icon Contrast** | Follow WCAG contrast standards: 4.5:1 for small elements, 3:1 minimum for larger UI glyphs. | Low-contrast icons that blend into the background. | Ensures accessibility in both light and dark modes. |
 

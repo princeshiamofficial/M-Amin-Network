@@ -1,28 +1,40 @@
 "use client";
-/* eslint-disable react-hooks/exhaustive-deps */
+ 
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
-import { getSetting, setSetting, submitPackageRequestAction } from "@/actions/content";
+import { getSetting, submitPackageRequestAction } from "@/actions/content";
 import { defaultPageHeaders, PageHeaderData } from "@/app/admin/(dashboard)/page-headers/page";
 
 interface Plan {
   speed: string;
   price: number;
   name: string;
-  category: "home" | "gaming" | "corporate";
+  category: string;
   tagline: string;
   features: string[];
   popular?: boolean;
 }
+
+interface PackageCategory {
+  id: string;
+  name: string;
+}
+
+const defaultCategories: PackageCategory[] = [
+  { id: "home", name: "Home Internet" },
+  { id: "gaming", name: "Gamer Packs" },
+  { id: "corporate", name: "Corporate Dedicated" },
+];
 
 function PackagesContent() {
   const searchParams = useSearchParams();
   const lang = useTranslation();
   const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
 
-  const [activeTab, setActiveTab] = useState<"home" | "gaming" | "corporate">("home");
+  const [categories, setCategories] = useState<PackageCategory[]>(defaultCategories);
+  const [activeTab, setActiveTab] = useState<string>("home");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -283,13 +295,22 @@ function PackagesContent() {
     },
   ];
 
-  const [allPlans, setAllPlans] = useState<Plan[]>([]);
+  const [allPlans, setAllPlans] = useState<Plan[]>(defaultPlans);
   const [headerData, setHeaderData] = useState<PageHeaderData>(defaultPageHeaders);
   useEffect(() => {
     if (typeof window !== "undefined") {
+      getSetting("package_categories").then(saved => {
+        if (Array.isArray(saved) && saved.length > 0) {
+          const list = saved as PackageCategory[];
+          setCategories(list);
+          setActiveTab((prev) => (list.some((c) => c.id === prev) ? prev : list[0].id));
+        }
+      });
       getSetting("packages_list").then(saved => {
-        if (Array.isArray(saved)) {
+        if (Array.isArray(saved) && saved.length > 0) {
           setAllPlans(saved as Plan[]);
+        } else {
+          setAllPlans(defaultPlans);
         }
       });
       getSetting("page_headers").then(saved => {
@@ -298,6 +319,7 @@ function PackagesContent() {
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-select plan from url query parameter if available
@@ -417,22 +439,18 @@ function PackagesContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tab Selectors */}
           <div className="flex justify-center -mt-24 mb-24 relative z-20">
-            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl">
-              {[
-                { id: "home", label: "Home Internet" },
-                { id: "gaming", label: "Gamer Packs" },
-                { id: "corporate", label: "Corporate Dedicated" },
-              ].map((tab) => (
+            <div className="inline-flex p-1 rounded-2xl bg-white border border-slate-200/80 shadow-xl flex-wrap justify-center gap-1">
+              {categories.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as "home" | "gaming" | "corporate")}
+                  onClick={() => setActiveTab(tab.id)}
                   className={`px-6 py-3 rounded-xl text-sm font-bold tracking-wide transition-all cursor-pointer ${
                     activeTab === tab.id
                       ? "force-active-tab shadow-md relative z-10"
                       : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
                   }`}
                 >
-                  {tab.label}
+                  {tab.name}
                 </button>
               ))}
             </div>

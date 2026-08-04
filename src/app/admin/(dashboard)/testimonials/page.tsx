@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import * as Lucide from "lucide-react";
+import { toast } from "sonner";
 import {
   Table,
   TableHeader,
@@ -85,10 +86,15 @@ export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   
   const [isEditing, setIsEditing] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState<Partial<Testimonial>>({ rating: 5, image: "" });
+  const [currentTestimonial, setCurrentTestimonial] = useState<Partial<Testimonial>>({ image: "" });
   const [uploading, setUploading] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isRatingDropdownOpen, setIsRatingDropdownOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Section heading state
+  const [headingEn, setHeadingEn] = useState("What Our Customers Say");
+  const [headingSaved, setHeadingSaved] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -104,7 +110,27 @@ export default function TestimonialsPage() {
         setTestimonials([]);
       }
     });
+    getSetting("testimonials_content").then(saved => {
+      if (saved) {
+        const item = Array.isArray(saved) ? saved[0] : saved;
+        if (item && typeof item === "object") {
+          const s = item as Record<string, string>;
+          if (s.headingEn) setHeadingEn(s.headingEn);
+        }
+      }
+    });
   }, [router]);
+
+  const saveHeading = async () => {
+    const success = await setSetting("testimonials_content", { headingEn });
+    if (success) {
+      setHeadingSaved(true);
+      toast.success("Section heading saved successfully!");
+      setTimeout(() => setHeadingSaved(false), 3000);
+    } else {
+      toast.error("Failed to save to database. Please check admin login session.");
+    }
+  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -132,49 +158,77 @@ export default function TestimonialsPage() {
     }
   };
 
-  const openNewForm = () => {
-    setCurrentTestimonial({ rating: 5, image: "" });
-    setIsEditing(false);
-    setIsFormOpen(true);
-  };
 
-  const saveTestimonial = (e: React.FormEvent) => {
+  const saveTestimonial = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentTestimonial.author || !currentTestimonial.text) return;
+    if (!currentTestimonial.author?.trim()) {
+      toast.error("Customer name is required.");
+      return;
+    }
 
-    let updated;
+    let updated: Testimonial[];
+    const textVal = currentTestimonial.text?.trim() || "";
     if (isEditing && currentTestimonial.id) {
-      updated = testimonials.map(t => 
-        t.id === currentTestimonial.id ? { ...t, ...currentTestimonial } as Testimonial : t
+      updated = testimonials.map((t) =>
+        t.id === currentTestimonial.id
+          ? ({
+              ...t,
+              ...currentTestimonial,
+              text: textVal,
+              comment: textVal,
+            } as Testimonial)
+          : t
       );
     } else {
       updated = [
-        ...testimonials, 
-        { 
-          ...currentTestimonial, 
-          id: Date.now().toString(), 
-          rating: currentTestimonial.rating || 5, 
-          isPublished: true 
-        } as Testimonial
+        ...testimonials,
+        {
+          id: Date.now().toString(),
+          author: currentTestimonial.author?.trim() || "",
+          role: currentTestimonial.role?.trim() || "",
+          text: textVal,
+          comment: textVal,
+          rating: currentTestimonial.rating,
+          image: currentTestimonial.image || "",
+          isPublished: true,
+        } as Testimonial,
       ];
     }
-    
+
     setTestimonials(updated);
-    setSetting("testimonials", updated as Testimonial[]);
-    setCurrentTestimonial({ rating: 5, image: "" });
+    const ok = await setSetting("testimonials", updated as Testimonial[]);
+    if (ok) {
+      toast.success(isEditing ? "Testimonial updated successfully!" : "Testimonial added successfully!");
+    } else {
+      toast.error("Failed to save to database. Please check admin login session.");
+    }
+    setCurrentTestimonial({ image: "" });
     setIsEditing(false);
+    setIsRatingDropdownOpen(false);
     setIsFormOpen(false);
   };
 
-  const editTestimonial = (t: Testimonial) => {
-    setCurrentTestimonial(t);
+  const openNewForm = () => {
+    setCurrentTestimonial({ image: "" });
+    setIsEditing(false);
+    setIsRatingDropdownOpen(false);
+    setIsFormOpen(true);
+  };
+
+  const editTestimonial = (t: Testimonial & { comment?: string }) => {
+    setCurrentTestimonial({
+      ...t,
+      text: t.text !== undefined && t.text !== "" ? t.text : (t.comment && t.comment !== "The internet speeds are super stable. Bufferless 4K streaming and low latency during night peering works perfectly." ? t.comment : ""),
+    });
     setIsEditing(true);
+    setIsRatingDropdownOpen(false);
     setIsFormOpen(true);
   };
 
   const cancelEdit = () => {
-    setCurrentTestimonial({ rating: 5, image: "" });
+    setCurrentTestimonial({ image: "" });
     setIsEditing(false);
+    setIsRatingDropdownOpen(false);
     setIsFormOpen(false);
   };
 
@@ -208,6 +262,33 @@ export default function TestimonialsPage() {
         >
           <Lucide.Plus className="w-4 h-4" /> Add Testimonial
         </button>
+      </div>
+
+      {/* Section Title Editor */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-900">Section Title</h3>
+            <p className="text-xs text-slate-500 mt-0.5">Edit the title displayed above customer testimonials on the homepage.</p>
+          </div>
+          <button
+            onClick={saveHeading}
+            className="px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <Lucide.Save className="w-3.5 h-3.5" />
+            {headingSaved ? "Saved!" : "Save Heading"}
+          </button>
+        </div>
+        <div className="space-y-1">
+          <label className="text-xs font-bold text-slate-700 block">Section Title</label>
+          <input
+            type="text"
+            value={headingEn}
+            onChange={(e) => setHeadingEn(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
+            placeholder="e.g. What Our Customers Say"
+          />
+        </div>
       </div>
 
       {mounted && isFormOpen && createPortal(
@@ -266,30 +347,89 @@ export default function TestimonialsPage() {
               </div>
               <div className="space-y-1 md:col-span-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-700 block">Review Text</label>
+                  <label className="text-xs font-bold text-slate-700 block">Review Text (Optional)</label>
                   <span className="text-[10px] text-slate-400 font-mono">{(currentTestimonial.text || "").length}/300</span>
                 </div>
                 <textarea
-                  required
                   rows={3}
                   maxLength={300}
                   value={currentTestimonial.text || ""}
                   onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, text: e.target.value })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue resize-none"
-                  placeholder="Enter the customer's review..."
+                  placeholder="Enter the customer's review (optional)..."
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700 block">Rating (1-5)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  required
-                  value={currentTestimonial.rating || 5}
-                  onChange={(e) => setCurrentTestimonial({ ...currentTestimonial, rating: parseInt(e.target.value) })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue"
-                />
+              <div className="space-y-1 relative">
+                <label className="text-xs font-bold text-slate-700 block">Rating (1-5) (Optional)</label>
+                <button
+                  type="button"
+                  onClick={() => setIsRatingDropdownOpen(!isRatingDropdownOpen)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-brand-blue cursor-pointer flex items-center justify-between transition-all hover:bg-slate-100/70"
+                >
+                  <div className="flex items-center gap-2 font-medium">
+                    {currentTestimonial.rating ? (
+                      <>
+                        <div className="flex text-amber-400">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Lucide.Star
+                              key={i}
+                              className={`w-3.5 h-3.5 ${i < (currentTestimonial.rating || 0) ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                            />
+                          ))}
+                        </div>
+                        <span className="font-bold text-slate-800">{currentTestimonial.rating} Star{currentTestimonial.rating > 1 ? "s" : ""}</span>
+                      </>
+                    ) : (
+                      <span className="text-slate-400 font-medium">No Rating (None)</span>
+                    )}
+                  </div>
+                  <Lucide.ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isRatingDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {isRatingDropdownOpen && (
+                  <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white border border-slate-200 rounded-2xl shadow-2xl z-50 p-1.5 space-y-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentTestimonial({ ...currentTestimonial, rating: undefined });
+                        setIsRatingDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                        !currentTestimonial.rating ? "bg-slate-100 text-slate-900 font-bold" : "hover:bg-slate-50 text-slate-600"
+                      }`}
+                    >
+                      <span>No Rating (None)</span>
+                      {!currentTestimonial.rating && <Lucide.Check className="w-3.5 h-3.5 text-brand-blue" />}
+                    </button>
+
+                    {[5, 4, 3, 2, 1].map((stars) => (
+                      <button
+                        key={stars}
+                        type="button"
+                        onClick={() => {
+                          setCurrentTestimonial({ ...currentTestimonial, rating: stars });
+                          setIsRatingDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3.5 py-2 rounded-xl text-xs font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                          currentTestimonial.rating === stars ? "bg-amber-50/80 text-slate-900 font-bold border border-amber-200/50" : "hover:bg-slate-50 text-slate-700"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex text-amber-400">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Lucide.Star
+                                key={i}
+                                className={`w-3.5 h-3.5 ${i < stars ? "fill-amber-400 text-amber-400" : "fill-slate-200 text-slate-200"}`}
+                              />
+                            ))}
+                          </div>
+                          <span>{stars} Star{stars > 1 ? "s" : ""}</span>
+                        </div>
+                        {currentTestimonial.rating === stars && <Lucide.Check className="w-3.5 h-3.5 text-amber-500" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <div className="md:col-span-2 flex items-center justify-end gap-3 mt-2 border-t border-slate-100 pt-3">

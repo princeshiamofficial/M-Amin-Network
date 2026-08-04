@@ -207,15 +207,6 @@ export default function HeroTypographyPage() {
     setHeroMetrics(updated);
   };
 
-  const updateMetricField = (index: number, field: keyof HeroMetric, val: string) => {
-    const updated = [...heroMetrics];
-    updated[index] = {
-      ...updated[index],
-      [field]: val
-    };
-    setHeroMetrics(updated);
-  };
-
   const handleMetricNumberChange = (index: number, numberValue: string) => {
     const currentValue = heroMetrics[index]?.value || "";
     const suffix = getMetricSuffix(currentValue, index);

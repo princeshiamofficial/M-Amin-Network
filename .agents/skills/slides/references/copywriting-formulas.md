@@ -1,4 +1,4 @@
-# Copywriting Formulas
+﻿# Copywriting Formulas
 
 25 formulas for persuasive slide copy.
 
@@ -6,27 +6,27 @@
 
 ### PAS (Problem-Agitate-Solution)
 **Use:** Problem slides, pain points
-**Components:** Problem → Agitate → Solution
+**Components:** Problem â†’ Agitate â†’ Solution
 **Template:** "[Pain point]? Every [time frame], [consequence]. [Solution] fixes this."
 
 ### AIDA (Attention-Interest-Desire-Action)
 **Use:** CTAs, closing slides
-**Components:** Attention → Interest → Desire → Action
+**Components:** Attention â†’ Interest â†’ Desire â†’ Action
 **Template:** "[Bold statement]. [Benefit detail]. [Social proof]. [CTA]."
 
 ### FAB (Features-Advantages-Benefits)
 **Use:** Feature slides, product showcases
-**Components:** Feature → Advantage → Benefit
+**Components:** Feature â†’ Advantage â†’ Benefit
 **Template:** "[Feature] lets you [advantage], so you can [benefit]."
 
 ### Cost of Inaction
 **Use:** Agitation slides, urgency
-**Components:** Status Quo → Loss → Time Decay
+**Components:** Status Quo â†’ Loss â†’ Time Decay
 **Template:** "Without [solution], you're losing [amount] every [timeframe]."
 
 ### Before-After-Bridge
 **Use:** Transformation slides, case studies
-**Components:** Before → After → Bridge
+**Components:** Before â†’ After â†’ Bridge
 **Template:** "[Pain point before]. [Desired state after]. [Your solution] is the bridge."
 
 ## Formula-to-Slide Mapping

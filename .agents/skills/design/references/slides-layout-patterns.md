@@ -1,4 +1,4 @@
-# Layout Patterns
+﻿# Layout Patterns
 
 25 slide layouts with CSS structures and animation classes.
 
@@ -124,14 +124,14 @@ python .claude/skills/design-system/scripts/search-slides.py "traction slide" \
 
 ```
 1. What's the slide goal?
-   └─> Search layout-logic.csv
+   â””â”€> Search layout-logic.csv
 
 2. What emotion should it trigger?
-   └─> Search color-logic.csv
+   â””â”€> Search color-logic.csv
 
 3. What's the content type?
-   └─> Search typography.csv
+   â””â”€> Search typography.csv
 
 4. Should it break pattern?
-   └─> Check position (1/3, 2/3) → Use full-bleed
+   â””â”€> Check position (1/3, 2/3) â†’ Use full-bleed
 ```

@@ -16,6 +16,8 @@ interface FooterData {
   addressEn: string;
   addressBn?: string;
   email: string;
+  aboutText?: string;
+  affiliationText?: string;
 }
 
 interface AffiliationBadge {
@@ -47,6 +49,8 @@ const defaultFooterData: FooterData = {
   linkedin: "https://linkedin.com/company/maminnetwork",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
   email: "info@m-aminnetwork.com",
+  aboutText: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+  affiliationText: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
 };
 
 const defaultNavLinks: NavLink[] = [
@@ -63,8 +67,7 @@ const defaultNavLinks: NavLink[] = [
 ];
 
 const defaultBadges: AffiliationBadge[] = [
-  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" },
-  { textEn: "AS150164 BGP NETWORK", isCyan: true }
+  { textEn: "ISPAB MEMBER", isCyan: false, image: "/ispab.jpeg" }
 ];
 
 const defaultLicenses: LicenseBadge[] = [
@@ -93,6 +96,8 @@ function normalizeFooterData(value: unknown): FooterData {
     addressEn: textValue(record.addressEn, defaultFooterData.addressEn),
     addressBn: textValue(record.addressBn ?? "", defaultFooterData.addressBn ?? ""),
     email: textValue(record.email, defaultFooterData.email),
+    aboutText: textValue(record.aboutText, defaultFooterData.aboutText ?? ""),
+    affiliationText: textValue(record.affiliationText, defaultFooterData.affiliationText ?? ""),
   };
 }
 
@@ -247,9 +252,9 @@ export default function Footer() {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 mb-12">
           {/* Logo and About */}
-          <div className="flex flex-col gap-4 md:col-span-3">
+          <div className="flex flex-col gap-4 sm:col-span-2 md:col-span-3">
             <Link href="/" className="inline-block relative z-10 w-[200px]">
               <Image
                 src={siteLogo}
@@ -259,50 +264,33 @@ export default function Footer() {
                 className="h-11 w-[200px] object-contain brightness-0 invert"
               />
             </Link>
-            <p className="text-sm text-slate-400 mt-2 leading-relaxed">
-              {"Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses."}
+            <p className="text-sm text-white mt-2 leading-relaxed max-w-xl">
+              {footerData.aboutText || "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses."}
             </p>
             <div className="flex items-center gap-3 mt-2 text-xs flex-wrap">
-              {licenses.map((lic, idx) => {
-                if (lic.image) {
-                  return (
-                    <div key={idx} className="flex items-center shrink-0">
-                      <Image
-                        src={lic.image}
-                        alt={lic.textEn}
-                        width={100}
-                        height={30}
-                        style={{ width: "auto", height: "auto" }}
-                        className="max-h-[30px] object-contain brightness-95 hover:brightness-100 transition-all duration-200"
-                      />
-                    </div>
-                  );
-                }
-
-                let colorClass = "text-slate-400";
-                if (lic.colorStyle === "cyan") colorClass = "text-brand-cyan";
-                if (lic.colorStyle === "emerald") colorClass = "text-emerald-400";
-
-                return (
-                  <span
-                    key={idx}
-                    className={`bg-brand-border px-2.5 py-1 rounded border border-brand-border/80 ${colorClass} ${
-                      lic.isMono ? "font-mono" : "font-semibold"
-                    }`}
-                  >
-                    {t(lic.textEn, lic.textBn ?? "")}
-                  </span>
-                );
-              })}
+              {licenses
+                .filter((lic) => Boolean(lic.image))
+                .map((lic, idx) => (
+                  <div key={idx} className="flex items-center shrink-0">
+                    <Image
+                      src={lic.image!}
+                      alt={lic.textEn || "Brand License"}
+                      width={100}
+                      height={30}
+                      style={{ width: "auto", height: "auto" }}
+                      className="max-h-[30px] object-contain brightness-95 hover:brightness-100 transition-all duration-200"
+                    />
+                  </div>
+                ))}
             </div>
             {/* Social Icons */}
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-2.5 mt-2 flex-wrap">
               {footerData.facebook && (
                 <a
                   href={footerData.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-brand-border/40 border border-brand-border/60 hover:border-brand-cyan/50 hover:bg-brand-blue/15 text-slate-400 hover:text-brand-cyan transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 text-[#1877F2] hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                   title="Follow us on Facebook"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -315,7 +303,7 @@ export default function Footer() {
                   href={footerData.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-brand-border/40 border border-brand-border/60 hover:border-brand-cyan/50 hover:bg-brand-blue/15 text-slate-400 hover:text-brand-cyan transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 text-[#FF0000] hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000] transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                   title="Subscribe on YouTube"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -328,7 +316,7 @@ export default function Footer() {
                   href={footerData.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-brand-border/40 border border-brand-border/60 hover:border-brand-cyan/50 hover:bg-brand-blue/15 text-slate-400 hover:text-brand-cyan transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 text-[#E4405F] hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white hover:border-transparent transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                   title="Follow us on Instagram"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -341,7 +329,7 @@ export default function Footer() {
                   href={footerData.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-brand-border/40 border border-brand-border/60 hover:border-brand-cyan/50 hover:bg-brand-blue/15 text-slate-400 hover:text-brand-cyan transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 text-white hover:bg-black hover:text-white hover:border-slate-500 transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                   title="Follow us on X"
                 >
                   <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -354,7 +342,7 @@ export default function Footer() {
                   href={footerData.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-brand-border/40 border border-brand-border/60 hover:border-brand-cyan/50 hover:bg-brand-blue/15 text-slate-400 hover:text-brand-cyan transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                  className="w-9 h-9 rounded-xl bg-slate-900/80 border border-slate-800 text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 active:scale-95"
                   title="Follow us on LinkedIn"
                 >
                   <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -366,15 +354,15 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="md:col-span-4">
+          <div className="sm:col-span-2 md:col-span-4">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
               {"Quick Links"}
             </h3>
-            <div className="grid grid-cols-3 gap-2 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm text-white">
               <ul className="space-y-3">
                 {col1.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                    <Link href={link.href} className="text-white hover:text-brand-cyan transition-colors">
                       {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
@@ -383,13 +371,13 @@ export default function Footer() {
               <ul className="space-y-3">
                 {col2.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                    <Link href={link.href} className="text-white hover:text-brand-cyan transition-colors">
                       {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
                 ))}
                 <li>
-                  <a href="/btrc-tariff.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors whitespace-nowrap">
+                  <a href="/btrc-tariff.pdf" target="_blank" rel="noopener noreferrer" className="text-white hover:text-brand-cyan transition-colors whitespace-nowrap">
                     {"BTRC Approved Tariff"}
                   </a>
                 </li>
@@ -397,7 +385,7 @@ export default function Footer() {
               <ul className="space-y-3">
                 {col3.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="hover:text-brand-cyan transition-colors">
+                    <Link href={link.href} className="text-white hover:text-brand-cyan transition-colors">
                       {t(link.nameEn, link.nameBn ?? "")}
                     </Link>
                   </li>
@@ -407,11 +395,11 @@ export default function Footer() {
           </div>
 
           {/* Contact Details */}
-          <div className="md:col-span-3">
+          <div className="sm:col-span-1 md:col-span-3">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
               {"Contact Info"}
             </h3>
-            <ul className="space-y-4 text-sm text-slate-400">
+            <ul className="space-y-4 text-sm text-white">
               <li className="flex gap-2.5 items-start">
                 <svg
                   className="w-5 h-5 text-brand-cyan shrink-0 mt-0.5"
@@ -431,7 +419,7 @@ export default function Footer() {
                     d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
                   />
                 </svg>
-                <span>
+                <span className="text-white">
                   {t(footerData.addressEn, footerData.addressBn ?? "")}
                 </span>
               </li>
@@ -450,7 +438,7 @@ export default function Footer() {
                       d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.824-1.47-5.114-3.758-6.583-6.583l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
                     />
                   </svg>
-                  <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="hover:text-brand-cyan transition-colors font-mono">
+                  <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="text-white hover:text-brand-cyan transition-colors font-mono">
                     {phone}
                   </a>
                 </li>
@@ -471,7 +459,7 @@ export default function Footer() {
                 </svg>
                 <a
                   href={`mailto:${footerData.email}`}
-                  className="hover:text-brand-cyan transition-colors"
+                  className="text-white hover:text-brand-cyan transition-colors"
                 >
                   {footerData.email}
                 </a>
@@ -480,36 +468,27 @@ export default function Footer() {
           </div>
 
           {/* Affiliation and Badges */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-1 md:col-span-2">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">
               {"Our Affiliations"}
             </h3>
-            <p className="text-sm text-slate-400 mt-2 mb-4 leading-relaxed max-w-[280px]">
-              {"We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB)."}
+            <p className="text-sm text-white mt-2 mb-4 leading-relaxed max-w-[280px]">
+              {footerData.affiliationText || "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB)."}
             </p>
-            <div className="flex flex-col gap-3">
-              {badges.map((badge, idx) => {
-                if (badge.image) {
-                  return (
-                    <div key={idx} className="p-2.5 rounded-lg bg-white/95 border border-brand-border text-center flex items-center justify-center min-h-[50px] w-full max-w-[180px] overflow-hidden">
-                      <Image
-                        src={badge.image}
-                        alt={badge.textEn}
-                        width={160}
-                        height={50}
-                        className="max-h-10 w-full object-contain"
-                      />
-                    </div>
-                  );
-                }
-                return (
-                  <div key={idx} className="p-3 rounded-lg bg-brand-card border border-brand-border text-center flex items-center justify-center min-h-[50px]">
-                    <span className={`text-xs font-bold tracking-widest leading-normal ${badge.isCyan ? "text-brand-cyan" : "text-slate-300"}`}>
-                      {t(badge.textEn, badge.textBn ?? "")}
-                    </span>
+            <div className="grid grid-cols-3 sm:grid-cols-2 md:flex md:flex-col gap-3">
+              {badges
+                .filter((badge) => Boolean(badge.image))
+                .map((badge, idx) => (
+                  <div key={idx} className="p-2.5 rounded-lg bg-white/95 border border-brand-border text-center flex items-center justify-center min-h-[50px] w-full md:max-w-[180px] overflow-hidden">
+                    <Image
+                      src={badge.image!}
+                      alt={badge.textEn || "Affiliation Badge"}
+                      width={160}
+                      height={50}
+                      className="max-h-10 w-full object-contain"
+                    />
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         </div>
@@ -528,11 +507,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright */}
-        <div className="pt-2 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-500">
+        <div className="pt-2 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+          <p className="text-xs text-white">
             {"© 2026 M Amin Network. All Rights Reserved."}
           </p>
-          <div className="flex gap-4 text-xs text-slate-500">
+          <div className="flex gap-4 text-xs text-white flex-wrap justify-center md:justify-end">
             <Link href="/" className="hover:text-brand-cyan transition-colors">
               {"Privacy Policy"}
             </Link>
@@ -541,7 +520,7 @@ export default function Footer() {
               {"Terms of Service"}
             </Link>
             <span>&bull;</span>
-            <span className="text-slate-400">{"Keraniganj ISP"}</span>
+            <span className="text-white">{"Dhaka District ISP"}</span>
           </div>
         </div>
       </div>

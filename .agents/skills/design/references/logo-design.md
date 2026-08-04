@@ -1,4 +1,4 @@
-# Logo Design Reference
+﻿# Logo Design Reference
 
 AI-powered logo design with 55+ styles, 30 color palettes, 25 industry guides. Uses Gemini Nano Banana models.
 
@@ -73,9 +73,9 @@ Options: `--style`, `--industry`, `--prompt`
 
 ## Workflow
 
-1. Generate design brief → `scripts/logo/search.py --design-brief`
-2. Generate logo variations → `scripts/logo/generate.py --brand --style --industry`
-3. Ask user about HTML preview → `AskUserQuestion` tool
+1. Generate design brief â†’ `scripts/logo/search.py --design-brief`
+2. Generate logo variations â†’ `scripts/logo/generate.py --brand --style --industry`
+3. Ask user about HTML preview â†’ `AskUserQuestion` tool
 4. If yes, invoke `/ui-ux-pro-max` for HTML gallery
 
 ## Detailed References

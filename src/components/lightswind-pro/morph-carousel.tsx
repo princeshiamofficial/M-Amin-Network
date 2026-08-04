@@ -20,6 +20,13 @@ const PROCEDURAL_GRADIENTS = [
   { c1: [0.03, 0.08, 0.10], c2: [0.1, 0.9, 0.55] }, // BGP Green
 ];
 
+const DEFAULT_HERO_SLIDES = [
+  "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
+  "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
+  "/933503ea823535235e8159f65709292f.jpg",
+  "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
+];
+
 export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   className = "",
   images = [],
@@ -36,7 +43,9 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   const activeTextureIndex = useRef(0);
   const nextTextureIndex = useRef(0);
 
-  const totalSlides = images.length > 0 ? images.length : PROCEDURAL_GRADIENTS.length;
+  const activeSlides = images && images.length > 0 ? images : DEFAULT_HERO_SLIDES;
+  const imagesKey = JSON.stringify(activeSlides);
+  const totalSlides = activeSlides.length;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -223,9 +232,13 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     const uTexActiveLoc = gl.getUniformLocation(program, "u_texActive");
     const uTexNextLoc = gl.getUniformLocation(program, "u_texNext");
 
+    // Enable WebGL alpha blending for transparent fallbacks
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
     // Texture setup and loading
     const textures: WebGLTexture[] = [];
-    const useTextures = images.length > 0;
+    const useTextures = activeSlides.length > 0;
     gl.uniform1i(uUseTexturesLoc, useTextures ? 1 : 0);
 
     const resizeCanvas = () => {
@@ -244,51 +257,10 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     resizeObserver.observe(canvas);
     window.addEventListener("resize", resizeCanvas);
 
-    if (useTextures) {
-      const loadTexture = (url: string) => {
-        const tex = gl.createTexture();
-        if (!tex) return null;
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        
-        // 1x1 fallback pixel while loading
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([7, 11, 25, 255]));
-
-        const img = new Image();
-        img.onload = () => {
-          gl.bindTexture(gl.TEXTURE_2D, tex);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        };
-        img.src = url;
-        return tex;
-      };
-
-      images.forEach((url) => {
-        const tex = loadTexture(url);
-        if (tex) textures.push(tex);
-      });
-    }
-
-    // Animation Loop
+    // Define drawFrame prior to texture load callbacks
     let animationFrameId: number;
     let isVisible = true;
     const startTime = Date.now();
-
-    const handleVisibilityChange = () => {
-      isVisible = !document.hidden;
-      if (isVisible) drawFrame();
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      isVisible = entry.isIntersecting && !document.hidden;
-      if (isVisible) drawFrame();
-    }, { threshold: 0.01 });
-    intersectionObserver.observe(canvas);
 
     const drawFrame = () => {
       if (!isVisible) return;
@@ -342,6 +314,70 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
       }
     };
 
+    if (useTextures) {
+      const loadTexture = (url: string) => {
+        const tex = gl.createTexture();
+        if (!tex) return null;
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        
+        // 1x1 transparent fallback pixel while loading so HTML NextImage shows through
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 0]));
+
+        const img = new Image();
+        const isRelative = url.startsWith("/");
+        const isData = url.startsWith("data:");
+        const isSameOrigin = typeof window !== "undefined" && (url.startsWith(window.location.origin) || url.startsWith("http://localhost") || url.startsWith("http://127.0.0.1"));
+        if (!isData && !isRelative && !isSameOrigin) {
+          img.crossOrigin = "anonymous";
+        }
+
+        const updateTexture = () => {
+          try {
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+            drawFrame();
+          } catch (e) {
+            console.warn("Failed to update WebGL texture:", e);
+          }
+        };
+
+        img.onload = updateTexture;
+        img.onerror = () => {
+          console.warn("Failed to load WebGL texture for:", url);
+        };
+        img.src = url;
+
+        if (img.complete && img.naturalWidth > 0) {
+          updateTexture();
+        }
+
+        return tex;
+      };
+
+      activeSlides.forEach((url) => {
+        const tex = loadTexture(url);
+        if (tex) textures.push(tex);
+      });
+    }
+
+    // Visibility handlers
+    const handleVisibilityChange = () => {
+      isVisible = !document.hidden;
+      if (isVisible) drawFrame();
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting && !document.hidden;
+      if (isVisible) drawFrame();
+    }, { threshold: 0.01 });
+    intersectionObserver.observe(canvas);
+
     drawFrame();
 
     return () => {
@@ -356,7 +392,8 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
         if (tex) gl.deleteTexture(tex);
       });
     };
-  }, [images]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imagesKey]);
 
   // Handle slide transitions
   const triggerTransition = useCallback((targetIndex: number) => {
@@ -378,16 +415,35 @@ export const MorphCarousel: React.FC<MorphCarouselProps> = ({
     }, autoplayInterval);
 
     return () => clearInterval(timer);
-  }, [autoplay, activeIndex, isTransitioning, totalSlides, autoplayInterval, triggerTransition]);
+  }, [autoplay, activeIndex, isTransitioning, totalSlides, activeSlides, autoplayInterval, triggerTransition]);
 
-  const isCurrentGif = images && images.length > 0 && images[activeIndex] && images[activeIndex].toLowerCase().endsWith(".gif");
+  const isCurrentGif = activeSlides[activeIndex] && activeSlides[activeIndex].toLowerCase().endsWith(".gif");
 
   return (
     <div className={`relative w-full h-full overflow-hidden ${aspectRatio} ${className}`}>
-      {/* WebGL Canvas */}
+      {/* HTML Image Layer for 100% Reliable Image Rendering */}
+      {activeSlides.map((src, idx) => (
+        <div
+          key={src + idx}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${
+            activeIndex === idx ? "opacity-90 z-0" : "opacity-0 z-0"
+          }`}
+        >
+          <NextImage
+            src={src}
+            alt={`Hero slide ${idx + 1}`}
+            fill
+            priority={idx === 0}
+            sizes="100vw"
+            className="object-cover pointer-events-none"
+          />
+        </div>
+      ))}
+
+      {/* WebGL Morph Canvas on top for liquid animations */}
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 w-full h-full block pointer-events-none transition-opacity duration-500 ${
+        className={`absolute inset-0 w-full h-full block pointer-events-none z-1 transition-opacity duration-500 ${
           isCurrentGif ? "opacity-0" : "opacity-100"
         }`}
       />
