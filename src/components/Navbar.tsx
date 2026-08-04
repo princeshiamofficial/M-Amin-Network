@@ -228,7 +228,18 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-11">
           {/* Logo */}
           <div className="shrink-0">
-            <Link href="/" className="flex items-center py-1">
+            <Link
+              href="/"
+              onClick={(e) => {
+                if (pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                } else {
+                  window.scrollTo({ top: 0, behavior: "instant" });
+                }
+              }}
+              className="flex items-center py-1 cursor-pointer"
+            >
               <Image
                 src={siteLogo}
                 alt="M Amin Network"

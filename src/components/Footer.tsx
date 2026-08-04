@@ -255,7 +255,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 mb-12">
           {/* Logo and About */}
           <div className="flex flex-col gap-4 sm:col-span-2 md:col-span-3">
-            <Link href="/" className="inline-block relative z-10 w-[200px]">
+            <Link
+              href="/"
+              onClick={(e) => {
+                if (typeof window !== "undefined") {
+                  if (window.location.pathname === "/") {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  } else {
+                    window.scrollTo({ top: 0, behavior: "instant" });
+                  }
+                }
+              }}
+              className="inline-block relative z-10 w-[200px]"
+            >
               <Image
                 src={siteLogo}
                 alt="M Amin Network"
