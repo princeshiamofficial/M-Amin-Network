@@ -92,14 +92,7 @@ export default function HeroTypographyPage() {
       if (saved) {
         const parsed = saved as Record<string, unknown>;
         const savedSlides = Array.isArray(parsed.slides)
-          ? parsed.slides.filter((slide): slide is string => 
-              typeof slide === "string" && 
-              slide.trim() !== "" &&
-              !slide.includes("28ca5e1d52c944ebfc4dd9f2b300980d") &&
-              !slide.includes("6c55d74de82b7eee7127c3e2d4939b1f") &&
-              !slide.includes("933503ea823535235e8159f65709292f") &&
-              !slide.includes("ea82d2834f062ee8d73d8b99aebe0d31")
-            )
+          ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "")
           : [];
         setHeroTypography({
           badgeText: (parsed.badgeText as string) || defaultHeroTypography.badgeText,

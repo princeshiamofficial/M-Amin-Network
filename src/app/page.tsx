@@ -61,12 +61,7 @@ interface HeroMetric {
   descBn?: string;
 }
 
-const DEFAULT_HERO_SLIDES = [
-  "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-  "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-  "/933503ea823535235e8159f65709292f.jpg",
-  "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-];
+const DEFAULT_HERO_SLIDES: string[] = [];
 
 const DEFAULT_HERO_TYPOGRAPHY: HeroTypography = {
   badgeText: "BTRC Licensed Broadband Provider",
@@ -448,13 +443,13 @@ export default function Home() {
         const parsed = savedTypo as Record<string, unknown>;
         const slides = Array.isArray(parsed.slides)
           ? parsed.slides.filter((slide): slide is string => typeof slide === "string" && slide.trim() !== "").slice(0, 6)
-          : DEFAULT_HERO_SLIDES;
+          : [];
 
         setHeroTypography({
           badgeText: typeof parsed.badgeText === "string" && parsed.badgeText.trim() ? parsed.badgeText : DEFAULT_HERO_TYPOGRAPHY.badgeText,
           mainTitle: typeof parsed.mainTitle === "string" && parsed.mainTitle.trim() ? parsed.mainTitle : DEFAULT_HERO_TYPOGRAPHY.mainTitle,
           subtitle: typeof parsed.subtitle === "string" && parsed.subtitle.trim() ? parsed.subtitle : DEFAULT_HERO_TYPOGRAPHY.subtitle,
-          slides: slides.length > 0 ? slides : DEFAULT_HERO_SLIDES,
+          slides: slides,
         });
       } else {
         setHeroTypography(DEFAULT_HERO_TYPOGRAPHY);

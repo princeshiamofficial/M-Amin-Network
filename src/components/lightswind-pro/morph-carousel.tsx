@@ -20,12 +20,7 @@ const PROCEDURAL_GRADIENTS = [
   { c1: [0.03, 0.08, 0.10], c2: [0.1, 0.9, 0.55] }, // BGP Green
 ];
 
-const DEFAULT_HERO_SLIDES = [
-  "/28ca5e1d52c944ebfc4dd9f2b300980d.jpg",
-  "/6c55d74de82b7eee7127c3e2d4939b1f.jpg",
-  "/933503ea823535235e8159f65709292f.jpg",
-  "/ea82d2834f062ee8d73d8b99aebe0d31.jpg",
-];
+const DEFAULT_HERO_SLIDES: string[] = [];
 
 export const MorphCarousel: React.FC<MorphCarouselProps> = ({
   className = "",
