@@ -30,7 +30,6 @@ import {
   Activity,
   Layers,
   X,
-  Compass,
   MapPin,
   HelpCircle,
   Loader2
