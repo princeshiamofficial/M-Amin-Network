@@ -414,7 +414,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="grow p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6 bg-[#f8fafc] min-w-0">
+          <div className="grow p-3 sm:p-5 lg:p-8 pb-28 sm:pb-32 space-y-4 sm:space-y-6 bg-[#f8fafc] min-w-0">
             {children}
           </div>
         </div>

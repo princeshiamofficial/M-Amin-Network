@@ -1653,10 +1653,6 @@ export default function AdminDashboardPage() {
                     <div
                       key={action.id}
                       data-quick-action-id={action.id}
-                      onPointerDown={(e) => handleQuickActionPointerDown(e, action.id)}
-                      onPointerMove={handleQuickActionPointerMove}
-                      onPointerUp={finishQuickActionPointerDrag}
-                      onPointerCancel={finishQuickActionPointerDrag}
                       onClick={() => {
                         if (ignoreNextClickRef.current) {
                           ignoreNextClickRef.current = false;
@@ -1668,17 +1664,24 @@ export default function AdminDashboardPage() {
                           router.push(action.route);
                         }
                       }}
-                      className={`group bg-white border rounded-2xl p-2.5 sm:p-4 flex items-center justify-between shadow-xs relative transition-all duration-200 select-none touch-none ${
+                      className={`group bg-white border rounded-2xl p-2.5 sm:p-4 flex items-center justify-between shadow-xs relative transition-all duration-200 select-none touch-pan-y ${
                         draggingQuickActionId === action.id
-                          ? "opacity-40 border-dashed border-slate-300 bg-slate-50 scale-95 cursor-grabbing z-40"
+                          ? "opacity-40 border-dashed border-slate-300 bg-slate-50 scale-95 z-40"
                           : hoveredId === action.id
                           ? "border-primary/50 bg-primary/5 ring-2 ring-primary/10 shadow-md scale-[1.02] z-30"
-                          : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
+                          : "border-slate-100/90 hover:shadow-md cursor-pointer"
                       }`}
                     >
                       <div className="flex items-center min-w-0">
-                        {/* Grab handle */}
-                        <div className="text-slate-300 mr-1.5 sm:mr-2 group-hover:text-slate-400 transition-colors cursor-grab active:cursor-grabbing shrink-0">
+                        {/* Grab handle with pointer drag handlers attached ONLY here */}
+                        <div
+                          onPointerDown={(e) => handleQuickActionPointerDown(e, action.id)}
+                          onPointerMove={handleQuickActionPointerMove}
+                          onPointerUp={finishQuickActionPointerDrag}
+                          onPointerCancel={finishQuickActionPointerDrag}
+                          className="text-slate-300 hover:text-slate-500 mr-1.5 sm:mr-2 transition-colors cursor-grab active:cursor-grabbing shrink-0 p-1 touch-none"
+                          title="Drag handle to reorder"
+                        >
                           <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M9 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm10-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
