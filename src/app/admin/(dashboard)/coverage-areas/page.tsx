@@ -382,6 +382,12 @@ export default function CoverageAreasPage() {
                   <div
                     key={zone.name}
                     className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between gap-2.5 text-left relative overflow-hidden bg-white hover:shadow-md transition-all"
+                    style={{
+                      backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)), url('/mapImg.webp')",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
                   >
                     <div>
                       {/* Top Row: Icon + Title + Actions */}
