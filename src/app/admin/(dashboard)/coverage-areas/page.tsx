@@ -6,14 +6,6 @@ import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { useAdminSecurity } from "@/hooks/useAdminSecurity";
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell
-} from "@/components/ui/table";
-import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -365,8 +357,8 @@ export default function CoverageAreasPage() {
           )}
         </div>
 
-        {/* Mobile View: 2-column Grid Cards matching public page style */}
-        <div className="block md:hidden">
+        {/* Universal Cards Grid for All Devices */}
+        <div>
           {filteredZones.length === 0 ? (
             <div className="py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200/80 p-6">
               <div className="flex flex-col items-center justify-center gap-2">
@@ -375,7 +367,7 @@ export default function CoverageAreasPage() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4">
               {filteredZones.map((zone) => {
                 const originalIndex = zones.findIndex((z) => z.name === zone.name);
                 return (
@@ -393,16 +385,16 @@ export default function CoverageAreasPage() {
                       {/* Top Row: Icon + Title + Actions */}
                       <div className="flex items-center justify-between gap-1 border-b border-slate-100/90 pb-2 mb-2">
                         <div className="flex items-center gap-1.5 min-w-0 pr-1">
-                          <div className="w-6 h-6 rounded-md bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                            <MapPin className="w-3.5 h-3.5" />
+                          <div className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           </div>
-                          <h4 className="text-slate-900 font-extrabold text-xs tracking-tight truncate">{zone.name}</h4>
+                          <h4 className="text-slate-900 font-extrabold text-xs sm:text-sm tracking-tight truncate">{zone.name}</h4>
                         </div>
                         {(allowEdit || allowDelete) && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="inline-flex items-center justify-center w-6 h-6 hover:bg-slate-100 rounded-md text-slate-400 hover:text-slate-700 transition-colors cursor-pointer outline-none shrink-0 -mr-1">
-                                <MoreVertical className="w-3.5 h-3.5" />
+                              <button className="inline-flex items-center justify-center w-6.5 h-6.5 sm:w-7 sm:h-7 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors cursor-pointer outline-none shrink-0 -mr-1">
+                                <MoreVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                               </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200/80 rounded-xl shadow-xl py-1 relative z-50">
@@ -431,7 +423,7 @@ export default function CoverageAreasPage() {
 
                       {/* Status Badge */}
                       <div className="mb-2">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold border leading-none ${
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold border leading-none ${
                           zone.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
                           zone.status === "expanding" ? "bg-blue-50 text-blue-700 border-blue-200" :
                           "bg-slate-100 text-slate-600 border-slate-200"
@@ -451,10 +443,10 @@ export default function CoverageAreasPage() {
 
                       {/* Sub-areas */}
                       <div className="space-y-1">
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Sub-areas:</p>
-                        <div className="flex flex-wrap gap-1">
+                        <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sub-areas / Peering:</p>
+                        <div className="flex flex-wrap gap-1.5">
                           {zone.subAreas.map((sub, i) => (
-                            <span key={i} className="bg-slate-100/90 text-slate-700 text-[9px] font-medium px-1.5 py-0.5 rounded border border-slate-200/50">
+                            <span key={i} className="bg-slate-100/90 text-slate-750 text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-md border border-slate-200/60 transition-all">
                               {sub}
                             </span>
                           ))}
@@ -466,106 +458,6 @@ export default function CoverageAreasPage() {
               })}
             </div>
           )}
-        </div>
-
-        {/* Desktop View: Full Table Grid */}
-        <div className="hidden md:block overflow-x-auto border border-slate-200/60 rounded-xl">
-          <Table>
-            <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="text-xs font-bold text-slate-500 uppercase tracking-wider py-4 pl-5">Zone Name</TableHead>
-                <TableHead className="text-xs font-bold text-slate-500 uppercase tracking-wider py-4">Status</TableHead>
-                <TableHead className="text-xs font-bold text-slate-500 uppercase tracking-wider py-4">Sub-areas / Road Peering</TableHead>
-                <TableHead className="text-xs font-bold text-slate-500 text-right uppercase tracking-wider py-4 pr-5">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredZones.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="py-12 text-center text-slate-400">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <HelpCircle className="w-8 h-8 text-slate-300" />
-                      <span className="text-xs font-semibold">No coverage zones found.</span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredZones.map((zone) => {
-                  const originalIndex = zones.findIndex(z => z.name === zone.name);
-                  return (
-                    <TableRow key={zone.name} className="group hover:bg-slate-50/40 transition-colors border-b border-slate-100 last:border-0">
-                      <TableCell className="py-4 pl-5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 group-hover:bg-white group-hover:border-indigo-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 shrink-0 transition-all">
-                            <MapPin className="w-4 h-4" />
-                          </div>
-                          <span className="font-extrabold text-slate-900">{zone.name}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border leading-none ${
-                          zone.status === "active" ? "bg-emerald-50/70 text-emerald-700 border-emerald-100" :
-                          zone.status === "expanding" ? "bg-blue-50/70 text-blue-700 border-blue-100" :
-                          "bg-slate-50/80 text-slate-500 border-slate-150"
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                            zone.status === "active" ? "bg-emerald-500" :
-                            zone.status === "expanding" ? "bg-blue-500 animate-pulse" :
-                            "bg-slate-400"
-                          }`} />
-                          <span>
-                            {zone.status === "active" ? "Active Fiber" :
-                             zone.status === "expanding" ? "Expanding" :
-                             "Planned"}
-                          </span>
-                        </span>
-                      </TableCell>
-                      <TableCell className="py-4 max-w-sm">
-                        <div className="flex flex-wrap gap-1.5">
-                          {zone.subAreas.map((sub, i) => (
-                            <span key={i} className="bg-slate-100/70 text-slate-650 hover:bg-slate-200/50 hover:text-slate-800 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-200/30 transition-all select-none">
-                              {sub}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell className="py-4 pr-5 text-right">
-                        {(allowEdit || allowDelete) && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <button className="inline-flex items-center justify-center w-7 h-7 hover:bg-slate-100/70 active:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-colors cursor-pointer outline-none border border-transparent hover:border-slate-200/40">
-                                <MoreVertical className="w-4 h-4" />
-                              </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-32 bg-white border border-slate-200/80 rounded-xl shadow-xl py-1 relative z-50">
-                              {allowEdit && (
-                                <DropdownMenuItem
-                                  onClick={() => handleOpenEditModal(originalIndex, zone)}
-                                  className="px-3 py-2 text-xs font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50/30 cursor-pointer flex items-center gap-2"
-                                >
-                                  <Pencil className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600" />
-                                  <span>Edit Zone</span>
-                                </DropdownMenuItem>
-                              )}
-                              {allowDelete && (
-                                <DropdownMenuItem
-                                  onClick={() => handleDeleteZone(originalIndex)}
-                                  className="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50/40 cursor-pointer flex items-center gap-2"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                                  <span>Delete</span>
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
         </div>
       </div>
 
