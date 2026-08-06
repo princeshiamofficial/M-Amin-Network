@@ -265,71 +265,53 @@ export default function CoverageAreasPage() {
   return (
     <div className="space-y-6 text-slate-850 font-sans">
       
-      {/* Title Header Card */}
-      <div className="bg-white border border-slate-200/80 shadow-xs rounded-2xl p-6 sm:p-7 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        {/* Decorative background gradient */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-blue-500/5 to-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex gap-4 items-start relative z-10">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-            <Compass className="w-6 h-6 animate-spin-slow" style={{ animationDuration: '25s' }} />
-          </div>
-          <div className="text-left">
-            <h1 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Network Coverage Sectors</h1>
-            <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
-              Manage client optical fiber coverage zones, check deployment status, and link road splicing sub-areas.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {/* Total Zones */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Sectors</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{totalZones}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Sectors</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{totalZones}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-            <Map className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+            <Map className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Active Fiber */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Active Fiber</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{activeZones}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Active Fiber</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{activeZones}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 relative">
-            <span className="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 relative">
+            <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
             </span>
-            <Wifi className="w-5 h-5" />
+            <Wifi className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Expanding */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Under Expansion</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{expandingZones}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Under Expansion</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{expandingZones}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-            <Activity className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+            <Activity className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Planned */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Planned Expansion</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{plannedZones}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Planned Expansion</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{plannedZones}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 shrink-0">
-            <Layers className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-500 shrink-0">
+            <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
       </div>
