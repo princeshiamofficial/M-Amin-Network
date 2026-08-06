@@ -1570,41 +1570,41 @@ export default function AdminDashboardPage() {
               </div>              {/* Today's Snapshot Section */}
               <div className="space-y-4 pt-4">
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                   {isLoadingData ? Array.from({ length: 10 }).map((_, idx) => (
                     <div
                       key={`snapshot-skeleton-${idx}`}
-                      className="border text-card-foreground bg-white p-2.5 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-sm sm:shadow-md flex flex-col justify-center min-h-[84px]"
+                      className="border text-card-foreground bg-white p-3 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-xs sm:shadow-md flex flex-col justify-center min-h-[76px] sm:min-h-[84px]"
                     >
-                      <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left">
-                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-full bg-slate-200 animate-pulse" />
-                        <div className="flex-1 min-w-0 w-full space-y-2">
-                          <div className="h-3 w-28 rounded bg-slate-200 animate-pulse" />
-                          <div className="h-6 w-16 rounded bg-slate-200 animate-pulse" />
+                      <div className="flex items-center space-x-2.5 sm:space-x-4 text-left">
+                        <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-xl sm:rounded-full bg-slate-200 animate-pulse shrink-0" />
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="h-2.5 w-20 sm:w-28 rounded bg-slate-200 animate-pulse" />
+                          <div className="h-5 w-12 sm:w-16 rounded bg-slate-200 animate-pulse" />
                         </div>
                       </div>
                     </div>
                   )) : snapshotCards.map((card, idx) => (
                     <div
                       key={idx}
-                      className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg bg-white p-2.5 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-sm sm:shadow-md flex flex-col justify-center min-h-[84px]"
+                      className="border text-card-foreground group relative overflow-hidden transition-all duration-300 hover:shadow-lg bg-white p-3 sm:p-4 rounded-2xl border-slate-100 border-solid shadow-xs sm:shadow-md flex flex-col justify-center min-h-[76px] sm:min-h-[84px]"
                     >
                       <div className={`absolute inset-0 opacity-[0.03] sm:hidden transition-opacity group-active:opacity-[0.06] ${card.color.bg}`} />
-                      <div className="flex sm:flex-row flex-col items-center sm:items-center space-y-2.5 sm:space-y-0 sm:space-x-4 text-center sm:text-left relative z-10">
-                        <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-full transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm sm:shadow-none ${card.color.bg}`}>
-                          <card.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${card.color.text}`} />
+                      <div className="flex items-center space-x-2.5 sm:space-x-4 text-left relative z-10">
+                        <div className={`p-2 sm:p-3 rounded-xl sm:rounded-full shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-xs sm:shadow-none ${card.color.bg}`}>
+                          <card.icon className={`h-4 w-4 sm:h-6 sm:w-6 ${card.color.text}`} />
                         </div>
-                        <div className="flex-1 min-w-0 w-full text-left">
-                          <p className="text-[10px] sm:text-sm font-bold sm:font-medium uppercase sm:capitalize tracking-widest sm:tracking-normal text-slate-400 sm:text-slate-500 truncate px-1">
+                        <div className="flex-1 min-w-0 text-left">
+                          <p className="text-[10px] sm:text-sm font-bold sm:font-medium uppercase sm:capitalize tracking-wider sm:tracking-normal text-slate-400 sm:text-slate-500 truncate">
                             {card.label}
                           </p>
-                          <p className="text-[15px] sm:text-2xl font-bold text-slate-800 font-mono mt-0.5 sm:mt-0 px-1 leading-tight">
+                          <p className="text-sm sm:text-2xl font-bold text-slate-800 font-mono mt-0.5 sm:mt-0 leading-tight truncate">
                             {card.value}
                           </p>
                         </div>
                       </div>
                       <div className="absolute -right-4 -bottom-4 opacity-[0.04] sm:hidden pointer-events-none transform rotate-12 scale-110">
-                        <card.icon className={`h-20 w-20 ${card.color.text}`} />
+                        <card.icon className={`h-16 w-16 ${card.color.text}`} />
                       </div>
                       <div className={`absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/10 to-transparent sm:hidden`} />
                     </div>
@@ -1634,17 +1634,17 @@ export default function AdminDashboardPage() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
                   {isLoadingData ? Array.from({ length: 8 }).map((_, idx) => (
                     <div
                       key={`quick-action-skeleton-${idx}`}
-                      className="bg-white border border-slate-100/90 rounded-2xl p-4 flex items-center shadow-sm"
+                      className="bg-white border border-slate-100/90 rounded-2xl p-3 sm:p-4 flex items-center shadow-xs"
                     >
-                      <div className="h-4 w-4 rounded bg-slate-200 animate-pulse mr-2" />
-                      <div className="h-9 w-9 rounded-full bg-slate-200 animate-pulse mr-3" />
-                      <div className="space-y-2">
-                        <div className="h-3.5 w-28 rounded bg-slate-200 animate-pulse" />
-                        <div className="h-2.5 w-20 rounded bg-slate-200 animate-pulse" />
+                      <div className="h-3.5 w-3.5 rounded bg-slate-200 animate-pulse mr-1.5 shrink-0" />
+                      <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-full bg-slate-200 animate-pulse mr-2 sm:mr-3 shrink-0" />
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="h-3 w-20 rounded bg-slate-200 animate-pulse" />
+                        <div className="h-2 w-14 rounded bg-slate-200 animate-pulse" />
                       </div>
                     </div>
                   )) : quickActionsList.map((action) => {
@@ -1668,7 +1668,7 @@ export default function AdminDashboardPage() {
                           router.push(action.route);
                         }
                       }}
-                      className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative transition-all duration-200 select-none touch-none ${
+                      className={`group bg-white border rounded-2xl p-2.5 sm:p-4 flex items-center justify-between shadow-xs relative transition-all duration-200 select-none touch-none ${
                         draggingQuickActionId === action.id
                           ? "opacity-40 border-dashed border-slate-300 bg-slate-50 scale-95 cursor-grabbing z-40"
                           : hoveredId === action.id
@@ -1676,21 +1676,21 @@ export default function AdminDashboardPage() {
                           : "border-slate-100/90 hover:shadow-md cursor-grab active:cursor-grabbing"
                       }`}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center min-w-0">
                         {/* Grab handle */}
-                        <div className="text-slate-300 mr-2 group-hover:text-slate-400 transition-colors cursor-grab active:cursor-grabbing">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <div className="text-slate-300 mr-1.5 sm:mr-2 group-hover:text-slate-400 transition-colors cursor-grab active:cursor-grabbing shrink-0">
+                          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M9 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm10-12a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0zm0 6a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                         </div>
                         {/* Icon in circle */}
-                        <div className={`p-2 ${action.bg} rounded-full mr-3 ${action.text}`}>
-                          <ActionIcon className="h-5 w-5" />
+                        <div className={`p-1.5 sm:p-2 ${action.bg} rounded-full mr-2 sm:mr-3 shrink-0 ${action.text}`}>
+                          <ActionIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                         {/* Title and path */}
-                        <div className="text-left">
-                          <span className="font-bold text-slate-800 text-sm block group-hover:text-brand-blue transition-colors">{action.label}</span>
-                          <span className="text-[10px] text-slate-400 font-mono block mt-0.5">{action.path}</span>
+                        <div className="text-left min-w-0">
+                          <span className="font-bold text-slate-800 text-xs sm:text-sm block group-hover:text-brand-blue transition-colors truncate">{action.label}</span>
+                          <span className="text-[9px] sm:text-[10px] text-slate-400 font-mono block mt-0.5 truncate">{action.path}</span>
                         </div>
                       </div>
 
