@@ -316,7 +316,7 @@ export default function CoverageAreasPage() {
       </div>
 
       {/* Main Panel Card */}
-      <div className="bg-white border border-slate-200/85 shadow-sm rounded-2xl p-6 space-y-6">
+      <div className="bg-transparent md:bg-white border-0 md:border md:border-slate-200/85 shadow-none md:shadow-sm rounded-none md:rounded-2xl p-0 md:p-6 space-y-4 md:space-y-6">
         
         {/* Controls Row */}
         <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
@@ -329,7 +329,7 @@ export default function CoverageAreasPage() {
                 placeholder="Search zone name or sub-area..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder-slate-400 transition-all font-medium"
+                className="w-full bg-white md:bg-slate-50/50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder-slate-400 transition-all font-medium"
               />
             </div>
             {/* Filter select */}
@@ -337,7 +337,7 @@ export default function CoverageAreasPage() {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as "all" | "active" | "expanding" | "planned")}
-                className="w-full sm:w-44 bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-700 font-bold focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 cursor-pointer appearance-none pr-8"
+                className="w-full sm:w-44 bg-white md:bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-700 font-bold focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 cursor-pointer appearance-none pr-8"
               >
                 <option value="all">All Sectors</option>
                 <option value="active">Active Only</option>
@@ -379,7 +379,7 @@ export default function CoverageAreasPage() {
                 return (
                   <div
                     key={zone.name}
-                    className="p-3 sm:p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between gap-2.5 text-left relative overflow-hidden bg-white hover:shadow-md transition-all"
+                    className="p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col justify-between gap-2.5 text-left relative overflow-hidden bg-white hover:shadow-md transition-all"
                   >
                     <div>
                       {/* Top Row: Icon + Title + Actions */}
