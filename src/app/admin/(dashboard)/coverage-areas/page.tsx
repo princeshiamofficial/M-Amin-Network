@@ -307,8 +307,8 @@ export default function CoverageAreasPage() {
         </div>
       </div>
 
-      {/* Main Panel Card */}
-      <div className="bg-transparent md:bg-white border-0 md:border md:border-slate-200/85 shadow-none md:shadow-sm rounded-none md:rounded-2xl p-0 md:p-6 space-y-4 md:space-y-6">
+      {/* Main Panel Content */}
+      <div className="space-y-4 sm:space-y-6">
         
         {/* Controls Row */}
         <div className="flex flex-row justify-between items-center gap-2 sm:gap-3">
@@ -320,7 +320,7 @@ export default function CoverageAreasPage() {
               placeholder="Search zone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white md:bg-slate-50/50 border border-slate-200 rounded-xl pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder-slate-400 transition-all font-medium"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-8 sm:pl-9 pr-2.5 sm:pr-3 py-2.5 text-xs text-slate-800 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 placeholder-slate-400 transition-all font-medium shadow-2xs"
             />
           </div>
 
@@ -329,7 +329,7 @@ export default function CoverageAreasPage() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as "all" | "active" | "expanding" | "planned")}
-              className="w-full bg-white md:bg-slate-50/50 border border-slate-200 rounded-xl pl-2.5 sm:pl-3 pr-6 sm:pr-8 py-2.5 text-xs text-slate-700 font-bold focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 cursor-pointer appearance-none truncate"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-2.5 sm:pl-3 pr-6 sm:pr-8 py-2.5 text-xs text-slate-700 font-bold focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 cursor-pointer appearance-none truncate shadow-2xs"
             >
               <option value="all">All Sectors</option>
               <option value="active">Active Only</option>
