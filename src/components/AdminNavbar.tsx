@@ -10,11 +10,13 @@ import { getSetting, setSetting, getNotifications, markNotificationAsRead, markA
 interface AdminNavbarProps {
   activeTab: string;
   onSignOut: () => void;
+  onToggleSidebar?: () => void;
 }
 
 export default function AdminNavbar({
   activeTab,
   onSignOut,
+  onToggleSidebar,
 }: AdminNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
@@ -73,7 +75,6 @@ export default function AdminNavbar({
   }
 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [loadingNotifications, setLoadingNotifications] = useState(true);
 
   const getRelativeTime = (dateStr: string) => {
     try {
@@ -83,13 +84,15 @@ export default function AdminNavbar({
       }
       const now = new Date();
       const diffMs = now.getTime() - date.getTime();
-      const diffMins = Math.floor(diffMs / 60000);
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
       if (diffMins < 1) return "Just now";
-      if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
-      const diffHours = Math.floor(diffMins / 60);
-      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-      const diffDays = Math.floor(diffHours / 24);
-      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString();
     } catch {
       return dateStr || "recently";
     }
@@ -111,8 +114,6 @@ export default function AdminNavbar({
         setNotifications(mapped);
       } catch {
         // safe fallback
-      } finally {
-        setLoadingNotifications(false);
       }
     };
 
@@ -142,16 +143,27 @@ export default function AdminNavbar({
 
   const unreadCount = notifications.filter(n => !n.read).length;
   return (
-    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-6 select-none relative z-10 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-      {/* Left side: Active Page Title */}
-      <div className="flex items-center gap-3">
-        <h2 className="text-slate-800 font-extrabold text-sm tracking-wide">
+    <header className="w-full h-16 bg-[#eef2f5] border-b border-[#e2e8f0] flex items-center justify-between px-3 sm:px-6 select-none relative z-10 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+      {/* Left side: Active Page Title & Mobile Toggle */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {onToggleSidebar && (
+          <button
+            onClick={onToggleSidebar}
+            className="p-1.5 hover:bg-slate-200/70 rounded-lg text-slate-700 transition-colors md:hidden cursor-pointer shrink-0"
+            title="Toggle Navigation Menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
+        <h2 className="text-slate-800 font-extrabold text-xs sm:text-sm tracking-wide truncate max-w-[140px] sm:max-w-none">
           {activeTab} Workspace
         </h2>
       </div>
 
       {/* Right side: Reference icons and avatar */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
         {/* Clear Cache button */}
         <button
           onClick={() => {
@@ -163,12 +175,12 @@ export default function AdminNavbar({
             if (avatar) localStorage.setItem("avatar_url", avatar);
             window.location.href = window.location.pathname + '?t=' + Date.now();
           }}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-200/80 text-red-700 hover:text-red-800 rounded-full text-xs font-semibold transition-all cursor-pointer shadow-xs"
         >
-          <svg className="w-[15px] h-[15px] text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <svg className="w-[15px] h-[15px] text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          <span>Clear Cache</span>
+          <span className="hidden sm:inline">Clear Cache</span>
         </button>
 
         {/* Notification Bell with Badge Dropdown */}

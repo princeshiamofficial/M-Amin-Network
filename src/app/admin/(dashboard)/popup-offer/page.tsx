@@ -13,10 +13,12 @@ import {
 import Image from "next/image";
 
 function normalizePopupEnabled(value: unknown): boolean {
+  if (value === true || value === 1 || value === "true" || value === "1" || value === "on" || value === "yes") return true;
+  if (value === false || value === 0 || value === "false" || value === "0" || value === "off" || value === "no") return false;
   if (typeof value === "boolean") return value;
   if (typeof value === "number") return value !== 0;
   if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
-  return true;
+  return false;
 }
 
 export default function PopupOfferPage() {
@@ -37,15 +39,15 @@ export default function PopupOfferPage() {
         setSystemConfig({
           ...config,
           popupEnabled: normalizePopupEnabled(config.popupEnabled),
-          popupImage: (config.popupImage as string) || "/popup.webp",
+          popupImage: (config.popupImage as string) || "",
         });
       } else {
         const defaultSys = {
           peeringBandwidthLimit: "10 Gbps",
           maintenanceMode: false,
           maintenanceMessage: "M-Amin Network is currently undergoing scheduled backend fiber infrastructure upgrades. We will be back online shortly.",
-          popupEnabled: true,
-          popupImage: "/popup.webp"
+          popupEnabled: false,
+          popupImage: ""
         };
         setSetting("system_config", defaultSys);
         setSystemConfig(defaultSys);
@@ -62,7 +64,7 @@ export default function PopupOfferPage() {
         const payload = {
           ...systemConfig,
           popupEnabled: normalizePopupEnabled(systemConfig.popupEnabled),
-          popupImage: (systemConfig.popupImage as string) || "/popup.webp",
+          popupImage: (systemConfig.popupImage as string) || "",
         };
         const saved = await setSetting("system_config", payload);
         if (!saved) {
@@ -81,7 +83,7 @@ export default function PopupOfferPage() {
   if (!auth) return null;
 
   const isEnabled = systemConfig.popupEnabled === true;
-  const popupImage = (systemConfig.popupImage as string) || "/popup.webp";
+  const popupImage = (systemConfig.popupImage as string) || "";
 
   return (
     <div className="space-y-6 w-full text-left pb-16 font-sans">

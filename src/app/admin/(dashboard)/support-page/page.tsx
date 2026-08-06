@@ -87,13 +87,14 @@ export default function SupportPageAdmin() {
   }, [router]);
 
   const save = async () => {
-    // Mirror all English values to Bangla for browser translator
+    const updatedContent = { ...content };
     for (let i = 1; i <= 55; i++) {
       const enKey = `str${i}En` as keyof SupportPageContent;
       const bnKey = `str${i}Bn` as keyof SupportPageContent;
-      if (bnKey in content) (content as unknown as Record<string, string>)[bnKey] = (content as unknown as Record<string, string>)[enKey];
+      if (bnKey in updatedContent) (updatedContent as unknown as Record<string, string>)[bnKey] = (updatedContent as unknown as Record<string, string>)[enKey];
     }
-    setSetting("support_page_content", content as unknown as Record<string, unknown>);
+    setContent(updatedContent);
+    setSetting("support_page_content", updatedContent as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

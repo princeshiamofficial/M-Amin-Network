@@ -213,8 +213,8 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
       peeringBandwidthLimit: "10 Gbps",
       maintenanceMode: false,
       maintenanceMessage: "M-Amin Network is currently undergoing scheduled backend fiber infrastructure upgrades. We will be back online shortly.",
-      popupEnabled: true,
-      popupImage: "/popup.webp",
+      popupEnabled: false,
+      popupImage: "",
       _sort_order: 0
     }
   ],

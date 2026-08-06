@@ -23,7 +23,6 @@ import {
 import {
   Pencil,
   Trash2,
-  Upload,
   Image as ImageIcon,
   Eye,
   Copy,

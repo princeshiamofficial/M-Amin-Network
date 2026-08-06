@@ -345,9 +345,9 @@ export default function BillsPage() {
                   className="w-full bg-[#f8fafc] border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-orange-500 font-medium transition-all"
                 >
                   <option value="">-- Choose Existing Subscriber --</option>
-                  {subscribers.map((s: any) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.id}) - {s.planName}
+                  {subscribers.map((s: Record<string, unknown>) => (
+                    <option key={String(s.id)} value={String(s.id)}>
+                      {String(s.name)} ({String(s.id)}) - {String(s.planName)}
                     </option>
                   ))}
                   <option value="custom">-- Custom Unlisted Client --</option>

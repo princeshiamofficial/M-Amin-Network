@@ -99,20 +99,21 @@ export default function ComplainPageAdmin() {
     setAuth(true);
     getSetting("complain_page_content").then(s => {
       if (s) setContent({ ...defaultComplainPageContent, ...(s as ComplainPageContent) });
-      else setSetting("complain_page_content", defaultComplainPageContent as any);
+      else setSetting("complain_page_content", defaultComplainPageContent as unknown as Record<string, unknown>);
     });
   }, [router]);
 
   const save = async () => {
-    // Mirror En -> Bn
-    const fields = Object.keys(content) as (keyof ComplainPageContent)[];
+    const updatedContent = { ...content };
+    const fields = Object.keys(updatedContent) as (keyof ComplainPageContent)[];
     fields.forEach(key => {
       if (key.endsWith("En")) {
         const bnKey = key.replace(/En$/, "Bn") as keyof ComplainPageContent;
-        if (bnKey in content) (content as unknown as Record<string, string>)[bnKey] = (content as unknown as Record<string, string>)[key];
+        if (bnKey in updatedContent) (updatedContent as unknown as Record<string, string>)[bnKey] = (updatedContent as unknown as Record<string, string>)[key];
       }
     });
-    setSetting("complain_page_content", content as any);
+    setContent(updatedContent);
+    setSetting("complain_page_content", updatedContent as unknown as Record<string, unknown>);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

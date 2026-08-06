@@ -370,6 +370,7 @@ export default function AdminDashboardPage() {
 
   const [isQuickActionModalOpen, setIsQuickActionModalOpen] = useState(false);
   const [isRouteDropdownOpen, setIsRouteDropdownOpen] = useState(false);
+  const [quickActionRouteMode, setQuickActionRouteMode] = useState<"preset" | "custom">("preset");
   const [editingQuickAction, setEditingQuickAction] = useState<QuickAction | null>(null);
   const [quickActionFormData, setQuickActionFormData] = useState<Omit<QuickAction, "id">>({
     label: "", path: "", route: "", iconName: "Link", bg: "bg-blue-50", text: "text-blue-600"
@@ -1624,6 +1625,7 @@ export default function AdminDashboardPage() {
                     onClick={() => {
                       setEditingQuickAction(null);
                       setQuickActionFormData({ label: "", path: "", route: "", iconName: "Link", bg: "bg-blue-50", text: "text-blue-600" });
+                      setQuickActionRouteMode("preset");
                       setIsQuickActionModalOpen(true);
                     }}
                     className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-all shadow-sm active:scale-95"
@@ -1660,7 +1662,11 @@ export default function AdminDashboardPage() {
                           ignoreNextClickRef.current = false;
                           return;
                         }
-                        router.push(action.route);
+                        if (action.route.startsWith("http://") || action.route.startsWith("https://")) {
+                          window.open(action.route, "_blank");
+                        } else {
+                          router.push(action.route);
+                        }
                       }}
                       className={`group bg-white border rounded-2xl p-4 flex items-center justify-between shadow-sm relative transition-all duration-200 select-none touch-none ${
                         draggingQuickActionId === action.id
@@ -1695,6 +1701,8 @@ export default function AdminDashboardPage() {
                             e.stopPropagation();
                             setEditingQuickAction(action);
                             setQuickActionFormData({ label: action.label, path: action.path, route: action.route, iconName: action.iconName, bg: action.bg, text: action.text });
+                            const isPreset = adminRoutes.some((r) => r.route === action.route);
+                            setQuickActionRouteMode(isPreset ? "preset" : "custom");
                             setIsQuickActionModalOpen(true);
                           }}
                           className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
@@ -1731,8 +1739,8 @@ export default function AdminDashboardPage() {
 
       {/* Quick Action Modal */}
       {isQuickActionModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 bg-slate-900/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="font-bold text-lg text-slate-800">{editingQuickAction ? "Edit Quick Action" : "Add Quick Action"}</h3>
               <button onClick={() => setIsQuickActionModalOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
@@ -1745,42 +1753,75 @@ export default function AdminDashboardPage() {
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Label</label>
                 <input type="text" required value={quickActionFormData.label} onChange={(e) => setQuickActionFormData({ ...quickActionFormData, label: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue" placeholder="e.g. Packages" />
               </div>
-              <div className="relative">
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Route URL</label>
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setIsRouteDropdownOpen(!isRouteDropdownOpen)}
-                    className="w-full flex items-center justify-between px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue text-left shadow-sm"
-                  >
-                    <span className={quickActionFormData.route ? "text-slate-900" : "text-slate-400"}>
-                      {quickActionFormData.route || "Select a route"}
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isRouteDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {isRouteDropdownOpen && (
-                    <div className="absolute z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto animate-in fade-in zoom-in-95 duration-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                      {adminRoutes
-                        .filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id))
-                        .map((r) => (
-                        <button
-                          key={r.route}
-                          type="button"
-                          onClick={() => {
-                            setQuickActionFormData({ ...quickActionFormData, route: r.route, path: r.route });
-                            setIsRouteDropdownOpen(false);
-                          }}
-                          className={`w-full text-left px-3.5 py-2.5 text-sm transition-colors border-b last:border-b-0 border-slate-50 ${quickActionFormData.route === r.route ? 'bg-brand-blue/5 text-brand-blue font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
-                        >
-                          {r.route}
-                        </button>
-                      ))}
-                      {adminRoutes.filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id)).length === 0 && (
-                        <div className="p-4 text-center text-sm text-slate-500">All available routes are added!</div>
-                      )}
-                    </div>
-                  )}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-semibold text-slate-700">Route URL / Link</label>
+                  <div className="flex bg-slate-100 p-0.5 rounded-lg text-[11px] font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setQuickActionRouteMode("preset")}
+                      className={`px-2 py-0.5 rounded-md transition-all ${quickActionRouteMode === "preset" ? "bg-white text-slate-900 shadow-xs font-bold" : "text-slate-500 hover:text-slate-800"}`}
+                    >
+                      Admin Page
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setQuickActionRouteMode("custom")}
+                      className={`px-2 py-0.5 rounded-md transition-all ${quickActionRouteMode === "custom" ? "bg-white text-slate-900 shadow-xs font-bold" : "text-slate-500 hover:text-slate-800"}`}
+                    >
+                      Custom Link
+                    </button>
+                  </div>
                 </div>
+
+                {quickActionRouteMode === "preset" ? (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsRouteDropdownOpen(!isRouteDropdownOpen)}
+                      className="w-full flex items-center justify-between px-3 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue text-left shadow-xs"
+                    >
+                      <span className={quickActionFormData.route ? "text-slate-900 font-mono text-xs" : "text-slate-400 text-xs"}>
+                        {quickActionFormData.route || "Select a route"}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isRouteDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isRouteDropdownOpen && (
+                      <div className="absolute z-50 w-full mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto animate-in fade-in zoom-in-95 duration-100 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        {adminRoutes
+                          .filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id))
+                          .map((r) => (
+                          <button
+                            key={r.route}
+                            type="button"
+                            onClick={() => {
+                              setQuickActionFormData({ ...quickActionFormData, route: r.route, path: r.route });
+                              setIsRouteDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3.5 py-2.5 text-xs font-mono transition-colors border-b last:border-b-0 border-slate-50 ${quickActionFormData.route === r.route ? 'bg-brand-blue/5 text-brand-blue font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+                          >
+                            {r.route}
+                          </button>
+                        ))}
+                        {adminRoutes.filter((r) => !quickActionsList.some((action) => action.route === r.route && action.id !== editingQuickAction?.id)).length === 0 && (
+                          <div className="p-4 text-center text-xs text-slate-500">All preset admin routes added! Switch to &quot;Custom Link&quot; to add any custom link.</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      value={quickActionFormData.route}
+                      onChange={(e) => setQuickActionFormData({ ...quickActionFormData, route: e.target.value, path: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue font-mono text-xs text-slate-800"
+                      placeholder="e.g. /admin/custom-page or https://example.com"
+                    />
+                    <p className="text-[10px] text-slate-400 mt-1">Supports internal paths (e.g. <code>/admin/packages</code>) or external URLs (e.g. <code>https://...</code>).</p>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">Icon</label>

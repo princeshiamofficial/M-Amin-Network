@@ -51,9 +51,9 @@ export default function TicketsPage() {
     setAuth(true);
     getSetting("tickets").then(saved => {
       if (saved && Array.isArray(saved) && saved.length > 0) {
-        setTickets(saved as any);
+        setTickets(saved as unknown as Ticket[]);
       } else {
-        setSetting("tickets", defaultTickets as any);
+        setSetting("tickets", defaultTickets as unknown as Record<string, unknown>[]);
         setTickets(defaultTickets);
       }
     });
@@ -62,7 +62,7 @@ export default function TicketsPage() {
   const updateStatus = (id: string, status: "Assigned" | "Resolved") => {
     const updated = tickets.map(t => t.id === id ? { ...t, status } : t);
     setTickets(updated);
-    setSetting("tickets", updated as any);
+    setSetting("tickets", updated as unknown as Record<string, unknown>[]);
     toast.success(`Ticket status updated to ${status}.`);
   };
 
@@ -75,7 +75,7 @@ export default function TicketsPage() {
 
     const updated = tickets.filter(t => t.id !== id);
     setTickets(updated);
-    setSetting("tickets", updated as any);
+    setSetting("tickets", updated as unknown as Record<string, unknown>[]);
     toast.success("Support ticket deleted successfully.");
   };
 
@@ -99,7 +99,7 @@ export default function TicketsPage() {
 
     const updated = [ticket, ...tickets];
     setTickets(updated);
-    setSetting("tickets", updated as any);
+    setSetting("tickets", updated as unknown as Record<string, unknown>[]);
     setShowAddTicket(false);
     setNewTicket({ clientId: "", name: "", phone: "", category: "Hardware", desc: "" });
     toast.success("Ticket added successfully.");

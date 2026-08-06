@@ -20,8 +20,9 @@ export default function OffersHeaderPage() {
       return;
     }
     setAuth(true);
-    getSetting("page_headers").then((s: any) => {
-      if (s) {
+    getSetting("page_headers").then((res: unknown) => {
+      if (res && typeof res === "object") {
+        const s = res as Record<string, string>;
         setTitleEn(s.offers_title_en || "");
         setHighlightEn(s.offers_title_highlight_en || "");
         setSubtitleEn(s.offers_subtitle_en || "");

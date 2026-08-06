@@ -269,12 +269,27 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden notranslate">
-      <div className="relative shrink-0">
+    <div className="min-h-screen -mt-24 bg-white text-slate-800 flex overflow-hidden notranslate relative">
+      {/* Mobile Backdrop Overlay when Sidebar is open */}
+      {!isSidebarCollapsed && (
+        <div
+          onClick={() => setIsSidebarCollapsed(true)}
+          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs md:hidden animate-fade-in"
+        />
+      )}
+
+      <div className={`shrink-0 transition-all duration-300 ${
+        !isSidebarCollapsed
+          ? "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 relative"
+          : "max-md:hidden md:relative"
+      }`}>
         <AdminSidebar
           activeTab={activeTab}
           setActiveTab={(tab) => {
             setActiveTab(tab);
+            if (typeof window !== "undefined" && window.innerWidth < 768) {
+              setIsSidebarCollapsed(true);
+            }
             const url = tabUrls[tab];
             if (url) {
               router.push(url);
@@ -303,22 +318,23 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
         </button>
       </div>
 
-      <main className="flex-1 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
-        <div className="sticky top-0 z-30 bg-white shadow-sm shrink-0">
+      <main className="flex-1 min-w-0 h-screen flex flex-col bg-slate-50/40 overflow-hidden">
+        <div className="sticky top-0 z-30 bg-white shadow-xs shrink-0">
           <AdminNavbar
             activeTab={activeTab}
             onSignOut={handleLogout}
+            onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           />
         </div>
 
         <div className="flex-1 overflow-y-auto flex flex-col admin-main-scroll">
-          <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-8 py-3 flex flex-wrap items-center gap-2">
-            <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none">My shortcuts:</span>
+          <div className="bg-[#f1f5f9]/70 border-b border-slate-200/50 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-wrap items-center gap-2">
+            <span className="text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1.5 select-none shrink-0">My shortcuts:</span>
             <div className="flex flex-wrap gap-2 items-center">
               {isLoadingQuickActions ? Array.from({ length: 8 }).map((_, index) => (
                 <div
                   key={`shortcut-skeleton-${index}`}
-                  className="h-8 w-32 rounded-full border border-slate-200 bg-white shadow-sm animate-pulse"
+                  className="h-8 w-32 rounded-full border border-slate-200 bg-white shadow-xs animate-pulse"
                 />
               )) : quickActions.map((item) => {
                 const isActive = pathname === item.route || (item.label === "Packages" && pathname === "/admin/packages");
@@ -327,7 +343,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
                   <button
                     key={item.id}
                     onClick={() => router.push(item.route)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-sm ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 border rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${
                       isActive
                         ? "border-brand-blue bg-blue-50/20 text-brand-blue"
                         : "border-slate-200 bg-white text-slate-700 hover:border-slate-350 hover:bg-slate-50/50"
@@ -341,7 +357,7 @@ function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="grow p-8 space-y-6 bg-[#f8fafc]">
+          <div className="grow p-3 sm:p-5 lg:p-8 space-y-4 sm:space-y-6 bg-[#f8fafc] min-w-0">
             {children}
           </div>
         </div>

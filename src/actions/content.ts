@@ -124,8 +124,8 @@ export async function setSetting(key: string, data: unknown): Promise<boolean> {
       broadcastMaintenance({
         isMaintenance: normalizeBooleanValue(config.maintenanceMode),
         maintenanceMessage: config.maintenanceMessage || "",
-        popupEnabled: normalizeBooleanValue(config.popupEnabled, true),
-        popupImage: config.popupImage || "/popup.webp"
+        popupEnabled: normalizeBooleanValue(config.popupEnabled, false),
+        popupImage: config.popupImage || ""
       });
     } catch (e) {
       console.warn("WebSocket broadcast failed:", e);

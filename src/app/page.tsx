@@ -78,10 +78,12 @@ const DEFAULT_HERO_METRICS: HeroMetric[] = [
 ];
 
 function normalizePopupEnabled(value: unknown): boolean {
+  if (value === true || value === 1 || value === "true" || value === "1" || value === "on" || value === "yes") return true;
+  if (value === false || value === 0 || value === "false" || value === "0" || value === "off" || value === "no") return false;
   if (typeof value === "boolean") return value;
   if (typeof value === "number") return value !== 0;
   if (typeof value === "string") return !["false", "0", "off", "no"].includes(value.toLowerCase());
-  return true;
+  return false;
 }
 
 function getPopupSessionKey(image: string): string {
@@ -202,8 +204,8 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [popupConfig, setPopupConfig] = useState({
-    enabled: true,
-    image: "/popup.webp"
+    enabled: false,
+    image: ""
   });
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -308,8 +310,14 @@ export default function Home() {
       if (saved) {
         const config = saved as Record<string, unknown>;
         const enabled = normalizePopupEnabled(config.popupEnabled);
-        const image = (config.popupImage as string) || "/popup.webp";
+        const image = (config.popupImage as string) || "";
         setPopupConfig({ enabled, image });
+        if (!enabled || !image) {
+          setShowPopup(false);
+        }
+      } else {
+        setPopupConfig({ enabled: false, image: "" });
+        setShowPopup(false);
       }
     });
 
@@ -337,13 +345,13 @@ export default function Home() {
             const data = JSON.parse(event.data);
             if (data && typeof data === "object" && "popupEnabled" in data) {
               const popupEnabled = normalizePopupEnabled(data.popupEnabled);
-              const popupImage = (data.popupImage as string) || "/popup.webp";
+              const popupImage = (data.popupImage as string) || "";
               setPopupConfig({
                 enabled: popupEnabled,
                 image: popupImage
               });
               
-              if (!popupEnabled) {
+              if (!popupEnabled || !popupImage) {
                 setShowPopup(false);
               } else {
                 const hasSeen = sessionStorage.getItem(getPopupSessionKey(popupImage));
@@ -389,8 +397,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (!popupConfig.enabled || !popupConfig.image) {
+      setShowPopup(false);
+      return;
+    }
     const hasSeen = sessionStorage.getItem(getPopupSessionKey(popupConfig.image));
-    if (!hasSeen && popupConfig.enabled) {
+    if (!hasSeen && popupConfig.enabled && popupConfig.image) {
       const timer = setTimeout(() => {
         setShowPopup(true);
       }, 1000);
