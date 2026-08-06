@@ -263,71 +263,55 @@ export default function CustomersPage() {
   return (
     <div className="space-y-6 text-slate-850 font-sans">
       
-      {/* Title Header Card */}
-      <div className="bg-white border border-slate-200/80 shadow-xs rounded-2xl p-6 sm:p-7 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        {/* Decorative background gradient */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-indigo-500/5 to-purple-500/5 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex gap-4 items-start relative z-10 text-left">
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-            <Users className="w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Client Subscription Directory</h1>
-            <p className="text-slate-500 text-[11px] leading-relaxed mt-0.5">
-              Register new broadband subscribers, assign custom bandwidth plans, toggle access status, and monitor invoicing logs.
-            </p>
-          </div>
-        </div>
-      </div>
+
 
       {/* Stats Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         {/* Total Subscribers */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Clients</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{totalSubs}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Total Clients</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{totalSubs}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-            <Users className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+            <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Active Subscribers */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Active Connections</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{activeSubs}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Active Connections</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{activeSubs}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 relative">
-            <span className="absolute top-2.5 right-2.5 flex h-2.5 w-2.5">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 relative">
+            <span className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 flex h-2 w-2 sm:h-2.5 sm:w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 bg-emerald-500"></span>
             </span>
-            <UserCheck className="w-5 h-5" />
+            <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Suspended Subscribers */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Suspended Lines</span>
-            <span className="text-2xl font-black text-slate-800 tracking-tight block">{suspendedSubs}</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Suspended Lines</span>
+            <span className="text-lg sm:text-2xl font-black text-slate-800 tracking-tight block truncate">{suspendedSubs}</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shrink-0">
-            <UserX className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shrink-0">
+            <UserX className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
 
         {/* Est. Revenue */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-          <div className="space-y-1 text-left">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Monthly Est. Billings</span>
-            <span className="text-2xl font-black text-slate-850 tracking-tight block">৳ {calculateRevenue().toLocaleString()} BDT</span>
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <div className="space-y-0.5 sm:space-y-1 text-left min-w-0">
+            <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">Monthly Est. Billings</span>
+            <span className="text-sm sm:text-2xl font-black text-slate-850 tracking-tight block truncate">৳ {calculateRevenue().toLocaleString()} BDT</span>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-            <DollarSign className="w-5 h-5" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+            <DollarSign className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         </div>
       </div>
