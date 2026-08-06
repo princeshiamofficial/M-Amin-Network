@@ -3,7 +3,6 @@ import { toast } from "sonner";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { verifyAdminLoginAction, requestPasswordResetAction, resetPasswordAction, getSetting, isAdminAuthenticated } from "@/actions/content";
 
@@ -28,7 +27,6 @@ const getLogoUrl = (value: unknown, variant: LogoVariant = "horizontal"): string
 };
 
 export default function AdminDashboard() {
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
@@ -86,9 +84,7 @@ export default function AdminDashboard() {
           if (isServerAuth) {
             sessionStorage.setItem("admin_authenticated", "true");
             localStorage.setItem("admin_token", "admin_logged_in_token");
-            setIsAuthenticated(true);
-            setMounted(true);
-            router.push("/admin/dashboard");
+            window.location.href = "/admin/dashboard";
             return;
           }
 
@@ -104,7 +100,7 @@ export default function AdminDashboard() {
       void resumeSession();
     }, 0);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,7 +115,7 @@ export default function AdminDashboard() {
         localStorage.setItem("admin_token", "admin_logged_in_token");
         localStorage.setItem("admin_username", result.username || "admin");
         localStorage.setItem("admin_user_role", result.role || "Super Administrator");
-        router.push("/admin/dashboard");
+        window.location.href = "/admin/dashboard";
       } else {
         setLoginError(result.error || "Invalid username or password. Please try again.");
       }
