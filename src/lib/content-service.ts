@@ -17,14 +17,15 @@ const OBJECT_KEYS = [
   "support_page_content",
   "portal_page_content",
   "about_content",
+  "about_content_full",
   "contact_content",
+  "contact_content_full",
   "complaint_content_guidelines",
   "topbar_content",
   "page_headers",
   "why_choose_content",
   "testimonials_content",
-  "packages_content",
-  "contact_content_full"
+  "packages_content"
 ];
 
 function isObjectKey(key: string): boolean {
