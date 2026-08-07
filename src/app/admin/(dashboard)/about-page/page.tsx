@@ -90,7 +90,7 @@ export default function AboutPageAdmin() {
   const [content, setContent] = useState<AboutContentFull>(defaultAboutContentFull);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const [activeTab, setActiveTab] = useState("header");
+  const [activeTab, setActiveTab] = useState("mission");
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {
@@ -172,7 +172,7 @@ export default function AboutPageAdmin() {
       </div>
 
       <div className="flex gap-4 border-b border-slate-200 pb-2">
-        {["header", "mission", "credentials", "infrastructure", "integrity"].map((tab: string) => (
+        {["mission", "credentials", "infrastructure", "integrity"].map((tab: string) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors capitalize ${activeTab === tab ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
             {tab}
@@ -181,26 +181,6 @@ export default function AboutPageAdmin() {
       </div>
 
       <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-
-        {activeTab === "header" && (
-          <div className="space-y-6">
-            <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-2">Header Section</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Header Title Prefix (English)</label>
-                <input type="text" value={content.headerTitleEn || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("headerTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Header Title Highlight (English)</label>
-                <input type="text" value={content.highlightEn || ""} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("highlightEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <label className="text-xs font-bold text-slate-700">Header Subtitle/Description (English)</label>
-                <textarea rows={3} value={content.headerDescEn || ""} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("headerDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
-              </div>
-            </div>
-          </div>
-        )}
 
         {activeTab === "mission" && (
           <div className="space-y-6">
