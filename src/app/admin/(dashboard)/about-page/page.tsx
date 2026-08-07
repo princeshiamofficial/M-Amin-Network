@@ -4,97 +4,14 @@ import { getSetting, setSetting } from "@/actions/content";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import * as Lucide from "lucide-react";
+import {
+  defaultAboutContentFull,
+  type Credential,
+  type InfraCard,
+  type AboutContentFull,
+} from "@/lib/about-content";
 
-export interface Credential {
-  keyEn: string;
-  keyBn?: string;
-  valEn: string;
-  valBn?: string;
-}
-
-export interface InfraCard {
-  titleEn: string;
-  titleBn?: string;
-  descEn: string;
-  descBn?: string;
-  iconName: string;
-}
-
-export interface AboutContentFull {
-  headerTitleEn: string;
-  headerTitleBn?: string;
-  headerDescEn: string;
-  headerDescBn?: string;
-  
-  missionTitleEn: string;
-  missionTitleBn?: string;
-  missionP1En: string;
-  missionP1Bn?: string;
-  missionP2En: string;
-  missionP2Bn?: string;
-  
-  credTitleEn: string;
-  credTitleBn?: string;
-  credentials: Credential[];
-  
-  infraTitleEn: string;
-  infraTitleBn?: string;
-  infraDescEn: string;
-  infraDescBn?: string;
-  infraCards: InfraCard[];
-  
-  integrityTitleEn: string;
-  integrityTitleBn?: string;
-  integrityDescEn: string;
-  integrityDescBn?: string;
-  btn1En: string;
-  btn1Bn?: string;
-  btn2En: string;
-  btn2Bn?: string;
-}
-
-export const defaultAboutContentFull: AboutContentFull = {
-  headerTitleEn: "About ",
-  headerDescEn: "Discover our history, network infrastructure capabilities, and why we are South Keraniganj's most trusted broadband provider.",
-  
-  missionTitleEn: "Our Mission",
-  missionP1En: "At M Amin Network, we believe high-speed, reliable internet is no longer a luxury—it is an essential utility for education, commerce, and communication. Since our inception, we have dedicated ourselves to bridging the digital divide in South Keraniganj by deploying pure, 100% optical fiber connections (FTTH) direct to homes and businesses.",
-  missionP2En: "Operating our own Autonomous System Number (AS150164), we peer directly with major local and global content exchanges. This infrastructure gives our subscribers latency-free access to remote work resources, streaming caches (Google GGC, Facebook FNA, Netflix OCA), and multiplayer gaming servers.",
-  
-  credTitleEn: "Key Credentials",
-  credentials: [
-    { keyEn: "License Authority", valEn: "BTRC Bangladesh" },
-    { keyEn: "ISP Association Membership", valEn: "ISPAB Active Member" },
-    { keyEn: "Autonomous System (ASN)", valEn: "AS150164" },
-    { keyEn: "Service Coverage", valEn: "South Keraniganj, Dhaka" },
-    { keyEn: "Line Configuration", valEn: "100% Fiber (FTTH)" }
-  ],
-  
-  infraTitleEn: "Infrastructure Powerhouse",
-  infraDescEn: "We leverage modern networking standards to maintain steady throughput, routing, and uptime.",
-  infraCards: [
-    {
-      titleEn: "BGP Multi-Homing Routing",
-      descEn: "By operating our own BGP network (AS150164), we peer with multiple major upstream Tier-1 network gateways. In the event of a fiber outage from one upstream gateway, our router automatically re-routes packets instantly.",
-      iconName: "Network"
-    },
-    {
-      titleEn: "Local Exchange Peering",
-      descEn: "We route directly to Bangladesh Internet Exchange (BDIX) and various local hosting centers. Subscribing to M Amin Network gives you access of up to 100 Mbps to local databases, FTP streaming archives, and live TV portals.",
-      iconName: "Database"
-    },
-    {
-      titleEn: "24/7 On-Field Dispatch",
-      descEn: "Unlike major centralized ISPs, our support center is localized right inside South Keraniganj. Our field crews, splicing engineers, and technical support assistants are situated nearby to provide instant physical repair service.",
-      iconName: "Wrench"
-    }
-  ],
-  
-  integrityTitleEn: "Our Integrity Guarantee",
-  integrityDescEn: "We adhere strictly to the guidelines and standards set forth by the Bangladesh Telecommunication Regulatory Commission (BTRC). We guarantee that you will receive the minimum committed bandwidth speeds as defined in your contract, with no hidden fair usage policies (FUP) or caps.",
-  btn1En: "Explore Packages",
-  btn2En: "Support Center"
-};
+export { defaultAboutContentFull, type Credential, type InfraCard, type AboutContentFull };
 
 const AVAILABLE_ICONS = [
   { value: "Network", label: "Network" },
@@ -202,12 +119,12 @@ export default function AboutPageAdmin() {
     if (e) e.preventDefault();
     const payload = {
       ...content,
-      credentials: (content.credentials || []).map(c => ({
+      credentials: (content.credentials || []).map((c: Credential) => ({
         ...c,
         keyBn: c.keyEn,
         valBn: c.valEn,
       })),
-      infraCards: (content.infraCards || []).map(c => ({
+      infraCards: (content.infraCards || []).map((c: InfraCard) => ({
         ...c,
         titleBn: c.titleEn,
         descBn: c.descEn,
@@ -255,7 +172,7 @@ export default function AboutPageAdmin() {
       </div>
 
       <div className="flex gap-4 border-b border-slate-200 pb-2">
-        {["mission", "credentials", "infrastructure", "integrity"].map((tab) => (
+        {["mission", "credentials", "infrastructure", "integrity"].map((tab: string) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors capitalize ${activeTab === tab ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
             {tab}
@@ -271,15 +188,15 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.missionTitleEn} onChange={e => updateField("missionTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.missionTitleEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("missionTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 1 (English)</label>
-                <textarea rows={4} value={content.missionP1En} onChange={e => updateField("missionP1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP1En} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("missionP1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Paragraph 2 (English)</label>
-                <textarea rows={4} value={content.missionP2En} onChange={e => updateField("missionP2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={4} value={content.missionP2En} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("missionP2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -291,18 +208,18 @@ export default function AboutPageAdmin() {
             <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Section Title (English)</label>
-                <input type="text" value={content.credTitleEn} onChange={e => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.credTitleEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("credTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
             
             <div className="space-y-3">
-              {(content.credentials || []).map((cred, i) => (
+              {(content.credentials || []).map((cred: Credential, i: number) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-center">
                   <div className="grid grid-cols-2 gap-3 flex-1">
-                    <input type="text" placeholder="Key (e.g. License Authority)" value={cred.keyEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
-                    <input type="text" placeholder="Value (e.g. BTRC Bangladesh)" value={cred.valEn} onChange={e => { const c = [...(content.credentials || [])]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
+                    <input type="text" placeholder="Key (e.g. License Authority)" value={cred.keyEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { const c = [...(content.credentials || [])]; c[i].keyEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
+                    <input type="text" placeholder="Value (e.g. BTRC Bangladesh)" value={cred.valEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { const c = [...(content.credentials || [])]; c[i].valEn = e.target.value; updateField("credentials", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
                   </div>
-                  <button onClick={() => updateField("credentials", (content.credentials || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
+                  <button onClick={() => updateField("credentials", (content.credentials || []).filter((_: Credential, idx: number) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
@@ -320,23 +237,23 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.infraTitleEn} onChange={e => updateField("infraTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.infraTitleEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("infraTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={2} value={content.infraDescEn} onChange={e => updateField("infraDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={2} value={content.infraDescEn} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("infraDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
 
             <div className="space-y-4">
-              {(content.infraCards || []).map((card, i) => (
+              {(content.infraCards || []).map((card: InfraCard, i: number) => (
                 <div key={i} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-4 items-start">
-                  <IconPicker value={card.iconName} onChange={v => { const c = [...(content.infraCards || [])]; c[i].iconName = v; updateField("infraCards", c); }} />
+                  <IconPicker value={card.iconName} onChange={(v: string) => { const c = [...(content.infraCards || [])]; c[i].iconName = v; updateField("infraCards", c); }} />
                   <div className="grid grid-cols-1 gap-3 flex-1">
-                    <input type="text" placeholder="Title (e.g. BGP Multi-Homing Routing)" value={card.titleEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
-                    <textarea rows={2} placeholder="Description..." value={card.descEn} onChange={e => { const c = [...(content.infraCards || [])]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800 resize-none" />
+                    <input type="text" placeholder="Title (e.g. BGP Multi-Homing Routing)" value={card.titleEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { const c = [...(content.infraCards || [])]; c[i].titleEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800" />
+                    <textarea rows={2} placeholder="Description..." value={card.descEn} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { const c = [...(content.infraCards || [])]; c[i].descEn = e.target.value; updateField("infraCards", c); }} className="px-3 py-2 text-xs border border-slate-200 rounded-lg w-full bg-white text-slate-800 resize-none" />
                   </div>
-                  <button onClick={() => updateField("infraCards", (content.infraCards || []).filter((_, idx) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
+                  <button onClick={() => updateField("infraCards", (content.infraCards || []).filter((_: InfraCard, idx: number) => idx !== i))} className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
                     <Lucide.X className="w-4 h-4" />
                   </button>
                 </div>
@@ -354,19 +271,19 @@ export default function AboutPageAdmin() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Title (English)</label>
-                <input type="text" value={content.integrityTitleEn} onChange={e => updateField("integrityTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.integrityTitleEn} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("integrityTitleEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <label className="text-xs font-bold text-slate-700">Description (English)</label>
-                <textarea rows={3} value={content.integrityDescEn} onChange={e => updateField("integrityDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <textarea rows={3} value={content.integrityDescEn} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateField("integrityDescEn", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Primary Button (English)</label>
-                <input type="text" value={content.btn1En} onChange={e => updateField("btn1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn1En} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("btn1En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-700">Secondary Button (English)</label>
-                <input type="text" value={content.btn2En} onChange={e => updateField("btn2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
+                <input type="text" value={content.btn2En} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateField("btn2En", e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800" />
               </div>
             </div>
           </div>
@@ -375,4 +292,3 @@ export default function AboutPageAdmin() {
     </div>
   );
 }
-
