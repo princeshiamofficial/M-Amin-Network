@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { Table, TableCard } from "@/components/application/table/table";
@@ -124,36 +124,33 @@ export default function JobApplicationsPage() {
     }
   };
 
-  const sortedItems = useMemo(() => {
-    const data = [...applications];
-    return data.sort((a, b) => {
-      let first: unknown = "";
-      let second: unknown = "";
+  const sortedItems = [...applications].sort((a, b) => {
+    let first: unknown = "";
+    let second: unknown = "";
 
-      if (sortDescriptor.column === "name") {
-        first = a.nameEn || a.applicantName || a.name || "";
-        second = b.nameEn || b.applicantName || b.name || "";
-      } else if (sortDescriptor.column === "role") {
-        first = a.position || a.jobTitle || "";
-        second = b.position || b.jobTitle || "";
-      } else if (sortDescriptor.column === "phone") {
-        first = a.phone || a.applicantPhone || "";
-        second = b.phone || b.applicantPhone || "";
-      } else if (sortDescriptor.column === "status") {
-        first = a.status || "";
-        second = b.status || "";
-      }
+    if (sortDescriptor.column === "name") {
+      first = a.nameEn || a.applicantName || a.name || "";
+      second = b.nameEn || b.applicantName || b.name || "";
+    } else if (sortDescriptor.column === "role") {
+      first = a.position || a.jobTitle || "";
+      second = b.position || b.jobTitle || "";
+    } else if (sortDescriptor.column === "phone") {
+      first = a.phone || a.applicantPhone || "";
+      second = b.phone || b.applicantPhone || "";
+    } else if (sortDescriptor.column === "status") {
+      first = a.status || "";
+      second = b.status || "";
+    }
 
-      if (typeof first === "string" && typeof second === "string") {
-        let cmp = first.localeCompare(second);
-        if (sortDescriptor.direction === "descending") {
-          cmp *= -1;
-        }
-        return cmp;
+    if (typeof first === "string" && typeof second === "string") {
+      let cmp = first.localeCompare(second);
+      if (sortDescriptor.direction === "descending") {
+        cmp *= -1;
       }
-      return 0;
-    });
-  }, [applications, sortDescriptor]);
+      return cmp;
+    }
+    return 0;
+  });
 
   if (!auth) return null;
 

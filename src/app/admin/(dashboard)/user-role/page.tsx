@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { useAdminSecurity } from "@/hooks/useAdminSecurity";
@@ -359,29 +359,26 @@ export default function UserRolePage() {
   const allowEdit = canEdit("/admin/user-role");
   const allowDelete = canDelete("/admin/user-role");
 
-  const formErrors = useMemo(() => roleIsValid(roleForm, roles, editingRoleId), [roleForm, roles, editingRoleId]);
+  const formErrors = roleIsValid(roleForm, roles, editingRoleId);
   const canSaveRole = !formErrors.name && !formErrors.permissions && !isSaving && (editingRoleId ? allowEdit : allowAdd);
 
-  const filteredRoles = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
-    return roles
-      .filter((role) => {
-        const matchesSearch = !query || role.name.toLowerCase().includes(query) || role.description.toLowerCase().includes(query);
-        const matchesStatus = statusFilter === "All" || role.status === statusFilter;
-        return matchesSearch && matchesStatus;
-      })
-      .sort((a, b) => {
-        if (sortBy === "users") return getAssignedCount(b.name, users) - getAssignedCount(a.name, users);
-        if (sortBy === "updated") return b.updatedAt.localeCompare(a.updatedAt);
-        return a.name.localeCompare(b.name);
-      });
-  }, [roles, searchQuery, statusFilter, sortBy, users]);
+  const query = searchQuery.trim().toLowerCase();
+  const filteredRoles = roles
+    .filter((role) => {
+      const matchesSearch = !query || role.name.toLowerCase().includes(query) || role.description.toLowerCase().includes(query);
+      const matchesStatus = statusFilter === "All" || role.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      if (sortBy === "users") return getAssignedCount(b.name, users) - getAssignedCount(a.name, users);
+      if (sortBy === "updated") return b.updatedAt.localeCompare(a.updatedAt);
+      return a.name.localeCompare(b.name);
+    });
 
-  const matrixAccess = useMemo(() => {
-    const query = matrixSearch.trim().toLowerCase();
-    if (!query) return roleForm.pageAccess;
-    return roleForm.pageAccess.filter((access) => access.page.toLowerCase().includes(query) || access.module.toLowerCase().includes(query));
-  }, [roleForm.pageAccess, matrixSearch]);
+  const matrixSearchQuery = matrixSearch.trim().toLowerCase();
+  const matrixAccess = !matrixSearchQuery
+    ? roleForm.pageAccess
+    : roleForm.pageAccess.filter((access) => access.page.toLowerCase().includes(matrixSearchQuery) || access.module.toLowerCase().includes(matrixSearchQuery));
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {

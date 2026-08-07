@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getSetting, setSetting } from "@/actions/content";
 import { useRouter } from "next/navigation";
 import { useAdminSecurity } from "@/hooks/useAdminSecurity";
@@ -194,21 +194,17 @@ export default function ManageUserPage() {
   const allowEdit = canEdit("/admin/manage-user");
   const allowDelete = canDelete("/admin/manage-user");
 
-  const roleNames = useMemo(() => adminRoles.map((role) => role.name), [adminRoles]);
+  const roleNames = adminRoles.map((role) => role.name);
 
-  const roleColorsMap = useMemo(() => {
-    return new Map(adminRoles.map((r) => [r.name, r.color || "#6b7280"]));
-  }, [adminRoles]);
+  const roleColorsMap = new Map(adminRoles.map((r) => [r.name, r.color || "#6b7280"]));
 
-  const filteredUsers = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
-    return adminUsers
-      .filter((user) => {
-        const matchesSearch = !query || user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query) || user.role.toLowerCase().includes(query);
-        const matchesStatus = statusFilter === "all" || user.status === statusFilter;
-        return matchesSearch && matchesStatus;
-      });
-  }, [adminUsers, searchTerm, statusFilter]);
+  const query = searchTerm.trim().toLowerCase();
+  const filteredUsers = adminUsers
+    .filter((user) => {
+      const matchesSearch = !query || user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query) || user.role.toLowerCase().includes(query);
+      const matchesStatus = statusFilter === "all" || user.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
 
   useEffect(() => {
     if (!localStorage.getItem("admin_token")) {

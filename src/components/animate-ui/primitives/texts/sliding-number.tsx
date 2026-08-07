@@ -258,18 +258,16 @@ function SlidingNumber({
     ? prevIntStrRaw.padStart(finalIntLength, '0')
     : prevIntStrRaw;
 
-  const adjustedPrevInt = React.useMemo(() => {
-    return prevIntStr.length > finalIntLength
+  const adjustedPrevInt =
+    prevIntStr.length > finalIntLength
       ? prevIntStr.slice(-finalIntLength)
       : prevIntStr.padStart(finalIntLength, '0');
-  }, [prevIntStr, finalIntLength]);
 
-  const adjustedPrevDec = React.useMemo(() => {
-    if (!newDecStrRaw) return '';
-    return prevDecStrRaw.length > newDecStrRaw.length
-      ? prevDecStrRaw.slice(0, newDecStrRaw.length)
-      : prevDecStrRaw.padEnd(newDecStrRaw.length, '0');
-  }, [prevDecStrRaw, newDecStrRaw]);
+  const adjustedPrevDec = !newDecStrRaw
+    ? ''
+    : prevDecStrRaw.length > newDecStrRaw.length
+    ? prevDecStrRaw.slice(0, newDecStrRaw.length)
+    : prevDecStrRaw.padEnd(newDecStrRaw.length, '0');
 
   React.useEffect(() => {
     if (isInView || initiallyStable) {
@@ -277,22 +275,15 @@ function SlidingNumber({
     }
   }, [effectiveNumber, isInView, initiallyStable]);
 
-  const intPlaces = React.useMemo(
-    () =>
-      Array.from({ length: finalIntLength }, (_, i) =>
-        Math.pow(10, finalIntLength - i - 1),
-      ),
-    [finalIntLength],
+  const intPlaces = Array.from({ length: finalIntLength }, (_, i) =>
+    Math.pow(10, finalIntLength - i - 1),
   );
-  const decPlaces = React.useMemo(
-    () =>
-      newDecStrRaw
-        ? Array.from({ length: newDecStrRaw.length }, (_, i) =>
-            Math.pow(10, newDecStrRaw.length - i - 1),
-          )
-        : [],
-    [newDecStrRaw],
-  );
+
+  const decPlaces = newDecStrRaw
+    ? Array.from({ length: newDecStrRaw.length }, (_, i) =>
+        Math.pow(10, newDecStrRaw.length - i - 1),
+      )
+    : [];
 
   const newDecValue = newDecStrRaw ? parseInt(newDecStrRaw, 10) : 0;
   const prevDecValue = adjustedPrevDec ? parseInt(adjustedPrevDec, 10) : 0;
