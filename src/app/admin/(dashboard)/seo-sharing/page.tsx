@@ -11,8 +11,8 @@ interface SEOSettings {
 }
 
 const defaultSEOSettings: SEOSettings = {
-  metaTitle: "M Amin Network - Leading ISP in Keraniganj",
-  metaDescription: "High-speed fiber internet solutions tailored for homes and businesses across Southern Keraniganj.",
+  metaTitle: "M-Amin Network - Leading ISP in Dhaka District",
+  metaDescription: "High-speed fiber internet solutions tailored for homes and businesses across Dhaka District.",
   keywords: "internet, broadband, fiber, keraniganj, isp, m-amin",
 };
 
@@ -114,7 +114,7 @@ export default function SEOSharingPage() {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[14px] text-[#202124] leading-tight">M Amin Network</span>
+                <span className="text-[14px] text-[#202124] leading-tight">M-Amin Network</span>
                 <span className="text-[12px] text-[#4d5156] leading-tight flex items-center gap-1">
                   https://www.m-amin.com 
                   <span className="text-[10px] mt-0.5">▼</span>

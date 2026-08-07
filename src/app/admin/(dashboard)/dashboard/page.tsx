@@ -517,13 +517,13 @@ export default function AdminDashboardPage() {
     subtitle: "High-speed fiber internet solutions tailored for homes and businesses across Southern Keraniganj.",
   });
   const [seoSettings, setSeoSettings] = useState<SEOSettings>({
-    metaTitle: "M Amin Network - Leading ISP in Keraniganj",
+    metaTitle: "M-Amin Network - Leading ISP in Dhaka District",
     metaDescription: "Enjoy ultra-fast fiber internet connection, stable gateway SLA, and dedicated customer support.",
     keywords: "internet provider, ISP Keraniganj, broadband, fiber optic, high-speed wifi",
   });
   const [aboutContent, setAboutContent] = useState<AboutContent>({
     storyTitle: "Our Story & Mission",
-    storyBody: "Founded with a vision to connect every household in Southern Keraniganj with premium fiber internet, M Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7.",
+    storyBody: "Founded with a vision to connect every household in Dhaka District with premium fiber internet, M-Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7.",
   });
 
   // Additional CMS States
@@ -539,8 +539,8 @@ export default function AdminDashboardPage() {
   const [footerContent, setFooterContent] = useState<FooterContent>({
     facebook: "https://facebook.com/maminnetwork",
     youtube: "https://youtube.com/maminnetwork",
-    copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
-    aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+    copyrightText: "© 2026 M-Amin Network. All Rights Reserved.",
+    aboutTextEn: "Top-tier Internet Service Provider (ISP) in Dhaka District. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
     asnText: "AS150164",
     btrcTextEn: "BTRC Licensed",
     addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
@@ -1069,8 +1069,8 @@ export default function AdminDashboardPage() {
       const defaultSite = { hotline: "+880 1707-009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka, Bangladesh" };
       const defaultHome = { hero: true, packages: true, offers: true, coverage: true, testimonials: true, faq: true };
       const defaultHero = { mainTitle: "Super Fast Broadband Connection in Dhaka", subtitle: "High-speed fiber internet solutions tailored for homes and businesses across Southern Keraniganj." };
-      const defaultSeo = { metaTitle: "M Amin Network - Leading ISP in Keraniganj", metaDescription: "Enjoy ultra-fast fiber internet connection, stable gateway SLA, and dedicated customer support.", keywords: "internet provider, ISP Keraniganj, broadband, fiber optic, high-speed wifi" };
-      const defaultAbout = { storyTitle: "Our Story & Mission", storyBody: "Founded with a vision to connect every household in Southern Keraniganj with premium fiber internet, M Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7." };
+      const defaultSeo = { metaTitle: "M-Amin Network - Leading ISP in Dhaka District", metaDescription: "Enjoy ultra-fast fiber internet connection, stable gateway SLA, and dedicated customer support.", keywords: "internet provider, ISP Keraniganj, broadband, fiber optic, high-speed wifi" };
+      const defaultAbout = { storyTitle: "Our Story & Mission", storyBody: "Founded with a vision to connect every household in Dhaka District with premium fiber internet, M-Amin Network provides reliable high-bandwidth gateway SLA and dedicated network engineers to ensure optimal performance 24/7." };
       const defaultContact = { headline: "Get in Touch With Us", officeHours: "Saturday - Thursday: 09:00 AM - 10:00 PM", mapEmbedUrl: "https://maps.google.com" };
       const defaultComp = { guidelineTitle: "Submitting Formal Grievances (BTRC SLA Compliance)", guidelineBody: "Under BTRC guidelines, clients may lodge formal complaints here. All submissions generate trace IDs. Tickets are resolved within standard BTRC SLA frames (24-48 hrs)." };
       const defaultFoot = {
@@ -1079,8 +1079,8 @@ export default function AdminDashboardPage() {
         instagram: "https://instagram.com/maminnetwork",
         twitter: "https://x.com/maminnetwork",
         linkedin: "https://linkedin.com/company/maminnetwork",
-        copyrightText: "© 2026 M Amin Network. All Rights Reserved.",
-        aboutTextEn: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+        copyrightText: "© 2026 M-Amin Network. All Rights Reserved.",
+        aboutTextEn: "Top-tier Internet Service Provider (ISP) in Dhaka District. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
         asnText: "AS150164",
         btrcTextEn: "BTRC Licensed",
         addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",

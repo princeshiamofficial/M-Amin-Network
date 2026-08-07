@@ -49,7 +49,7 @@ const defaultFooterData: FooterData = {
   linkedin: "https://linkedin.com/company/maminnetwork",
   addressEn: "House No. 68, Kadomtoli, Aganagar, South Keraniganj, Dhaka-1310, Bangladesh.",
   email: "info@m-aminnetwork.com",
-  aboutText: "Top-tier Internet Service Provider (ISP) in South Keraniganj, Dhaka. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
+  aboutText: "Top-tier Internet Service Provider (ISP) in Dhaka District. Providing lightning-fast, buffer-free, SLA-backed broadband internet solutions for homes and businesses.",
   affiliationText: "We are a proud, active member of the Internet Service Providers Association of Bangladesh (ISPAB).",
 };
 
@@ -271,7 +271,7 @@ export default function Footer() {
             >
               <Image
                 src={siteLogo}
-                alt="M Amin Network"
+                alt="M-Amin Network"
                 width={200}
                 height={44}
                 className="h-11 w-[200px] object-contain brightness-0 invert"
@@ -522,7 +522,7 @@ export default function Footer() {
         {/* Bottom copyright */}
         <div className="pt-2 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           <p className="text-xs text-white">
-            {"© 2026 M Amin Network. All Rights Reserved."}
+            {"© 2026 M-Amin Network. All Rights Reserved."}
           </p>
           <div className="flex gap-4 text-xs text-white flex-wrap justify-center md:justify-end">
             <Link href="/" className="hover:text-brand-cyan transition-colors">

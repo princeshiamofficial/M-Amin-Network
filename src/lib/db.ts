@@ -219,10 +219,10 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     }
   ],
   site_content: [
-    { siteTitle: "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
+    { siteTitle: "M-Amin Network | Best Broadband ISP in Dhaka District", hotline: "+880 1707 009267", supportEmail: "support@maminnetwork.com", address: "Kadomtoli, South Keraniganj, Dhaka", _sort_order: 0 }
   ],
   hero_typography: [
-    { mainTitle: "Blazing Fast Fiber | Internet in Keraniganj", subtitle: "M Amin Network (AS150164) is South Keraniganj's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.", slides: JSON.stringify([]), _sort_order: 0 }
+    { mainTitle: "Blazing Fast Fiber | Internet in Keraniganj", subtitle: "M-Amin Network (AS150164) is Dhaka District's leading ISP, offering high-speed, SLA-backed stable internet with dedicated routing.", slides: JSON.stringify([]), _sort_order: 0 }
   ],
   hero_metrics: [
     { value: "99.9%", titleEn: "Guaranteed Uptime", descEn: "Redundant upstream connections", _sort_order: 0 },
@@ -246,7 +246,7 @@ const SEED_DATA: Record<string, Record<string, unknown>[]> = {
     { title: "Subscriber Splicing Portal", subtitle: "Monitor your active internet packages, check billing history, and pay online.", _sort_order: 0 }
   ],
   about_content: [
-    { storyTitle: "Redefining Connectivity Since 2018", storyBody: "M-Amin Network started with a vision to provide stable, affordable broadband internet to every household in South Keraniganj. Today, we are proud to serve over 1,500 active subscribers.", _sort_order: 0 }
+    { storyTitle: "Redefining Connectivity Since 2018", storyBody: "M-Amin Network started with a vision to provide stable, affordable broadband internet to every household in Dhaka District. Today, we are proud to serve over 1,500 active subscribers.", _sort_order: 0 }
   ],
   contact_content: [
     { title: "Get In Touch With Our NOC Office", subtitle: "Reach out for home broadband setup, corporate splice queries, or local support.", _sort_order: 0 }

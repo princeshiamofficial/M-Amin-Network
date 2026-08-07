@@ -40,8 +40,8 @@ const getLogoUrl = (value: unknown): string | null => {
 export async function generateMetadata(): Promise<Metadata> {
   const siteContent = (await getSetting("site_content")) as { siteTitle?: string } | null;
   return {
-    title: siteContent?.siteTitle || "M Amin Network | Best Broadband ISP in South Keraniganj, Dhaka",
-    description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, South Keraniganj with M Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
+    title: siteContent?.siteTitle || "M-Amin Network | Best Broadband ISP in Dhaka District",
+    description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, Dhaka District with M-Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
     manifest: "/site.webmanifest",
     icons: {
       icon: [
@@ -109,8 +109,8 @@ export default async function RootLayout({
                   "@type": "WebSite",
                   "@id": "https://m-aminnetwork.com/#website",
                   "url": "https://m-aminnetwork.com/",
-                  "name": "M Amin Network",
-                  "description": "Best Broadband ISP in South Keraniganj, Dhaka",
+                  "name": "M-Amin Network",
+                  "description": "Best Broadband ISP in Dhaka District",
                   "potentialAction": [
                     {
                       "@type": "SearchAction",
@@ -125,7 +125,7 @@ export default async function RootLayout({
                 {
                   "@type": "Organization",
                   "@id": "https://m-aminnetwork.com/#organization",
-                  "name": "M Amin Network",
+                  "name": "M-Amin Network",
                   "url": "https://m-aminnetwork.com/",
                   "logo": fullLogoUrl,
                   "contactPoint": {
