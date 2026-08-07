@@ -241,10 +241,13 @@ export async function verifyAdminLoginAction(usernameInput: string, passwordInpu
           });
           if (matchedUser) {
             matchedUser.lastLogin = new Date().toLocaleString("en-US", { hour12: true });
-            await setSettingInternal("admin_users", userList);
+            const loginUpdated = await setSettingInternal("admin_users", userList);
+            if (!loginUpdated) {
+              console.error("CRITICAL: Failed to record admin login timestamp for user:", matchedUserId);
+            }
           }
         } catch (e) {
-          console.warn("Failed to update admin user lastLogin:", e);
+          console.error("Failed to update admin user lastLogin:", e);
         }
 
         let sessionVersion = getAdminSessionVersion(savedAuth);
@@ -295,6 +298,7 @@ export async function updateAdminAccountAction(input: {
   success: boolean;
   error?: string;
   sessionsRotated?: boolean;
+  usersSynced?: boolean;
   auth?: {
     email: string;
     username: string;
@@ -363,6 +367,7 @@ export async function updateAdminAccountAction(input: {
       await setAdminSessionCookie(updatedAuth.sessionVersion);
     }
 
+    let usersSynced = true;
     try {
       const savedUsers = (await getSettingInternal("admin_users")) as Record<string, unknown>[] | null;
       const userList = Array.isArray(savedUsers) ? savedUsers : [];
@@ -386,15 +391,17 @@ export async function updateAdminAccountAction(input: {
       });
 
       if (matched) {
-        await setSettingInternal("admin_users", updatedUsers);
+        usersSynced = await setSettingInternal("admin_users", updatedUsers);
       }
     } catch (error) {
       console.warn("Failed to sync managed admin credentials:", error);
+      usersSynced = false;
     }
 
     return {
       success: true,
       sessionsRotated: credentialsChanged,
+      usersSynced,
       auth: {
         email: updatedAuth.email,
         username: updatedAuth.username,
@@ -441,10 +448,18 @@ export async function isAdminAuthenticated(): Promise<boolean> {
     const savedAuth = (await getSettingInternal("admin_auth")) as Record<string, unknown> | null;
     const sessionVersion = getAdminSessionVersion(savedAuth);
     if (!sessionVersion) {
-      return cookieValue === LEGACY_ADMIN_SESSION_TOKEN;
+      const isLegacy = cookieValue === LEGACY_ADMIN_SESSION_TOKEN;
+      if (isLegacy) {
+        await setLegacyAdminSessionCookie();
+      }
+      return isLegacy;
     }
 
-    return cookieValue === createAdminSessionCookieValue(sessionVersion);
+    const isValid = cookieValue === createAdminSessionCookieValue(sessionVersion);
+    if (isValid) {
+      await setAdminSessionCookie(sessionVersion);
+    }
+    return isValid;
   } catch {
     return false;
   }
@@ -526,7 +541,7 @@ export async function submitJobApplicationAction(
 
 export async function submitPackageRequestAction(
   requestInfo: Record<string, unknown>
-): Promise<{ success: boolean; id?: string }> {
+): Promise<{ success: boolean; id?: string; claimsSynced?: boolean }> {
   try {
     const raw = await getSettingInternal("package_requests");
     const requestsArr = Array.isArray(raw) ? (raw as Record<string, unknown>[]) : [];
@@ -555,6 +570,7 @@ export async function submitPackageRequestAction(
     }
 
     // Also add to claims so it appears on /admin/applications
+    let claimsSynced = true;
     try {
       const claimsRaw = await getSettingInternal("claims");
       const claimsArr = Array.isArray(claimsRaw) ? (claimsRaw as Record<string, unknown>[]) : [];
@@ -568,12 +584,13 @@ export async function submitPackageRequestAction(
         date: new Date().toLocaleString(),
         status: "Pending"
       });
-      await setSettingInternal("claims", claimsArr);
+      claimsSynced = await setSettingInternal("claims", claimsArr);
     } catch (e) {
       console.error("Failed to sync package request to claims:", e);
+      claimsSynced = false;
     }
 
-    return { success, id: generatedId };
+    return { success, id: generatedId, claimsSynced };
   } catch (error) {
     console.error("submitPackageRequestAction error:", error);
     return { success: false };
@@ -728,7 +745,10 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
     if (savedAuth && savedAuth.email && savedAuth.email.toLowerCase() === cleanEmail) {
       savedAuth.password = hashed;
       savedAuth.sessionVersion = createAdminSessionVersion();
-      await setSettingInternal("admin_auth", savedAuth);
+      const saved = await setSettingInternal("admin_auth", savedAuth);
+      if (!saved) {
+        return { success: false, error: "Failed to save new password. Please try again." };
+      }
       return { success: true };
     }
     
@@ -745,13 +765,16 @@ export async function resetPasswordAction(emailInput: string, newPasswordInput: 
     });
     
     if (updated) {
-      // Also update primary credentials just in case since sub-admins share auth checks
+      let authOk = true;
       if (savedAuth) {
         savedAuth.password = hashed;
         savedAuth.sessionVersion = createAdminSessionVersion();
-        await setSettingInternal("admin_auth", savedAuth);
+        authOk = await setSettingInternal("admin_auth", savedAuth);
       }
-      await setSettingInternal("admin_users", updatedUsers);
+      const usersOk = await setSettingInternal("admin_users", updatedUsers);
+      if (!authOk || !usersOk) {
+        return { success: false, error: "Failed to save new password. Please try again." };
+      }
       return { success: true };
     }
     

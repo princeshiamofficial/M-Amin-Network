@@ -172,6 +172,7 @@ export default function AboutPageAdmin() {
   const [auth, setAuth] = useState(false);
   const [content, setContent] = useState<AboutContentFull>(defaultAboutContentFull);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [activeTab, setActiveTab] = useState("mission");
 
   useEffect(() => {
@@ -212,7 +213,13 @@ export default function AboutPageAdmin() {
         descBn: c.descEn,
       })),
     };
-    await setSetting("about_content_full", payload as unknown as Record<string, unknown>);
+    setSaveError("");
+    const success = await setSetting("about_content_full", payload as unknown as Record<string, unknown>);
+    if (!success) {
+      setSaveError("Session expired or save failed. Please log in again.");
+      setTimeout(() => setSaveError(""), 5000);
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -234,6 +241,11 @@ export default function AboutPageAdmin() {
           {saved && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold rounded-lg">
               <Lucide.CheckCircle2 className="w-3.5 h-3.5" /> Saved!
+            </span>
+          )}
+          {saveError && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold rounded-lg">
+              {saveError}
             </span>
           )}
           <button onClick={save} className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition-all cursor-pointer shadow-md shadow-blue-500/25 active:scale-[0.98]">
