@@ -38,10 +38,15 @@ const getLogoUrl = (value: unknown): string | null => {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteContent = (await getSetting("site_content")) as { siteTitle?: string } | null;
+  const [siteContent, seoSettings] = await Promise.all([
+    getSetting("site_content") as Promise<{ siteTitle?: string } | null>,
+    getSetting("seo_settings") as Promise<{ metaTitle?: string; metaDescription?: string } | null>,
+  ]);
+  const title = seoSettings?.metaTitle || siteContent?.siteTitle || "M-Amin Network | Best Broadband ISP in Dhaka District";
+  const description = seoSettings?.metaDescription || "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, Dhaka District with M-Amin Network (AS150164). BTRC Licensed & ISPAB Member.";
   return {
-    title: siteContent?.siteTitle || "M-Amin Network | Best Broadband ISP in Dhaka District",
-    description: "Get high-speed, buffer-free broadband internet and corporate connectivity in Kadomtoli, Aganagar, Dhaka District with M-Amin Network (AS150164). BTRC Licensed & ISPAB Member.",
+    title,
+    description,
     manifest: "/site.webmanifest",
     icons: {
       icon: [
