@@ -14,7 +14,7 @@ import {
 
 export default function About() {
   const lang = useTranslation();
-  const t = (en: string, bn: string) => (lang === "BN" ? bn : en);
+  const t = (en: string, bn?: string) => (lang === "BN" && bn ? bn : en);
 
   const [content, setContent] = useState<AboutContentFull>(defaultAboutContentFull);
   const [bgUrl, setBgUrl] = useState("/About.jpg");
@@ -27,6 +27,7 @@ export default function About() {
         setContent((prev: AboutContentFull) => ({
           ...prev,
           headerTitleEn: data.about_title_en || prev.headerTitleEn,
+          highlightEn: data.about_title_highlight_en || prev.highlightEn,
           headerDescEn: data.about_subtitle_en || prev.headerDescEn,
         }));
       }
@@ -37,12 +38,18 @@ export default function About() {
         const merged = { ...defaultAboutContentFull, ...(saved as unknown as Partial<AboutContentFull>) };
         if (!Array.isArray(merged.credentials)) merged.credentials = defaultAboutContentFull.credentials;
         if (!Array.isArray(merged.infraCards)) merged.infraCards = defaultAboutContentFull.infraCards;
-        setContent(merged);
+        setContent((prev: AboutContentFull) => ({
+          ...merged,
+          headerTitleEn: merged.headerTitleEn || prev.headerTitleEn,
+          highlightEn: merged.highlightEn || prev.highlightEn,
+          headerDescEn: merged.headerDescEn || prev.headerDescEn,
+        }));
       }
     });
   }, []);
 
-  const highlightText = (content as unknown as Record<string, string>).highlightEn || "M Amin Network";
+  const highlightText = content.highlightEn || "M Amin Network";
+  const highlightTextBn = content.highlightBn || highlightText;
 
   return (
     <div className="w-full grow relative text-left">
@@ -59,13 +66,13 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-left relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-extrabold text-white tracking-tight mt-3 text-center w-full block">
-              {t(content.headerTitleEn, content.headerTitleBn || content.headerTitleEn)}{" "}
+              {t(content.headerTitleEn, content.headerTitleBn)}{" "}
               <span className="text-transparent bg-clip-text bg-linear-to-r from-brand-cyan to-brand-blue text-glow">
-                {t(highlightText, highlightText)}
+                {t(highlightText, highlightTextBn)}
               </span>
             </h1>
             <p className="text-slate-300 mt-4 text-sm sm:text-base leading-relaxed text-center font-medium drop-shadow-sm max-w-2xl mx-auto">
-              {t(content.headerDescEn, content.headerDescBn || content.headerDescEn)}
+              {t(content.headerDescEn, content.headerDescBn)}
             </p>
           </div>
         </div>
@@ -78,25 +85,25 @@ export default function About() {
           {/* Mission Section */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-7 space-y-6 text-left">
-              <h2 className="text-2xl font-bold text-slate-900">{t(content.missionTitleEn, content.missionTitleBn || content.missionTitleEn)}</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t(content.missionTitleEn, content.missionTitleBn)}</h2>
               <p className="text-slate-650 text-sm sm:text-base leading-relaxed">
-                {t(content.missionP1En, content.missionP1Bn || content.missionP1En)}
+                {t(content.missionP1En, content.missionP1Bn)}
               </p>
               <p className="text-slate-650 text-sm sm:text-base leading-relaxed">
-                {t(content.missionP2En, content.missionP2Bn || content.missionP2En)}
+                {t(content.missionP2En, content.missionP2Bn)}
               </p>
             </div>
 
             {/* Credentials Section */}
             <div className="lg:col-span-5">
               <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm text-left">
-                <h3 className="text-slate-900 font-extrabold text-base">{t(content.credTitleEn, content.credTitleBn || content.credTitleEn)}</h3>
+                <h3 className="text-slate-900 font-extrabold text-base">{t(content.credTitleEn, content.credTitleBn)}</h3>
                 <div className="space-y-4">
                   {content.credentials.map((cred: Credential, idx: number) => (
                     <div key={idx} className={`flex justify-between items-center ${idx !== content.credentials.length - 1 ? 'border-b border-slate-200 pb-2.5' : ''}`}>
-                      <span className="text-xs text-slate-500 font-medium">{t(cred.keyEn, cred.keyBn || cred.keyEn)}</span>
+                      <span className="text-xs text-slate-500 font-medium">{t(cred.keyEn, cred.keyBn)}</span>
                       <span className={`text-xs font-bold ${cred.keyEn.includes("ASN") ? 'text-brand-blue font-mono' : cred.keyEn.includes("Configuration") ? 'text-emerald-600' : 'text-slate-800 uppercase'}`}>
-                        {t(cred.valEn, cred.valBn || cred.valEn)}
+                        {t(cred.valEn, cred.valBn)}
                       </span>
                     </div>
                   ))}
@@ -108,9 +115,9 @@ export default function About() {
           {/* Infrastructure highlights */}
           <div className="space-y-10 text-center pt-8 border-t border-slate-100">
             <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl font-bold text-slate-900">{t(content.infraTitleEn, content.infraTitleBn || content.infraTitleEn)}</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{t(content.infraTitleEn, content.infraTitleBn)}</h2>
               <p className="text-slate-650 mt-2 text-sm leading-relaxed">
-                {t(content.infraDescEn, content.infraDescBn || content.infraDescEn)}
+                {t(content.infraDescEn, content.infraDescBn)}
               </p>
             </div>
 
@@ -126,10 +133,10 @@ export default function About() {
                       <IconComp className="w-6 h-6" />
                     </div>
                     <h4 className="text-lg font-bold text-slate-900 tracking-wide">
-                      {t(infra.titleEn, infra.titleBn || infra.titleEn)}
+                      {t(infra.titleEn, infra.titleBn)}
                     </h4>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      {t(infra.descEn, infra.descBn || infra.descEn)}
+                      {t(infra.descEn, infra.descBn)}
                     </p>
                   </div>
                 );
@@ -139,16 +146,16 @@ export default function About() {
 
           {/* Corporate Integrity pledge */}
           <div className="p-8 sm:p-12 rounded-3xl bg-linear-to-r from-slate-50 to-slate-100/85 border border-slate-200 text-center relative overflow-hidden shadow-sm">
-            <h3 className="text-2xl font-extrabold text-slate-900 mb-4">{t(content.integrityTitleEn, content.integrityTitleBn || content.integrityTitleEn)}</h3>
+            <h3 className="text-2xl font-extrabold text-slate-900 mb-4">{t(content.integrityTitleEn, content.integrityTitleBn)}</h3>
             <p className="text-slate-650 max-w-2xl mx-auto mb-8 text-sm sm:text-base leading-relaxed">
-              {t(content.integrityDescEn, content.integrityDescBn || content.integrityDescEn)}
+              {t(content.integrityDescEn, content.integrityDescBn)}
             </p>
             <div className="flex gap-4 justify-center">
               <Link
                 href="/packages"
                 className="bg-brand-blue hover:bg-brand-blue/90 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-sm transition-all cursor-pointer"
               >
-                {t(content.btn1En, content.btn1Bn || content.btn1En)}
+                {t(content.btn1En, content.btn1Bn)}
               </Link>
             </div>
           </div>

@@ -16,6 +16,8 @@ export interface InfraCard {
 export interface AboutContentFull {
   headerTitleEn: string;
   headerTitleBn?: string;
+  highlightEn?: string;
+  highlightBn?: string;
   headerDescEn: string;
   headerDescBn?: string;
 
@@ -48,6 +50,7 @@ export interface AboutContentFull {
 
 export const defaultAboutContentFull: AboutContentFull = {
   headerTitleEn: "About ",
+  highlightEn: "M Amin Network",
   headerDescEn:
     "Discover our history, network infrastructure capabilities, and why we are South Keraniganj's most trusted broadband provider.",
 
