@@ -12,6 +12,7 @@ const OBJECT_KEYS = [
   "site_logo",
   "hero_typography",
   "offers_page_content",
+  "seo_settings",
   "footer_content",
   "bill_payment_page_content",
   "support_page_content",
